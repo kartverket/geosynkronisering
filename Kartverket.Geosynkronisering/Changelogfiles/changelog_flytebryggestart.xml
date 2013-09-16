@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chlogf:TransactionCollection timeStamp="2001-12-17T09:30:47Z" numberMatched="2" numberReturned="2" startIndex="0" endIndex="2" 
+                              xsi:schemaLocation="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/0.3 http://www.geosynkronisering.no/files/skjema/v0.4/changelogfile.xsd http://schemas.geonorge.no/prodspek/FellesKystkontur/1.0 http://www.geosynkronisering.no/files/skjema/Flytebrygge.xsd" 
+                                xmlns:chlogf="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/0.3" 
+                                  xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                                    xmlns:app="http://schemas.geonorge.no/prodspek/FellesKystkontur/1.0" 
+                                      xmlns:gml="http://www.opengis.net/gml/3.2" >
+  <chlogf:transactions service="WFS" version="2.0.0" >
+    <wfs:Insert handle="1" inputFormat="application/gml+xml; version=3.2" srsName="urn:ogc:def:crs:EPSG::4258"  >
+        <app:Flytebrygge gml:id="Flytebrygge.1">
+            <gml:boundedBy>
+                <gml:Envelope srsDimension="2" srsName="urn:ogc:def:crs:EPSG::4258">
+                    <gml:lowerCorner>59.32071097925174 10.791053232488062</gml:lowerCorner>
+                    <gml:upperCorner>59.3211256558841 10.791536916137812</gml:upperCorner>
+                </gml:Envelope>
+            </gml:boundedBy>
+            <app:geometri>
+                <gml:Polygon gml:id="Flytebrygge.1_geom" srsDimension="2" srsName="urn:ogc:def:crs:EPSG::4258">
+                    <gml:exterior>
+                        <gml:LinearRing>
+                            <gml:posList>59.321122065547925 10.791053232488062 59.32112544275409
+                                10.791071462228533 59.3211256558841 10.791072491380508
+                                59.3211256558841 10.791072491380508 59.32084577367758
+                                10.791393198983767 59.32084685065045 10.791398695153871
+                                59.32071941137069 10.791536916137812 59.32071097925174
+                                10.791504183172934 59.320835329249824 10.791367751994425
+                                59.32083930839998 10.79137957386835 59.321122065547925
+                                10.791053232488062</gml:posList>
+                        </gml:LinearRing>
+                    </gml:exterior>
+                </gml:Polygon>
+            </app:geometri>
+            <app:lokal_id>1</app:lokal_id>
+            <app:oppdateringsdato>2011-07-15T06:57:53Z</app:oppdateringsdato>
+            <app:objekttypenavn>Flytebrygge</app:objekttypenavn>
+        </app:Flytebrygge>
+    </wfs:Insert>
+  </chlogf:transactions>
+</chlogf:TransactionCollection>

@@ -1,0 +1,293 @@
+
+<wsdl:definitions  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"  xmlns:gsynk="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3" xmlns:gsynk-reqresp="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3" xmlns:xs="http://www.w3.org/2001/XMLSchema" name="WebFeatureServiceReplication" targetNamespace="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3" xmlns:gsynktypes="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3/types">
+    <xs:import namespace="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3/types" schemaLocation="C:\Users\tor\Documents\Visual Studio 2010\Projects\Kartverket.Geosynkronisering\Kartverket.Geosynkronisering\Datacontract\geosync2.xsd"/>
+      <xs:element name="GetCapabilities">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="getcapabilities" type="xs:string" nillable="true" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GetCapabilitiesResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="return" type="gsynktypes:REP_CapabilitiesType" nillable="true" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OrderChangelog">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="order" type="gsynktypes:ChangelogOrderType" nillable="true" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OrderChangelogResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="return" type="gsynktypes:ChangelogIdentificationType" nillable="true" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DescribeFeatureType">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="describefeaturetype" type="xs:string" nillable="true" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DescribeFeatureTypeResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="return" type="xs:anyType" nillable="true" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GetChangelog">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="changelogid" type="gsynktypes:ChangelogIdentificationType" nillable="true" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GetChangelogResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="return" type="gsynktypes:ChangelogType" nillable="true" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GetChangelogStatus">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="changelogid" type="gsynktypes:ChangelogIdentificationType" nillable="true" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GetChangelogStatusResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="return" type="gsynktypes:ChangelogStatusType" nillable="true" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ListStoredChangelogs">
+		<xs:complexType>
+			<xs:sequence/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ListStoredChangelogsResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="return" type="gsynktypes:StoredChangelogListe" nillable="true" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GetLastIndex">
+		<xs:complexType>
+			<xs:sequence/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GetLastIndexResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="return" type="xs:integer" nillable="true" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AcknowlegeChangelogDownloaded">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="changelogId" type="gsynktypes:ChangelogIdentificationType" nillable="true" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AcknowlegeChangelogDownloadedResponse">
+		<xs:complexType>
+			<xs:sequence/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CancelChangelog">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="changelogid" type="gsynktypes:ChangelogIdentificationType" nillable="true" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CancelChangelogResponse">
+		<xs:complexType>
+			<xs:sequence/>
+		</xs:complexType>
+	</xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="GetCapabilitiesMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:GetCapabilities" />
+  </wsdl:message>
+  <wsdl:message name="GetCapabilitiesResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:GetCapabilitiesResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrderChangelogMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:OrderChangelog" />
+  </wsdl:message>
+  <wsdl:message name="OrderChangelogResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:OrderChangelogResponse" />
+  </wsdl:message>
+  <wsdl:message name="DescribeFeatureTypeMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:DescribeFeatureType" />
+  </wsdl:message>
+  <wsdl:message name="DescribeFeatureTypeResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:DescribeFeatureTypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetChangelogMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:GetChangelog" />
+  </wsdl:message>
+  <wsdl:message name="GetChangelogResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:GetChangelogResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetChangelogStatusMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:GetChangelogStatus" />
+  </wsdl:message>
+  <wsdl:message name="GetChangelogStatusResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:GetChangelogStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="ListStoredChangelogsMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:ListStoredChangelogs" />
+  </wsdl:message>
+  <wsdl:message name="ListStoredChangelogsResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:ListStoredChangelogsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetLastIndexMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:GetLastIndex" />
+  </wsdl:message>
+  <wsdl:message name="GetLastIndexResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:GetLastIndexResponse" />
+  </wsdl:message>
+  <wsdl:message name="AcknowlegeChangelogDownloadedMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:AcknowlegeChangelogDownloaded" />
+  </wsdl:message>
+  <wsdl:message name="CancelChangelogMessage">
+    <wsdl:part name="parameters" element="gsynk-reqresp:CancelChangelog" />
+  </wsdl:message>
+  <wsdl:portType name="WebFeatureServiceReplicationPort">
+    <wsdl:operation name="GetCapabilities">
+      <wsdl:input name="GetCapabilitiesRequest" message="gsynk:GetCapabilitiesMessage" />
+      <wsdl:output name="GetCapabilitiesResponse" message="gsynk:GetCapabilitiesResponseMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OrderChangelog">
+      <wsdl:input name="OrderChangelogRequest" message="gsynk:OrderChangelogMessage" />
+      <wsdl:output name="OrderChangelogResponse" message="gsynk:OrderChangelogResponseMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DescribeFeatureType">
+      <wsdl:input name="DescribeFeatureTypeRequest" message="gsynk:DescribeFeatureTypeMessage" />
+      <wsdl:output name="DescribeFeatureTypeResponse" message="gsynk:DescribeFeatureTypeResponseMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetChangelog">
+      <wsdl:input name="GetChangelogRequest" message="gsynk:GetChangelogMessage" />
+      <wsdl:output name="GetChangelogResponse" message="gsynk:GetChangelogResponseMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetChangelogStatus">
+      <wsdl:input name="GetChangelogStatusRequest" message="gsynk:GetChangelogStatusMessage" />
+      <wsdl:output name="GetChangelogStatusResponse" message="gsynk:GetChangelogStatusResponseMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ListStoredChangelogs">
+      <wsdl:input name="ListStoredChangelogsRequest" message="gsynk:ListStoredChangelogsMessage" />
+      <wsdl:output name="ListStoredChangelogsResponse" message="gsynk:ListStoredChangelogsResponseMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLastIndex">
+      <wsdl:input name="GetLastIndexRequest" message="gsynk:GetLastIndexMessage" />
+      <wsdl:output name="GetLastIndexResponse" message="gsynk:GetLastIndexResponseMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AcknowlegeChangelogDownloaded">
+      <wsdl:input name="AcknowlegeChangelogDownloadedRequest" message="gsynk:AcknowlegeChangelogDownloadedMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CancelChangelog">
+      <wsdl:input name="CancelChangelogRequest" message="gsynk:CancelChangelogMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WebFeatureServiceReplicationSoap" type="gsynk:WebFeatureServiceReplicationPort">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetCapabilities">
+      <soap:operation soapAction="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3:GetCapabilitiesMessage" style="document" />
+      <wsdl:input name="GetCapabilitiesRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="GetCapabilitiesResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OrderChangelog">
+      <soap:operation soapAction="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3:OrderChangelogMessage" style="document" />
+      <wsdl:input name="OrderChangelogRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="OrderChangelogResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DescribeFeatureType">
+      <soap:operation soapAction="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3:DescribeFeatureTypeMessage" style="document" />
+      <wsdl:input name="DescribeFeatureTypeRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="DescribeFeatureTypeResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetChangelog">
+      <soap:operation soapAction="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3:GetChangelogMessage" style="document" />
+      <wsdl:input name="GetChangelogRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="GetChangelogResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetChangelogStatus">
+      <soap:operation soapAction="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3:GetChangelogStatusMessage" style="document" />
+      <wsdl:input name="GetChangelogStatusRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="GetChangelogStatusResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ListStoredChangelogs">
+      <soap:operation soapAction="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3:ListStoredChangelogsMessage" style="document" />
+      <wsdl:input name="ListStoredChangelogsRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="ListStoredChangelogsResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetLastIndex">
+      <soap:operation soapAction="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3:GetLastIndexMessage" style="document" />
+      <wsdl:input name="GetLastIndexRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="GetLastIndexResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AcknowlegeChangelogDownloaded">
+      <soap:operation soapAction="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3:AcknowlegeChangelogDownloadedMessage" style="document" />
+      <wsdl:input name="AcknowlegeChangelogDownloadedRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="CancelChangelog">
+      <soap:operation soapAction="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3:CancelChangelogMessage" style="document" />
+      <wsdl:input name="CancelChangelogRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WebFeatureServiceReplication">
+    <wsdl:port name="WebFeatureServiceReplication" binding="gsynk:WebFeatureServiceReplicationSoap">
+      <soap:address location="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

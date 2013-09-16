@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="geosyncDBModel.Store" Alias="Self" Provider="System.Data.SqlServerCe.4.0" ProviderManifestToken="4.0" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="geosyncDBModelStoreContainer">
+          <EntitySet Name="Dataset" EntityType="geosyncDBModel.Store.Dataset" store:Type="Tables" />
+        </EntityContainer>
+        <EntityType Name="Dataset">
+          <Key>
+            <PropertyRef Name="DatasetId" />
+          </Key>
+          <Property Name="DatasetId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="LastIndex" Type="int" />
+          <Property Name="SyncronizationUrl" Type="nvarchar" MaxLength="250" />
+          <Property Name="ClientWfsUrl" Type="nvarchar" MaxLength="250" />
+          <Property Name="MaxCount" Type="int" />
+          <Property Name="ProviderDatasetId" Type="int" />
+          <Property Name="TargetNamespace" Type="nvarchar" MaxLength="256" />
+          <Property Name="MappingFile" Type="nvarchar" MaxLength="260" />
+        </EntityType>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="geosyncDBModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="geosyncDBEntities" annotation:LazyLoadingEnabled="true" >
+          <EntitySet Name="Dataset" EntityType="geosyncDBModel.Dataset" />
+        </EntityContainer>
+        <EntityType Name="Dataset">
+          <Key>
+            <PropertyRef Name="DatasetId" />
+          </Key>
+          <Property Type="Int32" Name="DatasetId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Name" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="LastIndex" />
+          <Property Type="String" Name="SyncronizationUrl" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ClientWfsUrl" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="MaxCount" />
+          <Property Type="Int32" Name="ProviderDatasetId" />
+          <Property Type="String" Name="TargetNamespace" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="MappingFile" MaxLength="260" FixedLength="false" Unicode="true" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="geosyncDBModelStoreContainer" CdmEntityContainer="geosyncDBEntities" >
+          <EntitySetMapping Name="Dataset">
+            <EntityTypeMapping TypeName="geosyncDBModel.Dataset">
+              <MappingFragment StoreEntitySet="Dataset">
+                <ScalarProperty Name="MappingFile" ColumnName="MappingFile" />
+                <ScalarProperty Name="TargetNamespace" ColumnName="TargetNamespace" />
+                <ScalarProperty Name="ProviderDatasetId" ColumnName="ProviderDatasetId" />
+                <ScalarProperty Name="MaxCount" ColumnName="MaxCount" />
+                <ScalarProperty Name="ClientWfsUrl" ColumnName="ClientWfsUrl" />
+                <ScalarProperty Name="SyncronizationUrl" ColumnName="SyncronizationUrl" />
+                <ScalarProperty Name="LastIndex" ColumnName="LastIndex" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="DatasetId" ColumnName="DatasetId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="Model1" >
+        <EntityTypeShape EntityType="geosyncDBModel.Dataset" Width="1.5" PointX="0.75" PointY="0.75" Height="2.172587890625" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

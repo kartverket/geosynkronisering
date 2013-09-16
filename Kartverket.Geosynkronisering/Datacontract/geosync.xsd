@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:gsynk="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3/types" xmlns:fellestekniskns="http://rep.geointegrasjon.no/Felles/Teknisk/xml.schema/2012.01.31" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:ows="http://www.opengis.net/ows/1.1" targetNamespace="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3/types" elementFormDefault="qualified">
+	<!-- Generert av Arkitektum - 24.10.2012 13:46:09-->
+	<xs:import namespace="http://www.opengis.net/fes/2.0" schemaLocation="filterAll.xsd"/>
+	<xs:import namespace="http://www.opengis.net/wfs/2.0" schemaLocation="wfs.xsd"/>
+	<xs:import namespace="http://www.opengis.net/ows/1.1" schemaLocation="owsAll.xsd"/>
+	<xs:element name="Changelog" type="gsynk:ChangelogType"/>
+	<xs:complexType name="ChangelogType">
+		<xs:sequence>
+			<xs:element name="id" type="gsynk:ChangelogIdentificationType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="downloadUri" type="xs:anyURI" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="endIndex" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="ChangelogIdentification" type="gsynk:ChangelogIdentificationType"/>
+	<xs:complexType name="ChangelogIdentificationType">
+		<xs:sequence>
+			<xs:element name="changelogId" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="ChangelogStatusType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="started"/>
+			<xs:enumeration value="working"/>
+			<xs:enumeration value="finished"/>
+			<xs:enumeration value="cancelled"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="StoredChangelog" type="gsynk:StoredChangelogType"/>
+	<xs:complexType name="StoredChangelogType">
+		<xs:complexContent>
+			<xs:extension base="gsynk:ChangelogType">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="order" type="gsynk:ChangelogOrderType" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="startIndex" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="StoredChangelogListe">
+		<xs:sequence>
+			<xs:element name="storedchangelog" type="gsynk:StoredChangelogType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="ChangelogOrder" type="gsynk:ChangelogOrderType"/>
+	<xs:complexType name="ChangelogOrderType">
+		<xs:complexContent>
+			<xs:extension base="wfs:BaseRequestType">
+				<xs:sequence>
+					<xs:element ref="fes:AbstractQueryExpression" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attributeGroup ref="wfs:StandardPresentationParameters"/>
+				<xs:attributeGroup ref="wfs:StandardResolveParameters"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="REP_Capabilities" type="gsynk:REP_CapabilitiesType"/>
+	<xs:complexType name="REP_CapabilitiesType">
+		<xs:complexContent>
+			<xs:extension base="ows:CapabilitiesBaseType">
+				<xs:sequence>
+					<xs:element name="WSDL" type="xs:anyType" minOccurs="0" maxOccurs="1"/>
+					<xs:element ref="wfs:FeatureTypeList" minOccurs="0" maxOccurs="1"/>
+					<xs:element ref="fes:Filter_Capabilities" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

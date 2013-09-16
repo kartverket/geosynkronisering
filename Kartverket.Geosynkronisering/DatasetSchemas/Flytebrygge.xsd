@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:app="http://schemas.geonorge.no/prodspek/FellesKystkontur/1.0" xmlns:gml="http://www.opengis.net/gml/3.2"  xmlns:wfs="http://www.opengis.net/wfs/2.0" targetNamespace="http://schemas.geonorge.no/prodspek/FellesKystkontur/1.0" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+	<xsd:complexType name="FlytebryggeType">
+		<xsd:complexContent>
+			<xsd:extension base="gml:AbstractFeatureType">
+				<xsd:sequence>
+					<xsd:element name="geometri" type="gml:GeometryPropertyType" nillable="true" minOccurs="0" maxOccurs="1"/>
+					<xsd:element name="lokal_id" type="xsd:int" nillable="false" minOccurs="1" maxOccurs="1"/>
+					<xsd:element name="oppdateringsdato" type="xsd:dateTime" nillable="true" minOccurs="0" maxOccurs="1"/>
+					<xsd:element name="objekttypenavn" type="xsd:string" nillable="true" minOccurs="0" maxOccurs="1"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="Flytebrygge" type="app:FlytebryggeType" substitutionGroup="gml:AbstractFeature"/>
+</xsd:schema>

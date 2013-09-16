@@ -1,0 +1,313 @@
+﻿<?xml version='1.0' encoding='UTF-8'?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:app="http://schemas.geonorge.no/prodspek/FellesKystkontur/1.0" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gsr="http://www.isotc211.org/2005/gsr" xmlns:gss="http://www.isotc211.org/2005/gss" xmlns:gts="http://www.isotc211.org/2005/gts" targetNamespace="http://schemas.geonorge.no/prodspek/FellesKystkontur/1.0" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <element name="SOSI_ObjektSperrelinje" type="app:SOSI_ObjektSperrelinjeType" abstract="true" substitutionGroup="gml:AbstractFeature"/>
+  <complexType name="SOSI_ObjektSperrelinjeType" abstract="true">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="datafangstdato" type="dateTime"/>
+          <element name="informasjon" minOccurs="0" maxOccurs="unbounded" type="string"/>
+          <element name="kopidata" minOccurs="0" type="app:KopidataPropertyType"/>
+          <element name="kvalitet" minOccurs="0" type="app:PosisjonskvalitetPropertyType"/>
+          <element name="oppdateringsdato" minOccurs="0" type="dateTime"/>
+          <element name="opphav" minOccurs="0" type="string"/>
+          <element name="prosesshistorie" minOccurs="0" maxOccurs="unbounded" type="string"/>
+          <element name="registreringsversjon" minOccurs="0" type="app:RegistreringsversjonPropertyType"/>
+          <element name="verifiseringsdato" minOccurs="0" type="dateTime"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="HavElvSperre" type="app:HavElvSperreType" substitutionGroup="app:SOSI_ObjektSperrelinje"/>
+  <complexType name="HavElvSperreType">
+    <complexContent>
+      <extension base="app:SOSI_ObjektSperrelinjeType">
+        <sequence>
+          <element name="grense" type="gml:CurvePropertyType"/>
+          <element name="høyde" minOccurs="0" type="double"/>
+          <element name="kystreferanse" minOccurs="0" type="gml:CodeType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="SOSI_ObjektKystkontur" type="app:SOSI_ObjektKystkonturType" abstract="true" substitutionGroup="gml:AbstractFeature"/>
+  <complexType name="SOSI_ObjektKystkonturType" abstract="true">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="datafangstdato" type="dateTime"/>
+          <element name="informasjon" minOccurs="0" maxOccurs="unbounded" type="string"/>
+          <element name="kopidata" minOccurs="0" type="app:KopidataPropertyType"/>
+          <element name="kvalitet" type="app:PosisjonskvalitetPropertyType"/>
+          <element name="oppdateringsdato" minOccurs="0" type="dateTime"/>
+          <element name="opphav" minOccurs="0" type="string"/>
+          <element name="prosesshistorie" minOccurs="0" maxOccurs="unbounded" type="string"/>
+          <element name="registreringsversjon" minOccurs="0" type="app:RegistreringsversjonPropertyType"/>
+          <element name="verifiseringsdato" minOccurs="0" type="dateTime"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="Flytebryggekant" type="app:FlytebryggekantType" substitutionGroup="app:SOSI_ObjektKystkontur"/>
+  <complexType name="FlytebryggekantType">
+    <complexContent>
+      <extension base="app:SOSI_ObjektKystkonturType">
+        <sequence>
+          <element name="grense" type="gml:CurvePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="Skjær" type="app:SkjærType" substitutionGroup="app:SOSI_ObjektKystkontur"/>
+  <complexType name="SkjærType">
+    <complexContent>
+      <extension base="app:SOSI_ObjektKystkonturType">
+        <sequence>
+          <element name="posisjon" type="gml:PointPropertyType"/>
+          <element name="høyde" minOccurs="0" type="double"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="KystkonturTekniskeAnlegg" type="app:KystkonturTekniskeAnleggType" substitutionGroup="app:SOSI_ObjektKystkontur"/>
+  <complexType name="KystkonturTekniskeAnleggType">
+    <complexContent>
+      <extension base="app:SOSI_ObjektKystkonturType">
+        <sequence>
+          <element name="grense" type="gml:CurvePropertyType"/>
+          <element name="kystkonstruksjonstype" type="gml:CodeType"/>
+          <element name="kystreferanse" minOccurs="0" type="gml:CodeType"/>
+          <element name="høyde" minOccurs="0" type="double"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="SOSI_ObjektFlytebrygge" type="app:SOSI_ObjektFlytebryggeType" abstract="true" substitutionGroup="gml:AbstractFeature"/>
+  <complexType name="SOSI_ObjektFlytebryggeType" abstract="true">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="datafangstdato" minOccurs="0" type="dateTime"/>
+          <element name="informasjon" minOccurs="0" maxOccurs="unbounded" type="string"/>
+          <element name="kopidata" minOccurs="0" type="app:KopidataPropertyType"/>
+          <element name="kvalitet" minOccurs="0" type="app:PosisjonskvalitetPropertyType"/>
+          <element name="oppdateringsdato" minOccurs="0" type="dateTime"/>
+          <element name="opphav" minOccurs="0" type="string"/>
+          <element name="prosesshistorie" minOccurs="0" maxOccurs="unbounded" type="string"/>
+          <element name="registreringsversjon" minOccurs="0" type="app:RegistreringsversjonPropertyType"/>
+          <element name="verifiseringsdato" minOccurs="0" type="dateTime"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="Kystkontur" type="app:KystkonturType" substitutionGroup="app:SOSI_ObjektKystkontur"/>
+  <complexType name="KystkonturType">
+    <complexContent>
+      <extension base="app:SOSI_ObjektKystkonturType">
+        <sequence>
+          <element name="grense" type="gml:CurvePropertyType"/>
+          <element name="kystreferanse" minOccurs="0" type="gml:CodeType"/>
+          <element name="høyde" minOccurs="0" type="double"/>
+          <element name="medium" minOccurs="0" type="gml:CodeType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="Flytebrygge" type="app:FlytebryggeType" substitutionGroup="app:SOSI_ObjektFlytebrygge"/>
+  <complexType name="FlytebryggeType">
+    <complexContent>
+      <extension base="app:SOSI_ObjektFlytebryggeType">
+        <sequence>
+          <element name="område" minOccurs="0" type="gml:SurfacePropertyType"/>
+          <element name="posisjon" minOccurs="0" type="gml:PointPropertyType"/>
+          <element name="senterlinje" minOccurs="0" type="gml:CurvePropertyType"/>
+          <element name="avgrensning" minOccurs="0" maxOccurs="unbounded">
+            <complexType>
+              <sequence>
+                <element ref="app:Flytebryggekant" minOccurs="0"/>
+              </sequence>
+              <attributeGroup ref="gml:AssociationAttributeGroup"/>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="Posisjonskvalitet" substitutionGroup="gml:AbstractObject" type="app:PosisjonskvalitetType"/>
+  <element name="Kopidata" substitutionGroup="gml:AbstractObject" type="app:KopidataType"/>
+  <element name="Registreringsversjon" substitutionGroup="gml:AbstractObject" type="app:RegistreringsversjonType"/>
+  <complexType name="HavElvSperrePropertyType">
+    <sequence minOccurs="0">
+      <element ref="app:HavElvSperre"/>
+    </sequence>
+    <attribute name="type" type="string"/>
+    <attribute name="href" type="anyURI"/>
+    <attribute name="role" type="anyURI"/>
+    <attribute name="arcrole" type="anyURI"/>
+    <attribute name="title" type="string"/>
+    <attribute name="show" type="string"/>
+    <attribute name="actuate" type="string"/>
+    <attribute name="nilReason" type="gml:NilReasonType"/>
+    <attribute name="remoteSchema" type="anyURI"/>
+    <attribute name="owns" type="boolean"/>
+  </complexType>
+  <complexType name="KystkonturPropertyType">
+    <sequence minOccurs="0">
+      <element ref="app:Kystkontur"/>
+    </sequence>
+    <attribute name="type" type="string"/>
+    <attribute name="href" type="anyURI"/>
+    <attribute name="role" type="anyURI"/>
+    <attribute name="arcrole" type="anyURI"/>
+    <attribute name="title" type="string"/>
+    <attribute name="show" type="string"/>
+    <attribute name="actuate" type="string"/>
+    <attribute name="nilReason" type="gml:NilReasonType"/>
+    <attribute name="remoteSchema" type="anyURI"/>
+    <attribute name="owns" type="boolean"/>
+  </complexType>
+  <complexType name="RegistreringsversjonPropertyType">
+    <sequence>
+      <element ref="app:Registreringsversjon"/>
+    </sequence>
+  </complexType>
+  <complexType name="RegistreringsversjonType">
+    <sequence>
+      <element name="produkt" type="string"/>
+      <element name="versjon" type="string"/>
+    </sequence>
+  </complexType>
+  <complexType name="KopidataPropertyType">
+    <sequence>
+      <element ref="app:Kopidata"/>
+    </sequence>
+  </complexType>
+  <complexType name="FlytebryggekantPropertyType">
+    <sequence minOccurs="0">
+      <element ref="app:Flytebryggekant"/>
+    </sequence>
+    <attribute name="type" type="string"/>
+    <attribute name="href" type="anyURI"/>
+    <attribute name="role" type="anyURI"/>
+    <attribute name="arcrole" type="anyURI"/>
+    <attribute name="title" type="string"/>
+    <attribute name="show" type="string"/>
+    <attribute name="actuate" type="string"/>
+    <attribute name="nilReason" type="gml:NilReasonType"/>
+    <attribute name="remoteSchema" type="anyURI"/>
+    <attribute name="owns" type="boolean"/>
+  </complexType>
+  <complexType name="SkjærPropertyType">
+    <sequence minOccurs="0">
+      <element ref="app:Skjær"/>
+    </sequence>
+    <attribute name="type" type="string"/>
+    <attribute name="href" type="anyURI"/>
+    <attribute name="role" type="anyURI"/>
+    <attribute name="arcrole" type="anyURI"/>
+    <attribute name="title" type="string"/>
+    <attribute name="show" type="string"/>
+    <attribute name="actuate" type="string"/>
+    <attribute name="nilReason" type="gml:NilReasonType"/>
+    <attribute name="remoteSchema" type="anyURI"/>
+    <attribute name="owns" type="boolean"/>
+  </complexType>
+  <complexType name="FlytebryggePropertyType">
+    <sequence minOccurs="0">
+      <element ref="app:Flytebrygge"/>
+    </sequence>
+    <attribute name="type" type="string"/>
+    <attribute name="href" type="anyURI"/>
+    <attribute name="role" type="anyURI"/>
+    <attribute name="arcrole" type="anyURI"/>
+    <attribute name="title" type="string"/>
+    <attribute name="show" type="string"/>
+    <attribute name="actuate" type="string"/>
+    <attribute name="nilReason" type="gml:NilReasonType"/>
+    <attribute name="remoteSchema" type="anyURI"/>
+    <attribute name="owns" type="boolean"/>
+  </complexType>
+  <complexType name="SOSI_ObjektFlytebryggePropertyType">
+    <sequence minOccurs="0">
+      <element ref="app:SOSI_ObjektFlytebrygge"/>
+    </sequence>
+    <attribute name="type" type="string"/>
+    <attribute name="href" type="anyURI"/>
+    <attribute name="role" type="anyURI"/>
+    <attribute name="arcrole" type="anyURI"/>
+    <attribute name="title" type="string"/>
+    <attribute name="show" type="string"/>
+    <attribute name="actuate" type="string"/>
+    <attribute name="nilReason" type="gml:NilReasonType"/>
+    <attribute name="remoteSchema" type="anyURI"/>
+    <attribute name="owns" type="boolean"/>
+  </complexType>
+  <complexType name="PosisjonskvalitetType">
+    <sequence>
+      <element name="målemetode" type="gml:CodeType"/>
+      <element name="nøyaktighet" minOccurs="0" type="integer"/>
+      <element name="synbarhet" minOccurs="0" type="gml:CodeType"/>
+      <element name="målemetodeHøyde" minOccurs="0" type="gml:CodeType"/>
+      <element name="nøyaktighetHøyde" minOccurs="0" type="integer"/>
+      <element name="maksimaltAvvik" minOccurs="0" type="integer"/>
+    </sequence>
+  </complexType>
+  <complexType name="SOSI_ObjektKystkonturPropertyType">
+    <sequence minOccurs="0">
+      <element ref="app:SOSI_ObjektKystkontur"/>
+    </sequence>
+    <attribute name="type" type="string"/>
+    <attribute name="href" type="anyURI"/>
+    <attribute name="role" type="anyURI"/>
+    <attribute name="arcrole" type="anyURI"/>
+    <attribute name="title" type="string"/>
+    <attribute name="show" type="string"/>
+    <attribute name="actuate" type="string"/>
+    <attribute name="nilReason" type="gml:NilReasonType"/>
+    <attribute name="remoteSchema" type="anyURI"/>
+    <attribute name="owns" type="boolean"/>
+  </complexType>
+  <complexType name="PosisjonskvalitetPropertyType">
+    <sequence>
+      <element ref="app:Posisjonskvalitet"/>
+    </sequence>
+  </complexType>
+  <complexType name="KopidataType">
+    <sequence>
+      <element name="områdeId" type="integer"/>
+      <element name="originalDatavert" type="string"/>
+      <element name="kopidato" type="dateTime"/>
+    </sequence>
+  </complexType>
+  <complexType name="SOSI_ObjektSperrelinjePropertyType">
+    <sequence minOccurs="0">
+      <element ref="app:SOSI_ObjektSperrelinje"/>
+    </sequence>
+    <attribute name="type" type="string"/>
+    <attribute name="href" type="anyURI"/>
+    <attribute name="role" type="anyURI"/>
+    <attribute name="arcrole" type="anyURI"/>
+    <attribute name="title" type="string"/>
+    <attribute name="show" type="string"/>
+    <attribute name="actuate" type="string"/>
+    <attribute name="nilReason" type="gml:NilReasonType"/>
+    <attribute name="remoteSchema" type="anyURI"/>
+    <attribute name="owns" type="boolean"/>
+  </complexType>
+  <complexType name="KystkonturTekniskeAnleggPropertyType">
+    <sequence minOccurs="0">
+      <element ref="app:KystkonturTekniskeAnlegg"/>
+    </sequence>
+    <attribute name="type" type="string"/>
+    <attribute name="href" type="anyURI"/>
+    <attribute name="role" type="anyURI"/>
+    <attribute name="arcrole" type="anyURI"/>
+    <attribute name="title" type="string"/>
+    <attribute name="show" type="string"/>
+    <attribute name="actuate" type="string"/>
+    <attribute name="nilReason" type="gml:NilReasonType"/>
+    <attribute name="remoteSchema" type="anyURI"/>
+    <attribute name="owns" type="boolean"/>
+  </complexType>
+</schema>

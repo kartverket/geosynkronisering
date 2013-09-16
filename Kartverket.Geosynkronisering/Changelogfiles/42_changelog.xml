@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<chlogf:TransactionCollection timeStamp="2001-12-17T09:30:47Z" numberMatched="2" numberReturned="2" startIndex="0" endIndex="2" xsi:schemaLocation="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/0.3 changelogfile.xsd http://skjema.statkart.no/SOSI/produktspesifikasjon/Planomriss/4.5 Planomriss.xsd" xmlns:chlogf="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/0.3" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml/3.2" >
+<chlogf:transactions service="WFS" version="2.0.0" >	
+	<wfs:Insert handle="1" inputFormat="application/gml+xml; version=3.2" srsName="urn:ogc:def:crs:EPSG::4326"  >
+    <app:Kystkontur xmlns:app="http://schemas.geonorge.no/prodspek/FellesKystkontur/1.0" xmlns:gml="http://www.opengis.net/gml/3.2" gml:id="NO.SK.FKYST.406968">
+      <app:datafangstdato>1988-06-19T22:00:00Z</app:datafangstdato>
+      <app:oppdateringsdato>2011-07-13T11:10:48Z</app:oppdateringsdato>
+      <app:opphav>FKB</app:opphav>
+      <app:registreringsversjon>
+        <app:Registreringsversjon>
+          <app:produkt>FKB" "3.4 eller eldre</app:produkt>
+          <app:versjon>3.4 eller eldre</app:versjon>
+        </app:Registreringsversjon>
+      </app:registreringsversjon>
+      <app:grense>
+        <!--Inlined geometry 'NO.SK.FKYST.406968_APP_GRENSE'-->
+        <gml:LineString gml:id="NO.SK.FKYST.406968_APP_GRENSE" srsName="urn:ogc:def:crs:EPSG::32633">
+          <gml:posList>601265.750 7595294.920 601264.810 7595298.530 601262.220 7595299.410 601252.580 7595299.470 601249.260 7595299.550 601247.680 7595298.510 601247.130 7595296.720 601245.810 7595296.400 601243.990 7595295.720 601242.150 7595294.040 601241.410 7595291.660 601242.180 7595289.290 601243.790 7595287.220 601244.360 7595285.000 601242.330 7595283.290 601239.870 7595281.700 601237.400 7595280.910 601234.980 7595281.000 601231.960 7595280.220 601229.020 7595278.570 601225.190 7595277.500 601216.750 7595275.650 601212.900 7595274.400 601208.600 7595273.210 601204.170 7595272.370 601199.330 7595271.600 601194.160 7595271.250 601189.910 7595271.100 601186.790 7595271.080 601183.940 7595271.720 601182.850 7595273.310 601181.490 7595274.640 601179.230 7595273.760 601177.880 7595271.180 601177.050 7595268.790 601175.630 7595267.720 601172.430 7595267.780 601169.250 7595268.300 601166.530 7595269.640 601164.890 7595271.500 601164.490 7595273.180 601162.580 7595273.840 601160.500 7595273.610 601158.950 7595274.660 601156.660 7595275.210 601154.610 7595275.270 601153.470 7595276.320 601151.590 7595277.140 601148.970 7595277.180 601147.100 7595277.520 601145.210 7595278.520 601140.050 7595278.540 601136.870 7595278.750 601135.620 7595279.070 601133.610 7595279.570 601130.400 7595280.520 601128.340 7595279.940 601127.040 7595277.490 601126.080 7595276.040 601124.940 7595276.680 601125.620 7595280.040 601125.220 7595282.660 601123.400 7595282.370 601121.780 7595281.180 601120.510 7595282.620 601119.180 7595283.900 601116.950 7595282.840 601114.270 7595283.260 601111.740 7595284.490 601108.800 7595286.820</gml:posList>
+        </gml:LineString>
+      </app:grense>
+      <app:kystreferanse codeSpace="http://schemas.geonorge.no/prodspek/FellesKystkontur/1.0/Kystreferanse.xml">K0</app:kystreferanse>
+      <app:høyde>1.00</app:høyde>
+    </app:Kystkontur>
+    </wfs:Insert>
+    <wfs:Insert handle="2" inputFormat="application/gml+xml; version=3.2" srsName="urn:ogc:def:crs:EPSG::4326"  >
+	    <app:Kystkontur xmlns:app="http://schemas.geonorge.no/prodspek/FellesKystkontur/1.0" xmlns:gml="http://www.opengis.net/gml/3.2" gml:id="NO.SK.FKYST.388472">
+      <app:datafangstdato>2002-06-11T22:00:00Z</app:datafangstdato>
+      <app:oppdateringsdato>2011-07-13T11:10:48Z</app:oppdateringsdato>
+      <app:opphav>FKB</app:opphav>
+      <app:registreringsversjon>
+        <app:Registreringsversjon>
+          <app:produkt>FKB" "3.4 eller eldre</app:produkt>
+          <app:versjon>3.4 eller eldre</app:versjon>
+        </app:Registreringsversjon>
+      </app:registreringsversjon>
+      <app:grense>
+        <!--Inlined geometry 'NO.SK.FKYST.388472_APP_GRENSE'-->
+        <gml:LineString gml:id="NO.SK.FKYST.388472_APP_GRENSE" srsName="urn:ogc:def:crs:EPSG::32633">
+          <gml:posList>599607.250 7594668.760 599576.630 7594680.780 599570.310 7594678.130 599571.270 7594676.450 599571.860 7594675.920 599573.340 7594672.350 599575.940 7594668.720 599576.720 7594668.020 599578.050 7594667.360 599578.840 7594666.270 599580.320 7594665.790 599586.490 7594662.840 599587.750 7594662.630 599592.690 7594662.810 599596.280 7594662.200 599603.150 7594662.470 599608.550 7594662.720 599607.250 7594668.760</gml:posList>
+        </gml:LineString>
+      </app:grense>
+      <app:kystreferanse codeSpace="http://schemas.geonorge.no/prodspek/FellesKystkontur/1.0/Kystreferanse.xml">MHV</app:kystreferanse>
+      <app:høyde>0.92</app:høyde>
+    </app:Kystkontur>
+
+    </wfs:Insert>
+    </chlogf:transactions>
+  
+</chlogf:TransactionCollection>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:gsynk-reqresp="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3/reqresp" xmlns:gsynk="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3/types" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:ows="http://www.opengis.net/ows/1.1" targetNamespace="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3/reqresp" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://www.opengis.net/fes/2.0" schemaLocation="filterAll.xsd"/>
+	<xs:import namespace="http://www.opengis.net/wfs/2.0" schemaLocation="wfs.xsd"/>
+	<xs:import namespace="http://www.opengis.net/ows/1.1" schemaLocation="owsAll.xsd"/>
+	<xs:import namespace="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/0.3/types" schemaLocation="geosync.xsd"/>
+	<xs:element name="GetCapabilities">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="getcapabilities" type="wfs:GetCapabilitiesType" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GetCapabilitiesResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="return" type="gsynk:REP_CapabilitiesType" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OrderChangelog">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="order" type="gsynk:ChangelogOrderType" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OrderChangelogResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="return" type="gsynk:ChangelogIdentificationType" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DescribeFeatureType">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="describefeaturetype" type="wfs:DescribeFeatureTypeType" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DescribeFeatureTypeResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="return" type="xs:anyType" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GetChangelog">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="changelogid" type="gsynk:ChangelogIdentificationType" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GetChangelogResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="return" type="gsynk:ChangelogType" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GetChangelogStatus">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="changelogid" type="gsynk:ChangelogIdentificationType" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GetChangelogStatusResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="return" type="gsynk:ChangelogStatusType" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ListStoredChangelogs">
+		<xs:complexType>
+			<xs:sequence/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ListStoredChangelogsResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="return" type="gsynk:StoredChangelogListe" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GetLastIndex">
+		<xs:complexType>
+			<xs:sequence/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GetLastIndexResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="return" type="xs:integer" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AcknowlegeChangelogDownloaded">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="changelogId" type="gsynk:ChangelogIdentificationType" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AcknowlegeChangelogDownloadedResponse">
+		<xs:complexType>
+			<xs:sequence/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CancelChangelog">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="changelogid" type="gsynk:ChangelogIdentificationType" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CancelChangelogResponse">
+		<xs:complexType>
+			<xs:sequence/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

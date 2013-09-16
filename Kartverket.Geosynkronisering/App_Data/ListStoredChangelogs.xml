@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListStoredChangelogsResponse>
+	 <!--Optional:-->
+	 <return>
+		<!--Zero or more repetitions:-->
+		<storedchangelog>
+		   <id>
+			  <changelogId>42</changelogId>
+		   </id>
+		   <downloadUri>http://localhost:43397/ChangelogFiles/42_changelog.xml</downloadUri>
+		   <endIndex>2</endIndex>
+		   <name>Etablering av planomriss landet</name>
+		   <order service="WFS" version="2.0.0" handle="?" startIndex="0" count="2" resultType="results" outputFormat="application/gml+xml; version=3.2" resolve="none" resolveDepth="*" resolveTimeout="300">
+			  <!--1 or more repetitions:-->
+			  <AbstractQueryExpression handle="?"/>
+		   </order>
+		   <startIndex>1</startIndex>
+		</storedchangelog>
+     <storedchangelog>
+       <id>
+         <changelogId>41</changelogId>
+       </id>
+       <downloadUri>http://localhost:43397/ChangelogFiles/41_changelog.xml</downloadUri>
+       <endIndex>2</endIndex>
+       <name>Etablering av planomriss Stjørdal</name>
+       <order service="WFS" version="2.0.0" handle="?" startIndex="0" count="2" resultType="results" outputFormat="application/gml+xml; version=3.2" resolve="none" resolveDepth="*" resolveTimeout="300">
+         <!--TODO make sample polygon filter:-->
+         <AbstractQueryExpression handle="?"/>
+       </order>
+       <startIndex>1</startIndex>
+     </storedchangelog>
+	 </return>
+  </ListStoredChangelogsResponse>

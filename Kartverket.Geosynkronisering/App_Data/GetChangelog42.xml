@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GetChangelogResponse>
+  <return>
+    <id>
+      <changelogId>42</changelogId>
+    </id>
+    <downloadUri>http://localhost:43397/ChangelogFiles/42_changelog.xml</downloadUri>
+    <endIndex>2</endIndex>
+  </return>
+</GetChangelogResponse>

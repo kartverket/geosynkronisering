@@ -1,0 +1,88 @@
+﻿body
+{
+    font-family: Verdana;
+    font-size: small;
+    font-weight: normal;
+    background-color: #FFFFFF;
+  
+}
+div
+{
+    font-family: Verdana;
+    font-size: small;
+    background-color: #CEDCE9;
+}
+.GridView
+{
+    border-style: solid;
+    border-color: #F0F0F0;
+    font-family: Verdana;
+    font-size: x-small;
+    background-color: #FFFFFF;
+}
+.TableHeaderText
+{
+    font-family: Verdana;
+    font-size: medium;
+}
+.HeaderText
+{
+    font-family: Verdana;
+    font-size: xx-large;
+    font-weight: bold;
+    font-style: italic;
+}
+.Button
+{
+    font-family: 'MS Sans Serif';
+    font-size: xx-small;
+    background-color: #DBDBDB;
+}
+.LinkButton
+{
+    border-color: #C0C0C0;
+    font-family: Verdana;
+    font-size: small;
+    font-weight: bold;
+    background-color: #DCE6EF;
+    padding: 10px 10px 5px 5px;
+    margin: 10px 10px 0px 5px;
+    border-top-style: outset;
+    border-right-style: outset;
+    border-left-style: outset;
+    border-top-width: thin;
+    border-right-width: thin;
+    border-left-width: thin;
+    color: #808080;
+}
+.MultiView
+{
+    background-color: #CEDCE9;
+}
+.PanelBlank
+{
+    background-color: #F0F0F0;
+}
+.FieldHeader
+{
+    font-family: Verdana;
+    font-size: x-small;
+    font-weight: bold;
+}
+.LinkButtonSelected
+{
+    border-color: #C0C0C0;
+    font-family: Verdana;
+    font-size: small;
+    font-weight: bold;
+    background-color: #CEDCE9;
+    padding: 10px 10px 5px 10px;
+    margin: 10px 10px 0px 10px;
+    border-top-style: outset;
+    border-right-style: outset;
+    border-left-style: outset;
+    border-top-width: thin;
+    border-right-width: thin;
+    border-left-width: thin;
+    color: #000000;
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:chlogf="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/0.3" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:wfs="http://www.opengis.net/wfs/2.0" targetNamespace="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/0.3" elementFormDefault="qualified">
+	<!-- Generert av Metakat xsd generator(0.8.0.0) - 31.08.2012 09:58:50-->
+	<xs:import namespace="http://www.opengis.net/fes/2.0" schemaLocation="http://schemas.opengis.net/filter/2.0/filterAll.xsd"/>
+	<xs:import namespace="http://www.opengis.net/wfs/2.0" schemaLocation="http://schemas.opengis.net/wfs/2.0/wfs.xsd"/>
+	<xs:element name="TransactionCollection" type="chlogf:TransactionCollectionType"/>
+	<xs:complexType name="TransactionCollectionType">
+		<xs:sequence>
+			<xs:element name="transactions" type="wfs:TransactionType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="timeStamp" type="xs:dateTime" use="required"/>
+		<xs:attribute name="numberMatched" type="xs:integer" use="required"/>
+		<xs:attribute name="numberReturned" type="xs:integer" use="required"/>
+		<xs:attribute name="startIndex" type="xs:integer" use="required"/>
+		<xs:attribute name="endIndex" type="xs:integer" use="required"/>
+	</xs:complexType>
+</xs:schema>
