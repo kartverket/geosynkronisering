@@ -434,10 +434,10 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             int count = 0;
             foreach (string typename in typeNames) //foreach (string gmlId in updatesGmlIds) //foreach (string typename in typeNames)
             {
-                string gmlId = updatesGmlIds[count];
-                int pos = gmlId.IndexOf(".");
-                //string typename = gmlId.Substring(0, pos);
-                string lokalId = gmlId.Substring(pos + 1);
+                //string gmlId = updatesGmlIds[count];
+                //int pos = gmlId.IndexOf(".");
+                ////string typename = gmlId.Substring(0, pos);
+                //string lokalId = gmlId.Substring(pos + 1);
 
                 var featuresOfType = getFeatureResponse.Descendants(nsApp + typename);
                 foreach (XElement feature in featuresOfType)
@@ -458,6 +458,12 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                         updateElement.Add(new XElement(nsWfs + "Property", new XElement(nsWfs + "ValueReference", e.Name.LocalName), new XElement(nsWfs + "Value", e)));
                     }
+                    
+                    //TODO: er dette korrekt?
+                    string gmlId = updatesGmlIds[count];
+                    int pos = gmlId.IndexOf(".");
+                    //string typename = gmlId.Substring(0, pos);
+                    string lokalId = gmlId.Substring(pos + 1);
 
                     updateElement.Add(new XElement(nsFes + "Filter",
                                             new XElement(nsFes + "PropertyIsEqualTo",
