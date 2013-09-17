@@ -1961,7 +1961,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 // Display in geoserver openlayers
                 toolStripStatusLabel1.Text = "DisplayMap";
                 statusStrip1.Refresh();
-                DisplayMap(epsgCode: "EPSG:32633");
+                DisplayMap(); //DisplayMap(epsgCode: "EPSG:32633");
                 toolStripStatusLabel1.Text = "Ready";
                 statusStrip1.Refresh();
 
@@ -1994,7 +1994,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         /// <summary>
         /// Display map in geoserver openlayers
         /// </summary>
-        private void DisplayMap(string epsgCode = "EPSG:4258")
+        private void DisplayMap(string epsgCode = "EPSG:4258",string datasetName = "ar5")
         {
             string bBox;
             switch (epsgCode)
@@ -2009,10 +2009,19 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             }
             // app:Skjær will not display due to "æ"
             string layers = "app:Flytebrygge,app:Flytebryggekant,app:Kystkontur,app:HavElvsperre,app:KystkonturTekniskeAnlegg";
+            string hostWms = "http://localhost:8081/geoserver/app/wms?service=WMS&version=1.1.0&request=GetMap";
+
+            if (datasetName == "ar5")
+            {
+                layers = "ar5:ArealressursFlate,ar5:KantUtsnitt,ar5:ArealressursGrense,ar5:ArealressursGrenseFiktiv";
+                hostWms = "http://localhost:8081/geoserver/ar5/wms?service=WMS&version=1.1.0&request=GetMap";
+                bBox = "10.0,59.6,10.2,59.8";
+            }
 
 
             StringBuilder sb = new StringBuilder();
-            sb.Append("http://localhost:8081/geoserver/app/wms?service=WMS&version=1.1.0&request=GetMap");
+            sb.Append(hostWms);
+            //sb.Append("http://localhost:8081/geoserver/app/wms?service=WMS&version=1.1.0&request=GetMap");
             sb.Append("&layers=" + layers);
             sb.Append("&styles=");
             sb.Append("&bbox=" + bBox);
@@ -2021,9 +2030,11 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             sb.Append("&format=application/openlayers");
             //sb.Append("&CQL_FILTER=lokal_id = 1");
             string geoserverUrl = sb.ToString();
+            //geoserverUrl = "http://localhost:8081/geoserver/ar5/wms?service=WMS&version=1.1.0&request=GetMap&layers=ar5:ArealressursFlate&styles=&bbox=10.0,59.6,10.2,59.8&width=304&height=512&srs=EPSG:4258&format=application/openlayers";
 
-
-
+            // http://localhost:8081/geoserver/ar5/wms?service=WMS&version=1.1.0&request=GetMap&layers=ar5:ArealressursFlate&styles=&bbox=10.0,59.6,10.2,59.8&width=304&height=512&srs=EPSG:4258&format=application/openlayers
+            // http://localhost:8081/geoserver/ar5/wms?service=WMS&version=1.1.0&request=GetMap&layers=ar5:ArealressursFlate&styles=&bbox=10.0956697463989,59.7662086486816,10.1084928512573,59.7877578735352&width=304&height=512&srs=EPSG:4258&format=application/openlayers
+            // http://localhost:8081/geoserver/ar5/wms?service=WMS&version=1.1.0&request=GetMap&layers=ar5:KantUtsnitt&styles=&bbox=9.98602014038926,59.6960364835843,10.1071185944591,59.7432999411019&width=845&height=330&srs=EPSG:4258&format=application/openlayers
             //string geoserverUrl =
             //    "http://localhost:8081/geoserver/app/wms?service=WMS&version=1.1.0&request=GetMap&layers=app:Flytebrygge,app:Flytebryggekant,app:Kystkontur&styles=&bbox=4.0,57.0,20.0,70.0&width=512&height=416&srs=EPSG:4258&format=application/openlayers";
 
