@@ -7,6 +7,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Text;
 using System.IO;
+using System.Xml.XPath;
 using NLog;
 using Npgsql;
 using NpgsqlTypes;
@@ -429,6 +430,10 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             XNamespace nsGml = "http://www.opengis.net/gml/3.2";
             XNamespace nsApp = Database.DatasetsData.TargetNamespace(datasetId);
             string nsPrefixApp = changeLog.GetPrefixOfNamespace(nsApp);
+            //string nsNamespaceUri = changeLog.GetNamespaceOfPrefix(nsPrefixApp);
+
+            XmlNamespaceManager mgr = new XmlNamespaceManager(new NameTable());
+            mgr.AddNamespace(nsPrefixApp, nsApp.NamespaceName);
 
             // 20130913-Leg: Fix
             int count = 0;
@@ -449,6 +454,11 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     //XElement updateElement = new XElement(nsWfs + "Update", new XAttribute("typeName", typename), new XAttribute("handle", transCounter),
                     //                                    new XAttribute("inputFormat", "application/gml+xml; version=3.2"), new XAttribute(XNamespace.Xmlns + "App", nsApp));
                     //string lokalId = feature.Element(nsApp + "lokalId").Value;
+                    
+                    //string lokalId = feature.Element(nsApp + "lokalId").Value;
+                    XElement feaEl =  feature.XPathSelectElement("app:identifikasjon/app:Identifikasjon/app:lokalId",mgr);
+                    string lokalId = feaEl.Value;
+
                     foreach (XElement e in feature.Elements())
                     {
                         if (e.Name.Equals(nsGml + "boundedBy"))
@@ -460,10 +470,10 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     }
                     
                     //TODO: er dette korrekt?
-                    string gmlId = updatesGmlIds[count];
-                    int pos = gmlId.IndexOf(".");
-                    //string typename = gmlId.Substring(0, pos);
-                    string lokalId = gmlId.Substring(pos + 1);
+                    //string gmlId = updatesGmlIds[count];
+                    //int pos = gmlId.IndexOf(".");
+                    ////string typename = gmlId.Substring(0, pos);
+                    //string lokalId = gmlId.Substring(pos + 1);
 
                     updateElement.Add(new XElement(nsFes + "Filter",
                                             new XElement(nsFes + "PropertyIsEqualTo",
