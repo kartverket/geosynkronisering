@@ -21,6 +21,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         private string _namespacePrefixMapping;
 
         private IEnumerable<XElement> _attributeMappings;
+        private IEnumerable<XElement> _attributeMappingsGeom;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         //public string NamespacePrefix
@@ -61,14 +62,15 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 }
 
                 // Get all AttributeMapping nodes that contains <sourceExpression> and does NOT contain <targetAttributeNode>:
+                // TODO: Problems in Update with område
                 var attributeMappings =
-                    from item in doc.Descendants("AttributeMapping")
-                    where (from m in item.Elements("sourceExpression")
-                           where (from n in item.Elements("targetAttributeNode") select n).Any() == false
-                           select m).Any()
-                    select item;
+                 from item in doc.Descendants("AttributeMapping")
+                 where (from m in item.Elements("sourceExpression")
+                        where (from n in item.Elements("targetAttributeNode") select n).Any() == false
+                        select m).Any()
+                 select item;
 
-                // list All attributeMappings that contains <sourceExpression> :
+                // list All attributeMappings that contains <sourceExpression>, remove the ones starting with '
                 foreach (var attrMapping in attributeMappings.ToList())
                 {
                     //Console.WriteLine(attrMapping);
@@ -80,6 +82,16 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 }
 
                 _attributeMappings = attributeMappings;
+
+                // Special handling geometries
+                _attributeMappingsGeom =
+                    from item in doc.Descendants("AttributeMapping")
+                    where (from m in item.Elements("sourceExpression")
+                        where (from n in item.Elements("targetAttributeNode") select n).Any() == true
+                        select m).Any()
+                select item;
+
+                
                 setXmlMappingFile = true;
 
             }
@@ -113,6 +125,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
                 // replace the Namespace prefix in the mapping file
                 MappingfileReplaceNamespacePrefix(_attributeMappings);
+                MappingfileReplaceNamespacePrefix(_attributeMappingsGeom);
 
                 int countTransactions = 0;
                 var transactions = GetWfsTransactions(docWfs) as IEnumerable<XElement>;
@@ -206,22 +219,18 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                             var xNameFeaturetype = ele.Attribute("typeName").Name; ; // Gets the full name of this element.
                             Console.WriteLine("featureType: {0} wfs:{1}", featureType, ele.Name);
 
+                            List<string> valueReferenceToRemove = new List<string>();
+
                             var values = ele.Descendants(nsWfs + "Value"); // Update only
-                            var valueReferences = ele.DescendantsAndSelf(nsWfs + "ValueReference"); // Delete and Update
-                            var valueReferencesFilter = ele.DescendantsAndSelf(nsFes + "ValueReference"); // Delete and Update
+                            var valueReferencesFilter = ele.DescendantsAndSelf(nsFes + "ValueReference"); // Delete and Update Filter part
                             IEnumerable<XElement> xElements = null;
-                            for (int i = 0; i < 3; i++)
+                            for (int i = 0; i < 2; i++)
                             {
-                                if (i == 0 && valueReferences.Any())
-                                {
-                                    // TODO: Feil når Valuereference.
-                                    xElements = valueReferences;
-                                }
-                                else if (i == 1 && values.Any())
+                                if (i == 0 && values.Any())
                                 {
                                     xElements = values;
                                 }
-                                else if (i == 2 && valueReferencesFilter.Any())
+                                else if (i == 1 && valueReferencesFilter.Any())
                                 {
                                     xElements = valueReferencesFilter;
                                 }
@@ -255,21 +264,10 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                             // Mask of XPath expression, we want the second one
                                             string targetAttrFirstNode = targetAttrArr[1]; //+ "/";
                                             //Console.WriteLine("targetAttrFirstNode: {0}", targetAttrFirstNode);
-                                            //targetAttr = "//" + targetAttr;
-                                            // targetAttrFirstNode = "//" + targetAttrFirstNode;
-                                            if (i == 0 && valueReferences.Any())
+
+                                            if (i == 1 && valueReferencesFilter.Any())
                                             {
-                                                if (_namespacePrefix + ":" + elePropOrFilter.Value == targetAttr || _namespacePrefix + ":" + elePropOrFilter.Value == targetAttrFirstNode)
-                                                {
-                                                    string strNewContent =
-                                                        xEleAttributeMapping.Element("sourceExpression")
-                                                                            .Element("OCQL")
-                                                                            .Value;
-                                                    elePropOrFilter.ReplaceNodes(strNewContent);                                                   
-                                                }
-                                            }
-                                            else if (i == 2 && valueReferencesFilter.Any())
-                                            {
+                                                // Filter part - wfs:Update and wfs:Delete
                                                 string strNewContent =
                                                     xEleAttributeMapping.Element("sourceExpression")
                                                                         .Element("OCQL")
@@ -277,10 +275,9 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                                 elePropOrFilter.ReplaceNodes(strNewContent);
                                             }
 
-
                                             else
                                             {
-
+                                                // Value part - wfs:update only
 
                                                 XElement xEleTargetAttr = elePropOrFilter.XPathSelectElement(targetAttr, mgr) as XElement;
                                                 //XElement x = ele.XPathSelectElement(targetAttrFirstNode, mgr) as XElement;
@@ -288,29 +285,87 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                                 {
                                                     XElement xEleTargetAttrFirstNode = elePropOrFilter.XPathSelectElement(targetAttrFirstNode, mgr);
 
-                                                    //Console.WriteLine("targetAttribute: {0}", targetAttr);
-                                                    //Console.WriteLine("targetAttrFirstNode: {0}", targetAttrFirstNode);
-                                                    //Console.WriteLine("XElement found: {0}", xEleTargetAttr);
-                                                    //Console.WriteLine("XElement found: {0}", xEleTargetAttrFirstNode);
-                                                    //Console.WriteLine("xEleTargetAttr.Value:{0}", xEleTargetAttr.Value);
-
-                                                    //xEleTargetAttrFirstNode.ReplaceWith(new XElement(nAr5 + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value, xEleTargetAttr.Value));
-
                                                     // Create a new element where we use the element name from the mapping file
                                                     // Add it before the first node, than remove the current node
-                                                    XElement newEle = new XElement(nAr5 + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value, xEleTargetAttr.Value);
-                                                    xEleTargetAttrFirstNode.AddBeforeSelf(newEle);
+
+                                                    //XElement newEle = new XElement(nAr5 + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value, xEleTargetAttr.Value);
+                                                    //xEleTargetAttrFirstNode.AddBeforeSelf(newEle);
+
+                                                    XElement newEle = new XElement(nsWfs + "Property",
+                                                        new XElement("ValueReference", xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value),
+                                                        new XElement(nAr5 + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value, xEleTargetAttr.Value));
+                                                    xEleTargetAttrFirstNode.Parent.Parent.AddBeforeSelf(newEle);
                                                     xEleTargetAttr.Remove();
+
+                                                    //xEleTargetAttrFirstNode.Remove();
+                                                    //xEleTargetAttr.RemoveAll();
+
+                                                    // Mark ValueReference for removal
+                                                    if (targetAttrArr.Length > 0) //if (targetAttrArr.Length > 2)
+                                                    {
+                                                        valueReferenceToRemove.Add(targetAttrFirstNode);
+                                                    }
+
                                                 }
                                             }
                                         }
                                     }
+
+                                   
+                                }
+                            }
+                            
+                            if (valueReferenceToRemove.Any())
+                            {
+                                // Remove all the ValueReference marked for removing to clean up.
+                                foreach (var valRef in valueReferenceToRemove)
+                                {
+                                    var properties = from item in ele.Descendants(nsWfs + "Property")
+                                                     let element = item.Element(nsWfs + "ValueReference")
+                                                     where element != null && _namespacePrefix + ":" + element.Value == valRef //"identifikasjon"
+                                                     select item;
+
+                                    if (properties != null && properties.Any())
+                                    {
+                                        properties.Remove();
+                                        //foreach (var xElement in properties.Elements().ToList())
+                                        //{
+                                        //    xElement.Remove();
+                                        //}
+                                    }
+                                }
+                                valueReferenceToRemove.Clear();
+                            }
+
+                            if (ele.Name == nsWfs + "Update")
+                            {
+                                // Fix valuereference for Geometry ValueReference, e.g. Område should be omraade
+                                var valueReferences = ele.DescendantsAndSelf(nsWfs + "ValueReference"); // Update
+                                foreach (var xEleAttributeMapping in _attributeMappingsGeom)
+                                {
+                                    // Special handling for geoms
+                                    string targetAttrVal = xEleAttributeMapping.Element("targetAttribute").Value;
+                                    string[] targetAttrArr = targetAttrVal.Split('/');
+                                    string targetAttrFirstNode = targetAttrArr[1]; //+ "/";
+                                     if (targetAttrArr[0] == featureType)
+                                     {
+                                         foreach (var valRef in valueReferences.ToList())
+                                         {
+                                             if (_namespacePrefix + ":" + valRef.Value == targetAttrFirstNode)
+                                             {
+                                                 //xEleAttributeMapping
+                                                      string strNewContent =
+                                                    xEleAttributeMapping.Element("sourceExpression")
+                                                                        .Element("OCQL")
+                                                                        .Value;
+                                                      valRef.ReplaceNodes(strNewContent);
+                                             }
+                                         }
+                                     }
                                 }
                             }
 
                         }
-
-
                     }
                     Console.WriteLine("Transactions Count:{0}", countTransactions);
 

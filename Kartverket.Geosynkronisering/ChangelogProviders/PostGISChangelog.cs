@@ -7,6 +7,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Text;
 using System.IO;
+using System.Xml.XPath;
 using NLog;
 using Npgsql;
 using NpgsqlTypes;
@@ -373,7 +374,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 string lokalId = gmlId.Substring(pos + 1);
 
                 XElement deleteElement = new XElement(nsWfs + "Delete", new XAttribute("handle", transCounter), new XAttribute("typeName", nsPrefixApp + ":" + typename), //new XAttribute("typeName", "app:" + typename),
-                    new XAttribute("inputFormat", "application/gml+xml; version=3.2"), new XAttribute(XNamespace.Xmlns + "app", nsApp));
+                    new XAttribute("inputFormat", "application/gml+xml; version=3.2"), new XAttribute(XNamespace.Xmlns + nsPrefixApp, nsApp));
                 //XElement deleteElement = new XElement(nsWfs + "Delete", new XAttribute("handle", transCounter), new XAttribute("typeName", typename),
                 //    new XAttribute("inputFormat", "application/gml+xml; version=3.2"));
 
@@ -428,27 +429,34 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             XNamespace nsFes = "http://www.opengis.net/fes/2.0";
             XNamespace nsGml = "http://www.opengis.net/gml/3.2";
             XNamespace nsApp = Database.DatasetsData.TargetNamespace(datasetId);
+            
+            // 20130917-Leg: Fix
             string nsPrefixApp = changeLog.GetPrefixOfNamespace(nsApp);
-
-            // 20130913-Leg: Fix
-            int count = 0;
+            XmlNamespaceManager mgr = new XmlNamespaceManager(new NameTable());
+            mgr.AddNamespace(nsPrefixApp, nsApp.NamespaceName);
+            string nsPrefixAppComplete = nsPrefixApp + ":";
+            // LokalId is of form: "app:identifikasjon/app:Identifikasjon/app:lokalId"
+            string xpathExpressionLokalid = nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete +
+                                            "Identifikasjon/" + nsPrefixAppComplete + "lokalId";
+            
+            //int count = 0;
             foreach (string typename in typeNames) //foreach (string gmlId in updatesGmlIds) //foreach (string typename in typeNames)
             {
-                string gmlId = updatesGmlIds[count];
-                int pos = gmlId.IndexOf(".");
-                //string typename = gmlId.Substring(0, pos);
-                string lokalId = gmlId.Substring(pos + 1);
 
                 var featuresOfType = getFeatureResponse.Descendants(nsApp + typename);
                 foreach (XElement feature in featuresOfType)
                 {
-                    // 20130913-Leg: "App" replaced by "app"
-                    XElement updateElement = new XElement(nsWfs + "Update", new XAttribute("typeName", nsPrefixApp + ":" + typename), //new XAttribute("typeName", "app:" + typename),
+                    XElement updateElement = new XElement(nsWfs + "Update", new XAttribute("typeName", nsPrefixAppComplete + typename), //new XAttribute("typeName", "app:" + typename),
                                     new XAttribute("handle", transCounter),
-                                    new XAttribute("inputFormat", "application/gml+xml; version=3.2"), new XAttribute(XNamespace.Xmlns + "app", nsApp));
+                                    new XAttribute("inputFormat", "application/gml+xml; version=3.2"), new XAttribute(XNamespace.Xmlns + nsPrefixApp, nsApp));
                     //XElement updateElement = new XElement(nsWfs + "Update", new XAttribute("typeName", typename), new XAttribute("handle", transCounter),
                     //                                    new XAttribute("inputFormat", "application/gml+xml; version=3.2"), new XAttribute(XNamespace.Xmlns + "App", nsApp));
                     //string lokalId = feature.Element(nsApp + "lokalId").Value;
+                    
+                    // Get the lokalId with XPath
+                    XElement lokalidElement = feature.XPathSelectElement(xpathExpressionLokalid, mgr);
+                    string lokalId = lokalidElement.Value;
+
                     foreach (XElement e in feature.Elements())
                     {
                         if (e.Name.Equals(nsGml + "boundedBy"))
@@ -458,6 +466,11 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                         updateElement.Add(new XElement(nsWfs + "Property", new XElement(nsWfs + "ValueReference", e.Name.LocalName), new XElement(nsWfs + "Value", e)));
                     }
+                                       
+                    //string gmlId = updatesGmlIds[count];
+                    //int pos = gmlId.IndexOf(".");
+                    ////string typename = gmlId.Substring(0, pos);
+                    //string lokalId = gmlId.Substring(pos + 1);
 
                     updateElement.Add(new XElement(nsFes + "Filter",
                                             new XElement(nsFes + "PropertyIsEqualTo",
@@ -467,7 +480,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                                       ));
                     changeLog.Element(nsChlogf + "transactions").Add(updateElement);
                     transCounter++;
-                    count++;
+                    //count++;
                 }
             }
         }
