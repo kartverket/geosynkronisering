@@ -501,7 +501,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             XNamespace nsXsi = "http://www.w3.org/2001/XMLSchema-instance";
             XNamespace nsGml = "http://www.opengis.net/gml/3.2";
 
-            string schemaLocation = "http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/1.0 http://www.geosynkronisering.no/files/skjema/v0.4/changelogfile.xsd ";
+            string schemaLocation = "http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/1.0 http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/1.0/changelogfile.xsd ";
             schemaLocation += Database.DatasetsData.TargetNamespace(datasetId) + " " + Database.DatasetsData.SchemaFileUri(datasetId);
 
             XElement changelogRoot = 
