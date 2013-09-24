@@ -342,7 +342,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
             //Build inserts for each typename
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
-            XNamespace nsChlogf = "http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/1.0";
+            XNamespace nsChlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg";
 
             XNamespace nsApp = Database.DatasetsData.TargetNamespace(datasetId);
 
@@ -362,7 +362,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         private void AddDeletesToChangeLog(List<string> deletesGmlIds, ref int transCounter, XElement changeLog, int datasetId)
         {
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
-            XNamespace nsChlogf = "http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/1.0";
+            XNamespace nsChlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg";
             XNamespace nsFes = "http://www.opengis.net/fes/2.0";
             XNamespace nsApp = Database.DatasetsData.TargetNamespace(datasetId);
             string nsPrefixApp = changeLog.GetPrefixOfNamespace(nsApp);
@@ -425,7 +425,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             XElement getFeatureResponse = GetFeatureCollectionFromWFS(wfsUrl, ref typeNames, updatesGmlIds, datasetId);
 
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
-            XNamespace nsChlogf = "http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/1.0";
+            XNamespace nsChlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg";
             XNamespace nsFes = "http://www.opengis.net/fes/2.0";
             XNamespace nsGml = "http://www.opengis.net/gml/3.2";
             XNamespace nsApp = Database.DatasetsData.TargetNamespace(datasetId);
@@ -495,13 +495,13 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         private XElement BuildChangelogRoot( int datasetId )
         {
-            XNamespace nsChlogf = "http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/1.0";
+            XNamespace nsChlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg";
             XNamespace nsApp = Database.DatasetsData.TargetNamespace(datasetId);
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
             XNamespace nsXsi = "http://www.w3.org/2001/XMLSchema-instance";
             XNamespace nsGml = "http://www.opengis.net/gml/3.2";
 
-            string schemaLocation = "http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/1.0 http://geosynkronisering.no/files/skjema/1.0/changelogfile.xsd ";
+            string schemaLocation = "http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg http://geosynkronisering.no/files/skjema/1.0/changelogfile.xsd ";
             schemaLocation += Database.DatasetsData.TargetNamespace(datasetId) + " " + Database.DatasetsData.SchemaFileUri(datasetId);
 
             XElement changelogRoot = 
