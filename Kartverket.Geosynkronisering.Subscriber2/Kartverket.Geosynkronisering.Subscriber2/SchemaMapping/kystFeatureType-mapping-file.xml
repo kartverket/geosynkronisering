@@ -11,7 +11,7 @@
     </Namespace>
     <Namespace>
       <prefix>kyst</prefix>
-      <uri>http://skjema.geonorge.no/SOSI/produktspesifikasjon/PrimærdataKystkontur/1.0</uri>
+      <uri>http://skjema.geonorge.no/SOSI/produktspesifikasjon/PrimaerdataKystkontur/1.0</uri>
     </Namespace>
   </namespaces>
   <sourceDataStores>
@@ -55,7 +55,7 @@
   </sourceDataStores>
   <targetTypes>
     <FeatureType>
-      <schemaUri>http://www.geosynkronisering.no/files/skjema/Kyst/PrimærdataKystkontur.xsd</schemaUri>
+      <schemaUri>http://www.geosynkronisering.no/files/skjema/Kyst/PrimaerdataKystkontur.xsd</schemaUri>
     </FeatureType>
   </targetTypes>
   <typeMappings>
