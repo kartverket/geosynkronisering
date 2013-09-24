@@ -81,6 +81,19 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                     }
                 }
 
+                foreach (var attrMapping in attributeMappings.ToList())
+                {
+                    //Console.WriteLine(attrMapping);
+                    if (attrMapping.Element("sourceExpression").Element("OCQL").Value.StartsWith("\"") && attrMapping.Element("sourceExpression").Element("OCQL").Value.EndsWith("\""))
+                    {
+                        // Replace all " with blank
+                        string newVal = attrMapping.Element("sourceExpression").Element("OCQL").Value;
+                        newVal = newVal.Replace("\"", "");
+
+                        attrMapping.Element("sourceExpression").Element("OCQL").Value = newVal;
+                    }
+                }
+
                 _attributeMappings = attributeMappings;
 
                 // Special handling geometries
