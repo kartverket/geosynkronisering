@@ -52,7 +52,6 @@
                                     CommandName="2" onclick="lbtn_Click">Datasett</asp:LinkButton>
                                 <asp:LinkButton ID="lbtnChangeLog" runat="server" CssClass="LinkButton" 
                                     CommandName="3" onclick="lbtn_Click">Endringslogg</asp:LinkButton>
-                                <asp:Button ID="Button1" runat="server" onclick="Button1_Click" Text="Button" />
                             </td>                          
                         </tr>                            
                      </table>

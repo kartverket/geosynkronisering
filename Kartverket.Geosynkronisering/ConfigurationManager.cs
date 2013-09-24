@@ -501,15 +501,15 @@ namespace Kartverket.Geosynkronisering.Database
         private static GeosyncWCF.DomainType CreateParameter(string ParameterName, params string[] values)
         {
             GeosyncWCF.DomainType param = new GeosyncWCF.DomainType();
-            //List<GeosyncWCF.Value> valuelist = new List<GeosyncWCF.Value>();
+            List<GeosyncWCF.ValueType> valuelist = new List<GeosyncWCF.ValueType>();
                         
-            //foreach (string s in values)
-            //{
-            //    GeosyncWCF.Value val = new GeosyncWCF.Value();
-            //    val.AllowedValue = s;
-            //    valuelist.Add(val);
-            //}
-            //param.AllowedValues = valuelist.ToArray();
+            foreach (string s in values)
+            {
+                GeosyncWCF.ValueType val = new GeosyncWCF.ValueType();
+                val.Value = s;                
+                valuelist.Add(val);
+            }
+            param.AllowedValues = valuelist.ToArray();
             
             param.name = ParameterName;
             

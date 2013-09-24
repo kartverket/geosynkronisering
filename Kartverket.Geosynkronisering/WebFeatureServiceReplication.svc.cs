@@ -21,34 +21,10 @@ namespace Kartverket.Geosynkronisering
         public Kartverket.GeosyncWCF.REP_CapabilitiesType GetCapabilities(Kartverket.GeosyncWCF.GetCapabilitiesType1 getcapabilities1)
         {
 
-            Kartverket.GeosyncWCF.REP_CapabilitiesType res = new Kartverket.GeosyncWCF.REP_CapabilitiesType();
+            Geosynkronisering.Database.CapabilitiesDataBuilder cdb = new Geosynkronisering.Database.CapabilitiesDataBuilder();
+            GeosyncWCF.REP_CapabilitiesType cbt = cdb.GetCapabilities();
 
-            res.ServiceIdentification = new Kartverket.GeosyncWCF.ServiceIdentification();
-            Kartverket.GeosyncWCF.LanguageStringType Title_no = new Kartverket.GeosyncWCF.LanguageStringType();
-            Title_no.lang = "no";
-            Title_no.Value = "Kartverket WFS Replication Service";
-            List<Kartverket.GeosyncWCF.LanguageStringType> ticl = new List<Kartverket.GeosyncWCF.LanguageStringType>();
-            ticl.Add(Title_no);
-
-            res.ServiceIdentification.Title = ticl.ToArray();
-            Kartverket.GeosyncWCF.LanguageStringType Abstract_no = new Kartverket.GeosyncWCF.LanguageStringType();
-            Abstract_no.lang = "no";
-            Abstract_no.Value = "Replication Web Feature Service maintained by Kartverket";
-            List<Kartverket.GeosyncWCF.LanguageStringType> abcl = new List<Kartverket.GeosyncWCF.LanguageStringType>();
-            abcl.Add(Abstract_no);
-            res.ServiceIdentification.Abstract = abcl.ToArray();
-
-            res.ServiceProvider = new Kartverket.GeosyncWCF.ServiceProvider();
-            res.ServiceProvider.ProviderName = "Kartverket";
-            res.ServiceProvider.ProviderSite = new Kartverket.GeosyncWCF.OnlineResourceType();
-            res.ServiceProvider.ProviderSite.href = "http://www.kartverket.no";
-          
-
-            //TODO - add to Changelogmanager and get info from db. Make a complete capabilities doc.
-
-            
-           
-            return res;
+            return cbt;
         }
 
         /// <summary>
