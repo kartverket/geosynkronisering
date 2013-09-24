@@ -19,6 +19,7 @@ using Ionic.Zip;
 using System.Threading;
 using SaveOptions = System.Xml.Linq.SaveOptions;
 using Kartverket.GeosyncWCF;
+using Kartverket.Geosynkronisering.Database;
 
 namespace Kartverket.Geosynkronisering.Subscriber2
 {
@@ -174,8 +175,10 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
         private void btnGetCapabilities_Click(object sender, EventArgs e)
         {
-            var str = GetCapabilitiesXml();
-            VisXML((string)str);
+            var dataset = (from d in _localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
+            string Url = dataset.SyncronizationUrl;
+            GetCapabilitiesXml(Url);
+           
         }
 
         private void btnDescribeFeaturetype_Click(object sender, EventArgs e)
@@ -614,18 +617,12 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         /// Returnerer det som tilbyder støtter av dataset, filter operatorer og objekttyper.
         /// </summary>
         /// <returns></returns>
-        private string GetCapabilitiesXml()
+        private void GetCapabilitiesXml(string url)
         {
-            var dataset = (from d in _localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
+            
+            CapabilitiesDataBuilder cdb = new CapabilitiesDataBuilder(url);
+            //dgvCapabilities.DataSource = cdb.ProviderDatasets.Dataset;           
 
-            WebFeatureServiceReplicationPortClient client = new WebFeatureServiceReplicationPortClient();
-            client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SyncronizationUrl);
-
-            GetCapabilitiesType1 req = new GetCapabilitiesType1();
-
-            REP_CapabilitiesType resp = client.GetCapabilities(req);
-
-            return resp.ToString();
         }
 
         /// <summary>

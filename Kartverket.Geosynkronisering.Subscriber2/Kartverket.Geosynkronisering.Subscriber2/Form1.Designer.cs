@@ -89,15 +89,15 @@
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.tabControl1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.webBrowser1, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 37.11911F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 62.88089F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 38.50415F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 61.49585F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(884, 722);
             this.tableLayoutPanel1.TabIndex = 0;
@@ -111,7 +111,7 @@
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(878, 261);
+            this.tabControl1.Size = new System.Drawing.Size(878, 271);
             this.tabControl1.TabIndex = 2;
             // 
             // tabPage1
@@ -127,7 +127,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(870, 235);
+            this.tabPage1.Size = new System.Drawing.Size(870, 194);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Normal";
             // 
@@ -204,7 +204,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(870, 235);
+            this.tabPage2.Size = new System.Drawing.Size(870, 245);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Detailed test";
             // 
@@ -241,7 +241,7 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(864, 229);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(864, 239);
             this.tableLayoutPanel2.TabIndex = 2;
             // 
             // btnSimplify
@@ -489,7 +489,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(870, 235);
+            this.tabPage3.Size = new System.Drawing.Size(870, 194);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Dataset";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -511,17 +511,17 @@
             this.dgDataset.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgDataset.Location = new System.Drawing.Point(3, 3);
             this.dgDataset.Name = "dgDataset";
-            this.dgDataset.Size = new System.Drawing.Size(864, 229);
+            this.dgDataset.Size = new System.Drawing.Size(864, 188);
             this.dgDataset.TabIndex = 0;
             this.dgDataset.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgDataset_DataBindingComplete);
             // 
             // webBrowser1
             // 
             this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser1.Location = new System.Drawing.Point(3, 270);
+            this.webBrowser1.Location = new System.Drawing.Point(3, 280);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(878, 449);
+            this.webBrowser1.Size = new System.Drawing.Size(878, 439);
             this.webBrowser1.TabIndex = 1;
             // 
             // statusStrip1
