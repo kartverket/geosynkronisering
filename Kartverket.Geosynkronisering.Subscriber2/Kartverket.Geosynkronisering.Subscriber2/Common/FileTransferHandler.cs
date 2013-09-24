@@ -233,6 +233,7 @@ namespace Kartverket.Geosynkronisering.Common
                 }
                 else
                 {
+                    state.status = ftpStatus.done;
                     OnFileProgressChanged(new ProgressEventArgs(state.FileName, 1, 1, string.Format("The operation completed - {0}", state.StatusDescription), state.status));
                 }
             }
