@@ -778,7 +778,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 DownloadChangelog(downloaduri, fileName);
 #else
                 // DownloadChangelog now handles ftp asynchron download
-                DownloadChangelog(downloaduri, fileName);
+                DownloadChangelog2(downloaduri, fileName);
                 //DownloadChangelogFTP(downloaduri, fileName);
 #endif
 
@@ -922,7 +922,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             string ftpUser = par1[0].Split(':')[0];
             string ftpPasswd = par1[0].Split(':')[1];
             string ftpServer = par1[1].Split('/')[0];
-            string ftpFileName = par1[1].Split('/')[1];
+            string ftpFileName = par1[1].Split('/')[1] + ".zip";
             Kartverket.Geosynkronisering.Common.FileTransferHandler ftpHandler = new Common.FileTransferHandler();
             ftpHandler.ProgressChanged += new Common.FileTransferHandler.ProgressHandler(ftpHandler_ProgressChanged);
             ftpHandler.ProcessDone += new Common.FileTransferHandler.ProcessDoneHandler(ftpHandler_ProcessDone);
