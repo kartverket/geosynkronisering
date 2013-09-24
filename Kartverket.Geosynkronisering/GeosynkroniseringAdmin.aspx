@@ -181,6 +181,8 @@
                                                     <asp:BoundField DataField="Role" HeaderText="Rolle" SortExpression="Role" >
                                                     <HeaderStyle CssClass="FieldHeader" />
                                                     </asp:BoundField>
+                                                    <asp:BoundField DataField="ServiceURL" HeaderText="Service URL" 
+                                                        SortExpression="ServiceURL" />
                                                     <asp:CommandField ButtonType="Image" CancelImageUrl="~/Images/Edit_UndoHS.png" 
                                                         CancelText="Avbryt" DeleteImageUrl="~/Images/delete_12x12.png" 
                                                         DeleteText="Slett" EditImageUrl="~/Images/EditTableHS.png" EditText="Rediger" 
