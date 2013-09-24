@@ -100,11 +100,11 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 _attributeMappingsGeom =
                     from item in doc.Descendants("AttributeMapping")
                     where (from m in item.Elements("sourceExpression")
-                        where (from n in item.Elements("targetAttributeNode") select n).Any() == true
-                        select m).Any()
-                select item;
+                           where (from n in item.Elements("targetAttributeNode") select n).Any() == true
+                           select m).Any()
+                    select item;
 
-                
+
                 setXmlMappingFile = true;
 
             }
@@ -221,6 +221,30 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                         }
                                     }
                                 }
+                                
+                                foreach (var xEleAttributeMapping in _attributeMappingsGeom)
+                                {
+                                    // Special handling for geoms, e.g. Område should be omraade, chnage the xelement name
+                                    string targetAttrVal = xEleAttributeMapping.Element("targetAttribute").Value;
+                                    string[] targetAttrArr = targetAttrVal.Split('/');
+
+                                    if (targetAttrArr[0] == _namespacePrefix + ":" + featureType)
+                                    {
+                                        string targetAttr = String.Join("/", targetAttrArr, 1, targetAttrArr.Length - 1);
+                                        string targetAttrFirstNode = targetAttrArr[1]; //+ "/";
+                                        XElement xEleTargetAttr = feature.XPathSelectElement(targetAttr, mgr) as XElement;
+                                        if (xEleTargetAttr != null && !xEleTargetAttr.IsEmpty)
+                                        {
+                                            XElement xEleTargetAttrFirstNode =
+                                                feature.XPathSelectElement(targetAttrFirstNode, mgr);
+                                            string strNewContent =
+                                                xEleAttributeMapping.Element("sourceExpression")
+                                                          .Element("OCQL")
+                                                          .Value;
+                                            xEleTargetAttrFirstNode.Name = nAr5 + strNewContent;
+                                        }
+                                    }
+                                }
                             }
 
                         }
@@ -324,10 +348,10 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                         }
                                     }
 
-                                   
+
                                 }
                             }
-                            
+
                             if (valueReferenceToRemove.Any())
                             {
                                 // Remove all the ValueReference marked for removing to clean up.
@@ -360,21 +384,21 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                     string targetAttrVal = xEleAttributeMapping.Element("targetAttribute").Value;
                                     string[] targetAttrArr = targetAttrVal.Split('/');
                                     string targetAttrFirstNode = targetAttrArr[1]; //+ "/";
-                                     if (targetAttrArr[0] == featureType)
-                                     {
-                                         foreach (var valRef in valueReferences.ToList())
-                                         {
-                                             if (_namespacePrefix + ":" + valRef.Value == targetAttrFirstNode)
-                                             {
-                                                 //xEleAttributeMapping
-                                                      string strNewContent =
-                                                    xEleAttributeMapping.Element("sourceExpression")
-                                                                        .Element("OCQL")
-                                                                        .Value;
-                                                      valRef.ReplaceNodes(strNewContent);
-                                             }
-                                         }
-                                     }
+                                    if (targetAttrArr[0] == featureType)
+                                    {
+                                        foreach (var valRef in valueReferences.ToList())
+                                        {
+                                            if (_namespacePrefix + ":" + valRef.Value == targetAttrFirstNode)
+                                            {
+                                                //xEleAttributeMapping
+                                                string strNewContent =
+                                              xEleAttributeMapping.Element("sourceExpression")
+                                                                  .Element("OCQL")
+                                                                  .Value;
+                                                valRef.ReplaceNodes(strNewContent);
+                                            }
+                                        }
+                                    }
                                 }
                             }
 
