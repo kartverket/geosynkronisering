@@ -221,7 +221,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                         }
                                     }
                                 }
-                                
+
                                 foreach (var xEleAttributeMapping in _attributeMappingsGeom)
                                 {
                                     // Special handling for geoms, e.g. Område should be omraade, chnage the xelement name
@@ -241,6 +241,9 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                                 xEleAttributeMapping.Element("sourceExpression")
                                                           .Element("OCQL")
                                                           .Value;
+                                            // Replace all " with blank (æ,ø,å)
+                                            strNewContent = strNewContent.Replace("\"", "");
+                                            
                                             xEleTargetAttrFirstNode.Name = nAr5 + strNewContent;
                                         }
                                     }
@@ -305,11 +308,22 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                             if (i == 1 && valueReferencesFilter.Any())
                                             {
                                                 // Filter part - wfs:Update and wfs:Delete
-                                                string strNewContent =
-                                                    xEleAttributeMapping.Element("sourceExpression")
-                                                                        .Element("OCQL")
-                                                                        .Value;
-                                                elePropOrFilter.ReplaceNodes(strNewContent);
+                                                string[] targetAttrMinusNamespaceArr = targetAttrVal.Split('/');
+                                                for (int j = 1; j < targetAttrArr.Length; j++)
+                                                {
+                                                    // mask of namespace prefix
+                                                    targetAttrMinusNamespaceArr[j] = targetAttrArr[j].Replace(_namespacePrefix + ":", "");
+                                                }
+                                                string targetAttrMinusNamespacePrefix = String.Join("/", targetAttrMinusNamespaceArr, 1, targetAttrMinusNamespaceArr.Length - 1);
+
+                                                if (elePropOrFilter.Value == targetAttrMinusNamespacePrefix)
+                                                {
+                                                    string strNewContent =
+                                                        xEleAttributeMapping.Element("sourceExpression")
+                                                                            .Element("OCQL")
+                                                                            .Value;
+                                                    elePropOrFilter.ReplaceNodes(strNewContent);
+                                                }
                                             }
 
                                             else

@@ -46,6 +46,8 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             {
 
 
+                // txtDataset is now updated by the cboDatasetName combobox
+                txtDataset.Visible = false;
                 txtDataset.Text = Properties.Settings.Default.defaultDataset;
                 toolStripStatusLabel1.Text = "Ready";
 
@@ -80,10 +82,19 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                     return;
                 }
 
+                // Fill the cboDatasetName comboBox with the dataset names
+                var datasetNameList = (from d in localDb.Dataset select d.Name).ToList();
+                foreach (string name in datasetNameList)
+                {
+                    cboDatasetName.Items.Add(name);
+                }
+                cboDatasetName.SelectedIndex = cboDatasetName.Items.IndexOf(txtDataset.Text);
 
                 //20121122-Leg: get lastindex from db
                 var dataset = (from d in localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
                 txbSubscrLastindex.Text = dataset.LastIndex.ToString();
+                
+                //cboDatasetName.SelectedIndex = cboDatasetName.Items.IndexOf(dataset.Name);
                 //txbSubscrLastindex.Text = Properties.Settings.Default.lastChangeIndex.ToString();
 
                 // nlog start
@@ -103,6 +114,24 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 logger.ErrorException("Form1_Load failed:", ex);
                 MessageBox.Show(ex.Message + ex.StackTrace);
             }
+        }
+
+        /// <summary>
+        /// Handles the SelectedIndexChanged event of the cboDatasetName control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void cboDatasetName_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            txtDataset.Text = cboDatasetName.SelectedItem.ToString();
+            Properties.Settings.Default.defaultDataset = txtDataset.Text;
+            Properties.Settings.Default.Save();
+            if (_localDb != null)
+            {
+                var dataset = (from d in _localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
+                txbSubscrLastindex.Text = dataset.LastIndex.ToString();
+            }
+           
         }
 
         //private void webBrowser1_Navigating(object sender,
@@ -1958,7 +1987,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 // Display in geoserver openlayers
                 toolStripStatusLabel1.Text = "DisplayMap";
                 statusStrip1.Refresh();
-                DisplayMap(); //DisplayMap(epsgCode: "EPSG:32633");
+                DisplayMap(epsgCode: "EPSG:32633",datasetName: txtDataset.Text); //DisplayMap(epsgCode: "EPSG:32633");
                 toolStripStatusLabel1.Text = "Ready";
                 statusStrip1.Refresh();
 
@@ -2008,11 +2037,12 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             string layers = "app:Flytebrygge,app:Flytebryggekant,app:Kystkontur,app:HavElvsperre,app:KystkonturTekniskeAnlegg";
             string hostWms = "http://localhost:8081/geoserver/app/wms?service=WMS&version=1.1.0&request=GetMap";
 
-            if (datasetName == "ar5")
+            if (datasetName.ToLower() == "ar5")
             {
                 layers = "ar5:ArealressursFlate,ar5:KantUtsnitt,ar5:ArealressursGrense,ar5:ArealressursGrenseFiktiv";
                 hostWms = "http://localhost:8081/geoserver/ar5/wms?service=WMS&version=1.1.0&request=GetMap";
                 bBox = "10.0,59.6,10.2,59.8";
+                epsgCode = "EPSG:4258";
             }
 
 
@@ -2049,6 +2079,8 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         }
 
         #endregion
+
+    
     }
 
 

@@ -73,6 +73,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.cboDatasetName = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -117,6 +118,7 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPage1.Controls.Add(this.cboDatasetName);
             this.tabPage1.Controls.Add(this.txtLimitNumberOfFeatures);
             this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Controls.Add(this.txtDataset);
@@ -127,7 +129,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(870, 194);
+            this.tabPage1.Size = new System.Drawing.Size(870, 245);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Normal";
             // 
@@ -489,7 +491,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(870, 194);
+            this.tabPage3.Size = new System.Drawing.Size(870, 245);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Dataset";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -511,7 +513,7 @@
             this.dgDataset.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgDataset.Location = new System.Drawing.Point(3, 3);
             this.dgDataset.Name = "dgDataset";
-            this.dgDataset.Size = new System.Drawing.Size(864, 188);
+            this.dgDataset.Size = new System.Drawing.Size(864, 239);
             this.dgDataset.TabIndex = 0;
             this.dgDataset.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgDataset_DataBindingComplete);
             // 
@@ -547,6 +549,17 @@
             this.toolStripProgressBar1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
+            // 
+            // cboDatasetName
+            // 
+            this.cboDatasetName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboDatasetName.FormattingEnabled = true;
+            this.cboDatasetName.Location = new System.Drawing.Point(145, 18);
+            this.cboDatasetName.Name = "cboDatasetName";
+            this.cboDatasetName.Size = new System.Drawing.Size(163, 21);
+            this.cboDatasetName.TabIndex = 26;
+            this.toolTip1.SetToolTip(this.cboDatasetName, "Current dataset");
+            this.cboDatasetName.SelectedIndexChanged += new System.EventHandler(this.cboDatasetName_SelectedIndexChanged);
             // 
             // Form1
             // 
@@ -627,6 +640,7 @@
         private System.Windows.Forms.TextBox txtLimitNumberOfFeatures;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnSimplify;
+        private System.Windows.Forms.ComboBox cboDatasetName;
     }
 }
 
