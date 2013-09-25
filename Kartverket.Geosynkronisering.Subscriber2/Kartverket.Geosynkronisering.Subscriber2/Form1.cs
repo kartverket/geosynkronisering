@@ -2108,7 +2108,16 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 selectedDataset.Add(dgr.Index);
             }
             IBindingList blDataset = (IBindingList)dgvProviderDataset.DataSource;
-            if (!Database.DatasetsData.AddDatasets(blDataset, selectedDataset)) MessageBox.Show(this, "Error saving selected datasets to internal Database.","Get Provider Datasets",MessageBoxButtons.OK,MessageBoxIcon.Error); else MessageBox.Show(this,"Saved selected datasets to the internal Database.","Get Provider Datasets", MessageBoxButtons.OK,MessageBoxIcon.Information);
+            if (!Database.DatasetsData.AddDatasets(_localDb, blDataset, selectedDataset))
+            {
+                MessageBox.Show(this, "Error saving selected datasets to internal Database.", "Get Provider Datasets", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                MessageBox.Show(this, "Saved selected datasets to the internal Database.", "Get Provider Datasets", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                dgDataset.DataSource = null;
+                dgDataset.DataSource = _localDb.Dataset;
+            }
         }
 
     

@@ -107,27 +107,16 @@ namespace Kartverket.Geosynkronisering.Database
             }
         }
 
-        public static bool AddDatasets(IBindingList DatasetBindingList, IList<int> selectedDatasets)
+        public static bool AddDatasets(geosyncDBEntities db, IBindingList DatasetBindingList, IList<int> selectedDatasets)
         {
-            using (geosyncDBEntities db = new geosyncDBEntities())
+          
+            Dataset ds = null;
+            foreach (int selected in selectedDatasets)
             {
-                Dataset ds = null;
-                foreach (int selected in selectedDatasets)
-                {
-                    ds = (Dataset)DatasetBindingList[selected];
-                    try
-                    {
-                        db.Dataset.AddObject(ds);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogException(LogLevel.Error, "Error adding dataset object to Database Context!", ex);
-                        return false;
-                    }
-
-                }
+                ds = (Dataset)DatasetBindingList[selected];
                 try
-                {
+                {                  
+                    db.Dataset.AddObject(ds);
                     db.AcceptAllChanges();
                     db.SaveChanges();
                 }
@@ -136,7 +125,8 @@ namespace Kartverket.Geosynkronisering.Database
                     logger.LogException(LogLevel.Error, "Error saving selected datasets!", ex);
                     return false;
                 }
-            }
+            }                
+                  
             return true;
         }
     }
