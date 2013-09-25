@@ -1238,7 +1238,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 //
                 // get chlogf:transactions
                 //
-                XNamespace nschlogf = "http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/0.3";
+                XNamespace nschlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg";
                 IEnumerable<XElement> chlogfTransactions =
                     from item in changeLog.Descendants(nschlogf + "transactions")
                     select item;
