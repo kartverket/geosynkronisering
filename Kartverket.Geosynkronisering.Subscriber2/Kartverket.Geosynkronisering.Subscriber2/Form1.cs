@@ -84,17 +84,12 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 }
 
                 // Fill the cboDatasetName comboBox with the dataset names
-                var datasetNameList = (from d in localDb.Dataset select d.Name).ToList();
-                foreach (string name in datasetNameList)
-                {
-                    cboDatasetName.Items.Add(name);
-                }
-                cboDatasetName.SelectedIndex = cboDatasetName.Items.IndexOf(txtDataset.Text);
+                FillComboBoxDatasetName();
 
                 //20121122-Leg: get lastindex from db
                 var dataset = (from d in localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
                 txbSubscrLastindex.Text = dataset.LastIndex.ToString();
-                
+
                 //cboDatasetName.SelectedIndex = cboDatasetName.Items.IndexOf(dataset.Name);
                 //txbSubscrLastindex.Text = Properties.Settings.Default.lastChangeIndex.ToString();
 
@@ -118,6 +113,33 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         }
 
         /// <summary>
+        /// Fills the cboDatasetName comboBox with the dataset names
+        /// </summary>
+        private void FillComboBoxDatasetName()
+        {
+            cboDatasetName.Items.Clear();
+            var datasetNameList = (from d in _localDb.Dataset select d.Name).ToList();
+            if (datasetNameList.Count > 0)
+            {
+                foreach (string name in datasetNameList)
+                {
+                    cboDatasetName.Items.Add(name);
+                }
+                if (txtDataset.Text.Length > 0)
+                {
+                    if (cboDatasetName.Items.Contains(txtDataset.Text))
+                    {
+                        cboDatasetName.SelectedIndex = cboDatasetName.Items.IndexOf(txtDataset.Text);
+                    }
+                }
+                else
+                {
+                    cboDatasetName.SelectedIndex = -1;
+                }
+            }
+        }
+
+        /// <summary>
         /// Handles the SelectedIndexChanged event of the cboDatasetName control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
@@ -132,7 +154,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 var dataset = (from d in _localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
                 txbSubscrLastindex.Text = dataset.LastIndex.ToString();
             }
-           
+
         }
 
         //private void webBrowser1_Navigating(object sender,
@@ -159,6 +181,9 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
                 // Does not work on SQL Server Compact 3.5, must upgrade to 4.0.
                 _localDb.SaveChanges();
+
+                // Fill the cboDatasetName comboBox with the dataset names
+                FillComboBoxDatasetName();
             }
             catch (Exception ex)
             {
@@ -208,7 +233,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             var dataset = (from d in _localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
             string Url = dataset.SyncronizationUrl;
             GetCapabilitiesXml(Url);
-           
+
         }
 
         private void btnDescribeFeaturetype_Click(object sender, EventArgs e)
@@ -649,9 +674,9 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         /// <returns></returns>
         private void GetCapabilitiesXml(string url)
         {
-            
+
             CapabilitiesDataBuilder cdb = new CapabilitiesDataBuilder(url);
-            dgvProviderDataset.DataSource = cdb.ProviderDatasets;           
+            dgvProviderDataset.DataSource = cdb.ProviderDatasets;
 
         }
 
@@ -1736,14 +1761,14 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
                 logger.Info("SchemaTransformSimplify RunTime: {0}", elapsedTime);
 
-                
+
             }
             catch (Exception ex)
             {
                 logger.ErrorException("SetXmlMappingFile:", ex);
                 throw;
             }
-      
+
             return newFileName;
         }
 
@@ -1919,7 +1944,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                         {
                             fileName = newFileName;
                         }
-                        
+
                         // load an XML document from a file
                         XElement changeLog = XElement.Load(fileName);
                         //XElement changeLog = XElement.Load(txbDownloadedFile.Text);
@@ -1988,7 +2013,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 // Display in geoserver openlayers
                 toolStripStatusLabel1.Text = "DisplayMap";
                 statusStrip1.Refresh();
-                DisplayMap(epsgCode: "EPSG:32633",datasetName: txtDataset.Text); //DisplayMap(epsgCode: "EPSG:32633");
+                DisplayMap(epsgCode: "EPSG:32633", datasetName: txtDataset.Text); //DisplayMap(epsgCode: "EPSG:32633");
                 toolStripStatusLabel1.Text = "Ready";
                 statusStrip1.Refresh();
 
@@ -2021,7 +2046,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         /// <summary>
         /// Display map in geoserver openlayers
         /// </summary>
-        private void DisplayMap(string epsgCode = "EPSG:4258",string datasetName = "ar5")
+        private void DisplayMap(string epsgCode = "EPSG:4258", string datasetName = "ar5")
         {
             string bBox;
             switch (epsgCode)
@@ -2035,7 +2060,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                     break;
             }
             // app:Skjær will not display due to "æ"
-            string layers = "app:Flytebrygge,app:Flytebryggekant,app:Kystkontur,app:HavElvsperre,app:KystkonturTekniskeAnlegg";
+            string layers = "app:Flytebrygge,app:Flytebryggekant,app:Kystkontur,app:HavElvSperre,app:KystkonturTekniskeAnlegg";
             string hostWms = "http://localhost:8081/geoserver/app/wms?service=WMS&version=1.1.0&request=GetMap";
 
             if (datasetName.ToLower() == "ar5")
@@ -2120,7 +2145,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             }
         }
 
-    
+
     }
 
 
