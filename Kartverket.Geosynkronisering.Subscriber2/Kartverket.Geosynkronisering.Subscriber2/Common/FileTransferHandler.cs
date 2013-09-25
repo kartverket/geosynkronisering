@@ -15,7 +15,7 @@ using NLog;
 using System.Runtime.InteropServices;
 
 
-namespace Kartverket.Geosynkronisering.Common
+namespace Kartverket.Geosynkronisering.Subscriber2.Common
 {
     public class FileTransferHandler
     {

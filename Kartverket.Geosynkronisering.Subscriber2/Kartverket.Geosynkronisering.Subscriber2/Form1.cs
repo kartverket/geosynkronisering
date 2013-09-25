@@ -44,7 +44,8 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         {
             try
             {
-
+                txbUser.Cue = "Type username.";
+                txbPassword.Cue = "Type password.";
 
                 // txtDataset is now updated by the cboDatasetName combobox
                 txtDataset.Visible = false;
@@ -650,7 +651,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         {
             
             CapabilitiesDataBuilder cdb = new CapabilitiesDataBuilder(url);
-            //dgvCapabilities.DataSource = cdb.ProviderDatasets.Dataset;           
+            dgvProviderDataset.DataSource = cdb.ProviderDatasets;           
 
         }
 
@@ -949,7 +950,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             string ftpPasswd = par1[0].Split(':')[1];
             string ftpServer = par1[1].Split('/')[0];
             string ftpFileName = par1[1].Split('/')[1] + ".zip";
-            Kartverket.Geosynkronisering.Common.FileTransferHandler ftpHandler = new Common.FileTransferHandler();
+            Common.FileTransferHandler ftpHandler = new Common.FileTransferHandler();
             ftpHandler.ProgressChanged += new Common.FileTransferHandler.ProgressHandler(ftpHandler_ProgressChanged);
             ftpHandler.ProcessDone += new Common.FileTransferHandler.ProcessDoneHandler(ftpHandler_ProcessDone);
             if (ftpHandler.DownloadFileFromFtp(localFileName, ftpFileName, ftpServer, ftpUser, ftpPasswd))
@@ -2079,6 +2080,36 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         }
 
         #endregion
+
+        private void btnGetProviderDatasets_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.Cursor = Cursors.WaitCursor;
+                GetCapabilitiesXml(txbProviderURL.Text);
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = this.DefaultCursor;
+                MessageBox.Show("Error : " + ex.Message);
+            }
+            finally
+            {
+                this.Cursor = this.DefaultCursor;
+            }
+
+        }
+
+        private void btnAddSelected_Click(object sender, EventArgs e)
+        {
+            IList<int> selectedDataset = new List<int>();
+            foreach (DataGridViewRow dgr in dgvProviderDataset.SelectedRows)
+            {
+                selectedDataset.Add(dgr.Index);
+            }
+            IBindingList blDataset = (IBindingList)dgvProviderDataset.DataSource;
+            if (!Database.DatasetsData.AddDatasets(blDataset, selectedDataset)) MessageBox.Show(this, "Error saving selected datasets to internal Database.","Get Provider Datasets",MessageBoxButtons.OK,MessageBoxIcon.Error); else MessageBox.Show(this,"Saved selected datasets to the internal Database.","Get Provider Datasets", MessageBoxButtons.OK,MessageBoxIcon.Information);
+        }
 
     
     }
