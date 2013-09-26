@@ -1724,7 +1724,12 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
                 string path = System.Environment.CurrentDirectory;
                 string fileName = path.Substring(0, path.LastIndexOf("bin")) + "SchemaMapping" + @"\_wfsT-test1.xml";
+
+                // Test empty changelog
+                // fileName = path.Substring(0, path.LastIndexOf("bin")) + "SchemaMapping" + @"\ar5-tom-07a8e3ef-7315-409f-862d-6417b4275368.xml";
+
                 string mappingFileName = path.Substring(0, path.LastIndexOf("bin")) + "SchemaMapping" + @"\ar5FeatureType-mapping-file.xml";
+           
 
                 // load the changelog XML document from file
                 // XElement changeLog = XElement.Load(fileName);
@@ -1995,7 +2000,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                         //
                         string fileName = txbDownloadedFile.Text;
                         var newFileName = SchemaTransformSimplify(fileName);
-                        if (newFileName.Length > 0)
+                        if (!string.IsNullOrEmpty(newFileName))
                         {
                             fileName = newFileName;
                         }

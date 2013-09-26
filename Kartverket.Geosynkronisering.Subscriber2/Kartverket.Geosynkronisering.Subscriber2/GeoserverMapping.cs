@@ -154,16 +154,16 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
                     foreach (var ele in transactions.ToList()) //foreach (var ele in docWfs.Descendants(nsWfs + "Insert")) //.Descendants("ArealressursGrense"))  //foreach (var ele in wfs.ToList())
                     {
-                        countTransactions++;
+                        //countTransactions++;
 
 
                         // where item.Name == nsWfs + "Insert" || item.Name == nsWfs + "Delete" || item.Name == nsWfs + "Update" || item.Name == nsWfs + "Replace"
-                        if (ele.Name == nsWfs + "Insert")
+                        if (ele.Name == nsWfs + "Insert" && !ele.IsEmpty)
                         {
                             //string featureType = "";
                             //XName xNameFeaturetype = null;
                             Console.WriteLine(ele.Name);
-
+                            
                             // Get the objecttype name
                             Console.WriteLine(ele.Elements().ElementAt(0).Name.LocalName);
                             string featureType = ele.Elements().ElementAt(0).Name.LocalName; //Gets the local (unqualified) part of the name
@@ -249,9 +249,9 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                     }
                                 }
                             }
-
+                            countTransactions++;
                         }
-                        else if (ele.Name == nsWfs + "Update" || ele.Name == nsWfs + "Delete")
+                        else if ((ele.Name == nsWfs + "Update" || ele.Name == nsWfs + "Delete") && !ele.IsEmpty)
                         {
                             // TODO: More here for Update and Delete
                             // Get the objecttype name
@@ -415,7 +415,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                     }
                                 }
                             }
-
+                            countTransactions++;
                         }
                     }
                     Console.WriteLine("Transactions Count:{0}", countTransactions);
@@ -427,7 +427,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 }
                 else
                 {
-                    retVal = docWfs;
+                    //retVal = docWfs;
                 }
             }
 
