@@ -1448,10 +1448,27 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                     }
                     httpWebResponse.Close();
 
-                    if (httpWebResponse.StatusCode == HttpStatusCode.OK)
+                    if (httpWebResponse.StatusCode == HttpStatusCode.OK && resultString.ToString().Contains("ExceptionReport")==false)
                     {
+                        //TODO en får alltid status 200 OK fra geoserver
+                        //En må sjekke om en har fått ExceptionReport
+                        //<?xml version="1.0" encoding="UTF-8"?>
+                        //<ows:ExceptionReport version="2.0.0"
+                        //  xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://localhost:8081/geoserver/schemas/ows/1.1.0/owsAll.xsd"
+                        //  xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                        //  <ows:Exception exceptionCode="0">
+                        //    <ows:ExceptionText>Error performing insert: Error inserting features
+                        //Error inserting features
+                        //ERROR: insert or update on table &amp;quot;navneenhet&amp;quot; violates foreign key constraint &amp;quot;navneenhet_navnetype_fkey&amp;quot;
+                        //  Detail: Key (navnetype)=() is not present in table &amp;quot;navnetype&amp;quot;.</ows:ExceptionText>
+                        //  </ows:Exception>
+                        //</ows:ExceptionReport>
+
+
+
                         sucsess = true;
                         XElement transactionResponseElement = XElement.Parse(resultString.ToString());
+                       
 
                         // TODO: It's not necesary to save the file here, but nice for debugging
                         string tempDir = System.Environment.GetEnvironmentVariable("TEMP");
@@ -1511,7 +1528,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                     }
                     else
                     {
-                        string message = "Geoserver WFS-T Transaction: ";
+                        string message = "Geoserver WFS-T Transaction feilet: ";
                         MessageBox.Show(message + "\r\n" + resultString.ToString(), "Transaction Status: " + httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription);
                         logger.Info("DoWfsTransactions: " + message + " Transaction Status:{0}" + "\r\n" + resultString.ToString(), httpWebResponse.StatusCode);
 
