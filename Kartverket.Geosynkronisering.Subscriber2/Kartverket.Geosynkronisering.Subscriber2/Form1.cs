@@ -678,6 +678,42 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
             CapabilitiesDataBuilder cdb = new CapabilitiesDataBuilder(_localDb, url);
             dgvProviderDataset.DataSource = cdb.ProviderDatasets;
+            IDictionary<string,IList<object>> visibleColumns = new Dictionary<string,IList<object>>();
+            IList<object> columnFormat = new List<object>();
+            columnFormat.Add("Datasett");
+            columnFormat.Add("1");
+            columnFormat.Add(DataGridViewAutoSizeColumnMode.AllCells);
+            visibleColumns.Add("name", columnFormat);
+            columnFormat = new List<object>();
+            columnFormat.Add("Applikasjonsskjema");
+            columnFormat.Add("2");
+            columnFormat.Add(DataGridViewAutoSizeColumnMode.ColumnHeader);
+            visibleColumns.Add("appschema", columnFormat);
+            columnFormat = new List<object>();
+            columnFormat.Add("Navnerom");
+            columnFormat.Add("3");
+            columnFormat.Add(DataGridViewAutoSizeColumnMode.Fill);
+            visibleColumns.Add("targetnamespace", columnFormat);                        
+            columnFormat = new List<object>();
+            columnFormat.Add("Datasett ID");
+            columnFormat.Add("4");
+            columnFormat.Add(DataGridViewAutoSizeColumnMode.ColumnHeader);
+            visibleColumns.Add("providerdatasetid", columnFormat);
+           
+            foreach (DataGridViewColumn col in dgvProviderDataset.Columns)
+            {
+                col.Visible = false;
+                if (visibleColumns.ContainsKey(col.Name.ToLower()))
+                {
+                    col.Visible = true;
+                    columnFormat = visibleColumns[col.Name.ToLower()];
+                    col.HeaderText = columnFormat[0].ToString();
+                    col.DisplayIndex = Convert.ToInt32(columnFormat[1]);
+                    col.AutoSizeMode = (DataGridViewAutoSizeColumnMode)columnFormat[2];
+                }
+            }
+            dgvProviderDataset.AutoSize = true;            
+            dgvProviderDataset.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;           
 
         }
 
