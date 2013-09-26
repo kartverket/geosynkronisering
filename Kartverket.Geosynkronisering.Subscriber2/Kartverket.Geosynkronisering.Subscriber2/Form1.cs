@@ -46,6 +46,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             {
                 txbUser.Cue = "Type username.";
                 txbPassword.Cue = "Type password.";
+               
 
                 // txtDataset is now updated by the cboDatasetName combobox
                 txtDataset.Visible = false;
@@ -675,7 +676,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         private void GetCapabilitiesXml(string url)
         {
 
-            CapabilitiesDataBuilder cdb = new CapabilitiesDataBuilder(url);
+            CapabilitiesDataBuilder cdb = new CapabilitiesDataBuilder(_localDb, url);
             dgvProviderDataset.DataSource = cdb.ProviderDatasets;
 
         }
@@ -2139,9 +2140,14 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             }
             else
             {
-                MessageBox.Show(this, "Saved selected datasets to the internal Database.", "Get Provider Datasets", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(this, "Saved selected datasets to the internal Database.", "Get Provider Datasets", MessageBoxButtons.OK, MessageBoxIcon.Information);               
                 dgDataset.DataSource = null;
+                _localDb.Connection.Close();
+                _localDb.Connection.Dispose();
+
+                _localDb = new geosyncDBEntities();
                 dgDataset.DataSource = _localDb.Dataset;
+                dgDataset.Refresh();
             }
         }
 

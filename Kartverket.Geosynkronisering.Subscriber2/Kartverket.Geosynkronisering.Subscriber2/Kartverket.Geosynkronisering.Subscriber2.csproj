@@ -103,9 +103,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Files\OrderChangelogRequest.xml" />
-    <Content Include="geosyncDB.sdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="geosyncDB.sdf" />
     <Content Include="Images\Geosynk.ico" />
     <Content Include="Images\Geosynk.png" />
     <EntityDeploy Include="GeoClientModel.edmx">

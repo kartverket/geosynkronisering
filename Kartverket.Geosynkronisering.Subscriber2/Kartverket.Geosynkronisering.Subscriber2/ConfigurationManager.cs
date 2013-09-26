@@ -23,6 +23,20 @@ namespace Kartverket.Geosynkronisering.Database
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
+        public static int GetNextDatasetID()
+        {
+            int max = 0;
+            using (geosyncDBEntities db = new geosyncDBEntities())
+            {                
+                var res = from d in db.Dataset select d.DatasetId;
+                foreach (Int32 id in res)
+                {
+                    if (max < id) max = id;
+                }               
+            }
+            return max+1;
+        }
+
         public static IList<Int32> GetListOfDatasetIDs()
         {
             using (geosyncDBEntities db = new geosyncDBEntities())
@@ -115,10 +129,11 @@ namespace Kartverket.Geosynkronisering.Database
             {
                 ds = (Dataset)DatasetBindingList[selected];
                 try
-                {                  
-                    db.Dataset.AddObject(ds);
-                    db.AcceptAllChanges();
+                {
+                    ds.DatasetId = DatasetsData.GetNextDatasetID();
+                    db.AddObject(ds.EntityKey.EntitySetName,ds);                                      
                     db.SaveChanges();
+                    db.AcceptAllChanges();   
                 }
                 catch (Exception ex)
                 {
@@ -135,7 +150,7 @@ namespace Kartverket.Geosynkronisering.Database
     public class CapabilitiesDataBuilder
     {
 
-        public CapabilitiesDataBuilder(string ProviderURL)
+        public CapabilitiesDataBuilder(geosyncDBEntities db, string ProviderURL)
         {
             WebFeatureServiceReplicationPortClient client = new WebFeatureServiceReplicationPortClient();
             client.Endpoint.Address = new System.ServiceModel.EndpointAddress(ProviderURL);
@@ -144,14 +159,14 @@ namespace Kartverket.Geosynkronisering.Database
 
             REP_CapabilitiesType rootCapabilities = client.GetCapabilities(req);
             
-            ReadGetCapabilities(rootCapabilities);
+            ReadGetCapabilities(db, rootCapabilities);
         }
 
         
         private IBindingList m_DatasetBindingList;
 
 
-        private void ReadGetCapabilities(Kartverket.GeosyncWCF.REP_CapabilitiesType rootCapabilities)
+        private void ReadGetCapabilities(geosyncDBEntities db, Kartverket.GeosyncWCF.REP_CapabilitiesType rootCapabilities)
         {
             //Build Cababilities.XML
             //ServiceIndentification
@@ -159,7 +174,9 @@ namespace Kartverket.Geosynkronisering.Database
             m_DatasetBindingList = new BindingList<Dataset>();
             foreach (GeosyncWCF.DatasetType dst in rootCapabilities.datasets)
             {
-                ds = new Dataset();                
+                ds = db.CreateObject<Dataset>();
+                ds.EntityKey = db.CreateEntityKey("Dataset", ds);
+                
                 ds.ProviderDatasetId = Convert.ToInt32(dst.datasetId);
                 ds.Name = dst.name;
                 GeosyncWCF.DomainType dt = GetConstraint("CountDefault", rootCapabilities.OperationsMetadata.Constraint);       
@@ -180,7 +197,7 @@ namespace Kartverket.Geosynkronisering.Database
         private string GetPostURL(GeosyncWCF.DCP[] dcps)
         {
             GeosyncWCF.DCP dcp = dcps[0];
-             GeosyncWCF.RequestMethodType postReq = null;
+            GeosyncWCF.RequestMethodType postReq = null;
             int index = 0;
             foreach ( GeosyncWCF.ItemsChoiceType ict in dcp.Item.ItemsElementName)
             { 
