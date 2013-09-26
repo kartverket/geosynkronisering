@@ -682,6 +682,7 @@
             this.dgvProviderDataset.Name = "dgvProviderDataset";
             this.dgvProviderDataset.Size = new System.Drawing.Size(858, 166);
             this.dgvProviderDataset.TabIndex = 18;
+            this.dgvProviderDataset.SelectionChanged += new System.EventHandler(this.dgvProviderDataset_SelectionChanged);
             // 
             // tableLayoutPanel8
             // 
@@ -699,6 +700,7 @@
             // 
             // btnAddSelected
             // 
+            this.btnAddSelected.Enabled = false;
             this.btnAddSelected.Location = new System.Drawing.Point(3, 3);
             this.btnAddSelected.Name = "btnAddSelected";
             this.btnAddSelected.Size = new System.Drawing.Size(86, 23);
@@ -712,7 +714,7 @@
             this.tableLayoutPanel9.ColumnCount = 3;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82.26744F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.73256F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 351F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 358F));
             this.tableLayoutPanel9.Controls.Add(this.txbUser, 0, 0);
             this.tableLayoutPanel9.Controls.Add(this.txbPassword, 2, 0);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -739,16 +741,16 @@
             this.txbUser.Dock = System.Windows.Forms.DockStyle.Top;
             this.txbUser.Location = new System.Drawing.Point(3, 3);
             this.txbUser.Name = "txbUser";
-            this.txbUser.Size = new System.Drawing.Size(259, 20);
+            this.txbUser.Size = new System.Drawing.Size(253, 20);
             this.txbUser.TabIndex = 0;
             // 
             // txbPassword
             // 
             this.txbPassword.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txbPassword.Location = new System.Drawing.Point(325, 3);
+            this.txbPassword.Location = new System.Drawing.Point(318, 3);
             this.txbPassword.Name = "txbPassword";
             this.txbPassword.PasswordChar = '*';
-            this.txbPassword.Size = new System.Drawing.Size(346, 20);
+            this.txbPassword.Size = new System.Drawing.Size(353, 20);
             this.txbPassword.TabIndex = 1;
             this.txbPassword.UseSystemPasswordChar = true;
             // 

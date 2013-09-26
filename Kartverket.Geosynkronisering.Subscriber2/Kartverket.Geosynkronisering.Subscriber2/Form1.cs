@@ -231,9 +231,10 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
         private void btnGetCapabilities_Click(object sender, EventArgs e)
         {
-            var dataset = (from d in _localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
-            string Url = dataset.SyncronizationUrl;
+            //var dataset = (from d in _localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
+            string Url = txbProviderURL.Text;
             GetCapabilitiesXml(Url);
+            btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
 
         }
 
@@ -2185,6 +2186,11 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 dgDataset.DataSource = _localDb.Dataset;
                 dgDataset.Refresh();
             }
+        }
+
+        private void dgvProviderDataset_SelectionChanged(object sender, EventArgs e)
+        {
+            btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
         }
 
 
