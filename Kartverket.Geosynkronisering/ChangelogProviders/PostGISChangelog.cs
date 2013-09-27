@@ -390,6 +390,13 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 //Update attributes in chlogf:TransactionCollection
                 UpdateRootAttributes(changeLog, counter, startChangeId, endChangeId);
 
+                if (!CheckChangelogHasFeatures(changeLog))
+                {
+                    System.Exception exp = new System.Exception("CheckChangelogHasFeatures found 0 features");
+                    logger.ErrorException("CheckChangelogHasFeatures found 0 features", exp);
+                    throw exp;
+                }
+
                 //store changelog to file
                 changeLog.Save(changeLogFileName);
             }
@@ -778,7 +785,22 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             } 
         }
 
+        
+        private bool CheckChangelogHasFeatures( XElement changeLog )
+        {
+            var reader = changeLog.CreateReader();
+            XmlNamespaceManager manager = new XmlNamespaceManager(reader.NameTable);
+            manager.AddNamespace("gml", "http://www.opengis.net/gml/3.2");
+            //Search recursively for first occurence of attribute gml:id 
+            XElement element = changeLog.XPathSelectElement("//*[@gml:id or @typeName][1]", manager );
+            if ( element == null)
+            {
+                return false;
+            }
 
+            return true;
+        }
+        
 
         #endregion
 
