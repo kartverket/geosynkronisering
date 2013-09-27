@@ -68,7 +68,113 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             return endChangeId.ToString();
         }
 
+        public OrderChangelog GenerateInitialChangelog(int datasetId)
+        {
+            int startIndex = 1; // StartIndex always 1 on initial changelog
+            int endIndex = Convert.ToInt32(GetLastIndex(datasetId));
+            int count = 1000; // TODO: Get from dataset table
+            logger.Info("GenerateInitialChangelog START");
+            StoredChangelog ldbo = new StoredChangelog();
+            ldbo.Stored = true;
+            ldbo.Status = "started";
+            ldbo.StartIndex = startIndex;                      
 
+            ldbo.DatasetId = datasetId;
+            ldbo.DateCreated = DateTime.Now;
+
+            //TODO make filter 
+            //TODO check if similar stored changelog is already done
+
+            // Store changelog info in database
+            p_db.StoredChangelogs.AddObject(ldbo);
+            p_db.SaveChanges();
+
+            OrderChangelog resp = new OrderChangelog();
+            resp.changelogId = ldbo.ChangelogId.ToString();
+
+            //New thread and do the work....
+            // We're coming back to the thread handling later...
+            //string sourceFileName = "Changelogfiles/41_changelog.xml";
+
+            // Generate unique filename
+            string destFileName = Guid.NewGuid().ToString();
+
+            //System.IO.File.Copy(Utils.BaseVirtualAppPath + sourceFileName, Utils.BaseVirtualAppPath + destFileName);
+            string dbConnectInfo = Database.DatasetsData.DatasetConnection(datasetId);
+            string wfsURL = Database.DatasetsData.TransformationConnection(datasetId);
+            string destPath = System.IO.Path.Combine(Utils.BaseVirtualAppPath, destFileName);
+            System.IO.Directory.CreateDirectory(destPath);
+            // Loop and create xml files
+            int i = 1;
+            int test = Convert.ToInt32(Math.Ceiling((double)endIndex / count));
+            while (i++ <= 1)//Convert.ToInt32(Math.Ceiling((double)endIndex/count)))
+            {                
+                string partFileName = DateTime.Now.Ticks + ".xml";
+
+                string fullPathWithFile = System.IO.Path.Combine(destPath, partFileName);
+                MakeChangeLog(startIndex, count, dbConnectInfo, wfsURL, fullPathWithFile, datasetId);
+                startIndex += count;
+                endIndex = Convert.ToInt32(GetLastIndex(datasetId));
+            }           
+
+            // Save endIndex to database
+            ldbo.EndIndex = endIndex;
+            p_db.SaveChanges();
+
+            // New code to handle FTP download
+
+            changeLogHandler chgLogHandler = new changeLogHandler(ldbo, p_db, logger);
+            string inFile = "";
+            string zipFile = "";
+            try
+            {
+                inFile = destPath;
+                zipFile = destFileName + ".zip";
+                chgLogHandler.createZipFileFromFolder(inFile, zipFile, destFileName);
+                Common.FileTransferHandler ftpTool = new Common.FileTransferHandler();
+                string tmpzipFile = Path.Combine(System.IO.Path.GetTempPath(), zipFile);
+                logger.Info(string.Format("Upload of file {0} started", tmpzipFile));
+                ldbo.Status = "Started";
+                p_db.SaveChanges();
+                // chgLogHandler.UploadFileToFtp(zipFile, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpServer, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpUser, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpPassword);
+                if (!ftpTool.UploadFileToFtp(tmpzipFile, Database.ServerConfigData.FTPUrl(), Database.ServerConfigData.FTPUser(), Database.ServerConfigData.FTPPwd())) throw new Exception("Could not upload file to FTPServer!");
+                ldbo.Status = "Finished";
+                p_db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException(string.Format("Failed to create or upload file {0}", zipFile), ex);
+                throw ex;
+            }
+
+            try
+            {
+                string downLoadUri = string.Format(@"ftp://{0}:{1}@{2}/{3}", Database.ServerConfigData.FTPUser(), Database.ServerConfigData.FTPPwd(), Database.ServerConfigData.FTPUrl(), destFileName);
+
+                ldbo.DownloadUri = downLoadUri;
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException(string.Format("Failed to create or upload file {0}", zipFile), ex);
+                throw ex;
+            }
+
+
+            try
+            {
+                p_db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException(string.Format("Failed on SaveChanges, Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog startIndex:{0} count:{1} changelogId:{2}", startIndex, count, ldbo.ChangelogId), ex);
+                throw ex;
+            }
+            logger.Info("Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog" + " startIndex:{0}" + " count:{1}" + " changelogId:{2}", startIndex, count, ldbo.ChangelogId);
+
+            logger.Info("GenerateInitialChangelog END");
+            return resp;
+
+        }
 
         public OrderChangelog OrderChangelog(int startIndex, int count, string todo_filter, int datasetId)
         {
@@ -154,13 +260,12 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
             logger.Info("OrderChangelog END");
             return resp;
-
         }
 
         //Build changelog responsefile
         private void MakeChangeLog(int startChangeId, int count, string dbConnectInfo, string wfsUrl, string changeLogFileName, int datasetId )
         {
-            logger.Info("MakeChangeLog START");
+            logger.Info("MakeChangeLog START");           
             try
             {
                 //Connect to postgres database
@@ -338,7 +443,11 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         private void AddInsertsToChangeLog(List<string> insertsGmlIds, ref int transCounter, string wfsUrl, XElement changeLog, int datasetId )
         {
             List<string> typeNames = new List<string>();
-            XElement getFeatureResponse = GetFeatureCollectionFromWFS(wfsUrl, ref typeNames, insertsGmlIds, datasetId);
+
+            ChangelogWFS wfs = new ChangelogWFS();
+
+            //XElement getFeatureResponse = GetFeatureCollectionFromWFS(wfsUrl, ref typeNames, insertsGmlIds, datasetId);
+            XElement getFeatureResponse = wfs.GetFeatureCollectionFromWFS(wfsUrl, ref typeNames, insertsGmlIds, datasetId);
 
             //Build inserts for each typename
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
@@ -422,7 +531,8 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         private void AddUpdatesToChangeLog(List<string> updatesGmlIds, ref int transCounter, string wfsUrl, XElement changeLog, int datasetId )
         {
             List<string> typeNames = new List<string>();
-            XElement getFeatureResponse = GetFeatureCollectionFromWFS(wfsUrl, ref typeNames, updatesGmlIds, datasetId);
+            ChangelogWFS wfs = new ChangelogWFS();
+            XElement getFeatureResponse = wfs.GetFeatureCollectionFromWFS(wfsUrl, ref typeNames, updatesGmlIds, datasetId);
 
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
             XNamespace nsChlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg";
@@ -517,7 +627,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             return changelogRoot;
         }
 
-        private XElement GetFeatureCollectionFromWFS(string wfsUrl, ref List<string> typeNames, List<string> gmlIds, int datasetId )
+        /*private XElement GetFeatureCollectionFromWFS(string wfsUrl, ref List<string> typeNames, List<string> gmlIds, int datasetId )
         {
             logger.Info("GetFeatureCollectionFromWFS START");
             XNamespace nsApp = Database.DatasetsData.TargetNamespace(datasetId);
@@ -611,7 +721,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 wfsGetFeatureDocument.Element(nsWfs + "GetFeature").Add(new XElement(nsWfs + "Query", new XAttribute("typeNames", "app:"+typename), filterElement));
             }
-        }
+        }*/
 
         private void PrepareChangeLogQuery(Npgsql.NpgsqlConnection conn, ref Npgsql.NpgsqlCommand command, int startChangeId, Int64 endChangeId, int datasetId)
         {
@@ -1369,6 +1479,20 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             {
                 m_zipFile = Path.Combine(m_workingDirectory, zipFile);
                 zip.AddFile(infile, @"\");
+
+                zip.Comment = "Changelog created " + DateTime.Now.ToString("G");
+                zip.Save(m_zipFile);
+                zip.Dispose();
+            }
+            return true;
+        }
+
+        public bool createZipFileFromFolder(string infolder, string zipFile, string toFolder)
+        {
+            using (ZipFile zip = new ZipFile())
+            {
+                m_zipFile = Path.Combine(m_workingDirectory, zipFile);
+                zip.AddDirectory(infolder, @"\"+toFolder+@"\");
 
                 zip.Comment = "Changelog created " + DateTime.Now.ToString("G");
                 zip.Save(m_zipFile);
