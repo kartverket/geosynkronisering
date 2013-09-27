@@ -44,8 +44,10 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         {
             try
             {
+#region GetCapabilities - Hent datasett fra tilbyder.
                 txbUser.Cue = "Type username.";
                 txbPassword.Cue = "Type password.";
+#endregion
                
 
                 // txtDataset is now updated by the cboDatasetName combobox
@@ -227,15 +229,6 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 //Properties.Settings.Default.Save();
                 //txbSubscrLastindex.Text = Properties.Settings.Default.lastChangeIndex.ToString();
             }
-        }
-
-        private void btnGetCapabilities_Click(object sender, EventArgs e)
-        {
-            //var dataset = (from d in _localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
-            string Url = txbProviderURL.Text;
-            GetCapabilitiesXml(Url);
-            btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
-
         }
 
         private void btnDescribeFeaturetype_Click(object sender, EventArgs e)
@@ -2166,6 +2159,17 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
         #endregion
 
+
+        #region Get Capabilities - Hente datasett fra tilbyder
+
+        private void btnGetCapabilities_Click(object sender, EventArgs e)
+        {
+            //var dataset = (from d in _localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
+            string Url = txbProviderURL.Text;
+            GetCapabilitiesXml(Url);
+            btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
+
+        }
         private void btnGetProviderDatasets_Click(object sender, EventArgs e)
         {
             try
@@ -2210,11 +2214,12 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             }
         }
 
+        
         private void dgvProviderDataset_SelectionChanged(object sender, EventArgs e)
         {
             btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
         }
-
+        #endregion
 
     }
 
