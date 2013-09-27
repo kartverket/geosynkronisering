@@ -131,6 +131,8 @@ namespace Kartverket.Geosynkronisering.Database
                 try
                 {
                     ds.DatasetId = DatasetsData.GetNextDatasetID();
+                    ds.LastIndex = 0;
+                    ds.ClientWfsUrl = "http://localhost:8081/geoserver/wfs?"; //TODO: Flytt til config
                     db.AddObject(ds.EntityKey.EntitySetName,ds);                                      
                     db.SaveChanges();
                     db.AcceptAllChanges();   
@@ -205,7 +207,12 @@ namespace Kartverket.Geosynkronisering.Database
                 index++;
             }
 
-            if (postReq != null) return postReq.href;
+            if (postReq != null)
+            {
+                string href = postReq.href;
+                if (postReq.href.EndsWith("/")) href = postReq.href.Remove(postReq.href.LastIndexOf("/"));               
+                return href;
+            }
             return "";
         }
 
