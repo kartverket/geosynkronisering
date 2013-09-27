@@ -81,12 +81,13 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                     }
                 }
 
+                // list All attributeMappings that contains <sourceExpression>, replace all " with blank
                 foreach (var attrMapping in attributeMappings.ToList())
                 {
                     //Console.WriteLine(attrMapping);
                     if (attrMapping.Element("sourceExpression").Element("OCQL").Value.StartsWith("\"") && attrMapping.Element("sourceExpression").Element("OCQL").Value.EndsWith("\""))
                     {
-                        // Replace all " with blank
+                        // Replace all " with blank, e.g "høyde" --> høyde
                         string newVal = attrMapping.Element("sourceExpression").Element("OCQL").Value;
                         newVal = newVal.Replace("\"", "");
 
@@ -96,13 +97,29 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
                 _attributeMappings = attributeMappings;
 
-                // Special handling geometries
-                _attributeMappingsGeom =
+                //
+                // Special handling geometries, they conaint <targetAttributeNode>
+                //
+                var attributeMappingsGeom =
                     from item in doc.Descendants("AttributeMapping")
                     where (from m in item.Elements("sourceExpression")
                            where (from n in item.Elements("targetAttributeNode") select n).Any() == true
                            select m).Any()
                     select item;
+                // list All attributeMappingsGeom that contains <sourceExpression>, replace all " with blank
+                foreach (var attrMappingGeo in attributeMappingsGeom.ToList())
+                {
+                    //Console.WriteLine(attrMapping);
+                    if (attrMappingGeo.Element("sourceExpression").Element("OCQL").Value.StartsWith("\"") && attrMappingGeo.Element("sourceExpression").Element("OCQL").Value.EndsWith("\""))
+                    {
+                        // Replace all " with blank, e.g "Område" --> område
+                        string newVal = attrMappingGeo.Element("sourceExpression").Element("OCQL").Value;
+                        newVal = newVal.Replace("\"", "");
+
+                        attrMappingGeo.Element("sourceExpression").Element("OCQL").Value = newVal;
+                    }
+                }
+                _attributeMappingsGeom = attributeMappingsGeom;
 
 
                 setXmlMappingFile = true;
@@ -146,7 +163,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 {
 
                     // Namespace stuff
-                    XNamespace nAr5 = _namespaceUri; // "http://skjema.geonorge.no/SOSI/produktspesifikasjon/Arealressurs/4.5";
+                    XNamespace nsApp = _namespaceUri; // "http://skjema.geonorge.no/SOSI/produktspesifikasjon/Arealressurs/4.5";
                     XmlNamespaceManager mgr = new XmlNamespaceManager(new NameTable());
                     mgr.AddNamespace(_namespacePrefix, _namespaceUri);
                     XNamespace nsWfs = "http://www.opengis.net/wfs/2.0"; // "wfs";
@@ -163,7 +180,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                             //string featureType = "";
                             //XName xNameFeaturetype = null;
                             Console.WriteLine(ele.Name);
-                            
+
                             // Get the objecttype name
                             Console.WriteLine(ele.Elements().ElementAt(0).Name.LocalName);
                             string featureType = ele.Elements().ElementAt(0).Name.LocalName; //Gets the local (unqualified) part of the name
@@ -210,11 +227,9 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                             //Console.WriteLine("XElement found: {0}", xEleTargetAttrFirstNode);
                                             //Console.WriteLine("xEleTargetAttr.Value:{0}", xEleTargetAttr.Value);
 
-                                            //xEleTargetAttrFirstNode.ReplaceWith(new XElement(nAr5 + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value, xEleTargetAttr.Value));
-
                                             // Create a new element where we use the element name from the mapping file
-                                            // Add it before the first node, than remove the current node
-                                            XElement newEle = new XElement(nAr5 + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value, xEleTargetAttr.Value);
+                                            // Add it before the first node, then remove the current node
+                                            XElement newEle = new XElement(nsApp + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value, xEleTargetAttr.Value);
                                             xEleTargetAttrFirstNode.AddBeforeSelf(newEle);
                                             xEleTargetAttr.Remove();
 
@@ -224,7 +239,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
                                 foreach (var xEleAttributeMapping in _attributeMappingsGeom)
                                 {
-                                    // Special handling for geoms, e.g. Område should be omraade, chnage the xelement name
+                                    // Special handling for geoms, e.g. Område should be omraade, change the xelement name
                                     string targetAttrVal = xEleAttributeMapping.Element("targetAttribute").Value;
                                     string[] targetAttrArr = targetAttrVal.Split('/');
 
@@ -241,10 +256,10 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                                 xEleAttributeMapping.Element("sourceExpression")
                                                           .Element("OCQL")
                                                           .Value;
-                                            // Replace all " with blank (æ,ø,å)
-                                            strNewContent = strNewContent.Replace("\"", "");
-                                            
-                                            xEleTargetAttrFirstNode.Name = nAr5 + strNewContent;
+
+                                            //strNewContent = strNewContent.Replace("\"", ""); // Replace all " with blank (æ,ø,å)
+
+                                            xEleTargetAttrFirstNode.Name = nsApp + strNewContent;
                                         }
                                     }
                                 }
@@ -308,13 +323,17 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                             if (i == 1 && valueReferencesFilter.Any())
                                             {
                                                 // Filter part - wfs:Update and wfs:Delete
-                                                string[] targetAttrMinusNamespaceArr = targetAttrVal.Split('/');
-                                                for (int j = 1; j < targetAttrArr.Length; j++)
-                                                {
-                                                    // mask of namespace prefix
-                                                    targetAttrMinusNamespaceArr[j] = targetAttrArr[j].Replace(_namespacePrefix + ":", "");
-                                                }
-                                                string targetAttrMinusNamespacePrefix = String.Join("/", targetAttrMinusNamespaceArr, 1, targetAttrMinusNamespaceArr.Length - 1);
+
+                                                // mask of namespace prefix
+                                                string targetAttrMinusNamespacePrefix = RemoveNamespacePrefixOfXPathExpression(targetAttr, _namespacePrefix);
+
+                                                //string[] targetAttrMinusNamespaceArr = targetAttrVal.Split('/');
+                                                //for (int j = 1; j < targetAttrArr.Length; j++)
+                                                //{
+                                                //    // mask of namespace prefix
+                                                //    targetAttrMinusNamespaceArr[j] = targetAttrArr[j].Replace(_namespacePrefix + ":", "");
+                                                //}
+                                                //string targetAttrMinusNamespacePrefix = String.Join("/", targetAttrMinusNamespaceArr, 1, targetAttrMinusNamespaceArr.Length - 1);
 
                                                 if (elePropOrFilter.Value == targetAttrMinusNamespacePrefix)
                                                 {
@@ -336,22 +355,37 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                                 {
                                                     XElement xEleTargetAttrFirstNode = elePropOrFilter.XPathSelectElement(targetAttrFirstNode, mgr);
 
-                                                    // Create a new element where we use the element name from the mapping file
-                                                    // Add it before the first node, than remove the current node
+                                                    // Create a new element where we use the element name from the mapping file.
+                                                    // Add it before the Property node, then remove the current Value node.
+                                                    // e.g. xEleTargetAttrFirstNode is here <app:identifikasjon>, xEleTargetAttr is <app:lokalId>:
+                                                    //  <wfs:Property>
+                                                    //    <wfs:ValueReference>identifikasjon</wfs:ValueReference>
+                                                    //    <wfs:Value>
+                                                    //      <app:identifikasjon>
+                                                    //        <app:Identifikasjon>
+                                                    //          <app:lokalId>4eb2d1e4-bf9f-45f2-875f-b9707dd9f885</app:lokalId>
+                                                    //          <app:navnerom>no.skogoglandskap.ar5.ArealressursFlate</app:navnerom>
+                                                    //          <app:versjonId>1.0</app:versjonId>
+                                                    //        </app:Identifikasjon>
+                                                    //      </app:identifikasjon>
+                                                    //    </wfs:Value>
+                                                    //  </wfs:Property>
 
-                                                    //XElement newEle = new XElement(nAr5 + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value, xEleTargetAttr.Value);
-                                                    //xEleTargetAttrFirstNode.AddBeforeSelf(newEle);
-
+                                                    // namespace mangler på ValueReference. Legger vi på det, så fjernes de med ett nivå i "ValueReference for removal".
+                                                    // løsning er å oppdatere det på slutten.
                                                     XElement newEle = new XElement(nsWfs + "Property",
                                                         new XElement("ValueReference", xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value),
-                                                        new XElement(nAr5 + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value, xEleTargetAttr.Value));
-                                                    xEleTargetAttrFirstNode.Parent.Parent.AddBeforeSelf(newEle);
+                                                        new XElement(nsWfs + "Value",
+                                                        new XElement(nsApp + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value, xEleTargetAttr.Value)));
+
+                                                    //XElement newEle = new XElement(nsWfs + "Property",
+                                                    //    new XElement("ValueReference", xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value),
+                                                    //    new XElement(nApp + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value, xEleTargetAttr.Value));
+
+                                                    xEleTargetAttrFirstNode.Parent.Parent.AddBeforeSelf(newEle); //before node Property.Value
                                                     xEleTargetAttr.Remove();
 
-                                                    //xEleTargetAttrFirstNode.Remove();
-                                                    //xEleTargetAttr.RemoveAll();
-
-                                                    // Mark ValueReference for removal
+                                                    // Mark <ValueReference> for removal
                                                     if (targetAttrArr.Length > 0) //if (targetAttrArr.Length > 2)
                                                     {
                                                         valueReferenceToRemove.Add(targetAttrFirstNode);
@@ -406,15 +440,28 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                             {
                                                 //xEleAttributeMapping
                                                 string strNewContent =
-                                              xEleAttributeMapping.Element("sourceExpression")
+                                                    xEleAttributeMapping.Element("sourceExpression")
                                                                   .Element("OCQL")
                                                                   .Value;
+                                                //strNewContent = strNewContent.Replace("\"", ""); // Replace all " with blank (æ,ø,å)
                                                 valRef.ReplaceNodes(strNewContent);
                                             }
                                         }
                                     }
                                 }
                             }
+
+                            if (ele.Name == nsWfs + "Update")
+                            {
+                                // Add eventual missing namespace on ValueReference
+                                var valueReferences = ele.DescendantsAndSelf("ValueReference");
+                                foreach (var valRef in valueReferences.ToList())
+                                {
+                                    string strNewContent = valRef.Name.ToString();
+                                    valRef.Name = nsWfs + strNewContent;
+                                }
+                            }
+
                             countTransactions++;
                         }
                     }
@@ -450,10 +497,11 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 foreach (var attrMapping in attributeMappings.ToList())
                 {
                     XElement xEleTargetAttribute = attrMapping.Element("targetAttribute");
+
                     // replace namespace prefix in mapping with the prefix found in the source data
                     string originalTargetAttr = xEleTargetAttribute.Value;
-                    var targetAttrArr = TargetAttrArrReplaceNamespacePrefix(originalTargetAttr);
-                    string targetAttr = String.Join("/", targetAttrArr);
+                    string targetAttr = ReplaceNamespacePrefixOfXPathExpression(originalTargetAttr, _namespacePrefixMapping, _namespacePrefix);
+
                     xEleTargetAttribute.ReplaceNodes(targetAttr);
                 }
             }
@@ -465,21 +513,33 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         }
 
         /// <summary>
-        /// Replace namespace prefix for an array of targetAttribute strings
+        /// Replace namespace prefix for an XPath expression.
+        ///  (e.g. ar5:ArealressursFlate/ar5:identifikasjon/ar5:Identifikasjon/ar5:lokalId with app:ArealressursFlate/app:identifikasjon/app:Identifikasjon/app:lokalId)
         /// </summary>
-        /// <param name="originalTargetAttr">The original target attribute string array.</param>
-        /// <returns> the modified target attribute string array </returns>
-        private string[] TargetAttrArrReplaceNamespacePrefix(string originalTargetAttr)
+        /// <param name="originalXPathExpression"></param>
+        /// <param name="oldNamespacePrefix">The old namespace prefix.</param>
+        /// <param name="newNamespacePrefix">The new namespace prefix.</param>
+        /// <returns>
+        /// the modified XPath expression string
+        /// </returns>
+        private string ReplaceNamespacePrefixOfXPathExpression(string originalXPathExpression, string oldNamespacePrefix, string newNamespacePrefix)
         {
             try
             {
-                string[] originalTargetAttrArr = originalTargetAttr.Split('/');
+                string[] originalTargetAttrArr = originalXPathExpression.Split('/');
                 string[] targetAttrArr = originalTargetAttrArr;
+                string oldNamespacePrefixWithColon = oldNamespacePrefix + ":";
+                string newNamespacePrefixWithColon = "";
+                if (!string.IsNullOrEmpty(newNamespacePrefix))
+                {
+                    newNamespacePrefixWithColon = newNamespacePrefix + ":";
+                }
+
                 for (int i = 0; i < originalTargetAttrArr.Length; i++)
                 {
-                    targetAttrArr[i] = originalTargetAttrArr[i].Replace(_namespacePrefixMapping + ":", _namespacePrefix + ":");
+                    targetAttrArr[i] = originalTargetAttrArr[i].Replace(oldNamespacePrefixWithColon, newNamespacePrefixWithColon);
                 }
-                return targetAttrArr;
+                return String.Join("/", targetAttrArr);
             }
             catch (Exception ex)
             {
@@ -487,6 +547,18 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 throw;
             }
         }
+
+        /// <summary>
+        /// Removes the namespace prefix of an XPath expression.
+        /// </summary>
+        /// <param name="originalXPathExpression">The original x path expression.</param>
+        /// <param name="namespacePrefix">The namespace prefix.</param>
+        /// <returns> the modified XPath expression </returns>
+        private string RemoveNamespacePrefixOfXPathExpression(string originalXPathExpression, string namespacePrefix)
+        {
+            return ReplaceNamespacePrefixOfXPathExpression(originalXPathExpression, namespacePrefix, "");
+        }
+
 
         public bool SetCsvMappingFiles(List<string> csvMappingFiles)
         {
