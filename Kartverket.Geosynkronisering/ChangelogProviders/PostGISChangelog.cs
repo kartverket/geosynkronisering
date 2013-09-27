@@ -176,6 +176,78 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         }
 
+        public OrderChangelog OrderChangelog2(int startIndex, int count, string todo_filter, int datasetId)
+        {
+            ChangelogManager chlmng = new ChangelogManager(p_db);
+            return chlmng.CreateChangeLog(startIndex, count, datasetId);
+            
+        }
+
+        public bool CreateDataExtraction(int startIndex, int count, string todo_filter, int datasetId, int ChangelogID)
+        {
+            // Generate unique filename
+            string destFileName = Guid.NewGuid().ToString();
+
+            //System.IO.File.Copy(Utils.BaseVirtualAppPath + sourceFileName, Utils.BaseVirtualAppPath + destFileName);
+            string dbConnectInfo = Database.DatasetsData.DatasetConnection(datasetId);
+            string wfsURL = Database.DatasetsData.TransformationConnection(datasetId);
+            MakeChangeLog(startIndex, count, dbConnectInfo, wfsURL, Utils.BaseVirtualAppPath + destFileName + ".xml", datasetId);
+
+            // New code to handle FTP download
+            ChangelogManager chlmng = new ChangelogManager(p_db);
+
+            //TODO:HLU ChangelogHandler IS FTP- DO not need LDBO. Could be handled here.
+            StoredChangelog ldbo = chlmng.GetStoredChangelogRow(ChangelogID);
+            changeLogHandler chgLogHandler = new changeLogHandler(ldbo, p_db, logger);
+            string inFile = "";
+            string zipFile = "";
+            try
+            {
+                inFile = Utils.BaseVirtualAppPath + destFileName + ".xml";
+                zipFile = destFileName + ".zip";
+                chgLogHandler.createZipFile(inFile, zipFile);
+                Common.FileTransferHandler ftpTool = new Common.FileTransferHandler();
+                string tmpzipFile = Path.Combine(System.IO.Path.GetTempPath(), zipFile);
+                logger.Info(string.Format("Upload of file {0} started", tmpzipFile));
+                chlmng.SetStatus(ChangelogID, ChangelogStatusType.working);
+                // chgLogHandler.UploadFileToFtp(zipFile, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpServer, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpUser, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpPassword);
+                if (!ftpTool.UploadFileToFtp(tmpzipFile, Database.ServerConfigData.FTPUrl(), Database.ServerConfigData.FTPUser(), Database.ServerConfigData.FTPPwd())) throw new Exception("Could not upload file to FTPServer!");                
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException(string.Format("Failed to create or upload file {0}", zipFile), ex);
+                throw ex;
+            }
+
+            try
+            {
+                string downLoadUri = string.Format(@"ftp://{0}:{1}@{2}/{3}", Database.ServerConfigData.FTPUser(), Database.ServerConfigData.FTPPwd(), Database.ServerConfigData.FTPUrl(), destFileName);
+
+                ldbo.DownloadUri = downLoadUri;
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException(string.Format("Failed to create or upload file {0}", zipFile), ex);
+                throw ex;
+            }
+
+
+            try
+            {
+                chlmng.SetStatus(ChangelogID, ChangelogStatusType.finished);
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException(string.Format("Failed on SaveChanges, Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog startIndex:{0} count:{1} changelogId:{2}", startIndex, count, ldbo.ChangelogId), ex);
+                throw ex;
+            }
+            logger.Info("Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog" + " startIndex:{0}" + " count:{1}" + " changelogId:{2}", startIndex, count, ldbo.ChangelogId);
+
+            logger.Info("OrderChangelog END");
+            return true;
+        }
+
+
         public OrderChangelog OrderChangelog(int startIndex, int count, string todo_filter, int datasetId)
         {
             logger.Info("OrderChangelog START");
@@ -803,7 +875,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         
 
         #endregion
-
+      
     }
     #region changeLogHandler
     public class changeLogHandler

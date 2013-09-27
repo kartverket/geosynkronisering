@@ -176,6 +176,49 @@ namespace Kartverket.Geosynkronisering
             this.AcknowledgeChangelogDownloaded(changelogid);
         }
 
-        
+        public OrderChangelog CreateChangeLog(int startIndex, int count, int datasetId)
+        {            
+            StoredChangelog ldbo = new StoredChangelog();
+            ldbo.Stored = false;            
+            
+            ldbo.Status = ((string)System.Enum.GetName(typeof(Kartverket.GeosyncWCF.ChangelogStatusType),Kartverket.GeosyncWCF.ChangelogStatusType.started));
+            ldbo.StartIndex = startIndex;
+            ldbo.EndIndex = startIndex + count; //TODO fix
+
+            ldbo.DatasetId = datasetId;
+            ldbo.DateCreated = DateTime.Now;
+
+            //TODO make filter 
+            //TODO check if similar stored changelog is already done
+            db.StoredChangelogs.AddObject(ldbo);
+            db.SaveChanges();
+
+            OrderChangelog resp = new OrderChangelog();
+            resp.changelogId = ldbo.ChangelogId.ToString();
+            return resp;            
+        }
+
+        public StoredChangelog GetStoredChangelogRow(int changelogid)
+        {
+            var changelog = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c).First();
+            return changelog;
+        }
+
+        public bool SetStatus(int changelogid, Kartverket.GeosyncWCF.ChangelogStatusType status)
+        {
+            var changelog = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c).First();
+
+            changelog.Status = ((string)System.Enum.GetName(typeof(Kartverket.GeosyncWCF.ChangelogStatusType), status));
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return true;
+        }
+
     }
 }

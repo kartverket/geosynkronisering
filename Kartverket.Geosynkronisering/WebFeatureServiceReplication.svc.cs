@@ -9,6 +9,8 @@ using System.ServiceModel.Activation;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Linq;
+using NLog;
+
 
 namespace Kartverket.Geosynkronisering
 {
@@ -17,7 +19,7 @@ namespace Kartverket.Geosynkronisering
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "WebFeatureServiceReplication" in code, svc and config file together.
     public class WebFeatureServiceReplication : Kartverket.GeosyncWCF.WebFeatureServiceReplicationPort
     {
-
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
         public Kartverket.GeosyncWCF.REP_CapabilitiesType GetCapabilities(Kartverket.GeosyncWCF.GetCapabilitiesType1 getcapabilities1)
         {
 
@@ -131,6 +133,12 @@ namespace Kartverket.Geosynkronisering
         public Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelog(Kartverket.GeosyncWCF.ChangelogOrderType order)
         {
          
+            return OrderChangelogSync(order);
+            
+        }
+
+        private Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelogSync(Kartverket.GeosyncWCF.ChangelogOrderType order)
+        {
             int id = -1;
             int.TryParse(order.datasetId, out id);
             IChangelogProvider changelogprovider;
@@ -163,6 +171,170 @@ namespace Kartverket.Geosynkronisering
             return res;
             
         }
+
+
+        #region Asynchron handling of OrderChangeLog
+        private delegate Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelogAsync(Kartverket.GeosyncWCF.ChangelogOrderType order);
+
+        protected class ProcessState
+        {
+            private OrderChangelogAsync request;
+            private bool completed = false;
+            private string id;
+            private string msg;
+            private string tableName;
+            private string IDFld;
+            private string CompletedFld;
+            private string MessageFld;
+            private Kartverket.GeosyncWCF.ChangelogIdentificationType _Result;
+
+            public Kartverket.GeosyncWCF.ChangelogIdentificationType Result
+            {
+                get { return _Result; }
+                set { _Result = value; }
+            }
+
+            public ProcessState(string ID)
+            {
+                id = ID;
+                tableName = "processtatus";
+                IDFld = "processid";
+                CompletedFld = "completed";
+                MessageFld = "message";
+
+            }
+
+            public bool DeleteFromDB()
+            {
+                try
+                {
+                    //Implement db delete order.
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    logger.ErrorException(string.Concat("Feil ved sletting av record: ", ex.Message), ex);
+                    return false;
+                }
+
+            }
+
+            public bool UpdateDB()
+            {
+                try
+                {
+                    //Implement Update status
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    logger.ErrorException(string.Concat("Feil ved oppdatring av record: ", ex.Message), ex);
+                    return false;
+                }
+            }
+
+            public bool WriteToDB()
+            {
+                try
+                {
+                    //Implement write status
+                    IDictionary<string, object> fields = new Dictionary<string, object>();
+                    fields.Add(IDFld, id);
+                    fields.Add(CompletedFld, Convert.ToInt32(completed));
+                    fields.Add(MessageFld, msg);
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    logger.ErrorException(string.Concat("Feil ved skriving til db: ", ex.Message), ex);
+                    return false;
+                }
+
+
+
+            }
+
+            public bool ReadFromDB()
+            {
+
+                try
+                {
+                    //Implemnet read for db
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    logger.ErrorException(string.Concat("Feil ved lesing fra DB: ", ex.Message), ex);
+                    return false;
+                }
+
+            }
+
+
+            public string Message
+            {
+                get { return msg; }
+                set { msg = value; }
+            }
+
+            public string ID
+            {
+                get { return id; }
+                set { id = value; }
+            }
+
+            public OrderChangelogAsync Request
+            {
+                get { return request; }
+                set { request = value; }
+            }
+
+            public bool Completed
+            {
+                get { return completed; }
+                set { completed = value; }
+            }
+        }
+
+        private string OrderChangeLogAsync(Kartverket.GeosyncWCF.ChangelogOrderType order)
+        {
+
+            // Create the delegate.
+            string ID = "1"; //Bestillingsnummer
+            ProcessState state = new ProcessState(ID);
+            state.Message = "Startet";
+            state.Completed = false;
+
+            // Create the delegate.
+            OrderChangelogAsync caller = new OrderChangelogAsync(OrderChangelogSync);
+            state.Request = caller;
+            IAsyncResult result = caller.BeginInvoke(order, new AsyncCallback(CallbackProcessStatus), state);
+            return "#PROCESSID:" + ID;
+        }
+
+        private void CallbackProcessStatus(IAsyncResult ar)
+        {
+            // Retrieve the delegate.
+
+
+            ProcessState result = (ProcessState)ar.AsyncState;
+            OrderChangelogAsync caller = result.Request;
+            Kartverket.GeosyncWCF.ChangelogIdentificationType returnResult = caller.EndInvoke(ar);
+            string msg = "";
+            result.Result = returnResult;
+            result.Completed = true;
+
+            if (!result.UpdateDB())
+            {
+                logger.Error("Kunne ikke skrive status for prosessfil.");
+                result.Message = "#ERROR: Kunne ikke skrive status for prosessfil på land";
+            }
+
+        }
+
+        #endregion
 
 
         

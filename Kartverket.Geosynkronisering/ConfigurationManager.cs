@@ -347,7 +347,7 @@ namespace Kartverket.Geosynkronisering.Database
     public class StoredChangeLogIDData
     {
 
-
+       
         public static string Name(Int32 ChangelogID)
         {
             using (geosyncEntities db = new geosyncEntities())
