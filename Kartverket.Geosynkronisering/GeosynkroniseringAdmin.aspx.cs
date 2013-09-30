@@ -11,12 +11,56 @@ namespace Kartverket.Geosynkronisering
 {
     public partial class GeosynkroniseringAdmin : System.Web.UI.Page
     {
+        
+
         protected void Page_Load(object sender, EventArgs e)
         {
+          
+
 
         }
 
        
+
+        protected void ChangePage(object sender, CommandEventArgs e)
+        {
+            
+            switch (e.CommandName)
+            {
+                case "First":
+                    if (e.CommandArgument == "DL") vDataset.PageIndex = 0; else gwStoredChangeLogs.PageIndex = 0;
+                    break;
+
+                case "Prev":
+                    if (e.CommandArgument == "DL")
+                    {
+                        if (vDataset.PageIndex > 0) vDataset.PageIndex = vDataset.PageIndex - 1;
+                    }
+                    else
+                    {
+                        if (gwStoredChangeLogs.PageIndex > 0) gwStoredChangeLogs.PageIndex = gwStoredChangeLogs.PageIndex - 1;
+                    }
+                    break;
+
+                case "Next":
+                    if (e.CommandArgument == "DL")
+                    {
+                        if (vDataset.PageIndex < vDataset.PageCount - 1) vDataset.PageIndex = vDataset.PageIndex + 1;
+                    }
+                    else
+                    {
+                        if (gwStoredChangeLogs.PageIndex < gwStoredChangeLogs.PageCount - 1) gwStoredChangeLogs.PageIndex = gwStoredChangeLogs.PageIndex + 1;
+                    }
+                    break;
+
+                case "Last":
+                    if (e.CommandArgument == "DL") vDataset.PageIndex = vDataset.PageCount - 1; else gwStoredChangeLogs.PageIndex = gwStoredChangeLogs.PageCount - 1;
+                    break;
+
+            }       
+            
+        }
+
 
         protected void lbtn_Click(object sender, EventArgs e)
         {
@@ -72,6 +116,26 @@ namespace Kartverket.Geosynkronisering
             cdb.SerializeObject(cbt, "C:\\temp\\getcapababilities.xml");
             
             
+        }
+
+        protected void vDataset_PreRender(object sender, EventArgs e)
+        {
+            DetailsView dw = (DetailsView)sender;
+            if (dw != null)
+            {
+                DetailsViewRow pagerRow = dw.BottomPagerRow;
+                if (pagerRow != null)
+                {
+                    pagerRow.Visible = true;                  
+                    //foreach (Control ctrl in pagerRow.Controls)
+                    //{
+                    //    ctrl.Visible = true;
+                    //    (ctrl as LinkButton).Enabled = true;
+                    //}
+                }
+
+            }
+
         }
 
       

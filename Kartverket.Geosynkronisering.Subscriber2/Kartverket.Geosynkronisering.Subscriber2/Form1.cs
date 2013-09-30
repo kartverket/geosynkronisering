@@ -19,6 +19,7 @@ using Ionic.Zip;
 using System.Threading;
 using SaveOptions = System.Xml.Linq.SaveOptions;
 using Kartverket.GeosyncWCF;
+using Kartverket.Geosynkronisering.Database;
 
 namespace Kartverket.Geosynkronisering.Subscriber2
 {
@@ -43,8 +44,14 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         {
             try
             {
+#region GetCapabilities - Hent datasett fra tilbyder.
+                txbUser.Cue = "Type username.";
+                txbPassword.Cue = "Type password.";
+#endregion
+               
 
-
+                // txtDataset is now updated by the cboDatasetName combobox
+                txtDataset.Visible = false;
                 txtDataset.Text = Properties.Settings.Default.defaultDataset;
                 toolStripStatusLabel1.Text = "Ready";
 
@@ -79,10 +86,14 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                     return;
                 }
 
+                // Fill the cboDatasetName comboBox with the dataset names
+                FillComboBoxDatasetName();
 
                 //20121122-Leg: get lastindex from db
                 var dataset = (from d in localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
                 txbSubscrLastindex.Text = dataset.LastIndex.ToString();
+
+                //cboDatasetName.SelectedIndex = cboDatasetName.Items.IndexOf(dataset.Name);
                 //txbSubscrLastindex.Text = Properties.Settings.Default.lastChangeIndex.ToString();
 
                 // nlog start
@@ -102,6 +113,51 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 logger.ErrorException("Form1_Load failed:", ex);
                 MessageBox.Show(ex.Message + ex.StackTrace);
             }
+        }
+
+        /// <summary>
+        /// Fills the cboDatasetName comboBox with the dataset names
+        /// </summary>
+        private void FillComboBoxDatasetName()
+        {
+            cboDatasetName.Items.Clear();
+            var datasetNameList = (from d in _localDb.Dataset select d.Name).ToList();
+            if (datasetNameList.Count > 0)
+            {
+                foreach (string name in datasetNameList)
+                {
+                    cboDatasetName.Items.Add(name);
+                }
+                if (txtDataset.Text.Length > 0)
+                {
+                    if (cboDatasetName.Items.Contains(txtDataset.Text))
+                    {
+                        cboDatasetName.SelectedIndex = cboDatasetName.Items.IndexOf(txtDataset.Text);
+                    }
+                }
+                else
+                {
+                    cboDatasetName.SelectedIndex = -1;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles the SelectedIndexChanged event of the cboDatasetName control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void cboDatasetName_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            txtDataset.Text = cboDatasetName.SelectedItem.ToString();
+            Properties.Settings.Default.defaultDataset = txtDataset.Text;
+            Properties.Settings.Default.Save();
+            if (_localDb != null)
+            {
+                var dataset = (from d in _localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
+                txbSubscrLastindex.Text = dataset.LastIndex.ToString();
+            }
+
         }
 
         //private void webBrowser1_Navigating(object sender,
@@ -128,6 +184,9 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
                 // Does not work on SQL Server Compact 3.5, must upgrade to 4.0.
                 _localDb.SaveChanges();
+
+                // Fill the cboDatasetName comboBox with the dataset names
+                FillComboBoxDatasetName();
             }
             catch (Exception ex)
             {
@@ -170,12 +229,6 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 //Properties.Settings.Default.Save();
                 //txbSubscrLastindex.Text = Properties.Settings.Default.lastChangeIndex.ToString();
             }
-        }
-
-        private void btnGetCapabilities_Click(object sender, EventArgs e)
-        {
-            var str = GetCapabilitiesXml();
-            VisXML((string)str);
         }
 
         private void btnDescribeFeaturetype_Click(object sender, EventArgs e)
@@ -614,18 +667,48 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         /// Returnerer det som tilbyder støtter av dataset, filter operatorer og objekttyper.
         /// </summary>
         /// <returns></returns>
-        private string GetCapabilitiesXml()
+        private void GetCapabilitiesXml(string url)
         {
-            var dataset = (from d in _localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
 
-            WebFeatureServiceReplicationPortClient client = new WebFeatureServiceReplicationPortClient();
-            client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SyncronizationUrl);
+            CapabilitiesDataBuilder cdb = new CapabilitiesDataBuilder(_localDb, url);
+            dgvProviderDataset.DataSource = cdb.ProviderDatasets;
+            IDictionary<string,IList<object>> visibleColumns = new Dictionary<string,IList<object>>();
+            IList<object> columnFormat = new List<object>();
+            columnFormat.Add("Datasett");
+            columnFormat.Add("1");
+            columnFormat.Add(DataGridViewAutoSizeColumnMode.AllCells);
+            visibleColumns.Add("name", columnFormat);
+            columnFormat = new List<object>();
+            columnFormat.Add("Applikasjonsskjema");
+            columnFormat.Add("2");
+            columnFormat.Add(DataGridViewAutoSizeColumnMode.ColumnHeader);
+            visibleColumns.Add("appschema", columnFormat);
+            columnFormat = new List<object>();
+            columnFormat.Add("Navnerom");
+            columnFormat.Add("3");
+            columnFormat.Add(DataGridViewAutoSizeColumnMode.Fill);
+            visibleColumns.Add("targetnamespace", columnFormat);                        
+            columnFormat = new List<object>();
+            columnFormat.Add("Datasett ID");
+            columnFormat.Add("4");
+            columnFormat.Add(DataGridViewAutoSizeColumnMode.ColumnHeader);
+            visibleColumns.Add("providerdatasetid", columnFormat);
+           
+            foreach (DataGridViewColumn col in dgvProviderDataset.Columns)
+            {
+                col.Visible = false;
+                if (visibleColumns.ContainsKey(col.Name.ToLower()))
+                {
+                    col.Visible = true;
+                    columnFormat = visibleColumns[col.Name.ToLower()];
+                    col.HeaderText = columnFormat[0].ToString();
+                    col.DisplayIndex = Convert.ToInt32(columnFormat[1]);
+                    col.AutoSizeMode = (DataGridViewAutoSizeColumnMode)columnFormat[2];
+                }
+            }
+            dgvProviderDataset.AutoSize = true;            
+            dgvProviderDataset.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;           
 
-            GetCapabilitiesType1 req = new GetCapabilitiesType1();
-
-            REP_CapabilitiesType resp = client.GetCapabilities(req);
-
-            return resp.ToString();
         }
 
         /// <summary>
@@ -778,7 +861,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 DownloadChangelog(downloaduri, fileName);
 #else
                 // DownloadChangelog now handles ftp asynchron download
-                DownloadChangelog(downloaduri, fileName);
+                DownloadChangelog2(downloaduri, fileName);
                 //DownloadChangelogFTP(downloaduri, fileName);
 #endif
 
@@ -922,8 +1005,8 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             string ftpUser = par1[0].Split(':')[0];
             string ftpPasswd = par1[0].Split(':')[1];
             string ftpServer = par1[1].Split('/')[0];
-            string ftpFileName = par1[1].Split('/')[1];
-            Kartverket.Geosynkronisering.Common.FileTransferHandler ftpHandler = new Common.FileTransferHandler();
+            string ftpFileName = par1[1].Split('/')[1] + ".zip";
+            Common.FileTransferHandler ftpHandler = new Common.FileTransferHandler();
             ftpHandler.ProgressChanged += new Common.FileTransferHandler.ProgressHandler(ftpHandler_ProgressChanged);
             ftpHandler.ProcessDone += new Common.FileTransferHandler.ProcessDoneHandler(ftpHandler_ProcessDone);
             if (ftpHandler.DownloadFileFromFtp(localFileName, ftpFileName, ftpServer, ftpUser, ftpPasswd))
@@ -1212,7 +1295,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 //
                 // get chlogf:transactions
                 //
-                XNamespace nschlogf = "http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/0.3";
+                XNamespace nschlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg";
                 IEnumerable<XElement> chlogfTransactions =
                     from item in changeLog.Descendants(nschlogf + "transactions")
                     select item;
@@ -1358,10 +1441,27 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                     }
                     httpWebResponse.Close();
 
-                    if (httpWebResponse.StatusCode == HttpStatusCode.OK)
+                    if (httpWebResponse.StatusCode == HttpStatusCode.OK && resultString.ToString().Contains("ExceptionReport")==false)
                     {
+                        //TODO en får alltid status 200 OK fra geoserver
+                        //En må sjekke om en har fått ExceptionReport
+                        //<?xml version="1.0" encoding="UTF-8"?>
+                        //<ows:ExceptionReport version="2.0.0"
+                        //  xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://localhost:8081/geoserver/schemas/ows/1.1.0/owsAll.xsd"
+                        //  xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                        //  <ows:Exception exceptionCode="0">
+                        //    <ows:ExceptionText>Error performing insert: Error inserting features
+                        //Error inserting features
+                        //ERROR: insert or update on table &amp;quot;navneenhet&amp;quot; violates foreign key constraint &amp;quot;navneenhet_navnetype_fkey&amp;quot;
+                        //  Detail: Key (navnetype)=() is not present in table &amp;quot;navnetype&amp;quot;.</ows:ExceptionText>
+                        //  </ows:Exception>
+                        //</ows:ExceptionReport>
+
+
+
                         sucsess = true;
                         XElement transactionResponseElement = XElement.Parse(resultString.ToString());
+                       
 
                         // TODO: It's not necesary to save the file here, but nice for debugging
                         string tempDir = System.Environment.GetEnvironmentVariable("TEMP");
@@ -1421,7 +1521,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                     }
                     else
                     {
-                        string message = "Geoserver WFS-T Transaction: ";
+                        string message = "Geoserver WFS-T Transaction feilet: ";
                         MessageBox.Show(message + "\r\n" + resultString.ToString(), "Transaction Status: " + httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription);
                         logger.Info("DoWfsTransactions: " + message + " Transaction Status:{0}" + "\r\n" + resultString.ToString(), httpWebResponse.StatusCode);
 
@@ -1617,7 +1717,12 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
                 string path = System.Environment.CurrentDirectory;
                 string fileName = path.Substring(0, path.LastIndexOf("bin")) + "SchemaMapping" + @"\_wfsT-test1.xml";
+
+                // Test empty changelog
+                // fileName = path.Substring(0, path.LastIndexOf("bin")) + "SchemaMapping" + @"\ar5-tom-07a8e3ef-7315-409f-862d-6417b4275368.xml";
+
                 string mappingFileName = path.Substring(0, path.LastIndexOf("bin")) + "SchemaMapping" + @"\ar5FeatureType-mapping-file.xml";
+           
 
                 // load the changelog XML document from file
                 // XElement changeLog = XElement.Load(fileName);
@@ -1709,14 +1814,14 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
                 logger.Info("SchemaTransformSimplify RunTime: {0}", elapsedTime);
 
-                
+
             }
             catch (Exception ex)
             {
                 logger.ErrorException("SetXmlMappingFile:", ex);
                 throw;
             }
-      
+
             return newFileName;
         }
 
@@ -1888,11 +1993,11 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                         //
                         string fileName = txbDownloadedFile.Text;
                         var newFileName = SchemaTransformSimplify(fileName);
-                        if (newFileName.Length > 0)
+                        if (!string.IsNullOrEmpty(newFileName))
                         {
                             fileName = newFileName;
                         }
-                        
+
                         // load an XML document from a file
                         XElement changeLog = XElement.Load(fileName);
                         //XElement changeLog = XElement.Load(txbDownloadedFile.Text);
@@ -1961,7 +2066,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 // Display in geoserver openlayers
                 toolStripStatusLabel1.Text = "DisplayMap";
                 statusStrip1.Refresh();
-                DisplayMap(); //DisplayMap(epsgCode: "EPSG:32633");
+                DisplayMap(epsgCode: "EPSG:32633", datasetName: txtDataset.Text); //DisplayMap(epsgCode: "EPSG:32633");
                 toolStripStatusLabel1.Text = "Ready";
                 statusStrip1.Refresh();
 
@@ -1994,7 +2099,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         /// <summary>
         /// Display map in geoserver openlayers
         /// </summary>
-        private void DisplayMap(string epsgCode = "EPSG:4258",string datasetName = "ar5")
+        private void DisplayMap(string epsgCode = "EPSG:4258", string datasetName = "ar5")
         {
             string bBox;
             switch (epsgCode)
@@ -2008,14 +2113,15 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                     break;
             }
             // app:Skjær will not display due to "æ"
-            string layers = "app:Flytebrygge,app:Flytebryggekant,app:Kystkontur,app:HavElvsperre,app:KystkonturTekniskeAnlegg";
+            string layers = "app:Flytebrygge,app:Flytebryggekant,app:Kystkontur,app:HavElvSperre,app:KystkonturTekniskeAnlegg";
             string hostWms = "http://localhost:8081/geoserver/app/wms?service=WMS&version=1.1.0&request=GetMap";
 
-            if (datasetName == "ar5")
+            if (datasetName.ToLower() == "ar5")
             {
                 layers = "ar5:ArealressursFlate,ar5:KantUtsnitt,ar5:ArealressursGrense,ar5:ArealressursGrenseFiktiv";
                 hostWms = "http://localhost:8081/geoserver/ar5/wms?service=WMS&version=1.1.0&request=GetMap";
                 bBox = "10.0,59.6,10.2,59.8";
+                epsgCode = "EPSG:4258";
             }
 
 
@@ -2052,6 +2158,69 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         }
 
         #endregion
+
+
+        #region Get Capabilities - Hente datasett fra tilbyder
+
+        private void btnGetCapabilities_Click(object sender, EventArgs e)
+        {
+            //var dataset = (from d in _localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
+            string Url = txbProviderURL.Text;
+            GetCapabilitiesXml(Url);
+            btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
+
+        }
+        private void btnGetProviderDatasets_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.Cursor = Cursors.WaitCursor;
+                GetCapabilitiesXml(txbProviderURL.Text);
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = this.DefaultCursor;
+                MessageBox.Show("Error : " + ex.Message);
+            }
+            finally
+            {
+                this.Cursor = this.DefaultCursor;
+            }
+
+        }
+
+        private void btnAddSelected_Click(object sender, EventArgs e)
+        {
+            IList<int> selectedDataset = new List<int>();
+            foreach (DataGridViewRow dgr in dgvProviderDataset.SelectedRows)
+            {
+                selectedDataset.Add(dgr.Index);
+            }
+            IBindingList blDataset = (IBindingList)dgvProviderDataset.DataSource;
+            if (!Database.DatasetsData.AddDatasets(_localDb, blDataset, selectedDataset))
+            {
+                MessageBox.Show(this, "Error saving selected datasets to internal Database.", "Get Provider Datasets", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                MessageBox.Show(this, "Saved selected datasets to the internal Database.", "Get Provider Datasets", MessageBoxButtons.OK, MessageBoxIcon.Information);               
+                dgDataset.DataSource = null;
+                _localDb.Connection.Close();
+                _localDb.Connection.Dispose();
+
+                _localDb = new geosyncDBEntities();
+                dgDataset.DataSource = _localDb.Dataset;
+                dgDataset.Refresh();
+            }
+        }
+
+        
+        private void dgvProviderDataset_SelectionChanged(object sender, EventArgs e)
+        {
+            btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
+        }
+        #endregion
+
     }
 
 

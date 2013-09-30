@@ -8839,7 +8839,7 @@ namespace Kartverket.GeosyncWCF
     public partial class UnNamedDomainType
     {
         
-        private Value[] allowedValuesField;
+        private object[] allowedValuesField;
         
         private AnyValue anyValueField;
         
@@ -8861,9 +8861,9 @@ namespace Kartverket.GeosyncWCF
         
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayAttribute(Order=0)]
-       // [System.Xml.Serialization.XmlArrayItemAttribute("Range", typeof(RangeType), IsNullable=false)]
-       // [System.Xml.Serialization.XmlArrayItemAttribute("Value", typeof(ValueType), IsNullable=false)]
-        public Value[] AllowedValues
+        [System.Xml.Serialization.XmlArrayItemAttribute("Range", typeof(RangeType), IsNullable=false)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("Value", typeof(ValueType), IsNullable=false)]
+        public object[] AllowedValues
         {
             get
             {
@@ -9145,30 +9145,7 @@ namespace Kartverket.GeosyncWCF
         [System.Xml.Serialization.XmlEnumAttribute("closed-open")]
         closedopen,
     }
-
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.0.30319.17929")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.opengis.net/ows/1.1")]
-    public partial class Value
-    {
-        private string valueField;
-        /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public string AllowedValue
-        {
-            get
-            {
-                return this.valueField;
-            }
-            set
-            {
-                this.valueField = value;
-            }
-        }
-    }
-
+    
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.0.30319.17929")]
     [System.SerializableAttribute()]

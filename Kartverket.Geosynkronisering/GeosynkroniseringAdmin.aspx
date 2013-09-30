@@ -52,7 +52,6 @@
                                     CommandName="2" onclick="lbtn_Click">Datasett</asp:LinkButton>
                                 <asp:LinkButton ID="lbtnChangeLog" runat="server" CssClass="LinkButton" 
                                     CommandName="3" onclick="lbtn_Click">Endringslogg</asp:LinkButton>
-                                <asp:Button ID="Button1" runat="server" onclick="Button1_Click" Text="Button" />
                             </td>                          
                         </tr>                            
                      </table>
@@ -182,6 +181,8 @@
                                                     <asp:BoundField DataField="Role" HeaderText="Rolle" SortExpression="Role" >
                                                     <HeaderStyle CssClass="FieldHeader" />
                                                     </asp:BoundField>
+                                                    <asp:BoundField DataField="ServiceURL" HeaderText="Service URL" 
+                                                        SortExpression="ServiceURL" />
                                                     <asp:CommandField ButtonType="Image" CancelImageUrl="~/Images/Edit_UndoHS.png" 
                                                         CancelText="Avbryt" DeleteImageUrl="~/Images/delete_12x12.png" 
                                                         DeleteText="Slett" EditImageUrl="~/Images/EditTableHS.png" EditText="Rediger" 
@@ -205,7 +206,7 @@
                                             <asp:DetailsView ID="vDataset" runat="server" AllowPaging="True" 
                                                 CssClass="GridView" DataSourceID="edsDataset" Height="50px" Width="125px" 
                                                 AutoGenerateRows="False" DataKeyNames="DatasetId" 
-                                                onitemcreated="vDataset_ItemCreated">
+                                                onitemcreated="vDataset_ItemCreated" onprerender="vDataset_PreRender">
                                                 <EditRowStyle CssClass="GridView" />
                                                 <EmptyDataRowStyle CssClass="GridView" />
                                                 <FieldHeaderStyle CssClass="FieldHeader" />
@@ -242,11 +243,18 @@
                                                         InsertImageUrl="~/Images/saveHS.png" />
                                                 </Fields>
                                                 <InsertRowStyle CssClass="GridView" />
-                                                <PagerSettings FirstPageImageUrl="~/Images/DataContainer_MoveFirstHS.png" 
-                                                    LastPageImageUrl="~/Images/DataContainer_MoveLastHS.png" 
-                                                    Mode="NextPreviousFirstLast" 
-                                                    NextPageImageUrl="~/Images/DataContainer_MoveNextHS.png" 
-                                                    PreviousPageImageUrl="~/Images/DataContainer_MovePreviousHS.png" />
+                                                <PagerSettings Mode="NextPreviousFirstLast" Position="Bottom" Visible="true" />
+                                                <PagerTemplate>
+                                                    <asp:ImageButton ID="btnFirst" runat="server" CommandName="First" OnCommand="ChangePage" CommandArgument="DL"
+                                                        ImageUrl="~/Images/DataContainer_MoveFirstHS.png" /> 
+                                                    <asp:ImageButton ID="btnPrev" runat="server" CommandName="Prev" OnCommand="ChangePage" CommandArgument="DL"
+                                                        ImageUrl="~/Images/DataContainer_MovePreviousHS.png" />
+                                                    <asp:ImageButton ID="btnNext" runat="server" CommandName="Next" OnCommand="ChangePage" CommandArgument="DL"
+                                                        ImageUrl="~/Images/DataContainer_MoveNextHS.png" />
+                                                    <asp:ImageButton ID="btnLast" runat="server" CommandName="Last" OnCommand="ChangePage" CommandArgument="DL"
+                                                        ImageUrl="~/Images/DataContainer_MoveLastHS.png" />
+                                                </PagerTemplate>
+                                                <PagerStyle CssClass="GridView" />
                                             </asp:DetailsView>
                                         </div>
                                         <div style="height: 10%"> 
@@ -283,11 +291,17 @@
                                                             ReadOnly="True" SortExpression="ChangelogId" />
                                                     </Columns>
                                                     <HeaderStyle CssClass="FieldHeader" />
-                                                    <PagerSettings FirstPageImageUrl="~/Images/DataContainer_MoveFirstHS.png" 
-                                                        LastPageImageUrl="~/Images/DataContainer_MoveLastHS.png" 
-                                                        Mode="NextPreviousFirstLast" 
-                                                        NextPageImageUrl="~/Images/DataContainer_MoveNextHS.png" 
-                                                        PreviousPageImageUrl="~/Images/DataContainer_MovePreviousHS.png" />
+                                                    <PagerSettings Mode="NextPreviousFirstLast" Position="Bottom" Visible="true" />
+                                                    <PagerTemplate>
+                                                        <asp:ImageButton ID="btnFirstCL" runat="server" CommandName="First" OnCommand="ChangePage" CommandArgument="CL"
+                                                            ImageUrl="~/Images/DataContainer_MoveFirstHS.png" /> 
+                                                        <asp:ImageButton ID="btnPrevCL" runat="server" CommandName="Prev" OnCommand="ChangePage" CommandArgument="CL"
+                                                            ImageUrl="~/Images/DataContainer_MovePreviousHS.png" />
+                                                        <asp:ImageButton ID="btnNextCL" runat="server" CommandName="Next" OnCommand="ChangePage" CommandArgument="CL"
+                                                            ImageUrl="~/Images/DataContainer_MoveNextHS.png" />
+                                                        <asp:ImageButton ID="btnLastCL" runat="server" CommandName="Last" OnCommand="ChangePage" CommandArgument="CL"
+                                                            ImageUrl="~/Images/DataContainer_MoveLastHS.png" />
+                                                    </PagerTemplate>
                                                     <PagerStyle CssClass="GridView" />
                                                 </asp:GridView>
     

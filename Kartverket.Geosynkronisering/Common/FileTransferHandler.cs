@@ -233,6 +233,7 @@ namespace Kartverket.Geosynkronisering.Common
                 }
                 else
                 {
+                    state.status = ftpStatus.done;
                     OnFileProgressChanged(new ProgressEventArgs(state.FileName, 1, 1, string.Format("The operation completed - {0}", state.StatusDescription), state.status));
                 }
             }
@@ -255,15 +256,17 @@ namespace Kartverket.Geosynkronisering.Common
                     byte[] buffer = new byte[bufferLength];
                     int count = 0;
                     int readBytes = 2048;
-                    stream = File.Create(state.FileName);
-                    do
+                    using (stream = File.Create(state.FileName))
                     {
-                        readBytes = requestStream.Read(buffer, 0, bufferLength);
-                        stream.Write(buffer, 0, readBytes);
-                        count += readBytes;
-                        OnFileProgressChanged(new ProgressEventArgs(state.FileName, 1, 1, string.Format("Writing {0} bytes to the stream.", count.ToString()), state.status));
+                        do
+                        {
+                            readBytes = requestStream.Read(buffer, 0, bufferLength);
+                            stream.Write(buffer, 0, readBytes);
+                            count += readBytes;
+                            OnFileProgressChanged(new ProgressEventArgs(state.FileName, 1, 1, string.Format("Writing {0} bytes to the stream.", count.ToString()), state.status));
+                        }
+                        while (readBytes != 0);
                     }
-                    while (readBytes != 0);
                     // IMPORTANT: Close the request stream before sending the request.
                     requestStream.Close();
                     // Asynchronously get the response to the upload request.

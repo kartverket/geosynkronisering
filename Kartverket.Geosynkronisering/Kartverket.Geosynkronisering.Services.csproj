@@ -159,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChangelogManager.cs" />
+    <Compile Include="ChangelogProviders\ChangelogWFS.cs" />
     <Compile Include="ChangelogProviders\MockChangelog.cs" />
     <Compile Include="ChangelogProviders\PostGISChangelog.cs" />
     <Compile Include="Common\FileTransferHandler.cs" />

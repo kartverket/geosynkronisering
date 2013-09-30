@@ -14,23 +14,31 @@ using System.IO;
 namespace Kartverket.Geosynkronisering.Database
 {    
     public class ServerConfigData 
-    {
-        private static geosyncEntities db = new geosyncEntities();
+    {      
 
         public static string FTPUrl()
         {
-           var res = from sc in db.ServerConfigs select sc.FTPUrl;
-           if (res.First() != null) return res.First().ToString(); else return "";         
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.ServerConfigs select sc.FTPUrl;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }        
         }
         public static string FTPUser()
         {
-            var res = from sc in db.ServerConfigs select sc.FTPUser;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.ServerConfigs select sc.FTPUser;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string FTPPwd()
         {
-            var res = from sc in db.ServerConfigs select sc.FTPPwd;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.ServerConfigs select sc.FTPPwd;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
 
 
@@ -38,243 +46,366 @@ namespace Kartverket.Geosynkronisering.Database
 
     public class ServiceData
     {
-        private static geosyncEntities db = new geosyncEntities();
-
+        
         public static string Title()
         {
-            var res = from sc in db.Services select sc.Title;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.Title;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string Abstract()
         {
-            var res = from sc in db.Services select sc.Abstract;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.Abstract;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
 
         public static string Fees()
         {
-            var res = from sc in db.Services select sc.Fees;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.Fees;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static IList<string> Keywords()
         {
-            var res = from sc in db.Services select sc.Keywords;
-            IList<string> kw = new List<string>();
-            string kws = res.First().ToString();
-            string[] kwords  = kws.Split(',');
-            foreach (string s in kwords) { kw.Add(s); }            
-            return kw;
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.Keywords;
+                IList<string> kw = new List<string>();
+                string kws = res.First().ToString();
+                string[] kwords = kws.Split(',');
+                foreach (string s in kwords) { kw.Add(s); }
+                return kw;
+            }
         }
         public static string AccessConstraints()
         {
-            var res = from sc in db.Services select sc.AccessConstraints;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.AccessConstraints;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string ProviderName()
         {
-            var res = from sc in db.Services select sc.ProviderName;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.ProviderName;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string ProviderSite()
         {
-            var res = from sc in db.Services select sc.ProviderSite;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.ProviderSite;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string IndividualName()
         {
-            var res = from sc in db.Services select sc.IndividualName;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.IndividualName;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string Phone()
         {
-            var res = from sc in db.Services select sc.Phone;
-            return  res.First().ToString();
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.Phone;
+                return res.First().ToString();
+            }
         }
         public static string Fax()
         {
-            var res = from sc in db.Services select sc.Facsimile;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.Facsimile;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string Adresse()
         {
-            var res = from sc in db.Services select sc.Deliverypoint;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.Deliverypoint;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
+
         public static string City()
         {
-            var res = from sc in db.Services select sc.City;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.City;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
+
         public static string PostalCode()
         {
-            var res = from sc in db.Services select sc.PostalCode;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.PostalCode;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
+
         public static string Country()
         {
-            var res = from sc in db.Services select sc.Country;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.Country;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
+
         public static string EMail()
         {
-            var res = from sc in db.Services select sc.EMail;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.EMail;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
+
         public static string OnlineResourcesUrl()
         {
-            var res = from sc in db.Services select sc.OnlineResourcesUrl;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.OnlineResourcesUrl;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string HoursOfService()
         {
-            var res = from sc in db.Services select sc.HoursOfService;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.HoursOfService;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string ContactInstructions()
         {
-            var res = from sc in db.Services select sc.ContactInstructions;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.ContactInstructions;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string Role()
         {
-            var res = from sc in db.Services select sc.Role;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.Role;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string ServiceURL(bool addSlash)
         {
-            var res = from sc in db.Services select sc.ServiceURL;
-            string url = res.First().ToString();
-            string slash = "";
-            if (!url.EndsWith("/") && addSlash) slash = "/";
-            return string.Format("{0}{1}", url, slash);
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.ServiceURL;
+                string url = res.First().ToString();
+                string slash = "";
+                if (!url.EndsWith("/") && addSlash) slash = "/";
+                return string.Format("{0}{1}", url, slash);
+            }
         }
         public static string ServiceURLWithQuestionMark()
         {
-            var res = from sc in db.Services select sc.ServiceURL;
-            string url = res.First().ToString();
-            string slash= "";
-            if (!url.EndsWith("/")) slash = "/";
-            return string.Format("{0}{1}?",url, slash);
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.ServiceURL;
+                string url = res.First().ToString();
+                string slash = "";
+                if (!url.EndsWith("/")) slash = "/";
+                return string.Format("{0}{1}?", url, slash);
+            }
         }
     }
 
     public class DatasetsData
     {
-        private static geosyncEntities db = new geosyncEntities();
-
+        
         public static IList<Int32> GetListOfDatasetIDs()
         {
-            IList<Int32> idList = new List<Int32>();
-            var res = from d in db.Datasets select d.DatasetId;
-            foreach (Int32 id in res)
+            using (geosyncEntities db = new geosyncEntities())
             {
-                idList.Add(id);
+                IList<Int32> idList = new List<Int32>();
+                var res = from d in db.Datasets select d.DatasetId;
+                foreach (Int32 id in res)
+                {
+                    idList.Add(id);
+                }
+                return idList;
             }
-            return idList;
         }
 
         public static string Name(Int32 DatasetID)
         {
-            var res = from d in db.Datasets where d.DatasetId == DatasetID select d.Name;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from d in db.Datasets where d.DatasetId == DatasetID select d.Name;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string SchemaFileUri(Int32 DatasetID)
         {
-            var res = from d in db.Datasets where d.DatasetId == DatasetID select d.SchemaFileUri;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from d in db.Datasets where d.DatasetId == DatasetID select d.SchemaFileUri;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
 
         public static string DatasetProvider(Int32 DatasetID)
         {
-            var res = from d in db.Datasets where d.DatasetId == DatasetID select d.DatasetProvider;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from d in db.Datasets where d.DatasetId == DatasetID select d.DatasetProvider;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string ServerMaxCount(Int32 DatasetID)
         {
-            var res = from d in db.Datasets where d.DatasetId == DatasetID select d.ServerMaxCount;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from d in db.Datasets where d.DatasetId == DatasetID select d.ServerMaxCount;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string DatasetConnection(Int32 DatasetID)
         {
-            var res = from d in db.Datasets where d.DatasetId == DatasetID select d.DatasetConnection;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from d in db.Datasets where d.DatasetId == DatasetID select d.DatasetConnection;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string DBSchema(Int32 DatasetID)
         {
-            var res = from d in db.Datasets where d.DatasetId == DatasetID select d.DBSchema;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from d in db.Datasets where d.DatasetId == DatasetID select d.DBSchema;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
 
-         public static string TransformationConnection(Int32 DatasetID)
+        public static string TransformationConnection(Int32 DatasetID)
         {
-            var res = from d in db.Datasets where d.DatasetId == DatasetID select d.TransformationConnection;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from d in db.Datasets where d.DatasetId == DatasetID select d.TransformationConnection;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string DefaultCrs(Int32 DatasetID)
         {
-            var res = from d in db.Datasets where d.DatasetId == DatasetID select d.DefaultCrs;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from d in db.Datasets where d.DatasetId == DatasetID select d.DefaultCrs;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string UpperCornerCoords(Int32 DatasetID)
         {
-            var res = from d in db.Datasets where d.DatasetId == DatasetID select d.UpperCornerCoords;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from d in db.Datasets where d.DatasetId == DatasetID select d.UpperCornerCoords;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string LowerCornerCoords(Int32 DatasetID)
         {
-            var res = from d in db.Datasets where d.DatasetId == DatasetID select d.LowerCornerCoords;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from d in db.Datasets where d.DatasetId == DatasetID select d.LowerCornerCoords;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
 
         public static string TargetNamespace(Int32 DatasetID)
         {
-            var res = from d in db.Datasets where d.DatasetId == DatasetID select d.TargetNamespace;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from d in db.Datasets where d.DatasetId == DatasetID select d.TargetNamespace;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
 
     }
 
     public class StoredChangeLogIDData
     {
-        private static geosyncEntities db = new geosyncEntities();
 
+       
         public static string Name(Int32 ChangelogID)
         {
-            var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.Name;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.Name;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string OrderUri(Int32 ChangelogID)
         {
-            var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.OrderUri;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.OrderUri;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
 
         public static string StartIndex(Int32 ChangelogID)
         {
-            var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.StartIndex;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.StartIndex;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string DownloadUri(Int32 ChangelogID)
         {
-            var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.DownloadUri;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.DownloadUri;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string EndIndex(Int32 ChangelogID)
         {
-            var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.EndIndex;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.EndIndex;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
         public static string Status(Int32 ChangelogID)
         {
-            var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.Status;
-            if (res.First() != null) return res.First().ToString(); else return "";
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.Status;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
         }
 
         public static string Stored(Int32 ChangelogID)
         {
-            var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.Stored;
-            if (res.First() != null) return res.First().ToString(); else return "";
-        }     
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.Stored;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
+        } 
 
     }
 
@@ -501,15 +632,15 @@ namespace Kartverket.Geosynkronisering.Database
         private static GeosyncWCF.DomainType CreateParameter(string ParameterName, params string[] values)
         {
             GeosyncWCF.DomainType param = new GeosyncWCF.DomainType();
-            //List<GeosyncWCF.Value> valuelist = new List<GeosyncWCF.Value>();
+            List<GeosyncWCF.ValueType> valuelist = new List<GeosyncWCF.ValueType>();
                         
-            //foreach (string s in values)
-            //{
-            //    GeosyncWCF.Value val = new GeosyncWCF.Value();
-            //    val.AllowedValue = s;
-            //    valuelist.Add(val);
-            //}
-            //param.AllowedValues = valuelist.ToArray();
+            foreach (string s in values)
+            {
+                GeosyncWCF.ValueType val = new GeosyncWCF.ValueType();
+                val.Value = s;                
+                valuelist.Add(val);
+            }
+            param.AllowedValues = valuelist.ToArray();
             
             param.name = ParameterName;
             
