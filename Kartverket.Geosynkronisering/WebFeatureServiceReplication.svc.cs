@@ -285,11 +285,11 @@ namespace Kartverket.Geosynkronisering
                 set { id = value; }
             }
 
-            public OrderChangelogAsync Request
-            {
-                get { return request; }
-                set { request = value; }
-            }
+            //public OrderChangelogAsync Request
+            //{
+            //    get { return request; }
+            //    set { request = value; }
+            //}
 
             public bool Completed
             {
@@ -309,7 +309,7 @@ namespace Kartverket.Geosynkronisering
 
             // Create the delegate.
             OrderChangelogAsync caller = new OrderChangelogAsync(OrderChangelogSync);
-            state.Request = caller;
+           // state.Request = caller;
             IAsyncResult result = caller.BeginInvoke(order, new AsyncCallback(CallbackProcessStatus), state);
             return "#PROCESSID:" + ID;
         }
@@ -319,18 +319,18 @@ namespace Kartverket.Geosynkronisering
             // Retrieve the delegate.
 
 
-            ProcessState result = (ProcessState)ar.AsyncState;
-            OrderChangelogAsync caller = result.Request;
-            Kartverket.GeosyncWCF.ChangelogIdentificationType returnResult = caller.EndInvoke(ar);
-            string msg = "";
-            result.Result = returnResult;
-            result.Completed = true;
+            //ProcessState result = (ProcessState)ar.AsyncState;
+            ////OrderChangelogAsync caller = result.Request;
+            //Kartverket.GeosyncWCF.ChangelogIdentificationType returnResult = caller.EndInvoke(ar);
+            //string msg = "";
+            //result.Result = returnResult;
+            //result.Completed = true;
 
-            if (!result.UpdateDB())
-            {
-                logger.Error("Kunne ikke skrive status for prosessfil.");
-                result.Message = "#ERROR: Kunne ikke skrive status for prosessfil på land";
-            }
+            //if (!result.UpdateDB())
+            //{
+            //    logger.Error("Kunne ikke skrive status for prosessfil.");
+            //    result.Message = "#ERROR: Kunne ikke skrive status for prosessfil på land";
+            //}
 
         }
 
