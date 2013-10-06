@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kartverket.Geosynk.BusinessLayer", "Kartverket.Geosynk.BusinessLayer\Kartverket.Geosynk.BusinessLayer.csproj", "{B9B95D50-72F4-4EFF-B638-45E62E7FE9FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kartverket.Geosynk.DataLayer", "Kartverket.Geosynk.DataLayer\Kartverket.Geosynk.DataLayer.csproj", "{63EAED98-969B-409F-AA8C-C1A08317674D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kartverket.Geosynk.GUI", "Kartverket.Geosynk.GUI\Kartverket.Geosynk.GUI.csproj", "{B8123856-8F40-4554-B482-0711DB8DEE23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kartverket.Geosynk.Tests", "Kartverket.Geosynk.Tests\Kartverket.Geosynk.Tests.csproj", "{7EE506F2-783B-426D-8088-A3E30D7DBC0F}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 5
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs12
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Kartverket.Geosynk.BusinessLayer\\Kartverket.Geosynk.BusinessLayer.csproj
+		SccProjectName1 = Kartverket.Geosynk.BusinessLayer
+		SccLocalPath1 = Kartverket.Geosynk.BusinessLayer
+		SccProjectUniqueName2 = Kartverket.Geosynk.DataLayer\\Kartverket.Geosynk.DataLayer.csproj
+		SccProjectName2 = Kartverket.Geosynk.DataLayer
+		SccLocalPath2 = Kartverket.Geosynk.DataLayer
+		SccProjectUniqueName3 = Kartverket.Geosynk.GUI\\Kartverket.Geosynk.GUI.csproj
+		SccProjectName3 = Kartverket.Geosynk.GUI
+		SccLocalPath3 = Kartverket.Geosynk.GUI
+		SccProjectUniqueName4 = Kartverket.Geosynk.Tests\\Kartverket.Geosynk.Tests.csproj
+		SccProjectName4 = Kartverket.Geosynk.Tests
+		SccLocalPath4 = Kartverket.Geosynk.Tests
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B9B95D50-72F4-4EFF-B638-45E62E7FE9FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9B95D50-72F4-4EFF-B638-45E62E7FE9FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9B95D50-72F4-4EFF-B638-45E62E7FE9FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9B95D50-72F4-4EFF-B638-45E62E7FE9FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63EAED98-969B-409F-AA8C-C1A08317674D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63EAED98-969B-409F-AA8C-C1A08317674D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63EAED98-969B-409F-AA8C-C1A08317674D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63EAED98-969B-409F-AA8C-C1A08317674D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8123856-8F40-4554-B482-0711DB8DEE23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8123856-8F40-4554-B482-0711DB8DEE23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8123856-8F40-4554-B482-0711DB8DEE23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8123856-8F40-4554-B482-0711DB8DEE23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EE506F2-783B-426D-8088-A3E30D7DBC0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EE506F2-783B-426D-8088-A3E30D7DBC0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EE506F2-783B-426D-8088-A3E30D7DBC0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EE506F2-783B-426D-8088-A3E30D7DBC0F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
