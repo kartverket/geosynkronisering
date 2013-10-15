@@ -6,11 +6,11 @@ using NLog;
 
 namespace Kartverket.Geosynkronisering.Subscriber.DL
 {
-    public class SubscriberDatasetManager
+    public static class SubscriberDatasetManager
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
      
-        public SubscriberDataset GetDataset(string datasetName)
+        public static SubscriberDataset GetDataset(string datasetName)
         {
             using (var localDb = new  geosyncDBEntities())
             {
@@ -24,7 +24,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             }
         }
 
-        public SubscriberDataset GetDataset(int datasetId)
+        public static SubscriberDataset GetDataset(int datasetId)
         {
             using (var localDb = new geosyncDBEntities())
             {
@@ -37,16 +37,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             }
         }
 
-        public string GetDatasource()
+        public static string GetDatasource()
         {
             using (var localDb = new geosyncDBEntities())
             {
-                //return localDb.Connection.DataSource;
-                return "";
+                return localDb.Connection.DataSource;
             }
         }
 
-        public bool UpdateDataset(SubscriberDataset geoClientDataset)
+        public static bool UpdateDataset(SubscriberDataset geoClientDataset)
         {
             using (var localDb = new geosyncDBEntities())
             {
