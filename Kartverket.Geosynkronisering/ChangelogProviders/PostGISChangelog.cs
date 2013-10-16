@@ -554,7 +554,9 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             XNamespace nsFes = "http://www.opengis.net/fes/2.0";
             XNamespace nsApp = Database.DatasetsData.TargetNamespace(datasetId);
             string nsPrefixApp = changeLog.GetPrefixOfNamespace(nsApp);
-
+            string nsPrefixAppComplete = nsPrefixApp + ":";
+            string xpathExpressionLokalid = nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete +
+                                          "Identifikasjon/" + nsPrefixAppComplete + "lokalId";
             foreach (string gmlId in deletesGmlIds)
             {
                 int pos = gmlId.IndexOf(".");
@@ -569,9 +571,10 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 //deleteElement.Add(getFeatureResponse.Element(nsWfs + "member").Nodes());
                 //Add filter
                 // 20121031-Leg: "lokal_id" replaced by "lokalId"
+                // 20131015-Leg: Filter ValueReference content with namespace prefix
                 deleteElement.Add(new XElement(nsFes + "Filter",
                                         new XElement(nsFes + "PropertyIsEqualTo",
-                                            new XElement(nsFes + "ValueReference", "identifikasjon/Identifikasjon/lokalId"),
+                                            new XElement(nsFes + "ValueReference", xpathExpressionLokalid), //new XElement(nsFes + "ValueReference", "identifikasjon/Identifikasjon/lokalId"),
                                             new XElement(nsFes + "Literal", lokalId)
                                         )
                                   ));
@@ -652,8 +655,9 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                         {
                             continue;
                         }
-
-                        updateElement.Add(new XElement(nsWfs + "Property", new XElement(nsWfs + "ValueReference", e.Name.LocalName), new XElement(nsWfs + "Value", e)));
+                        // 20131015-Leg: ValueReference content with namespace prefix
+                        updateElement.Add(new XElement(nsWfs + "Property", new XElement(nsWfs + "ValueReference", nsPrefixAppComplete + e.Name.LocalName), new XElement(nsWfs + "Value", e)));
+                        //updateElement.Add(new XElement(nsWfs + "Property", new XElement(nsWfs + "ValueReference", e.Name.LocalName), new XElement(nsWfs + "Value", e)));
                     }
                                        
                     //string gmlId = updatesGmlIds[count];
@@ -661,9 +665,10 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     ////string typename = gmlId.Substring(0, pos);
                     //string lokalId = gmlId.Substring(pos + 1);
 
+                    // 20131015-Leg: Filter ValueReference content with namespace prefix
                     updateElement.Add(new XElement(nsFes + "Filter",
                                             new XElement(nsFes + "PropertyIsEqualTo",
-                                                new XElement(nsFes + "ValueReference", "identifikasjon/Identifikasjon/lokalId"),
+                                                new XElement(nsFes + "ValueReference", xpathExpressionLokalid), //new XElement(nsFes + "ValueReference", "identifikasjon/Identifikasjon/lokalId"),
                                                 new XElement(nsFes + "Literal", lokalId)
                                             )
                                       ));
