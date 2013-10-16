@@ -174,9 +174,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 {
 
                     //20121122-Leg::  Get subscriber GeoServer url from db
-                    //geosyncDBEntities localDb = new geosyncDBEntities();
-                    var datasetManager = new SubscriberDatasetManager();
-                    var dataset = datasetManager.GetDataset(datasetId);
+                 
+                    var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
                     String url = dataset.ClientWfsUrl;
               
@@ -358,13 +357,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                                        select g;
                 // If wfs:member comes before typeName for Insert:
                 //var insertGroups = from item in changeLog.Descendants(nsWfs + "Insert")
-                //                   group item.Name.LocalName                 //operation
-                //              by item.Elements().Descendants().ElementAt(0).Name.LocalName //(Key) typeName-for Insert it follows in the next Element 
+                //                   group item.GetDatasetName.LocalName                 //operation
+                //              by item.Elements().Descendants().ElementAt(0).GetDatasetName.LocalName //(Key) typeName-for Insert it follows in the next Element 
                 //                       into g
                 //                       select g;
 
                 //var inserts = (from x in changeLog.Descendants(nsWfs + "Insert")
-                //                                      select x.Name.LocalName);
+                //                                      select x.GetDatasetName.LocalName);
                 //System.Diagnostics.Debug.WriteLine("  features of {0}", inserts.Count());
 
                 var updateGroups = from item in changeLog.Descendants(nsWfs + "Update")

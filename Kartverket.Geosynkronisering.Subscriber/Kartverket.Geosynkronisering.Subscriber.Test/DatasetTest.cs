@@ -17,5 +17,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.Test
             var dataset = SubscriberDatasetManager.GetDataset(1); 
             Assert.AreEqual(dataset.Name,"Flytebrygge");
         }
+
+        [Test]
+        public void TestGetTargetNamespace()
+        {
+            var dataset = SubscriberDatasetManager.GetDataset(1);
+            Assert.IsNull(dataset.TargetNamespace);
+        }
     }
 }

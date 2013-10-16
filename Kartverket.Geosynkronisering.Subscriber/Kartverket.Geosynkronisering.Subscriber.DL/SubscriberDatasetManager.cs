@@ -45,6 +45,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             }
         }
 
+
+      
         public static bool UpdateDataset(SubscriberDataset geoClientDataset)
         {
             using (var localDb = new geosyncDBEntities())
@@ -77,8 +79,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                                        SynchronizationUrl = dataset.SyncronizationUrl,
                                        ClientWfsUrl = dataset.ClientWfsUrl,
                                        MaxCount = dataset.MaxCount.HasValue ? dataset.MaxCount.Value : -1,
-                                       ProviderDatasetId =
-                                           dataset.ProviderDatasetId.HasValue ? dataset.ProviderDatasetId.Value : -1
+                                       ProviderDatasetId = dataset.ProviderDatasetId.HasValue ? dataset.ProviderDatasetId.Value : -1,
+                                       TargetNamespace = dataset.TargetNamespace,
+                                       MappingFile = dataset.MappingFile
                                    };
             return geoClientDataset;
         }
@@ -111,14 +114,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             }
         }
 
-        public static string Name(Int32 DatasetID)
-        {
-            using (var localDb = new geosyncDBEntities())
-            {
-                var res = from d in localDb.Datasets where d.DatasetId == DatasetID select d.Name;
-                if (res.First() != null) return res.First().ToString(); else return "";
-            }
-        }
         public static string SyncronizationUrl(Int32 DatasetID)
         {
             using (var localDb = new geosyncDBEntities())
@@ -145,29 +140,38 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             }
         }
 
-        public static string MaxCount(Int32 DatasetID)
+        public static int GetMaxCount(int datasetID)
         {
             using (var localDb = new geosyncDBEntities())
             {
-                var res = from d in localDb.Datasets where d.DatasetId == DatasetID select d.MaxCount;
-                if (res.First() != null) return res.First().ToString(); else return "";
+                var res = (from d in localDb.Datasets where d.DatasetId == datasetID select d.MaxCount).FirstOrDefault();
+                return res.GetValueOrDefault();
             }
         }
-        public static string LastIndex(Int32 DatasetID)
+        public static string GetLastIndex(int datasetID)
         {
             using (var localDb = new geosyncDBEntities())
             {
-                var res = from d in localDb.Datasets where d.DatasetId == DatasetID select d.LastIndex;
+                var res = from d in localDb.Datasets where d.DatasetId ==datasetID select d.LastIndex;
                 if (res.First() != null) return res.First().ToString(); else return "";
             }
         }
 
-        public static string ClientWfsUrl(Int32 DatasetID)
+        public static string ClientWfsUrl(int datasetID)
         {
             using (var localDb = new geosyncDBEntities())
             {
-                var res = from d in localDb.Datasets where d.DatasetId == DatasetID select d.ClientWfsUrl;
+                var res = from d in localDb.Datasets where d.DatasetId == datasetID select d.ClientWfsUrl;
                 if (res.First() != null) return res.First().ToString(); else return "";
+            }
+        }
+
+        public static List<string> GetDatasetNames()
+        {
+            using (var localDb = new geosyncDBEntities())
+            {
+                var res = (from d in localDb.Datasets select d.Name).ToList();
+                return res;
             }
         }
 
@@ -180,26 +184,27 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             }
         }
 
-        public static bool AddDatasets(geosyncDBEntities db, IBindingList datasetBindingList, IList<int> selectedDatasets)
+        public static bool AddDatasets(IBindingList datasetBindingList, IList<int> selectedDatasets)
         {
-
-            Dataset ds = null;
-            foreach (int selected in selectedDatasets)
-            {
-                ds = (Dataset)datasetBindingList[selected];
-                try
+            using (var localDb = new geosyncDBEntities())
+            {           
+                foreach (int selected in selectedDatasets)
                 {
-                    ds.DatasetId = GetNextDatasetID();
-                    ds.LastIndex = 0;
-                    ds.ClientWfsUrl = "http://localhost:8081/geoserver/wfs?"; //TODO: Flytt til config
-                    db.AddObject(ds.EntityKey.EntitySetName, ds);
-                    db.SaveChanges();
-                    db.AcceptAllChanges();
-                }
-                catch (Exception ex)
-                {
-                    logger.LogException(LogLevel.Error, "Error saving selected datasets!", ex);
-                    return false;
+                    var ds = (Dataset) datasetBindingList[selected];
+                    try
+                    {
+                        ds.DatasetId = GetNextDatasetID();
+                        ds.LastIndex = 0;
+                        ds.ClientWfsUrl = "http://localhost:8081/geoserver/wfs?"; //TODO: Flytt til config
+                        localDb.AddObject(ds.EntityKey.EntitySetName, ds);
+                        localDb.SaveChanges();
+                        localDb.AcceptAllChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogException(LogLevel.Error, "Error saving selected datasets!", ex);
+                        return false;
+                    }
                 }
             }
 

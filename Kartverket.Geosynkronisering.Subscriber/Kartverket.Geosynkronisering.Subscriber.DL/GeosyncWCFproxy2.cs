@@ -15,7 +15,7 @@ namespace Kartverket.GeosyncWCF
     
     //[System.Diagnostics.DebuggerStepThroughAttribute()]
     //[System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    //[System.Runtime.Serialization.DataContractAttribute(Name="ChangelogIdentificationType", Namespace="http://skjema.geonorge.no/standard/geosynkronisering/1.0/produkt")]
+    //[System.Runtime.Serialization.DataContractAttribute(GetDatasetName="ChangelogIdentificationType", Namespace="http://skjema.geonorge.no/standard/geosynkronisering/1.0/produkt")]
     //public partial class ChangelogIdentificationType : object, System.Runtime.Serialization.IExtensibleDataObject
     //{
         

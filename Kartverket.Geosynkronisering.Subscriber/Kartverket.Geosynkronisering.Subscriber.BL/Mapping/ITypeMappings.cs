@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
-namespace Kartverket.Geosynkronisering.Subscriber.BL
+namespace Kartverket.Geosynkronisering.Subscriber.BL.Mapping
 {
     /// <summary>
     /// Schema transformation mapping interface.

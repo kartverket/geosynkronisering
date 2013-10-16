@@ -16,16 +16,16 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
-        public string DownloadFilename { get; set; }
+        public string ChangelogFilename { get; set; }
 
         public DownloadController()
         {
-            DownloadFilename = string.Empty;
+            ChangelogFilename = string.Empty;
         }
 
-        public DownloadController(string downloadFilename)
+        public DownloadController(string changelogFilename)
         {
-            DownloadFilename = downloadFilename;
+            ChangelogFilename = changelogFilename;
         }
 
         private bool DownloadDone = false;
@@ -35,7 +35,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// </summary>
         /// <param name="downloadUri"></param>
         /// <param name="localFileName"> Filename including path </param>
-        private bool DownloadChangelog2(string downloadUri, string localFileName)
+        public bool DownloadChangelog2(string downloadUri)
         {
             string d = downloadUri;
             d = d.Substring(d.IndexOf('/') + 2);
@@ -47,18 +47,18 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             var ftpHandler = new FileTransferHandler();
             ftpHandler.ProgressChanged += new FileTransferHandler.ProgressHandler(ftpHandler_ProgressChanged);
             ftpHandler.ProcessDone += new FileTransferHandler.ProcessDoneHandler(ftpHandler_ProcessDone);
-            if (ftpHandler.DownloadFileFromFtp(localFileName, ftpFileName, ftpServer, ftpUser, ftpPasswd))
+            if (ftpHandler.DownloadFileFromFtp(ChangelogFilename, ftpFileName, ftpServer, ftpUser, ftpPasswd))
             {
-                if (Path.GetExtension(localFileName) != ".zip")
+                if (Path.GetExtension(ChangelogFilename) != ".zip")
                 {
-                    logger.ErrorException("File " + localFileName + " is not a zip file", null);
+                    logger.ErrorException("File " + ChangelogFilename + " is not a zip file", null);
                     return false;
                 }
 
-                string outPath = Path.GetDirectoryName(DownloadFilename);
-                this.unpackZipFile(DownloadFilename, outPath);
-                string xmlFile = Path.ChangeExtension(DownloadFilename, ".xml");
-                DownloadFilename = xmlFile;
+                string outPath = Path.GetDirectoryName(ChangelogFilename);
+                this.unpackZipFile(ChangelogFilename, outPath);
+                string xmlFile = Path.ChangeExtension(ChangelogFilename, ".xml");
+                ChangelogFilename = xmlFile;
 
                 System.Diagnostics.Debug.WriteLine("client_DownloadFileCompleted: File downloaded");
                 return true;
@@ -99,23 +99,23 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         {           
             if (e.Error == null)
             {
-                if (Path.GetExtension(DownloadFilename) != ".zip")
+                if (Path.GetExtension(ChangelogFilename) != ".zip")
                 {
-                    logger.ErrorException("File " + DownloadFilename + " is not a zip file", null);
+                    logger.ErrorException("File " + ChangelogFilename + " is not a zip file", null);
                     return;
                 }
 
                 var client = (WebClient)sender;
 
 #if !(NOT_FTP)
-                string outPath = Path.GetDirectoryName(DownloadFilename);
+                string outPath = Path.GetDirectoryName(ChangelogFilename);
 
-                FileInfo fileInfo = new FileInfo(DownloadFilename);
+                FileInfo fileInfo = new FileInfo(ChangelogFilename);
                 int retry_counter = 0;
 
                 while ((!fileInfo.Exists || fileInfo.Length == 0) && retry_counter < 5)
                 {
-                    logger.ErrorException("File " + DownloadFilename + " is empty, counter = " + retry_counter, null);
+                    logger.ErrorException("File " + ChangelogFilename + " is empty, counter = " + retry_counter, null);
                     Thread.Sleep(2000);
                     fileInfo.Refresh();
                     retry_counter++;
@@ -123,14 +123,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 if (retry_counter == 4)
                 {
-                    logger.ErrorException("File " + DownloadFilename + " is empty", null);                  
+                    logger.ErrorException("File " + ChangelogFilename + " is empty", null);                  
                     System.Diagnostics.Debug.WriteLine("client_DownloadFileCompleted failed");
                 }
 
-                this.unpackZipFile(DownloadFilename, outPath);
+                this.unpackZipFile(ChangelogFilename, outPath);
 
-                string localFileName = Path.ChangeExtension(DownloadFilename, ".xml");
-                DownloadFilename = localFileName;
+                string localFileName = Path.ChangeExtension(ChangelogFilename, ".xml");
+                ChangelogFilename = localFileName;
 #endif
               
                 System.Diagnostics.Debug.WriteLine("client_DownloadFileCompleted: File downloaded");

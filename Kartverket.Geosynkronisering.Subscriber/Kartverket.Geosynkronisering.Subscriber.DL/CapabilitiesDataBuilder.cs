@@ -10,18 +10,19 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
 using System.ComponentModel;
-using Kartverket.Geosynkronisering.Subscriber.DL;
+using Kartverket.GeosyncWCF;
 using NLog;
 
 
-namespace Kartverket.Geosynkronisering.Database
+namespace Kartverket.Geosynkronisering.Subscriber.DL
 {    
    
     public class CapabilitiesDataBuilder
     {
-
-        public CapabilitiesDataBuilder(geosyncDBEntities db, string ProviderURL)
+        public CapabilitiesDataBuilder(string ProviderURL)
         {
+            geosyncDBEntities db = new geosyncDBEntities();
+
             WebFeatureServiceReplicationPortClient client = new WebFeatureServiceReplicationPortClient();
             client.Endpoint.Address = new System.ServiceModel.EndpointAddress(ProviderURL);
 
