@@ -2073,8 +2073,11 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 Cursor.Current = Cursors.WaitCursor;
 
                 return true;
-
-
+            }
+            catch (FaultException e)
+            {
+                MessageBox.Show("Error : " + e.Message);
+                return false;
             }
             catch (WebException webEx)
             {
