@@ -8,15 +8,15 @@
 //------------------------------------------------------------------------------
 
 using System;
-using System.ComponentModel;
-using System.Data.EntityClient;
 using System.Data.Objects;
 using System.Data.Objects.DataClasses;
-using System.Linq;
-using System.Runtime.Serialization;
+using System.Data.EntityClient;
+using System.ComponentModel;
 using System.Xml.Serialization;
+using System.Runtime.Serialization;
 
 [assembly: EdmSchemaAttribute()]
+
 namespace Kartverket.Geosynkronisering
 {
     #region Contexts
@@ -130,7 +130,6 @@ namespace Kartverket.Geosynkronisering
         private ObjectSet<StoredChangelog> _StoredChangelogs;
 
         #endregion
-
         #region AddTo Methods
     
         /// <summary>
@@ -166,11 +165,11 @@ namespace Kartverket.Geosynkronisering
         }
 
         #endregion
-
     }
+    
 
     #endregion
-
+    
     #region Entities
     
     /// <summary>
@@ -195,7 +194,6 @@ namespace Kartverket.Geosynkronisering
         }
 
         #endregion
-
         #region Primitive Properties
     
         /// <summary>
@@ -488,9 +486,32 @@ namespace Kartverket.Geosynkronisering
         private global::System.String _TargetNamespace;
         partial void OnTargetNamespaceChanging(global::System.String value);
         partial void OnTargetNamespaceChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String TargetNamespacePrefix
+        {
+            get
+            {
+                return _TargetNamespacePrefix;
+            }
+            set
+            {
+                OnTargetNamespacePrefixChanging(value);
+                ReportPropertyChanging("TargetNamespacePrefix");
+                _TargetNamespacePrefix = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("TargetNamespacePrefix");
+                OnTargetNamespacePrefixChanged();
+            }
+        }
+        private global::System.String _TargetNamespacePrefix;
+        partial void OnTargetNamespacePrefixChanging(global::System.String value);
+        partial void OnTargetNamespacePrefixChanged();
 
         #endregion
-
     
     }
     
@@ -516,7 +537,6 @@ namespace Kartverket.Geosynkronisering
         }
 
         #endregion
-
         #region Primitive Properties
     
         /// <summary>
@@ -619,7 +639,6 @@ namespace Kartverket.Geosynkronisering
         partial void OnIDChanged();
 
         #endregion
-
     
     }
     
@@ -645,7 +664,6 @@ namespace Kartverket.Geosynkronisering
         }
 
         #endregion
-
         #region Primitive Properties
     
         /// <summary>
@@ -1156,7 +1174,6 @@ namespace Kartverket.Geosynkronisering
         partial void OnServiceIDChanged();
 
         #endregion
-
     
     }
     
@@ -1182,7 +1199,6 @@ namespace Kartverket.Geosynkronisering
         }
 
         #endregion
-
         #region Primitive Properties
     
         /// <summary>
@@ -1429,11 +1445,9 @@ namespace Kartverket.Geosynkronisering
         partial void OnDateCreatedChanged();
 
         #endregion
-
     
     }
 
     #endregion
-
     
 }

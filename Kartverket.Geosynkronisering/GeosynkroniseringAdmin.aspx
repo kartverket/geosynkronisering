@@ -233,6 +233,8 @@
                                                         SortExpression="LowerCornerCoords" />
                                                     <asp:BoundField DataField="TargetNamespace" HeaderText="TargetNamespace" 
                                                         SortExpression="TargetNamespace" />
+                                                         <asp:BoundField DataField="TargetNamespacePrefix" HeaderText="TargetNamespacePrefix" 
+                                                        SortExpression="TargetNamespacePrefix" />
                                                     <asp:CommandField ShowDeleteButton="True" ShowEditButton="True" 
                                                         ShowInsertButton="True" ButtonType="Image" 
                                                         CancelImageUrl="~/Images/Edit_UndoHS.png" CancelText="Avbryt" 

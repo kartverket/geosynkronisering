@@ -27,6 +27,7 @@
           <Property Name="UpperCornerCoords" Type="nvarchar" MaxLength="30" />
           <Property Name="LowerCornerCoords" Type="nvarchar" MaxLength="30" />
           <Property Name="TargetNamespace" Type="nvarchar" MaxLength="256" />
+          <Property Name="TargetNamespacePrefix" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="ServerConfig">
           <Key>
@@ -104,6 +105,7 @@
           <Property Type="String" Name="UpperCornerCoords" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="LowerCornerCoords" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="TargetNamespace" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="TargetNamespacePrefix" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ServerConfig">
           <Key>
@@ -164,6 +166,7 @@
           <EntitySetMapping Name="Datasets">
             <EntityTypeMapping TypeName="geosyncModel.Dataset">
               <MappingFragment StoreEntitySet="Dataset">
+                <ScalarProperty Name="TargetNamespacePrefix" ColumnName="TargetNamespacePrefix" />
                 <ScalarProperty Name="TargetNamespace" ColumnName="TargetNamespace" />
                 <ScalarProperty Name="LowerCornerCoords" ColumnName="LowerCornerCoords" />
                 <ScalarProperty Name="UpperCornerCoords" ColumnName="UpperCornerCoords" />
