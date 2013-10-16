@@ -20,6 +20,7 @@ using System.Threading;
 using SaveOptions = System.Xml.Linq.SaveOptions;
 using Kartverket.GeosyncWCF;
 using Kartverket.Geosynkronisering.Database;
+using System.ServiceModel;
 
 namespace Kartverket.Geosynkronisering.Subscriber2
 {
