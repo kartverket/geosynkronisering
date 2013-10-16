@@ -302,6 +302,15 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                                                             .Value;
                                                     elePropOrFilter.ReplaceNodes(strNewContent);
                                                 }
+                                                else if (elePropOrFilter.Value == targetAttr)
+                                                {
+                                                    // 20131015-Leg: Filter ValueReference content with namespace prefix
+                                                    string strNewContent =
+                                                     xEleAttributeMapping.Element("sourceExpression")
+                                                                         .Element("OCQL")
+                                                                         .Value;
+                                                    elePropOrFilter.ReplaceNodes(_namespacePrefix + ":" + strNewContent);
+                                                }
                                             }
 
                                             else
@@ -320,7 +329,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                                     // Add it before the Property node, then remove the current Value node.
                                                     // e.g. xEleTargetAttrFirstNode is here <app:identifikasjon>, xEleTargetAttr is <app:lokalId>:
                                                     //  <wfs:Property>
-                                                    //    <wfs:ValueReference>identifikasjon</wfs:ValueReference>
+                                                    //    <wfs:ValueReference>app:identifikasjon</wfs:ValueReference>
                                                     //    <wfs:Value>
                                                     //      <app:identifikasjon>
                                                     //        <app:Identifikasjon>
@@ -332,10 +341,13 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                                     //    </wfs:Value>
                                                     //  </wfs:Property>
 
-                                                    // namespace mangler på ValueReference. Legger vi på det, så fjernes de med ett nivå i "ValueReference for removal".
+                                                    // namespace mangler på ValueReference tag. Legger vi på det, så fjernes de med ett nivå i "ValueReference for removal".
                                                     // løsning er å oppdatere det på slutten.
+
+                                                    // 20131015-Leg: ValueReference content with namespace prefix
                                                     XElement newEle = new XElement(nsWfs + "Property",
-                                                        new XElement("ValueReference", xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value),
+                                                        new XElement("ValueReference", _namespacePrefix + ":" + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value),
+                                                        //new XElement("ValueReference", xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value),
                                                         new XElement(nsWfs + "Value",
                                                         new XElement(nsApp + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value, xEleTargetAttr.Value)));
 
@@ -349,7 +361,8 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                                                     // Mark <ValueReference> for removal
                                                     if (targetAttrArr.Length > 0) //if (targetAttrArr.Length > 2)
                                                     {
-                                                        valueReferenceToRemove.Add(targetAttrFirstNode);
+                                                        // 20131015-Leg: ValueReference content with namespace prefix
+                                                        valueReferenceToRemove.Add(_namespacePrefix + ":" + targetAttrFirstNode);  //valueReferenceToRemove.Add(targetAttrFirstNode);
                                                     }
 
                                                 }
@@ -550,15 +563,16 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 {
                     foreach (var valRef in valueReferences.ToList())
                     {
-                        if (_namespacePrefix + ":" + valRef.Value == targetAttrFirstNode)
+                        // 20131015-Leg: ValueReference content has namespace prefix
+                        if (valRef.Value == targetAttrFirstNode)  //if (_namespacePrefix + ":" + valRef.Value == targetAttrFirstNode)
                         {
-                            //xEleAttributeMapping
-                            string strNewContent =
+                            string strNewContent = 
                                 xEleAttributeMapping.Element("sourceExpression")
                                                     .Element("OCQL")
                                                     .Value;
                             //strNewContent = strNewContent.Replace("\"", ""); // Replace all " with blank (æ,ø,å)
-                            valRef.ReplaceNodes(strNewContent);
+                            // 20131015-Leg: ValueReference content with namespace prefix
+                            valRef.ReplaceNodes(_namespacePrefix + ":" + strNewContent); //valRef.ReplaceNodes(strNewContent);
                         }
                     }
                 }
