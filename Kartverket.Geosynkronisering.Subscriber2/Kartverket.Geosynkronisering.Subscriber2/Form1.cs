@@ -355,7 +355,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
                 var response = GetChangelogStatusResponse(changelogId);
 
-                VisXML(response);
+               // VisXML(response);
             }
             catch (WebException webEx)
             {
@@ -526,7 +526,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         /// <param name="e"></param>
         private void btnTestSyncronizationComplete_Click(object sender, EventArgs e)
         {
-            bool sucsess = TestSyncronizationComplete();
+            bool sucsess = TestAsyncSyncronizationComplete(); //TestSyncronizationComplete();
             if (sucsess)
             {
                 //MessageBox.Show("TestSyncronizationComplete OK");
@@ -807,7 +807,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         /// </summary>
         /// <param name="changelogId"></param>
         /// <returns></returns>
-        private string GetChangelogStatusResponse(string changelogId)
+        private ChangelogStatusType GetChangelogStatusResponse(string changelogId)
         {
             var dataset = (from d in _localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
 
@@ -820,7 +820,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
             ChangelogStatusType resp = client.GetChangelogStatus(id);
 
-            return resp.ToString();
+            return resp;
         }
 
         /// <summary>
@@ -2225,11 +2225,321 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         }
         #endregion
 
+   
+
+    #region Test Async SyncronizationComplete
+
+        /// <summary>
+        /// Test full Syncronization without any user input,
+        /// </summary>
+        /// <returns></returns>
+        private bool TestAsyncSyncronizationComplete()
+        {
+            //            GetLastIndex (ikke endre verdi)
+            //            OrderChangelog
+            //            GetChangelog
+            //            DoTransaction
+
+            try
+            {
+                listBoxLog.Items.Clear();
+                //listBoxLog.Refresh();
+
+                // Create new stopwatch
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+                logger.Info("TestSyncronizationComplete start");
+                //logger.Info("GetLastIndexFromProvider lastIndex :{0}{1}", "\t", lastIndex);
+
+                //
+                // GetLastIndex from Provider
+                //
+                toolStripStatusLabel1.Text = "GetLastIndexFromProvider";
+                statusStrip1.Refresh();
+
+                string lastIndex;
+                var response = GetLastIndexFromProvider(out lastIndex);
+                //txbLastIndex.Text = lastIndex;
+                _lastIndexProvider = Convert.ToInt32(lastIndex);
+                //VisXML(response);
+                toolStripStatusLabel1.Text = "GetLastIndexFromProvider OK";
+                statusStrip1.Refresh();
+                listBoxLog.BeginUpdate();
+                listBoxLog.Items.Add("GetLastIndexFromProvider:" + lastIndex.ToString());
+                listBoxLog.EndUpdate();
+
+                //
+                // OrderChangelog
+                //
+                Cursor.Current = Cursors.WaitCursor;
+
+                toolStripStatusLabel1.Text = "Order Changelog. Wait...";
+                statusStrip1.Refresh();
+
+                //20121122-Leg: get lastindex from db
+                //geosyncDBEntities localDb = new geosyncDBEntities();
+                var dataset = (from d in _localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
+                int lastChangeIndexSubscriber = (int)dataset.LastIndex;
+                //int lastChangeIndexSubscriber = Properties.Settings.Default.lastChangeIndex;
+
+
+                if (lastChangeIndexSubscriber >= _lastIndexProvider)
+                {
+                    Cursor.Current = Cursors.Default;
+                    string message = "Changelog has already been downloaded and handled:";
+                    logger.Info(message + " Provider lastIndex:{0} Subscriber lastChangeIndex:{1}", _lastIndexProvider, lastChangeIndexSubscriber);
+                    toolStripStatusLabel1.Text = message;
+                    statusStrip1.Refresh();
+                    MessageBox.Show(message + " Provider lastIndex:" + _lastIndexProvider.ToString() + " Subscriber lastChangeIndex:" + lastChangeIndexSubscriber.ToString());
+                    return false;
+                }
+
+                // 20121107-Leg            
+                int maxCount = (int)dataset.MaxCount;
+
+                // TODO: For testing, remove?
+                // lastChangeIndexSubscriber = _lastIndexProvider - 10;
+                int limitNumberOfFeature = 0;
+                if (int.TryParse(txtLimitNumberOfFeatures.Text, out limitNumberOfFeature))
+                {
+                    if (limitNumberOfFeature > 0)
+                    {
+                        lastChangeIndexSubscriber = _lastIndexProvider - limitNumberOfFeature;
+                    }
+                }
+
+
+                int numberOfFeatures = _lastIndexProvider - lastChangeIndexSubscriber;
+
+
+                int numberOfOrders = (numberOfFeatures / maxCount);
+                if (numberOfFeatures % maxCount > 0)
+                    ++numberOfOrders;
+
+                logger.Info("TestSyncronizationComplete: numberOfFeatures:{0} numberOfOrders:{1} maxCount:{2}", numberOfFeatures, numberOfOrders, maxCount);
+                listBoxLog.Items.Add("maxCount:" + maxCount.ToString());
+                if (lastChangeIndexSubscriber < _lastIndexProvider)
+                {
+                    listBoxLog.Items.Add("Subscriber lastChangeIndex:" + lastChangeIndexSubscriber.ToString());
+                    for (int i = 0; i < numberOfOrders; i++)
+                    {
+
+                        // 20130822-Leg: Fix for initial/first syncronization: Provider startIndex (GetLastIndex) starts at 1
+                        int startIndex = lastChangeIndexSubscriber + 1;
+
+                        if (i > 0)
+                        {
+                            //startIndex = (i * maxCount) + lastChangeIndexSubscriber;
+                            startIndex = (i * maxCount) + lastChangeIndexSubscriber + 1;
+                        }
+
+                        System.Diagnostics.Debug.WriteLine("startIndex:" + startIndex.ToString() + " lastChangeIndex:" +
+                                                           lastChangeIndexSubscriber.ToString());
+                        //listBoxLog.Items.Add("Subscriber lastChangeIndex:" + lastChangeIndexSubscriber.ToString());
+                        listBoxLog.Items.Add("Subscriber startIndex:" + startIndex.ToString());
+
+                        bool useGet = true;
+                        string schangelogid;
+
+                        response = GetOrderChangelogResponse(useGet, startIndex, out schangelogid);
+                        if (response == null)
+                        {
+                            System.Diagnostics.Debug.WriteLine("GetOrderChangelogResponse failed");
+                            return false;
+                        }
+                        //VisXML(response);
+                        txbChangelogid.Text = schangelogid;
+                        toolStripStatusLabel1.Text = "Waiting for ChangeLog from Provider..";
+                        statusStrip1.Refresh();
+                        listBoxLog.Items.Add("ChangelogId:" + schangelogid);
+
+
+                        // Check status for changelog production at provider site
+                        try
+                        {
+                            Cursor.Current = Cursors.WaitCursor;
+                            ChangelogStatusType changeLogStatus = GetChangelogStatusResponse(schangelogid);
+
+                            DateTime starttid = DateTime.Now;
+                            long elapsedTicks = DateTime.Now.Ticks - starttid.Ticks;
+
+                            TimeSpan elapsedSpan = new TimeSpan(elapsedTicks);
+                            int timeout = 5;
+
+                            while ((changeLogStatus == ChangelogStatusType.started || changeLogStatus == ChangelogStatusType.working)  && elapsedSpan.Minutes < timeout)
+                            {
+
+                                System.Threading.Thread.Sleep(3000);
+                                elapsedTicks = DateTime.Now.Ticks - starttid.Ticks;
+                                elapsedSpan = new TimeSpan(elapsedTicks);
+                                changeLogStatus = GetChangelogStatusResponse(schangelogid);
+                            }
+                            if (changeLogStatus != ChangelogStatusType.finished)
+                            {
+                                logger.Info("Timeout");
+                                toolStripStatusLabel1.Text = "Timeout or cancelled ChangeLog from Provider..";
+                                statusStrip1.Refresh();
+                                listBoxLog.Items.Add("ChangelogId:" + schangelogid);
+                                return false;
+                            }
+                            toolStripStatusLabel1.Text = "ChangeLog from Provider ready for download.";
+                            statusStrip1.Refresh();
+                            listBoxLog.Items.Add("ChangelogId:" + schangelogid);
+                            
+
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.ErrorException(string.Format("Failed to get ChangeLog Status for changelog {0} from provider {1}", schangelogid, "TEST"), ex);
+                            Cursor.Current = Cursors.Default;
+                            return false;
+                        }
+                        finally
+                        {
+                            Cursor.Current = Cursors.Default;                          
+                        }
+
+                        //
+                        //            GetChangelog
+                        //
+
+                       
+                        toolStripStatusLabel1.Text = "GetChangelog. Wait...";
+                        statusStrip1.Refresh();
+                        string changelogId = txbChangelogid.Text;
+                        response = "";
+                        response = GetChangelog(changelogId);
+                        if (response == null)
+                        {
+                            System.Diagnostics.Debug.WriteLine("GetOrderChangelogResponse failed");
+                            logger.Info("TestSyncronizationComplete: GetOrderChangelogResponse failed");
+                            Cursor.Current = Cursors.Default;
+                            return false;
+                        }
+                        //VisXML(response);
+                        toolStripStatusLabel1.Text = "GetChangelog OK";
+                        listBoxLog.Items.Add("GetChangelog OK");
+                        statusStrip1.Refresh();
+                        Cursor.Current = Cursors.Default;
+
+                        //
+                        //            DoTransaction
+                        //
+                        toolStripStatusLabel1.Text = "DoTransaction. Wait...";
+                        statusStrip1.Refresh();
+                        Cursor.Current = Cursors.WaitCursor;
+
+
+
+                        //
+                        // Schema transformation
+                        // Mapping from the nested structure of one or more simple features to the simple features for GeoServer.
+                        //
+                        string fileName = txbDownloadedFile.Text;
+                        var newFileName = SchemaTransformSimplify(fileName);
+                        if (!string.IsNullOrEmpty(newFileName))
+                        {
+                            fileName = newFileName;
+                        }
+
+                        // load an XML document from a file
+                        XElement changeLog = XElement.Load(fileName);
+                        //XElement changeLog = XElement.Load(txbDownloadedFile.Text);
+
+
+
+#if (false)              
+                        if (GetWfsInsert(changeLog) < 0)
+                        {
+                            return false;
+                        }                   
+#endif
+
+                        // Build wfs-t transaction from changelog, and do the transaction          
+                        if (this.DoWfsTransactions(changeLog))
+                        {
+                            // sucsess - update subscriber lastChangeIndex
+                            int lastIndexSubscriber = _lastIndexProvider;
+                            if (numberOfOrders > 1 && i < (numberOfOrders - 1))
+                            {
+                                lastIndexSubscriber = (i * maxCount) + lastChangeIndexSubscriber;
+                                toolStripStatusLabel1.Text = "DoWfsTransactions OK, pass " + (i + 1).ToString();
+                                statusStrip1.Refresh();
+                                logger.Info("DoWfsTransactions OK, pass {0}", (i + 1));
+                                listBoxLog.Items.Add("DoWfsTransactions OK, pass " + (i + 1).ToString());
+                            }
+                            else
+                            {
+                                toolStripStatusLabel1.Text = "TestSyncronizationComplete OK";
+                                statusStrip1.Refresh();
+                                logger.Info("TestSyncronizationComplete sucsess");
+                                listBoxLog.Items.Add("TestSyncronizationComplete sucsess");
+                            }
+
+                            //20121122-Leg: update db with  lastindex
+                            dataset.LastIndex = lastIndexSubscriber;
+                            _localDb.SaveChanges();
+                            txbSubscrLastindex.Text = lastIndexSubscriber.ToString();
+
+                            // Update datagridview control with changes
+                            dgDataset.DataSource = _localDb.Dataset;
+                            //dgDataset.Refresh();
+
+                            //Properties.Settings.Default.lastChangeIndex = lastIndexSubscriber; //_lastIndex;
+                            //Properties.Settings.Default.Save();
+                            //txbSubscrLastindex.Text = Properties.Settings.Default.lastChangeIndex.ToString();
+
+                            //TODO: Call AcknowlegeChangelogDownloaded here?
+                            // Bekrefte at endringslogg er lastet ned
+                            AcknowledgeChangelogDownloaded();
+                        }
+
+
+                    }
+
+
+                }
+
+                // Stop timing
+                stopwatch.Stop();
+                TimeSpan ts = stopwatch.Elapsed;
+                string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
+                listBoxLog.Items.Add("TestSyncronizationComplete RunTime: " + elapsedTime);
+                logger.Info("TestSyncronizationComplete RunTime: {0}", elapsedTime);
+
+                // Display in geoserver openlayers
+                toolStripStatusLabel1.Text = "DisplayMap";
+                statusStrip1.Refresh();
+                DisplayMap(epsgCode: "EPSG:32633", datasetName: txtDataset.Text); //DisplayMap(epsgCode: "EPSG:32633");
+                toolStripStatusLabel1.Text = "Ready";
+                statusStrip1.Refresh();
+
+                Cursor.Current = Cursors.WaitCursor;
+
+                return true;
+
+
+            }
+            catch (WebException webEx)
+            {
+                MessageBox.Show("Error : " + webEx.Message);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error : " + ex.Message);
+                return false;
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+        }
+
+        #endregion
+
+
     }
-
-
-
-
     #region Not_in_Use
 #if (NOT_IN_USE)
 

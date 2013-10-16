@@ -90,7 +90,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             p_db.SaveChanges();
 
             OrderChangelog resp = new OrderChangelog();
-            resp.changelogId = ldbo.ChangelogId.ToString();
+            resp.changelogId = ldbo.ChangelogId;
 
             //New thread and do the work....
             // We're coming back to the thread handling later...
@@ -175,12 +175,82 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             return resp;
 
         }
-
-        public OrderChangelog OrderChangelog2(int startIndex, int count, string todo_filter, int datasetId)
+        private OrderChangelog CurrentOrderChangeLog = null;
+        private string BaseVirtualPath;
+        public OrderChangelog CreateChangelog(int startIndex, int count, string todo_filter, int datasetId)
         {
+            logger.Info("CreateChangelog START");
+            BaseVirtualPath = Utils.BaseVirtualAppPath;
             ChangelogManager chlmng = new ChangelogManager(p_db);
-            return chlmng.CreateChangeLog(startIndex, count, datasetId);
-            
+            CurrentOrderChangeLog =  chlmng.CreateChangeLog(startIndex, count, datasetId);
+            chlmng.SetStatus(CurrentOrderChangeLog.changelogId, ChangelogStatusType.started);
+            return CurrentOrderChangeLog;
+        }
+      
+        public OrderChangelog OrderChangelog(int startIndex, int count, string todo_filter, int datasetId)
+        {
+
+            ChangelogManager chlmng = new ChangelogManager(p_db);
+            string destFileName = Guid.NewGuid().ToString();
+
+            chlmng.SetStatus(CurrentOrderChangeLog.changelogId, ChangelogStatusType.working);
+            //System.IO.File.Copy(Utils.BaseVirtualAppPath + sourceFileName, Utils.BaseVirtualAppPath + destFileName);
+            string dbConnectInfo = Database.DatasetsData.DatasetConnection(datasetId);
+            string wfsURL = Database.DatasetsData.TransformationConnection(datasetId);
+            MakeChangeLog(startIndex, count, dbConnectInfo, wfsURL, BaseVirtualPath + destFileName + ".xml", datasetId);
+
+            // New code to handle FTP download
+             changeLogHandler chgLogHandler = new changeLogHandler(logger);
+            string inFile = "";
+            string zipFile = "";
+            try
+            {
+                inFile = BaseVirtualPath + destFileName + ".xml";
+                zipFile = destFileName + ".zip";
+                chgLogHandler.createZipFile(inFile, zipFile);
+                Common.FileTransferHandler ftpTool = new Common.FileTransferHandler();
+                string tmpzipFile = Path.Combine(System.IO.Path.GetTempPath(), zipFile);
+                logger.Info(string.Format("Upload of file {0} started", tmpzipFile));
+               
+                p_db.SaveChanges();
+                // chgLogHandler.UploadFileToFtp(zipFile, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpServer, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpUser, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpPassword);
+                if (!ftpTool.UploadFileToFtp(tmpzipFile, Database.ServerConfigData.FTPUrl(), Database.ServerConfigData.FTPUser(), Database.ServerConfigData.FTPPwd())) throw new Exception("Could not upload file to FTPServer!");
+               
+                p_db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                chlmng.SetStatus(CurrentOrderChangeLog.changelogId, ChangelogStatusType.cancelled);
+                logger.ErrorException(string.Format("Failed to create or upload file {0}", zipFile), ex);
+                throw ex;
+            }
+
+            try
+            {
+                string downLoadUri = string.Format(@"ftp://{0}:{1}@{2}/{3}", Database.ServerConfigData.FTPUser(), Database.ServerConfigData.FTPPwd(), Database.ServerConfigData.FTPUrl(), destFileName);
+                chlmng.SetStatus(CurrentOrderChangeLog.changelogId, ChangelogStatusType.finished);
+                chlmng.SetDownloadURI(CurrentOrderChangeLog.changelogId, downLoadUri);
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException(string.Format("Failed to create or upload file {0}", zipFile), ex);
+                throw ex;
+            }
+
+
+            try
+            {
+                p_db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException(string.Format("Failed on SaveChanges, Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog startIndex:{0} count:{1} changelogId:{2}", startIndex, count, CurrentOrderChangeLog.changelogId), ex);
+                throw ex;
+            }
+            logger.Info("Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog" + " startIndex:{0}" + " count:{1}" + " changelogId:{2}", startIndex, count, CurrentOrderChangeLog.changelogId);
+
+            logger.Info("OrderChangelog END");
+            return CurrentOrderChangeLog;
         }
 
         public bool CreateDataExtraction(int startIndex, int count, string todo_filter, int datasetId, int ChangelogID)
@@ -248,7 +318,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         }
 
 
-        public OrderChangelog OrderChangelog(int startIndex, int count, string todo_filter, int datasetId)
+        public OrderChangelog OrderChangelog2(int startIndex, int count, string todo_filter, int datasetId)
         {
             logger.Info("OrderChangelog START");
             StoredChangelog ldbo = new StoredChangelog();
@@ -266,7 +336,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             p_db.SaveChanges();
 
             OrderChangelog resp = new OrderChangelog();
-            resp.changelogId = ldbo.ChangelogId.ToString();
+            resp.changelogId = ldbo.ChangelogId;
 
             //New thread and do the work....
             // We're coming back to the thread handling later...
@@ -889,15 +959,22 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         string m_zipFile;
         string m_workingDirectory;
-        string m_changeLog;
-        StoredChangelog m_storedChangelog;
-        geosyncEntities m_db;
+        //string m_changeLog;
+        //StoredChangelog m_storedChangelog;
+        //geosyncEntities m_db;
         Logger m_logger;
 
         public changeLogHandler(StoredChangelog sclog, geosyncEntities db, Logger logger)
         {
-            m_storedChangelog = sclog;
-            m_db = db;
+            //m_storedChangelog = sclog;
+            //m_db = db;
+            m_logger = logger;
+            m_workingDirectory = System.IO.Path.GetTempPath();
+
+        }
+
+        public changeLogHandler(Logger logger)
+        {          
             m_logger = logger;
             m_workingDirectory = System.IO.Path.GetTempPath();
 
@@ -950,17 +1027,17 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             private string m_ftpServer;
             private string m_user;
             private string m_pwd;
-            private StoredChangelog m_storedChangelog;
-            private geosyncEntities m_db;
+          //  private StoredChangelog m_storedChangelog;
+           // private geosyncEntities m_db;
             private Logger m_logger;
 
-            public AsynchronousFtpUpLoader(string ftpserver, string user, string password, StoredChangelog sclog, geosyncEntities db, Logger logger)
+            public AsynchronousFtpUpLoader(string ftpserver, string user, string password, Logger logger)
             {
                 m_ftpServer = ftpserver;
                 m_user = user;
                 m_pwd = password;
-                m_storedChangelog = sclog;
-                m_db = db;
+               // m_storedChangelog = sclog;
+               // m_db = db;
                 m_logger = logger;
             }
             // Command line arguments are two strings:
@@ -1011,7 +1088,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 // Asynchronously get the stream for the file contents.
                 m_logger.Info(string.Format("Upload of file {0} started", fileName));
-                m_storedChangelog.Status = "started";
+                //m_storedChangelog.Status = "started";
                 request.BeginGetRequestStream(
                     new AsyncCallback(EndGetStreamCallback),
                     state
@@ -1031,7 +1108,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                     //m_logger.Info(string.Format("Upload of file {0} started", fileName));
                     // m_storedChangelog.Status="started";
-                    m_db.SaveChanges();
+                   // m_db.SaveChanges();
                 }
             }
 
@@ -1097,8 +1174,8 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 else
                 {
                     m_logger.Info(string.Format("Download of file {0} started", target));
-                    m_storedChangelog.Status = "started";
-                    m_db.SaveChanges();
+                    //m_storedChangelog.Status = "started";
+                    //m_db.SaveChanges();
                 }
             }
 
@@ -1138,8 +1215,8 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                         state
                     );
                     m_logger.Info(string.Format("Download of file {0} finished", state.FileName));
-                    m_storedChangelog.Status = "finished";
-                    m_db.SaveChanges();
+                   // m_storedChangelog.Status = "finished";
+                    //m_db.SaveChanges();
                 }
                 // Return exceptions to the main application thread.
 
@@ -1199,8 +1276,8 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                         state
                     );
                     m_logger.Info(string.Format("Upload of file {0} finished", state.FileName));
-                    m_storedChangelog.Status = "finished";
-                    m_db.SaveChanges();
+                    //m_storedChangelog.Status = "finished";
+                    //m_db.SaveChanges();
                 }
                 // Return exceptions to the main application thread.
                 catch (Exception e)
@@ -1471,7 +1548,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             string server = "";
             if (ftpserver != null) server = ftpserver;
 
-            AsynchronousFtpUpLoader ftp = new AsynchronousFtpUpLoader(server, user, password, m_storedChangelog, m_db, m_logger);
+            AsynchronousFtpUpLoader ftp = new AsynchronousFtpUpLoader(server, user, password, m_logger);
             try
             {
                 //ftp.FileSendingProgressChanged += new AsynchronousFtpUpLoader.FileSendingProgressHandler(FileSendingProgressChanged);

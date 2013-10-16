@@ -133,7 +133,7 @@ namespace Kartverket.Geosynkronisering
         public Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelog(Kartverket.GeosyncWCF.ChangelogOrderType order)
         {
          
-            return OrderChangelogSync(order);
+            return OrderChangelogAsyncCaller(order);
             
         }
 
@@ -167,26 +167,99 @@ namespace Kartverket.Geosynkronisering
             var resp = changelogprovider.OrderChangelog(startindex, count, "", id);
 
             Kartverket.GeosyncWCF.ChangelogIdentificationType res = new Kartverket.GeosyncWCF.ChangelogIdentificationType();
-            res.changelogId = resp.changelogId;
+            res.changelogId = resp.changelogId.ToString();
             return res;
             
         }
 
 
-        #region Asynchron handling of OrderChangeLog
-        private delegate Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelogAsync(Kartverket.GeosyncWCF.ChangelogOrderType order);
+        #region Async Code for OrderChangeLog
 
-        protected class ProcessState
+        public Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangeLogAsync(IChangelogProvider changelogprovider, int startindex, int count, string to_doFilter, int datasetID)
         {
-            private OrderChangelogAsync request;
+            var resp = changelogprovider.OrderChangelog(startindex, count, "", datasetID);
+
+            Kartverket.GeosyncWCF.ChangelogIdentificationType res = new Kartverket.GeosyncWCF.ChangelogIdentificationType();
+            res.changelogId = resp.changelogId.ToString();
+            return res;
+
+        }
+      
+
+        private Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelogAsyncCaller(Kartverket.GeosyncWCF.ChangelogOrderType order)
+        {
+
+
+            int id = -1;
+            int.TryParse(order.datasetId, out id);
+            IChangelogProvider changelogprovider;
+            geosyncEntities db = new geosyncEntities();
+            var datasets = from d in db.Datasets where d.DatasetId == id select d;
+            string initType = datasets.First().DatasetProvider;
+            //Initiate provider from config/dataset
+            Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
+            changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
+            changelogprovider.SetDb(db);
+            int startindex = -1;
+            int count = -1;
+
+            int.TryParse(order.startIndex, out startindex);
+            int.TryParse(order.count, out count);
+
+            if (startindex == -1)
+            {
+                throw new System.Exception("MissingParameterValue : startindex");
+            }
+            if (count == -1)
+            {
+                throw new System.Exception("MissingParameterValue : count");
+            }
+
+            var resp = changelogprovider.CreateChangelog(startindex, count, "", id);
+            
+            
+
+            // Create the delegate.
+            OrderChangelogAsync caller = new OrderChangelogAsync(OrderChangeLogAsync);
+            ProcessState state = new ProcessState(resp.changelogId);
+            state.Request = caller;
+            
+            IAsyncResult result = caller.BeginInvoke(changelogprovider, startindex, count, "", id, new AsyncCallback(CallbackProcessStatus), state);
+
+            Kartverket.GeosyncWCF.ChangelogIdentificationType res = new Kartverket.GeosyncWCF.ChangelogIdentificationType();
+            res.changelogId = resp.changelogId.ToString();
+            return res;
+                                  
+          
+        }
+
+        private void CallbackProcessStatus(IAsyncResult ar)
+        {
+            // Retrieve the delegate.
+
+
+            ProcessState result = (ProcessState)ar.AsyncState;
+            OrderChangelogAsync caller = result.Request;
+            Kartverket.GeosyncWCF.ChangelogIdentificationType returnResult = caller.EndInvoke(ar);           
+            result.Result = returnResult;
+            result.Completed = true;           
+        }
+
+
+
+
+        public class ProcessState
+        {
+            private Kartverket.Geosynkronisering.OrderChangelogAsync m_request;
             private bool completed = false;
-            private string id;
-            private string msg;
-            private string tableName;
-            private string IDFld;
-            private string CompletedFld;
-            private string MessageFld;
+            private int id;
+
             private Kartverket.GeosyncWCF.ChangelogIdentificationType _Result;
+
+            public ProcessState(int ID)
+            {
+                id = ID;
+            }
 
             public Kartverket.GeosyncWCF.ChangelogIdentificationType Result
             {
@@ -194,102 +267,17 @@ namespace Kartverket.Geosynkronisering
                 set { _Result = value; }
             }
 
-            public ProcessState(string ID)
-            {
-                id = ID;
-                tableName = "processtatus";
-                IDFld = "processid";
-                CompletedFld = "completed";
-                MessageFld = "message";
-
-            }
-
-            public bool DeleteFromDB()
-            {
-                try
-                {
-                    //Implement db delete order.
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    logger.ErrorException(string.Concat("Feil ved sletting av record: ", ex.Message), ex);
-                    return false;
-                }
-
-            }
-
-            public bool UpdateDB()
-            {
-                try
-                {
-                    //Implement Update status
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    logger.ErrorException(string.Concat("Feil ved oppdatring av record: ", ex.Message), ex);
-                    return false;
-                }
-            }
-
-            public bool WriteToDB()
-            {
-                try
-                {
-                    //Implement write status
-                    IDictionary<string, object> fields = new Dictionary<string, object>();
-                    fields.Add(IDFld, id);
-                    fields.Add(CompletedFld, Convert.ToInt32(completed));
-                    fields.Add(MessageFld, msg);
-
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    logger.ErrorException(string.Concat("Feil ved skriving til db: ", ex.Message), ex);
-                    return false;
-                }
-
-
-
-            }
-
-            public bool ReadFromDB()
-            {
-
-                try
-                {
-                    //Implemnet read for db
-
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    logger.ErrorException(string.Concat("Feil ved lesing fra DB: ", ex.Message), ex);
-                    return false;
-                }
-
-            }
-
-
-            public string Message
-            {
-                get { return msg; }
-                set { msg = value; }
-            }
-
-            public string ID
+            public int ID
             {
                 get { return id; }
                 set { id = value; }
             }
 
-            //public OrderChangelogAsync Request
-            //{
-            //    get { return request; }
-            //    set { request = value; }
-            //}
+            public Kartverket.Geosynkronisering.OrderChangelogAsync Request
+            {
+                get { return m_request; }
+                set { m_request = value; }
+            }
 
             public bool Completed
             {
@@ -298,45 +286,13 @@ namespace Kartverket.Geosynkronisering
             }
         }
 
-        private string OrderChangeLogAsync(Kartverket.GeosyncWCF.ChangelogOrderType order)
-        {
+          
 
-            // Create the delegate.
-            string ID = "1"; //Bestillingsnummer
-            ProcessState state = new ProcessState(ID);
-            state.Message = "Startet";
-            state.Completed = false;
-
-            // Create the delegate.
-            OrderChangelogAsync caller = new OrderChangelogAsync(OrderChangelogSync);
-           // state.Request = caller;
-            IAsyncResult result = caller.BeginInvoke(order, new AsyncCallback(CallbackProcessStatus), state);
-            return "#PROCESSID:" + ID;
-        }
-
-        private void CallbackProcessStatus(IAsyncResult ar)
-        {
-            // Retrieve the delegate.
-
-
-            //ProcessState result = (ProcessState)ar.AsyncState;
-            ////OrderChangelogAsync caller = result.Request;
-            //Kartverket.GeosyncWCF.ChangelogIdentificationType returnResult = caller.EndInvoke(ar);
-            //string msg = "";
-            //result.Result = returnResult;
-            //result.Completed = true;
-
-            //if (!result.UpdateDB())
-            //{
-            //    logger.Error("Kunne ikke skrive status for prosessfil.");
-            //    result.Message = "#ERROR: Kunne ikke skrive status for prosessfil på land";
-            //}
-
-        }
-
-        #endregion
-
-
+   
         
     }
+    
+    public delegate Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelogAsync(IChangelogProvider changelogprovider, int startindex, int count, string to_doFilter, int datasetID);
+     #endregion
+     
 }

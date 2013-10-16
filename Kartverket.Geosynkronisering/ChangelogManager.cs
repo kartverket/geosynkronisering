@@ -194,7 +194,7 @@ namespace Kartverket.Geosynkronisering
             db.SaveChanges();
 
             OrderChangelog resp = new OrderChangelog();
-            resp.changelogId = ldbo.ChangelogId.ToString();
+            resp.changelogId = ldbo.ChangelogId;
             return resp;            
         }
 
@@ -209,6 +209,22 @@ namespace Kartverket.Geosynkronisering
             var changelog = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c).First();
 
             changelog.Status = ((string)System.Enum.GetName(typeof(Kartverket.GeosyncWCF.ChangelogStatusType), status));
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return true;
+        }
+
+        public bool SetDownloadURI(int changelogid, string URI)
+        {
+            var changelog = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c).First();
+
+            changelog.DownloadUri = URI;
             try
             {
                 db.SaveChanges();
