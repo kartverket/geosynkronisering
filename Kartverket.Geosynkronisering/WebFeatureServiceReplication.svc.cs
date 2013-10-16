@@ -37,139 +37,199 @@ namespace Kartverket.Geosynkronisering
         /// <returns></returns>
         public object DescribeFeatureType(string datasetId, Kartverket.GeosyncWCF.DescribeFeatureTypeType describefeaturetype1)
         {
-            int numDatasetId = 0;
-            int.TryParse(datasetId, out numDatasetId);
-            geosyncEntities db = new geosyncEntities();
-            ChangelogManager mng = new ChangelogManager(db);
-            return mng.DescribeFeatureType(numDatasetId).ToString(); //TODO Får ikke til å returnere XElement eller XmlDocument her. Virker som serialiseringen får problemer... 
+            try
+            {
+                int numDatasetId = 0;
+                int.TryParse(datasetId, out numDatasetId);
+                geosyncEntities db = new geosyncEntities();
+                ChangelogManager mng = new ChangelogManager(db);
+                return mng.DescribeFeatureType(numDatasetId).ToString(); //TODO Får ikke til å returnere XElement eller XmlDocument her. Virker som serialiseringen får problemer... 
+            }
+            catch (System.Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
 
         public GeosyncWCF.ListStoredChangelogsResponse ListStoredChangelogs(Kartverket.GeosyncWCF.ListStoredChangelogsRequest request)
         {
-            string dataset=request.datasetId;
-            int datasetId = 0;
-            int.TryParse(dataset, out datasetId);
-            geosyncEntities db = new geosyncEntities();
-            ChangelogManager mng = new ChangelogManager(db);
-            return mng.ListStoredChangelogs(datasetId);//TODO mangler input datasettid
+            try
+            {
+                string dataset = request.datasetId;
+                int datasetId = 0;
+                int.TryParse(dataset, out datasetId);
+                geosyncEntities db = new geosyncEntities();
+                ChangelogManager mng = new ChangelogManager(db);
+                return mng.ListStoredChangelogs(datasetId);//TODO mangler input datasettid
+            }
+            catch (System.Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
         public Kartverket.GeosyncWCF.GetLastIndexResponse GetLastIndex(Kartverket.GeosyncWCF.GetLastIndexRequest request)
         {
-            string dataset = request.datasetId;
-            if (dataset == "") dataset = Properties.Settings.Default.defaultDataset;
-            int id = 0;
-            int.TryParse(dataset, out id);
+            try
+            {
+                string dataset = request.datasetId;
+                if (dataset == "") dataset = Properties.Settings.Default.defaultDataset;
+                int id = 0;
+                int.TryParse(dataset, out id);
 
-            IChangelogProvider changelogprovider;
-            geosyncEntities db = new geosyncEntities();
-            var datasets = from d in db.Datasets where d.DatasetId == id select d;
-            string initType = datasets.First().DatasetProvider;
-            //Initiate provider from config/dataset
-            Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
-            changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
-            changelogprovider.SetDb(db);
-            int datasetId = Convert.ToInt32(dataset);
+                IChangelogProvider changelogprovider;
+                geosyncEntities db = new geosyncEntities();
+                var datasets = from d in db.Datasets where d.DatasetId == id select d;
+                string initType = datasets.First().DatasetProvider;
+                //Initiate provider from config/dataset
+                Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
+                changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
+                changelogprovider.SetDb(db);
+                int datasetId = Convert.ToInt32(dataset);
 
-            var resp = changelogprovider.GetLastIndex(datasetId);
+                var resp = changelogprovider.GetLastIndex(datasetId);
 
-            Kartverket.GeosyncWCF.GetLastIndexResponse res = new Kartverket.GeosyncWCF.GetLastIndexResponse();
-            res.@return = resp;
-            return res;
+                Kartverket.GeosyncWCF.GetLastIndexResponse res = new Kartverket.GeosyncWCF.GetLastIndexResponse();
+                res.@return = resp;
+                return res;
+            }
+            catch (System.Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
 
         public void AcknowlegeChangelogDownloaded(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogId)
         {
-            int id;
-            if (int.TryParse(changelogId.changelogId, out id))
+            try
             {
-                geosyncEntities db = new geosyncEntities();
-                ChangelogManager mng = new ChangelogManager(db);
-                mng.AcknowledgeChangelogDownloaded(id);
+                int id;
+                if (int.TryParse(changelogId.changelogId, out id))
+                {
+                    geosyncEntities db = new geosyncEntities();
+                    ChangelogManager mng = new ChangelogManager(db);
+                    mng.AcknowledgeChangelogDownloaded(id);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                throw new FaultException(ex.Message);
             }
         }
 
         public void CancelChangelog(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid)
         {
-            int id;
-            if (int.TryParse(changelogid.changelogId, out id))
+            try
             {
-                geosyncEntities db = new geosyncEntities();
-                ChangelogManager mng = new ChangelogManager(db);
-                mng.AcknowledgeChangelogDownloaded(id);
+                int id;
+                if (int.TryParse(changelogid.changelogId, out id))
+                {
+                    geosyncEntities db = new geosyncEntities();
+                    ChangelogManager mng = new ChangelogManager(db);
+                    mng.AcknowledgeChangelogDownloaded(id);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                throw new FaultException(ex.Message);
             }
         }
 
         public Kartverket.GeosyncWCF.ChangelogType GetChangelog(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid)
         {
-            int id = -1;
-            int.TryParse(changelogid.changelogId, out id);
-
-            if (id == -1)
+            try
             {
-                throw new System.Exception("MissingParameterValue : changelogid");
+                int id = -1;
+                int.TryParse(changelogid.changelogId, out id);
+
+                if (id == -1)
+                {
+                    throw new System.Exception("MissingParameterValue : changelogid");
+                }
+                geosyncEntities db = new geosyncEntities();
+                ChangelogManager mng = new ChangelogManager(db);
+                return mng.GetChangelog(id);
             }
-            geosyncEntities db = new geosyncEntities();
-            ChangelogManager mng = new ChangelogManager(db);
-            return mng.GetChangelog(id);
+            catch (System.Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
         public Kartverket.GeosyncWCF.ChangelogStatusType GetChangelogStatus(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid)
         {
-            int id=-1;
-            int.TryParse(changelogid.changelogId, out id);
-            
-            if (id == -1)
+            try
             {
-                throw new System.Exception("MissingParameterValue : changelogid");
+                int id = -1;
+                int.TryParse(changelogid.changelogId, out id);
+
+                if (id == -1)
+                {
+                    throw new System.Exception("MissingParameterValue : changelogid");
+                }
+                geosyncEntities db = new geosyncEntities();
+                ChangelogManager mng = new ChangelogManager(db);
+                return mng.GetChangelogStatus(id);
             }
-            geosyncEntities db = new geosyncEntities();
-            ChangelogManager mng = new ChangelogManager(db);
-            return mng.GetChangelogStatus(id);
+            catch (System.Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
         public Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelog(Kartverket.GeosyncWCF.ChangelogOrderType order)
         {
-         
-            return OrderChangelogAsyncCaller(order);
-            
+            try
+            {
+                return OrderChangelogAsyncCaller(order);
+            }
+            catch (System.Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }            
         }
 
         private Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelogSync(Kartverket.GeosyncWCF.ChangelogOrderType order)
         {
-            int id = -1;
-            int.TryParse(order.datasetId, out id);
-            IChangelogProvider changelogprovider;
-            geosyncEntities db = new geosyncEntities();
-            var datasets = from d in db.Datasets where d.DatasetId == id select d;
-            string initType = datasets.First().DatasetProvider;
-            //Initiate provider from config/dataset
-            Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
-            changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
-            changelogprovider.SetDb(db);
-            int startindex = -1;
-            int count = -1;
-
-            int.TryParse(order.startIndex, out startindex);
-            int.TryParse(order.count, out count);
-
-            if (startindex == -1)
+            try
             {
-                throw new System.Exception("MissingParameterValue : startindex");
+                int id = -1;
+                int.TryParse(order.datasetId, out id);
+                IChangelogProvider changelogprovider;
+                geosyncEntities db = new geosyncEntities();
+                var datasets = from d in db.Datasets where d.DatasetId == id select d;
+                string initType = datasets.First().DatasetProvider;
+                //Initiate provider from config/dataset
+                Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
+                changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
+                changelogprovider.SetDb(db);
+                int startindex = -1;
+                int count = -1;
+
+                int.TryParse(order.startIndex, out startindex);
+                int.TryParse(order.count, out count);
+
+                if (startindex == -1)
+                {
+                    throw new System.Exception("MissingParameterValue : startindex");
+                }
+                if (count == -1)
+                {
+                    throw new System.Exception("MissingParameterValue : count");
+                }
+
+                var resp = changelogprovider.OrderChangelog(startindex, count, "", id);
+
+                Kartverket.GeosyncWCF.ChangelogIdentificationType res = new Kartverket.GeosyncWCF.ChangelogIdentificationType();
+                res.changelogId = resp.changelogId.ToString();
+                return res;
             }
-            if (count == -1)
+            catch (System.Exception ex)
             {
-                throw new System.Exception("MissingParameterValue : count");
-            }
-
-            var resp = changelogprovider.OrderChangelog(startindex, count, "", id);
-
-            Kartverket.GeosyncWCF.ChangelogIdentificationType res = new Kartverket.GeosyncWCF.ChangelogIdentificationType();
-            res.changelogId = resp.changelogId.ToString();
-            return res;
-            
+                throw new FaultException(ex.Message);
+            }            
         }
 
 
