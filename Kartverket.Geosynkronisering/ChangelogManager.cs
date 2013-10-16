@@ -38,7 +38,7 @@ namespace Kartverket.Geosynkronisering
             //get xsd file from dataset table
             System.Xml.XmlDocument xmlDoc = new System.Xml.XmlDocument();
             string filePath = Utils.BaseSiteUrl + dataset.First().SchemaFileUri;
-            //xmlDoc.Load(filePath);
+            xmlDoc.Load(filePath);
             //XElement retElement = XElement.Load(new XmlNodeReader(xmlDoc));
             //return retElement;
             return xmlDoc;
@@ -76,40 +76,43 @@ namespace Kartverket.Geosynkronisering
 
         public Kartverket.GeosyncWCF.ChangelogStatusType GetChangelogStatus(int changelogid)
         {
-            var changelog = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c).First();
-
+            var result = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c);
+            
             Kartverket.GeosyncWCF.ChangelogStatusType resp = new GeosyncWCF.ChangelogStatusType();
-            switch (changelog.Status)
+            if (result.Count() > 0)
             {
+                var changelog = result.First();
+                switch (changelog.Status)
+                {
 
-                case "started": resp = Kartverket.GeosyncWCF.ChangelogStatusType.started;break;
-                case "working": resp = Kartverket.GeosyncWCF.ChangelogStatusType.working; break;
-                case "cancelled": resp = Kartverket.GeosyncWCF.ChangelogStatusType.cancelled; break;
-                case "finished": resp = Kartverket.GeosyncWCF.ChangelogStatusType.finished; break;
+                    case "started": resp = Kartverket.GeosyncWCF.ChangelogStatusType.started; break;
+                    case "working": resp = Kartverket.GeosyncWCF.ChangelogStatusType.working; break;
+                    case "cancelled": resp = Kartverket.GeosyncWCF.ChangelogStatusType.cancelled; break;
+                    case "finished": resp = Kartverket.GeosyncWCF.ChangelogStatusType.finished; break;
+                }
             }
-
             return resp;
         }
 
         public Kartverket.GeosyncWCF.ChangelogType GetChangelog(int changelogid)
         {
-            var changelog = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c).First();
-
+            var result = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c);
+            
             Kartverket.GeosyncWCF.ChangelogType resp = new Kartverket.GeosyncWCF.ChangelogType();
-
-            if (changelog != null)
+            if (result.Count() > 0)
             {
-
-
-                resp.id = new Kartverket.GeosyncWCF.ChangelogIdentificationType();
-                resp.id.changelogId = changelog.ChangelogId.ToString();
-               // resp.@return.downloadUri = Utils.BaseSiteUrl + changelog.DownloadUri;
-                resp.downloadUri = changelog.DownloadUri; // OKA changed 20121030
-                resp.endIndex = changelog.EndIndex.Value.ToString();
+                var changelog = result.First();
+                if (changelog != null)
+                {
+                    resp.id = new Kartverket.GeosyncWCF.ChangelogIdentificationType();
+                    resp.id.changelogId = changelog.ChangelogId.ToString();
+                    // resp.@return.downloadUri = Utils.BaseSiteUrl + changelog.DownloadUri;
+                    resp.downloadUri = changelog.DownloadUri; // OKA changed 20121030
+                    resp.endIndex = changelog.EndIndex.Value.ToString();
+                }
             }
-
             return resp;
-        }
+         }
 
         public void AcknowledgeChangelogDownloaded(int changelogid)
         {                   
@@ -120,12 +123,12 @@ namespace Kartverket.Geosynkronisering
             // TODO: Should be replaced by: var obsoleteFiles = (from c in db.StoredChangelogs where (c.Status == "started" || (c.Status == "Finished" && c.Stored == false)) && c.DateCreated < deleteDate select c);
 
             foreach (var of in obsoleteFiles)
-            {                                
+            {
                 if (of.DownloadUri != null) //TODO: Quick fix of permanent?
                 {
                     var downloadUri = new Uri(of.DownloadUri);
                     DeleteFileOnServer(downloadUri);
-                    db.StoredChangelogs.DeleteObject(of);                   
+                    db.StoredChangelogs.DeleteObject(of);
                 }
             }
 
@@ -133,10 +136,11 @@ namespace Kartverket.Geosynkronisering
 
 
             //Delete files and db row if not a stored one...
-            var changelog = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c).First();
-            
-            if (changelog != null)
+            //var changelog = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c).First();
+            var result = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c);
+            if (result != null && result.Count()>0)
             {
+                var changelog = result.First();
                 if (changelog.Stored == false)
                 {
                     var downloadUri = new Uri(changelog.DownloadUri);
