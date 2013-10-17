@@ -133,7 +133,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 }
                 else
                 {
-                    XElement orElement = new XElement("Or");
+                    XElement orElement = new XElement(nsFes + "Or");
                     foreach (string localId in localIds)
                     {
                         //ValueReference content has namespace prefix
