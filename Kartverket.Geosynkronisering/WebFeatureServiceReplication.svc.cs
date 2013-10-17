@@ -41,9 +41,11 @@ namespace Kartverket.Geosynkronisering
             {
                 int numDatasetId = 0;
                 int.TryParse(datasetId, out numDatasetId);
-                geosyncEntities db = new geosyncEntities();
-                ChangelogManager mng = new ChangelogManager(db);
-                return mng.DescribeFeatureType(numDatasetId).ToString(); //TODO Får ikke til å returnere XElement eller XmlDocument her. Virker som serialiseringen får problemer... 
+                using (geosyncEntities db = new geosyncEntities())
+                {
+                    ChangelogManager mng = new ChangelogManager(db);
+                    return mng.DescribeFeatureType(numDatasetId).ToString(); //TODO Får ikke til å returnere XElement eller XmlDocument her. Virker som serialiseringen får problemer...                     
+                }
             }
             catch (System.Exception ex)
             {
@@ -59,9 +61,11 @@ namespace Kartverket.Geosynkronisering
                 string dataset = request.datasetId;
                 int datasetId = 0;
                 int.TryParse(dataset, out datasetId);
-                geosyncEntities db = new geosyncEntities();
-                ChangelogManager mng = new ChangelogManager(db);
-                return mng.ListStoredChangelogs(datasetId);//TODO mangler input datasettid
+                using (geosyncEntities db = new geosyncEntities())
+                {
+                    ChangelogManager mng = new ChangelogManager(db);
+                    return mng.ListStoredChangelogs(datasetId);//TODO mangler input datasettid                     
+                }
             }
             catch (System.Exception ex)
             {
@@ -79,20 +83,26 @@ namespace Kartverket.Geosynkronisering
                 int.TryParse(dataset, out id);
 
                 IChangelogProvider changelogprovider;
-                geosyncEntities db = new geosyncEntities();
-                var datasets = from d in db.Datasets where d.DatasetId == id select d;
-                string initType = datasets.First().DatasetProvider;
-                //Initiate provider from config/dataset
-                Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
-                changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
-                changelogprovider.SetDb(db);
-                int datasetId = Convert.ToInt32(dataset);
+                //geosyncEntities db = new geosyncEntities()
+                string resp;
+                using (geosyncEntities db = new geosyncEntities())
+                {
 
-                var resp = changelogprovider.GetLastIndex(datasetId);
+                    var datasets = from d in db.Datasets where d.DatasetId == id select d;
+                    string initType = datasets.First().DatasetProvider;
+                    //Initiate provider from config/dataset
+                    Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
+                    changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
+                    changelogprovider.SetDb(db);
+                    int datasetId = Convert.ToInt32(dataset);
+
+                    resp = changelogprovider.GetLastIndex(datasetId);
+                }
 
                 Kartverket.GeosyncWCF.GetLastIndexResponse res = new Kartverket.GeosyncWCF.GetLastIndexResponse();
                 res.@return = resp;
                 return res;
+
             }
             catch (System.Exception ex)
             {
@@ -108,9 +118,14 @@ namespace Kartverket.Geosynkronisering
                 int id;
                 if (int.TryParse(changelogId.changelogId, out id))
                 {
-                    geosyncEntities db = new geosyncEntities();
-                    ChangelogManager mng = new ChangelogManager(db);
-                    mng.AcknowledgeChangelogDownloaded(id);
+                    using (geosyncEntities db = new geosyncEntities())
+                    {
+                        ChangelogManager mng = new ChangelogManager(db);
+                        mng.AcknowledgeChangelogDownloaded(id);
+                    }
+                    //geosyncEntities db = new geosyncEntities();
+                    //ChangelogManager mng = new ChangelogManager(db);
+                    //mng.AcknowledgeChangelogDownloaded(id);
                 }
             }
             catch (System.Exception ex)
@@ -126,9 +141,11 @@ namespace Kartverket.Geosynkronisering
                 int id;
                 if (int.TryParse(changelogid.changelogId, out id))
                 {
-                    geosyncEntities db = new geosyncEntities();
-                    ChangelogManager mng = new ChangelogManager(db);
-                    mng.AcknowledgeChangelogDownloaded(id);
+                    using (geosyncEntities db = new geosyncEntities())
+                    {
+                        ChangelogManager mng = new ChangelogManager(db);
+                        mng.AcknowledgeChangelogDownloaded(id);
+                    }
                 }
             }
             catch (System.Exception ex)
@@ -148,9 +165,14 @@ namespace Kartverket.Geosynkronisering
                 {
                     throw new System.Exception("MissingParameterValue : changelogid");
                 }
-                geosyncEntities db = new geosyncEntities();
-                ChangelogManager mng = new ChangelogManager(db);
-                return mng.GetChangelog(id);
+                using (geosyncEntities db = new geosyncEntities())
+                {
+                    ChangelogManager mng = new ChangelogManager(db);
+                    return mng.GetChangelog(id);
+                }
+                //geosyncEntities db = new geosyncEntities();
+                //ChangelogManager mng = new ChangelogManager(db);
+                //return mng.GetChangelog(id);
             }
             catch (System.Exception ex)
             {
@@ -169,9 +191,11 @@ namespace Kartverket.Geosynkronisering
                 {
                     throw new System.Exception("MissingParameterValue : changelogid");
                 }
-                geosyncEntities db = new geosyncEntities();
-                ChangelogManager mng = new ChangelogManager(db);
-                return mng.GetChangelogStatus(id);
+                using (geosyncEntities db = new geosyncEntities())
+                {
+                    ChangelogManager mng = new ChangelogManager(db);
+                    return mng.GetChangelogStatus(id);
+                }
             }
             catch (System.Exception ex)
             {
@@ -188,7 +212,7 @@ namespace Kartverket.Geosynkronisering
             catch (System.Exception ex)
             {
                 throw new FaultException(ex.Message);
-            }            
+            }
         }
 
         private Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelogSync(Kartverket.GeosyncWCF.ChangelogOrderType order)
@@ -198,13 +222,16 @@ namespace Kartverket.Geosynkronisering
                 int id = -1;
                 int.TryParse(order.datasetId, out id);
                 IChangelogProvider changelogprovider;
-                geosyncEntities db = new geosyncEntities();
-                var datasets = from d in db.Datasets where d.DatasetId == id select d;
-                string initType = datasets.First().DatasetProvider;
-                //Initiate provider from config/dataset
-                Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
-                changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
-                changelogprovider.SetDb(db);
+                using (geosyncEntities db = new geosyncEntities())
+                {
+                    var datasets = from d in db.Datasets where d.DatasetId == id select d;
+                    string initType = datasets.First().DatasetProvider;
+                    //Initiate provider from config/dataset
+                    Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
+                    changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
+                    changelogprovider.SetDb(db);
+
+                }
                 int startindex = -1;
                 int count = -1;
 
@@ -229,7 +256,7 @@ namespace Kartverket.Geosynkronisering
             catch (System.Exception ex)
             {
                 throw new FaultException(ex.Message);
-            }            
+            }
         }
 
 
@@ -244,7 +271,7 @@ namespace Kartverket.Geosynkronisering
             return res;
 
         }
-      
+
 
         private Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelogAsyncCaller(Kartverket.GeosyncWCF.ChangelogOrderType order)
         {
@@ -253,15 +280,21 @@ namespace Kartverket.Geosynkronisering
             int id = -1;
             int.TryParse(order.datasetId, out id);
             IChangelogProvider changelogprovider;
+            OrderChangelog resp;
+            int startindex = -1;
+            int count = -1;
+            //using (geosyncEntities db = new geosyncEntities())
             geosyncEntities db = new geosyncEntities();
+
             var datasets = from d in db.Datasets where d.DatasetId == id select d;
             string initType = datasets.First().DatasetProvider;
             //Initiate provider from config/dataset
             Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
             changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
             changelogprovider.SetDb(db);
-            int startindex = -1;
-            int count = -1;
+
+
+
 
             int.TryParse(order.startIndex, out startindex);
             int.TryParse(order.count, out count);
@@ -275,22 +308,20 @@ namespace Kartverket.Geosynkronisering
                 throw new System.Exception("MissingParameterValue : count");
             }
 
-            var resp = changelogprovider.CreateChangelog(startindex, count, "", id);
-            
-            
+            resp = changelogprovider.CreateChangelog(startindex, count, "", id);
 
             // Create the delegate.
             OrderChangelogAsync caller = new OrderChangelogAsync(OrderChangeLogAsync);
             ProcessState state = new ProcessState(resp.changelogId);
             state.Request = caller;
-            
+
             IAsyncResult result = caller.BeginInvoke(changelogprovider, startindex, count, "", id, new AsyncCallback(CallbackProcessStatus), state);
 
             Kartverket.GeosyncWCF.ChangelogIdentificationType res = new Kartverket.GeosyncWCF.ChangelogIdentificationType();
             res.changelogId = resp.changelogId.ToString();
             return res;
-                                  
-          
+
+
         }
 
         private void CallbackProcessStatus(IAsyncResult ar)
@@ -300,9 +331,9 @@ namespace Kartverket.Geosynkronisering
 
             ProcessState result = (ProcessState)ar.AsyncState;
             OrderChangelogAsync caller = result.Request;
-            Kartverket.GeosyncWCF.ChangelogIdentificationType returnResult = caller.EndInvoke(ar);           
+            Kartverket.GeosyncWCF.ChangelogIdentificationType returnResult = caller.EndInvoke(ar);
             result.Result = returnResult;
-            result.Completed = true;           
+            result.Completed = true;
         }
 
 
@@ -346,13 +377,13 @@ namespace Kartverket.Geosynkronisering
             }
         }
 
-          
 
-   
-        
+
+
+
     }
-    
+
     public delegate Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelogAsync(IChangelogProvider changelogprovider, int startindex, int count, string to_doFilter, int datasetID);
-     #endregion
-     
+        #endregion
+
 }
