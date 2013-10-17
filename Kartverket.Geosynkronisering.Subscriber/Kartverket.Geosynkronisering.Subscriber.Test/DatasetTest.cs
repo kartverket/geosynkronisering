@@ -24,5 +24,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.Test
             var dataset = SubscriberDatasetManager.GetDataset(1);
             Assert.IsNull(dataset.TargetNamespace);
         }
+
+        [Test]
+        public void TestUpdateDataset()
+        {
+            SubscriberDataset geoClientDataset = new SubscriberDataset {DatasetId = 1, LastIndex = 0, MaxCount = 1000};
+
+            var res = SubscriberDatasetManager.UpdateDataset(geoClientDataset);
+            Assert.IsTrue(res);
+        }
     }
 }

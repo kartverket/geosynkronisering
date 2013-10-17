@@ -154,11 +154,11 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-
-                // Does not work on SQL Server Compact 3.5, must upgrade to 4.0.
-                // _localDb.SaveChanges();
-
-                // todo: Hvordan håndteres dette??
+                var subscriberDatasets = (List<DL.SubscriberDataset>) dgDataset.DataSource;
+                foreach (var subscriberDataset in subscriberDatasets)
+                {
+                    DL.SubscriberDatasetManager.UpdateDataset(subscriberDataset);
+                }                
 
                 // Fill the cboDatasetName comboBox with the dataset names
                 FillComboBoxDatasetName();
@@ -289,7 +289,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
 
                 string mappingFileName = path.Substring(0, path.LastIndexOf("bin")) + "SchemaMapping" + @"\ar5FeatureType-mapping-file.xml";
            
-
                 // load the changelog XML document from file
                 // XElement changeLog = XElement.Load(fileName);
 

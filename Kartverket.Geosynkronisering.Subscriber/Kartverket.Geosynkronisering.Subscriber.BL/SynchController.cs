@@ -374,7 +374,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             
                             var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
                             dataset.LastIndex = lastIndexSubscriber;
-                            DL.SubscriberDatasetManager.UpdateDataset(dataset);
+                            // todo. feiler i oppdatering av LastIndex
+                            //              DL.SubscriberDatasetManager.UpdateDataset(dataset);
 
                             AcknowledgeChangelogDownloaded(datasetId, changeLogId);
                         }

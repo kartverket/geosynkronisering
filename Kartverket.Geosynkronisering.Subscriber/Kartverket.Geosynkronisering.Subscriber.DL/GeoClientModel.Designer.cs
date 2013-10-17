@@ -167,9 +167,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             set
             {
                 OnNameChanging(value);
-                ReportPropertyChanging("GetDatasetName");
+                ReportPropertyChanging("Name");
                 _Name = StructuralObject.SetValidValue(value, true);
-                ReportPropertyChanged("GetDatasetName");
+                ReportPropertyChanged("Name");
                 OnNameChanged();
             }
         }
@@ -191,9 +191,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             set
             {
                 OnLastIndexChanging(value);
-                ReportPropertyChanging("GetLastIndex");
+                ReportPropertyChanging("LastIndex");
                 _LastIndex = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("GetLastIndex");
+                ReportPropertyChanged("LastIndex");
                 OnLastIndexChanged();
             }
         }

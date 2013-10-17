@@ -79,6 +79,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 dataset.ProviderDatasetId = geoClientDataset.ProviderDatasetId;
                 dataset.SyncronizationUrl = geoClientDataset.SynchronizationUrl;
                 dataset.ClientWfsUrl = geoClientDataset.ClientWfsUrl;
+                dataset.TargetNamespace = geoClientDataset.TargetNamespace;
+                dataset.MappingFile = geoClientDataset.MappingFile;
 
                 localDb.SaveChanges();
                 return true;
