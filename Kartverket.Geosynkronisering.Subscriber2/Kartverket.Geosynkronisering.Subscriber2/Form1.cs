@@ -45,11 +45,11 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         {
             try
             {
-#region GetCapabilities - Hent datasett fra tilbyder.
+                #region GetCapabilities - Hent datasett fra tilbyder.
                 txbUser.Cue = "Type username.";
                 txbPassword.Cue = "Type password.";
-#endregion
-               
+                #endregion
+
 
                 // txtDataset is now updated by the cboDatasetName combobox
                 txtDataset.Visible = false;
@@ -673,7 +673,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
             CapabilitiesDataBuilder cdb = new CapabilitiesDataBuilder(_localDb, url);
             dgvProviderDataset.DataSource = cdb.ProviderDatasets;
-            IDictionary<string,IList<object>> visibleColumns = new Dictionary<string,IList<object>>();
+            IDictionary<string, IList<object>> visibleColumns = new Dictionary<string, IList<object>>();
             IList<object> columnFormat = new List<object>();
             columnFormat.Add("Datasett");
             columnFormat.Add("1");
@@ -688,13 +688,13 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             columnFormat.Add("Navnerom");
             columnFormat.Add("3");
             columnFormat.Add(DataGridViewAutoSizeColumnMode.Fill);
-            visibleColumns.Add("targetnamespace", columnFormat);                        
+            visibleColumns.Add("targetnamespace", columnFormat);
             columnFormat = new List<object>();
             columnFormat.Add("Datasett ID");
             columnFormat.Add("4");
             columnFormat.Add(DataGridViewAutoSizeColumnMode.ColumnHeader);
             visibleColumns.Add("providerdatasetid", columnFormat);
-           
+
             foreach (DataGridViewColumn col in dgvProviderDataset.Columns)
             {
                 col.Visible = false;
@@ -707,8 +707,8 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                     col.AutoSizeMode = (DataGridViewAutoSizeColumnMode)columnFormat[2];
                 }
             }
-            dgvProviderDataset.AutoSize = true;            
-            dgvProviderDataset.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;           
+            dgvProviderDataset.AutoSize = true;
+            dgvProviderDataset.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
         }
 
@@ -1442,7 +1442,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                     }
                     httpWebResponse.Close();
 
-                    if (httpWebResponse.StatusCode == HttpStatusCode.OK && resultString.ToString().Contains("ExceptionReport")==false)
+                    if (httpWebResponse.StatusCode == HttpStatusCode.OK && resultString.ToString().Contains("ExceptionReport") == false)
                     {
                         //TODO en får alltid status 200 OK fra geoserver
                         //En må sjekke om en har fått ExceptionReport
@@ -1462,7 +1462,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
 
                         sucsess = true;
                         XElement transactionResponseElement = XElement.Parse(resultString.ToString());
-                       
+
 
                         // TODO: It's not necesary to save the file here, but nice for debugging
                         string tempDir = System.Environment.GetEnvironmentVariable("TEMP");
@@ -1723,7 +1723,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 // fileName = path.Substring(0, path.LastIndexOf("bin")) + "SchemaMapping" + @"\ar5-tom-07a8e3ef-7315-409f-862d-6417b4275368.xml";
 
                 string mappingFileName = path.Substring(0, path.LastIndexOf("bin")) + "SchemaMapping" + @"\ar5FeatureType-mapping-file.xml";
-           
+
 
                 // load the changelog XML document from file
                 // XElement changeLog = XElement.Load(fileName);
@@ -1761,7 +1761,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
         /// </summary>
         /// <param name="fileName">Name of the file to transform.</param>
         /// <returns> Name of transformed changelog</returns>
-        private string SchemaTransformSimplify(string fileName)
+        private string  SchemaTransformSimplify(string fileName)
         {
             string newFileName = "";
             try
@@ -1785,6 +1785,12 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                 string namespaceUri = dataset.TargetNamespace;
                 mappingFileName = path.Substring(0, path.LastIndexOf("bin")) + dataset.MappingFile; //"SchemaMapping" + @"\" + dataset.MappingFile;
 
+                // 20131016-Leg
+                if (string.IsNullOrEmpty(dataset.MappingFile))
+                {
+                    stopWatch.Stop();
+                    return fileName;
+                }
 
                 // Set up GeoServer mapping
                 // TODO: GetCapabilities should deliver NamespaceUri? Once, or get every time?
@@ -1824,6 +1830,98 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             }
 
             return newFileName;
+        }
+
+        #endregion
+
+        #region Test OffLine 
+        //20131015-Leg; Test offline syncronization from zip-file containg changelog(s).
+        private void btnOfflneSync_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+                string zipFile = "";
+                zipFile = @"C:\Users\leg\AppData\Local\Temp\abonnent\31304452-5349-475e-b377-e34c56525e90.zip";
+                this.tabControl1.SelectTab(0);
+                bool status = TestOfflineSyncronizationComplete(zipFile);
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + ex.StackTrace, "btnOfflneSync_Click");
+
+                //   throw;
+            }
+        }
+
+        private bool TestOfflineSyncronizationComplete(string zipFile)
+        {
+            //TODO: TestOfflineSyncronizationComplete NOT finished
+            try
+            {
+
+                bool status = false;
+
+                var dataset = (from d in _localDb.Dataset where d.Name == txtDataset.Text select d).FirstOrDefault();
+
+                int lastChangeIndexSubscriber = (int)dataset.LastIndex;
+                if (lastChangeIndexSubscriber > 0)
+                {
+                    logger.Info("TestOfflineSyncronizationComplete colud only be run if lastChangeIndexSubscriber = 0");
+                    return false;
+
+                }
+
+
+                string outPath = Path.GetDirectoryName(zipFile);
+                this.unpackZipFile(zipFile, outPath);
+                // TODO: Could be more than one file
+                string xmlFile = Path.ChangeExtension(zipFile, ".xml");
+                //_downLoadedChangelogName = xmlFile;
+
+                //
+                // Schema transformation
+                // Mapping from the nested structure of one or more simple features to the simple features for GeoServer.
+                //
+                string fileName = xmlFile; // txbDownloadedFile.Text;
+                var newFileName = SchemaTransformSimplify(fileName);
+                if (!string.IsNullOrEmpty(newFileName))
+                {
+                    fileName = newFileName;
+                }
+
+                // load an XML document from a file
+                XElement changeLog = XElement.Load(fileName);
+
+                // Build wfs-t transaction from changelog, and do the transaction          
+                if (this.DoWfsTransactions(changeLog))
+                {
+                    status = true;
+
+                    int numberMatched = (int)changeLog.Attribute("numberMatched");
+                    int numberReturned = (int)changeLog.Attribute("numberReturned");
+                    int startIndex = (int)changeLog.Attribute("startIndex");
+                    int endIndex = (int)changeLog.Attribute("endIndex"); //NOT correct, always the latest!
+                    int lastIndexSubscriber = startIndex + numberReturned; //endIndex - startIndex + 1;
+
+                    dataset.LastIndex = lastIndexSubscriber;
+                    _localDb.SaveChanges();
+                    txbSubscrLastindex.Text = lastIndexSubscriber.ToString();
+
+                    // Update datagridview control with changes
+                    dgDataset.DataSource = _localDb.Dataset;
+                }
+
+                return status;
+            }
+
+            catch (Exception ex)
+            {
+                logger.ErrorException("TestOfflineSyncronizationComplete:", ex);
+                throw;
+            }
+
         }
 
         #endregion
@@ -2207,7 +2305,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             }
             else
             {
-                MessageBox.Show(this, "Saved selected datasets to the internal Database.", "Get Provider Datasets", MessageBoxButtons.OK, MessageBoxIcon.Information);               
+                MessageBox.Show(this, "Saved selected datasets to the internal Database.", "Get Provider Datasets", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 dgDataset.DataSource = null;
                 _localDb.Connection.Close();
                 _localDb.Connection.Dispose();
@@ -2218,7 +2316,7 @@ namespace Kartverket.Geosynkronisering.Subscriber2
             }
         }
 
-        
+
         private void dgvProviderDataset_SelectionChanged(object sender, EventArgs e)
         {
             btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
