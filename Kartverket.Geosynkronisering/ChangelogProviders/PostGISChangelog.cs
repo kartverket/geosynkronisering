@@ -212,11 +212,11 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 string tmpzipFile = Path.Combine(System.IO.Path.GetTempPath(), zipFile);
                 logger.Info(string.Format("Upload of file {0} started", tmpzipFile));
                
-                p_db.SaveChanges();
+               // p_db.SaveChanges();
                 // chgLogHandler.UploadFileToFtp(zipFile, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpServer, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpUser, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpPassword);
                 if (!ftpTool.UploadFileToFtp(tmpzipFile, Database.ServerConfigData.FTPUrl(), Database.ServerConfigData.FTPUser(), Database.ServerConfigData.FTPPwd())) throw new Exception("Could not upload file to FTPServer!");
                
-                p_db.SaveChanges();
+                //p_db.SaveChanges();
             }
             catch (Exception ex)
             {
