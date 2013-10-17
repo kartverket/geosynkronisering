@@ -11,7 +11,7 @@ using System.Globalization;
 using System.Net;
 using System.Xml.Linq;
 using Kartverket.Geosynkronisering.Subscriber.BL;
-using Kartverket.Geosynkronisering.Subscriber.BL.Mapping;
+using Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping;
 using NLog;
 
 namespace Kartverket.Geosynkronisering.Subscriber
@@ -41,11 +41,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 //txbUser.Cue = "Type username.";
                 //txbPassword.Cue = "Type password.";
                 #endregion
-
-
-                // txtDataset is now updated by the cboDatasetName combobox
-                txtDataset.Visible = false;
-                txtDataset.Text = Properties.Settings.Default.defaultDataset;
+               
                 toolStripStatusLabel1.Text = "Ready";
 
                 // TODO: remember to geosyncDB.sdf to the build folder e.g. bin\debug
@@ -61,7 +57,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
 
                 try
                 {
-                    dgDataset.DataSource = DL.SubscriberDatasetManager.GetDataset(datasetId);
+                    dgDataset.DataSource = DL.SubscriberDatasetManager.GetAllDataset();
                 }
                 catch (Exception ex)
                 {
@@ -73,6 +69,9 @@ namespace Kartverket.Geosynkronisering.Subscriber
                     return;
                 }
 
+                // Initialize datasetId
+                datasetId = 1;
+                
                 // Fill the cboDatasetName comboBox with the dataset names
                 FillComboBoxDatasetName();
 
@@ -106,22 +105,24 @@ namespace Kartverket.Geosynkronisering.Subscriber
             cboDatasetName.Items.Clear();
             var datasetNameList = DL.SubscriberDatasetManager.GetDatasetNames();
             if (datasetNameList.Count > 0)
-            {
+            {                
                 foreach (string name in datasetNameList)
                 {
                     cboDatasetName.Items.Add(name);
                 }
-                if (txtDataset.Text.Length > 0)
-                {
-                    if (cboDatasetName.Items.Contains(txtDataset.Text))
-                    {
-                        cboDatasetName.SelectedIndex = cboDatasetName.Items.IndexOf(txtDataset.Text);
-                    }
-                }
-                else
-                {
-                    cboDatasetName.SelectedIndex = -1;
-                }
+
+                cboDatasetName.SelectedIndex = datasetId - 1;
+                //if (txtDataset.Text.Length > 0)
+                //{
+                //    if (cboDatasetName.Items.Contains(txtDataset.Text))
+                //    {
+                //        cboDatasetName.SelectedIndex = cboDatasetName.Items.IndexOf(txtDataset.Text);
+                //    }
+                //}
+                //else
+                //{
+                //    cboDatasetName.SelectedIndex = -1;
+                //}
             }
         }
 
@@ -132,10 +133,11 @@ namespace Kartverket.Geosynkronisering.Subscriber
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void cboDatasetName_SelectedIndexChanged(object sender, EventArgs e)
         {
-            txtDataset.Text = cboDatasetName.SelectedItem.ToString();
-            Properties.Settings.Default.defaultDataset = txtDataset.Text;
-            Properties.Settings.Default.Save();
-            txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetDataset(txtDataset.Text).LastIndex.ToString();
+            datasetId = cboDatasetName.SelectedIndex + 1;
+            // todo: endre defaultdataset til å lagre datasetId.
+            //Properties.Settings.Default.defaultDataset = txtDataset.Text;
+            //Properties.Settings.Default.Save();
+            txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetDataset(datasetId).LastIndex.ToString();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -239,7 +241,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
             // Display in geoserver openlayers
             toolStripStatusLabel1.Text = "DisplayMap";
             statusStrip1.Refresh();
-            DisplayMap(epsgCode: "EPSG:32633", datasetName: txtDataset.Text); //DisplayMap(epsgCode: "EPSG:32633");
+            var currentDataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
+            DisplayMap(epsgCode: "EPSG:32633", datasetName: currentDataset.Name); //DisplayMap(epsgCode: "EPSG:32633");
             toolStripStatusLabel1.Text = "Ready";
             statusStrip1.Refresh();
 

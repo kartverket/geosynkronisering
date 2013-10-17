@@ -37,6 +37,22 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             }
         }
 
+        public static List<SubscriberDataset> GetAllDataset()
+        {
+            using (var localDb = new geosyncDBEntities())
+            {
+                List<Dataset> datasets = (from d in localDb.Datasets select d).ToList();
+             
+                var geoClientDatasets = new List<SubscriberDataset>();
+
+                foreach (var dataset in datasets)
+                {
+                    geoClientDatasets.Add(MapToGeoClientDataset(dataset));
+                }
+                return geoClientDatasets;
+            }
+        }
+
         public static string GetDatasource()
         {
             using (var localDb = new geosyncDBEntities())

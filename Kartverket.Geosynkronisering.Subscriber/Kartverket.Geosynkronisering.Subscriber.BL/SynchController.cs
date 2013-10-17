@@ -7,7 +7,7 @@ using System.Net;
 using System.Text;
 using System.Xml.Linq;
 using Kartverket.GeosyncWCF;
-using Kartverket.Geosynkronisering.Subscriber.BL.Mapping;
+using Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping;
 using Kartverket.Geosynkronisering.Subscriber.DL;
 using NLog;
 
@@ -301,18 +301,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     logger.Info(message + " Provider lastIndex:{0} Subscriber lastChangeIndex:{1}", lastChangeIndexProvider, lastChangeIndexSubscriber);
                     return false;
                 }
-
-                //
-                // OrderChangelog
-                //
-                if (lastChangeIndexSubscriber >= lastChangeIndexProvider)
-                {                 
-                    string message = "Changelog has already been downloaded and handled:";
-                    logger.Info(message + " Provider lastIndex:{0} Subscriber lastChangeIndex:{1}", lastChangeIndexProvider, lastChangeIndexSubscriber);              
-                    return false;
-                }
-
-                // 20121107-Leg            
+                   
                 int maxCount = DL.SubscriberDatasetManager.GetMaxCount(datasetId);
 
                 int numberOfFeatures = lastChangeIndexProvider - lastChangeIndexSubscriber;
@@ -388,10 +377,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             DL.SubscriberDatasetManager.UpdateDataset(dataset);
 
                             AcknowledgeChangelogDownloaded(datasetId, changeLogId);
-
-                        
-
-
                         }
                     }
                 }             

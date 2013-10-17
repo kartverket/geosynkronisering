@@ -35,7 +35,6 @@
             this.cboDatasetName = new System.Windows.Forms.ComboBox();
             this.txtLimitNumberOfFeatures = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtDataset = new System.Windows.Forms.TextBox();
             this.listBoxLog = new System.Windows.Forms.ListBox();
             this.txbSubscrLastindex = new System.Windows.Forms.TextBox();
             this.btnResetSubscrLastindex = new System.Windows.Forms.Button();
@@ -43,12 +42,12 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnSimplify = new System.Windows.Forms.Button();
             this.btnGetCapabilities = new System.Windows.Forms.Button();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.txbLastIndex = new System.Windows.Forms.TextBox();
             this.btnGetLastIndex = new System.Windows.Forms.Button();
+            this.btnSimplify = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.buttonSave = new System.Windows.Forms.Button();
             this.dgDataset = new System.Windows.Forms.DataGridView();
@@ -82,7 +81,6 @@
             this.tableLayoutPanel7.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProviderDataset)).BeginInit();
-            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -120,7 +118,6 @@
             this.tabPage1.Controls.Add(this.cboDatasetName);
             this.tabPage1.Controls.Add(this.txtLimitNumberOfFeatures);
             this.tabPage1.Controls.Add(this.label3);
-            this.tabPage1.Controls.Add(this.txtDataset);
             this.tabPage1.Controls.Add(this.listBoxLog);
             this.tabPage1.Controls.Add(this.txbSubscrLastindex);
             this.tabPage1.Controls.Add(this.btnResetSubscrLastindex);
@@ -160,14 +157,6 @@
             this.label3.Size = new System.Drawing.Size(98, 13);
             this.label3.TabIndex = 24;
             this.label3.Text = "Limit no. of objects:";
-            // 
-            // txtDataset
-            // 
-            this.txtDataset.Location = new System.Drawing.Point(144, 18);
-            this.txtDataset.Name = "txtDataset";
-            this.txtDataset.Size = new System.Drawing.Size(164, 20);
-            this.txtDataset.TabIndex = 23;
-            this.toolTip1.SetToolTip(this.txtDataset, "Current dataset");
             // 
             // listBoxLog
             // 
@@ -241,10 +230,10 @@
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel2.Controls.Add(this.btnSimplify, 0, 4);
             this.tableLayoutPanel2.Controls.Add(this.btnGetCapabilities, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel3, 3, 1);
             this.tableLayoutPanel2.Controls.Add(this.btnGetLastIndex, 3, 0);
+            this.tableLayoutPanel2.Controls.Add(this.btnSimplify, 0, 1);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 5;
@@ -255,18 +244,6 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.Size = new System.Drawing.Size(858, 192);
             this.tableLayoutPanel2.TabIndex = 2;
-            // 
-            // btnSimplify
-            // 
-            this.btnSimplify.Location = new System.Drawing.Point(3, 59);
-            this.btnSimplify.Name = "btnSimplify";
-            this.btnSimplify.Size = new System.Drawing.Size(93, 44);
-            this.btnSimplify.TabIndex = 16;
-            this.btnSimplify.Text = "Schema Transformation";
-            this.toolTip1.SetToolTip(this.btnSimplify, "Mapping from the nested structure of one or more simple features to the simple fe" +
-        "atures for GeoServer");
-            this.btnSimplify.UseVisualStyleBackColor = true;
-            this.btnSimplify.Click += new System.EventHandler(this.btnSimplify_Click);
             // 
             // btnGetCapabilities
             // 
@@ -320,6 +297,18 @@
             this.btnGetLastIndex.Text = "GetLastIndex";
             this.btnGetLastIndex.UseVisualStyleBackColor = true;
             this.btnGetLastIndex.Click += new System.EventHandler(this.btnGetLastIndex_Click);
+            // 
+            // btnSimplify
+            // 
+            this.btnSimplify.Location = new System.Drawing.Point(3, 31);
+            this.btnSimplify.Name = "btnSimplify";
+            this.btnSimplify.Size = new System.Drawing.Size(93, 44);
+            this.btnSimplify.TabIndex = 16;
+            this.btnSimplify.Text = "Schema Transformation";
+            this.toolTip1.SetToolTip(this.btnSimplify, "Mapping from the nested structure of one or more simple features to the simple fe" +
+        "atures for GeoServer");
+            this.btnSimplify.UseVisualStyleBackColor = true;
+            this.btnSimplify.Click += new System.EventHandler(this.btnSimplify_Click);
             // 
             // tabPage3
             // 
@@ -437,7 +426,7 @@
             this.tableLayoutPanel9.ColumnCount = 3;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82.26744F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.73256F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 365F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 367F));
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel9.Location = new System.Drawing.Point(181, 23);
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
@@ -503,9 +492,6 @@
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1,
-            this.toolStripProgressBar1});
             this.statusStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.statusStrip1.Location = new System.Drawing.Point(0, 700);
             this.statusStrip1.Name = "statusStrip1";
@@ -553,8 +539,6 @@
             this.tableLayoutPanel7.PerformLayout();
             this.tableLayoutPanel8.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvProviderDataset)).EndInit();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -581,7 +565,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txbLastIndex;
         private System.Windows.Forms.ListBox listBoxLog;
-        private System.Windows.Forms.TextBox txtDataset;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.DataGridView dgDataset;
         private System.Windows.Forms.Button buttonSave;

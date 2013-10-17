@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Xml.Linq;
 
-namespace Kartverket.Geosynkronisering.Subscriber.BL.Mapping
+namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
 {
     /// <summary>
     /// Schema transformation mapping interface.

@@ -81,9 +81,9 @@
   <ItemGroup>
     <Compile Include="Download\DownloadController.cs" />
     <Compile Include="Download\FileTransferHandler.cs" />
-    <Compile Include="Mapping\GeoserverMapping.cs" />
-    <Compile Include="Mapping\ITypeMappings.cs" />
-    <Compile Include="Mapping\SchemaTransform.cs" />
+    <Compile Include="SchemaMapping\GeoserverMapping.cs" />
+    <Compile Include="SchemaMapping\ITypeMappings.cs" />
+    <Compile Include="SchemaMapping\SchemaTransform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SynchController.cs" />
     <Compile Include="Utils\Misc.cs" />
@@ -124,6 +124,10 @@
       <Project>{680da92d-1f96-4feb-87ec-52140faffd69}</Project>
       <Name>Kartverket.Geosynkronisering.Subscriber.DL</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SchemaMapping\ar5FeatureType-mapping-file.xml" />
+    <Content Include="SchemaMapping\kystFeatureType-mapping-file.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

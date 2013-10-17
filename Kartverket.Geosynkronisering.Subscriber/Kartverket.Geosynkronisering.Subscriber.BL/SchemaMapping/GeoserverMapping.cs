@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using NLog;
 using System.Xml.XPath;
 
-namespace Kartverket.Geosynkronisering.Subscriber.BL.Mapping
+namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
 {
     /// <summary>
     /// Schema transformation with mapping from the nested structure of one or more simple features to the simple features for the Geoserver app-schema Mappingfile.
