@@ -128,7 +128,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 {
                     string localId = localIds.ElementAt(0);
                     //ValueReference content has namespace prefix
-                    filterElement.Add(new XElement("PropertyIsEqualTo", new XElement("ValueReference", lokalidValrefContent), new XElement("Literal", localId)));
+                    filterElement.Add(new XElement(nsFes + "PropertyIsEqualTo", new XElement(nsFes + "ValueReference", lokalidValrefContent), new XElement(nsFes + "Literal", localId)));
                     //filterElement.Add(new XElement("PropertyIsEqualTo", new XElement("ValueReference", "identifikasjon/Identifikasjon/lokalId"), new XElement("Literal", localId)));
                 }
                 else
@@ -137,7 +137,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     foreach (string localId in localIds)
                     {
                         //ValueReference content has namespace prefix
-                        orElement.Add(new XElement("PropertyIsEqualTo", new XElement("ValueReference", lokalidValrefContent), new XElement("Literal", localId)));
+                        orElement.Add(new XElement(nsFes + "PropertyIsEqualTo", new XElement(nsFes + "ValueReference", lokalidValrefContent), new XElement(nsFes + "Literal", localId)));
                         //orElement.Add(new XElement("PropertyIsEqualTo", new XElement("ValueReference", "identifikasjon/Identifikasjon/lokalId"), new XElement("Literal", localId)));
                     }
                     filterElement.Add(orElement);
