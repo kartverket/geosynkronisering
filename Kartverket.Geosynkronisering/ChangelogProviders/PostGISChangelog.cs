@@ -606,7 +606,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
             foreach (string typename in typeNames)
             {
-                XElement insertElement = new XElement(nsWfs + "Insert", new XAttribute("handle", transCounter), new XAttribute("inputFormat", "application/gml+xml; version=3.2"));
+                XElement insertElement = new XElement(nsWfs + "Insert", new XAttribute("handle", transCounter));//, new XAttribute("inputFormat", "application/gml+xml; version=3.2"));
                 var featuresOfType = getFeatureResponse.Descendants(nsApp + typename);
                 foreach (XElement feature in featuresOfType)
                 {
