@@ -187,7 +187,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             return CurrentOrderChangeLog;
         }
       
-        public OrderChangelog OrderChangelog(int startIndex, int count, string todo_filter, int datasetId)
+        public OrderChangelog _OrderChangelog(int startIndex, int count, string todo_filter, int datasetId)
         {
 
             ChangelogManager chlmng = new ChangelogManager(p_db);
@@ -325,8 +325,26 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             return true;
         }
 
+        public OrderChangelog OrderChangelog(int startIndex, int count, string todo_filter, int datasetId)
+        {
+            // If startIndex == 0: Check if initital changelog exists
+            /*if (startIndex == 1)
+            {
+                var initialChangelog = (from d in p_db.StoredChangelogs where d.DatasetId == datasetId && d.StartIndex == 1 && d.Stored == true orderby d.DateCreated descending select d).FirstOrDefault();                
+                
+                if (initialChangelog != null)
+                {
+                    OrderChangelog resp = new OrderChangelog();
+                    resp.changelogId = initialChangelog.ChangelogId.ToString();
+                    return resp;
+                }
+            }*/
 
-        public OrderChangelog OrderChangelog2(int startIndex, int count, string todo_filter, int datasetId)
+            // If initial changelog don't exists or startIndex != 1
+            return _OrderChangelog(startIndex, count, todo_filter, datasetId);            
+        }
+
+        private OrderChangelog OrderChangelog2(int startIndex, int count, string todo_filter, int datasetId)
         {
             logger.Info("OrderChangelog START");
             StoredChangelog ldbo = new StoredChangelog();
@@ -430,7 +448,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 Npgsql.NpgsqlCommand command = null;
                 PrepareChangeLogQuery(conn, ref command, startChangeId, endChangeId, datasetId);
 
-                Dictionary<string, string> optimizedChangeLog = new Dictionary<string, string>();
+                Dictionary<string, Tuple<string, long>> optimizedChangeLog = new Dictionary<string, Tuple<string, long>>();
                 //Execute query against the changelog table and remove unnecessary transactions.
                 FillOptimizedChangeLog(ref command, ref optimizedChangeLog, startChangeId);
 
@@ -447,7 +465,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             logger.Info("MakeChangeLog END");
         }
 
-        private void FillOptimizedChangeLog(ref Npgsql.NpgsqlCommand command, ref Dictionary<string, string> optimizedChangeLog, int startChangeId)
+        private void FillOptimizedChangeLog(ref Npgsql.NpgsqlCommand command, ref Dictionary<string, Tuple<string,long>> optimizedChangeLog, int startChangeId)
         {
             logger.Info("FillOptimizedChangeLog START");
             try
@@ -464,23 +482,30 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                         //gmlId = char.ToUpper(gmlId[0]) + gmlId.Substring(1);
 
                         string transType = dr.GetString(1);
+                        long changelogId = dr.GetInt64(2);
 
-                        string value;
+                        Tuple<string, long> value;
                         if (transType.Equals("D"))
                         {
                             //Remove if inserted or updated earlier in this sequence of transactions
                             if (optimizedChangeLog.TryGetValue(gmlId, out value))
                             {
                                 optimizedChangeLog.Remove(gmlId);
+                                if (value.Equals("U"))
+                                {
+                                    optimizedChangeLog.Add(gmlId, new Tuple<string, long>(transType,changelogId));
+                                }
                             }
-                            if (startChangeId != 0)//Not necessary with delete if first time sync (startChangeid==0). Insert is removed when optimized.
-                                optimizedChangeLog.Add(gmlId, transType);
+                            else
+                            {
+                                optimizedChangeLog.Add(gmlId, new Tuple<string, long>(transType, changelogId));
+                            }
                         }
                         else
                         {
                             if (!optimizedChangeLog.TryGetValue(gmlId, out value))
                             {
-                                optimizedChangeLog.Add(gmlId, transType);
+                                optimizedChangeLog.Add(gmlId, new Tuple<string, long>(transType, changelogId));
                             }
                         }
                     }
@@ -494,8 +519,9 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             logger.Info("FillOptimizedChangeLog END");
         }
 
+
         //Execute query against the changelog table and get features from WFS
-        private void BuildChangeLogFile(int count, Dictionary<string, string> optimizedChangeLog, string wfsUrl, int startChangeId, Int64 endChangeId, 
+        private void BuildChangeLogFile(int count, Dictionary<string, Tuple<string, long>> optimizedChangeLog, string wfsUrl, int startChangeId, Int64 endChangeId, 
             string changeLogFileName, int datasetId)
         {
             logger.Info("BuildChangeLogFile START");
@@ -508,26 +534,26 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 int counter = 0;
 
-                List<string> updatesGmlIds = new List<string>();
-                List<string> insertsGmlIds = new List<string>();
-                List<string> deletesGmlIds = new List<string>();
+                List<KeyValuePair<string, Tuple<string, long>>> updatesGmlIds = new List<KeyValuePair<string, Tuple<string, long>>>();
+                List<KeyValuePair<string, Tuple<string, long>>> insertsGmlIds = new List<KeyValuePair<string, Tuple<string, long>>>();
+                List<KeyValuePair<string, Tuple<string, long>>> deletesGmlIds = new List<KeyValuePair<string, Tuple<string, long>>>();
 
-                foreach (KeyValuePair<string, string> pair in optimizedChangeLog)
+                foreach (KeyValuePair<string, Tuple<string, long>> pair in optimizedChangeLog)
                 {
                     string gmlId = pair.Key;
-                    string transType = pair.Value;
+                    Tuple<string, long> change = pair.Value;
                     counter++;
-                    if (transType == "D")
+                    if (change.Item1 == "D")
                     {
-                        deletesGmlIds.Add(gmlId);
+                        deletesGmlIds.Add(pair);
                     }
-                    else if (transType == "U")
+                    else if (change.Item1 == "U")
                     {
-                        updatesGmlIds.Add(gmlId);
+                        updatesGmlIds.Add(pair);
                     }
-                    else if (transType == "I")
+                    else if (change.Item1 == "I")
                     {
-                        insertsGmlIds.Add(gmlId);
+                        insertsGmlIds.Add(pair);
                     }
                     if (counter == count)
                     {
@@ -558,74 +584,119 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             logger.Info("BuildChangeLogFile END");
         }
 
-        private void AddAllTransactionsToChangeLog(List<string> updatesGmlIds, List<string> insertsGmlIds, List<string> deletesGmlIds, string wfsUrl, XElement changeLog, int datasetId )
+        private void AddAllTransactionsToChangeLog(List<KeyValuePair<string, Tuple<string, long>>> updatesGmlIds, List<KeyValuePair<string, Tuple<string, long>>> insertsGmlIds, List<KeyValuePair<string, Tuple<string, long>>> deletesGmlIds, string wfsUrl, XElement changeLog, int datasetId)
         {
             int transCounter = 0;
             if( deletesGmlIds.Count > 0)
                 AddDeletesToChangeLog(deletesGmlIds, ref transCounter, changeLog, datasetId);
             if (insertsGmlIds.Count > 0)
-                AddInsertPortionsToChangeLog(insertsGmlIds, ref transCounter, wfsUrl, changeLog, datasetId );
+                AddInsertPortionsToChangeLog(insertsGmlIds, wfsUrl, changeLog, datasetId );
             if (updatesGmlIds.Count > 0)
                 AddUpdatePortionsToChangeLog(updatesGmlIds, ref transCounter, wfsUrl, changeLog, datasetId);
         }
 
-        private void AddInsertPortionsToChangeLog(List<string> insertsGmlIds, ref int transCounter, string wfsUrl, XElement changeLog, int datasetId)
+        private void AddInsertPortionsToChangeLog(List<KeyValuePair<string, Tuple<string, long>>> insertList, string wfsUrl, XElement changeLog, int datasetId)
         {
             int portionSize = 100;
-            if (insertsGmlIds.Count() <= portionSize)
+
+            List<KeyValuePair<string, Tuple<string, long>>> insertsListPortion = new List<KeyValuePair<string, Tuple<string, long>>>();
+            int portionCounter = 0;
+            foreach (KeyValuePair<string, Tuple<string, long>> insert in insertList)
             {
-                AddInsertsToChangeLog(insertsGmlIds, ref transCounter, wfsUrl, changeLog, datasetId );
-            }
-            else
-            {
-                List<string> insertsPortionsGmlIds = new List<string>();
-                int portionCounter = 0;
-                foreach (string gmlId in insertsGmlIds)
+                portionCounter++;
+                insertsListPortion.Add(insert);
+                if (portionCounter % portionSize == 0)
                 {
-                    portionCounter++;
-                    insertsPortionsGmlIds.Add(gmlId);
-                    if (portionCounter % portionSize == 0)
-                    {
-                        AddInsertsToChangeLog(insertsPortionsGmlIds, ref transCounter, wfsUrl, changeLog, datasetId);
-                        insertsPortionsGmlIds.Clear();
-                    }
-                }
-                if (insertsPortionsGmlIds.Count() > 0)
-                {
-                    AddInsertsToChangeLog(insertsPortionsGmlIds, ref transCounter, wfsUrl, changeLog, datasetId);
+                    AddInsertsToChangeLog(insertsListPortion, wfsUrl, changeLog, datasetId);
+                    insertsListPortion.Clear();
                 }
             }
+            if (insertsListPortion.Count() > 0)
+            {
+                AddInsertsToChangeLog(insertsListPortion, wfsUrl, changeLog, datasetId);
+            }
+            
         }
 
-        private void AddInsertsToChangeLog(List<string> insertsGmlIds, ref int transCounter, string wfsUrl, XElement changeLog, int datasetId )
+        private void AddInsertsToChangeLog(List<KeyValuePair<string, Tuple<string, long>>> insertsGmlIds, string wfsUrl, XElement changeLog, int datasetId)
         {
             List<string> typeNames = new List<string>();
-
+             
             ChangelogWFS wfs = new ChangelogWFS();
 
+            Dictionary<string, string> typeIdDict = new Dictionary<string, string>();
+
+            List<string> GmlIds = new List<string>();
+
+            long maxChangelogId = 0;
+            foreach(KeyValuePair<string, Tuple<string, long>> insert in insertsGmlIds)
+            {
+                GmlIds.Add(insert.Key);
+
+                if (insert.Value.Item2 > maxChangelogId) maxChangelogId = insert.Value.Item2;
+            }
+
             //XElement getFeatureResponse = GetFeatureCollectionFromWFS(wfsUrl, ref typeNames, insertsGmlIds, datasetId);
-            XElement getFeatureResponse = wfs.GetFeatureCollectionFromWFS(wfsUrl, ref typeNames, insertsGmlIds, datasetId);
+            XElement getFeatureResponse = wfs.GetFeatureCollectionFromWFS(wfsUrl, ref typeIdDict, GmlIds, datasetId);
 
             //Build inserts for each typename
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
             XNamespace nsChlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg";
 
             XNamespace nsApp = Database.DatasetsData.TargetNamespace(datasetId);
+            // 20130917-Leg: Fix
+            string nsPrefixApp = changeLog.GetPrefixOfNamespace(nsApp);
+            XmlNamespaceManager mgr = new XmlNamespaceManager(new NameTable());
+            mgr.AddNamespace(nsPrefixApp, nsApp.NamespaceName);
+            string nsPrefixAppComplete = nsPrefixApp + ":";
 
-            foreach (string typename in typeNames)
+            XElement insertElement = new XElement(nsWfs + "Insert", new XAttribute("handle", maxChangelogId), new XAttribute("inputFormat", "application/gml+xml; version=3.2"));
+
+            foreach (KeyValuePair<string,string> dictElement in typeIdDict)
             {
-                XElement insertElement = new XElement(nsWfs + "Insert", new XAttribute("handle", transCounter));//, new XAttribute("inputFormat", "application/gml+xml; version=3.2"));
-                var featuresOfType = getFeatureResponse.Descendants(nsApp + typename);
-                foreach (XElement feature in featuresOfType)
-                {
-                    insertElement.Add(feature);
-                }
-                changeLog.Element(nsChlogf + "transactions").Add(insertElement);
-                transCounter++;
+                //string xpathExpressionLokalid = "//" + nsPrefixAppComplete + dictElement.Value + "[" + nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete + "Identifikasjon/" + nsPrefixAppComplete + "lokalId='"+dictElement.Key+"']";
+
+                // //kyst:identifikasjon/kyst:Identifikasjon[kyst:lokalId='0a11f53a-8a37-5977-b9a2-e65a17d42e05']/../..
+                string xpathExpressionLokalid = "//" + nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete + "Identifikasjon[" + nsPrefixAppComplete + "lokalId='" + dictElement.Key + "']/../..";
+
+                XElement feature = getFeatureResponse.XPathSelectElement(xpathExpressionLokalid, mgr);
+
+                insertElement.Add(feature);
+
             }
+            //string xpathExpressionLokalid = "//" + nsPrefixAppComplete + "Flytebryggekant[" + nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete + "Identifikasjon/" + nsPrefixAppComplete + "lokalId='0a11f53a-8a37-5977-b9a2-e65a17d42e05']";
+
+            //XElement test = getFeatureResponse.XPathSelectElement(xpathExpressionLokalid, mgr);
+            //kyst:Flytebryggekant[kyst:identifikasjon/kyst:Identifikasjon/kyst:lokalId='0a11f53a-8a37-5977-b9a2-e65a17d42e05']
+            /*foreach (string typename in typeNames)
+            {*/
+                
+                /*var featuresOfType = getFeatureResponse.Descendants(nsWfs + "member");
+            
+                foreach (XElement member in featuresOfType)
+                {
+
+                    var subMember = member.Descendants(nsWfs + "member");
+                    if (subMember.Count() > 0)
+                    {
+                        var feature = member.FirstNode;
+                        insertElement.Add(feature);
+                    }
+                    else
+                    {
+                        foreach (XElement subMemberElement in subMember)
+                        {
+                            var feature = subMemberElement.FirstNode;
+                            insertElement.Add(feature);
+                        }
+                    }
+                    
+                }*/
+                changeLog.Element(nsChlogf + "transactions").Add(insertElement);
+            //}
         }
 
-        private void AddDeletesToChangeLog(List<string> deletesGmlIds, ref int transCounter, XElement changeLog, int datasetId)
+        private void AddDeletesToChangeLog(List<KeyValuePair<string, Tuple<string, long>>> deletesGmlIds, ref int transCounter, XElement changeLog, int datasetId)
         {
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
             XNamespace nsChlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg";
@@ -635,13 +706,14 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             string nsPrefixAppComplete = nsPrefixApp + ":";
             string xpathExpressionLokalid = nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete +
                                           "Identifikasjon/" + nsPrefixAppComplete + "lokalId";
-            foreach (string gmlId in deletesGmlIds)
+            foreach (KeyValuePair<string, Tuple<string, long>> delete in deletesGmlIds)
             {
+                string gmlId = delete.Key;
                 int pos = gmlId.IndexOf(".");
                 string typename = gmlId.Substring(0, pos);
                 string lokalId = gmlId.Substring(pos + 1);
 
-                XElement deleteElement = new XElement(nsWfs + "Delete", new XAttribute("handle", transCounter), new XAttribute("typeName", nsPrefixApp + ":" + typename), //new XAttribute("typeName", "app:" + typename),
+                XElement deleteElement = new XElement(nsWfs + "Delete", new XAttribute("handle", delete.Value.Item2), new XAttribute("typeName", nsPrefixApp + ":" + typename), //new XAttribute("typeName", "app:" + typename),
                     new XAttribute("inputFormat", "application/gml+xml; version=3.2"), new XAttribute(XNamespace.Xmlns + nsPrefixApp, nsApp));
                 //XElement deleteElement = new XElement(nsWfs + "Delete", new XAttribute("handle", transCounter), new XAttribute("typeName", typename),
                 //    new XAttribute("inputFormat", "application/gml+xml; version=3.2"));
@@ -662,9 +734,15 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             }
         }
 
-        private void AddUpdatePortionsToChangeLog(List<string> updatesGmlIds, ref int transCounter, string wfsUrl, XElement changeLog, int datasetId)
+        private void AddUpdatePortionsToChangeLog(List<KeyValuePair<string, Tuple<string, long>>> updatesGmlIds, ref int transCounter, string wfsUrl, XElement changeLog, int datasetId)
         {
-            int portionSize = 100;
+            foreach (KeyValuePair<string, Tuple<string, long>> update in updatesGmlIds)
+            {
+
+                AddUpdatesToChangeLog(update, wfsUrl, changeLog, datasetId);
+
+            }
+            /*int portionSize = 100;
             if (updatesGmlIds.Count() <= portionSize)
             {
                 AddUpdatesToChangeLog(updatesGmlIds, ref transCounter, wfsUrl, changeLog, datasetId);
@@ -684,15 +762,19 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     portionCounter++;
                 }
                 AddUpdatesToChangeLog(updatePortionsGmlIds, ref transCounter, wfsUrl, changeLog, datasetId );
-            }
+            }*/
 
         }
 
-        private void AddUpdatesToChangeLog(List<string> updatesGmlIds, ref int transCounter, string wfsUrl, XElement changeLog, int datasetId )
+        private void AddUpdatesToChangeLog(KeyValuePair<string, Tuple<string, long>> update, string wfsUrl, XElement changeLog, int datasetId)
         {
-            List<string> typeNames = new List<string>();
+            Dictionary<string, string> typeIdDict = new Dictionary<string, string>();
+            string gmlId = update.Key;
+            //int pos = gmlId.IndexOf(".");
+            //string typename = gmlId.Substring(0, pos);
+            //string lokalId = gmlId.Substring(pos + 1);
             ChangelogWFS wfs = new ChangelogWFS();
-            XElement getFeatureResponse = wfs.GetFeatureCollectionFromWFS(wfsUrl, ref typeNames, updatesGmlIds, datasetId);
+            XElement getFeatureResponse = wfs.GetFeatureCollectionFromWFS(wfsUrl, ref typeIdDict, new List<string>(){gmlId}, datasetId);
 
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
             XNamespace nsChlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg";
@@ -706,25 +788,27 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             mgr.AddNamespace(nsPrefixApp, nsApp.NamespaceName);
             string nsPrefixAppComplete = nsPrefixApp + ":";
             // LokalId is of form: "app:identifikasjon/app:Identifikasjon/app:lokalId"
-            string xpathExpressionLokalid = nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete +
+            string xpathExpressionLokalidFilter = nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete +
                                             "Identifikasjon/" + nsPrefixAppComplete + "lokalId";
             
             //int count = 0;
-            foreach (string typename in typeNames) //foreach (string gmlId in updatesGmlIds) //foreach (string typename in typeNames)
+            foreach (KeyValuePair<string,string> dictElement in typeIdDict) //foreach (string gmlId in updatesGmlIds) //foreach (string typename in typeNames)
             {
+                string xpathExpressionLokalid = "//" + nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete + "Identifikasjon[" + nsPrefixAppComplete + "lokalId='" + dictElement.Key + "']/../..";
 
-                var featuresOfType = getFeatureResponse.Descendants(nsApp + typename);
-                foreach (XElement feature in featuresOfType)
+                XElement feature = getFeatureResponse.XPathSelectElement(xpathExpressionLokalid, mgr);
+                //var featuresOfType = getFeatureResponse.Descendants(nsApp + typename);
+                //foreach (XElement feature in featuresOfType)
                 {
-                    XElement updateElement = new XElement(nsWfs + "Update", new XAttribute("typeName", nsPrefixAppComplete + typename), //new XAttribute("typeName", "app:" + typename),
-                                    new XAttribute("handle", transCounter),
+                    XElement updateElement = new XElement(nsWfs + "Update", new XAttribute("typeName", nsPrefixAppComplete + dictElement.Value), //new XAttribute("typeName", "app:" + typename),
+                                    new XAttribute("handle", update.Value.Item2),
                                     new XAttribute("inputFormat", "application/gml+xml; version=3.2"), new XAttribute(XNamespace.Xmlns + nsPrefixApp, nsApp));
                     //XElement updateElement = new XElement(nsWfs + "Update", new XAttribute("typeName", typename), new XAttribute("handle", transCounter),
                     //                                    new XAttribute("inputFormat", "application/gml+xml; version=3.2"), new XAttribute(XNamespace.Xmlns + "App", nsApp));
                     //string lokalId = feature.Element(nsApp + "lokalId").Value;
                     
                     // Get the lokalId with XPath
-                    XElement lokalidElement = feature.XPathSelectElement(xpathExpressionLokalid, mgr);
+                    XElement lokalidElement = feature.XPathSelectElement(xpathExpressionLokalidFilter, mgr);
                     string lokalId = lokalidElement.Value;
 
                     foreach (XElement e in feature.Elements())
@@ -746,12 +830,12 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     // 20131015-Leg: Filter ValueReference content with namespace prefix
                     updateElement.Add(new XElement(nsFes + "Filter",
                                             new XElement(nsFes + "PropertyIsEqualTo",
-                                                new XElement(nsFes + "ValueReference", xpathExpressionLokalid), //new XElement(nsFes + "ValueReference", "identifikasjon/Identifikasjon/lokalId"),
+                                                new XElement(nsFes + "ValueReference", xpathExpressionLokalidFilter), //new XElement(nsFes + "ValueReference", "identifikasjon/Identifikasjon/lokalId"),
                                                 new XElement(nsFes + "Literal", lokalId)
                                             )
                                       ));
                     changeLog.Element(nsChlogf + "transactions").Add(updateElement);
-                    transCounter++;
+                    //transCounter++;
                     //count++;
                 }
             }
@@ -894,7 +978,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 //20121031-Leg: rad is now lokalId
                
                 string dbSchema = Kartverket.Geosynkronisering.Database.DatasetsData.DBSchema(datasetId);
-                string sqlSelectGmlIds = "SELECT tabell || '.' || lokalid, type FROM " + dbSchema + ".endringslogg WHERE endringsid >= :startChangeId AND endringsid <= :endChangeId ORDER BY endringsid";
+                string sqlSelectGmlIds = "SELECT tabell || '.' || lokalid, type, endringsid FROM " + dbSchema + ".endringslogg WHERE endringsid >= :startChangeId AND endringsid <= :endChangeId ORDER BY endringsid";
                 //string sqlSelectGmlIds = "SELECT tabell || '.' || rad, type FROM tilbyder.endringslogg WHERE endringsid >= :startChangeId AND endringsid <= :endChangeId ORDER BY endringsid";
                 // string sqlSelectGmlIds = "SELECT tabell || '.' || rad, type FROM tilbyder.endringslogg WHERE endringsid > :startChangeId AND endringsid <= :endChangeId ";
                 command = new NpgsqlCommand(sqlSelectGmlIds, conn);

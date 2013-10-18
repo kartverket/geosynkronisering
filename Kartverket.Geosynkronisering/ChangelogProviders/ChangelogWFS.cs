@@ -13,7 +13,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
-        public XElement GetFeatureCollectionFromWFS(string wfsUrl, ref List<string> typeNames, List<string> gmlIds, int datasetId)
+        public XElement GetFeatureCollectionFromWFS(string wfsUrl, ref Dictionary<string, string> typeIdDict, List<string> gmlIds, int datasetId)
         {
             logger.Info("GetFeatureCollectionFromWFS START");
             XNamespace nsApp = Database.DatasetsData.TargetNamespace(datasetId);
@@ -43,7 +43,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 )
             );
 
-            PopulateDocumentForGetFeatureRequest(gmlIds, ref typeNames, wfsGetFeatureDocument, datasetId);
+            PopulateDocumentForGetFeatureRequest(gmlIds, ref typeIdDict, wfsGetFeatureDocument, datasetId);
 
             try
             {
@@ -71,9 +71,10 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             }
         }
 
-        private void PopulateDocumentForGetFeatureRequest(List<string> gmlIds, ref List<string> typeNames, XDocument wfsGetFeatureDocument, int datasetId)
+        private void PopulateDocumentForGetFeatureRequest(List<string> gmlIds, ref Dictionary<string, string> typeIdDict, XDocument wfsGetFeatureDocument, int datasetId)
         {
-            XNamespace nsFes = "http://www.opengis.net/fes/2.0";
+            PopulateDocumentForGetFeatureRequest_simple(gmlIds, ref typeIdDict, wfsGetFeatureDocument, datasetId);
+            /*XNamespace nsFes = "http://www.opengis.net/fes/2.0";
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
 
             string nsPrefixTargetNamespace = Database.DatasetsData.TargetNamespacePrefix(datasetId);
@@ -145,7 +146,43 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 wfsGetFeatureDocument.Element(nsWfs + "GetFeature").Add(new XElement(nsWfs + "Query", new XAttribute("typeNames", nsPrefixTargetNamespace + ":" + typename), filterElement));
                 //wfsGetFeatureDocument.Element(nsWfs + "GetFeature").Add(new XElement(nsWfs + "Query", new XAttribute("typeNames", "app:" + typename), filterElement));
-            }
+            }*/
         }
+
+        /// <summary>
+        /// Execute get feature request for each feature
+        /// </summary>
+        /// <param name="gmlIds">List of gml ids</param>
+        /// <param name="typeIdDict">Dictonary containing type and gml id</param>
+        /// <param name="wfsGetFeatureDocument"></param>
+        private void PopulateDocumentForGetFeatureRequest_simple(List<string> gmlIds, ref Dictionary<string, string> typeIdDict, XDocument wfsGetFeatureDocument, int datasetId)
+        {            
+            XNamespace nsFes = "http://www.opengis.net/fes/2.0";
+            XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
+
+            string nsPrefixTargetNamespace = Database.DatasetsData.TargetNamespacePrefix(datasetId);
+            string nsPrefixTargetNamespaceComplete = nsPrefixTargetNamespace + ":";
+            if (String.IsNullOrWhiteSpace(nsPrefixTargetNamespace))
+            {
+                nsPrefixTargetNamespace = "app"; //Shouldn't happen, but works with GeoServer
+                nsPrefixTargetNamespaceComplete = "";
+            }
+
+            XElement orElement = new XElement("Or");
+            string typename = "";
+            foreach (string gmlId in gmlIds)
+            {
+                
+                int pos = gmlId.IndexOf(".");
+                typename = gmlId.Substring(0, pos);
+                string localId = gmlId.Substring(pos + 1);
+
+                typeIdDict.Add(localId, typename);
+
+                XElement filterElement = new XElement(nsFes + "Filter");
+                filterElement.Add(new XElement("PropertyIsEqualTo", new XElement("ValueReference", "identifikasjon/Identifikasjon/lokalId"), new XElement("Literal", localId)));
+                wfsGetFeatureDocument.Element(nsWfs + "GetFeature").Add(new XElement(nsWfs + "Query", new XAttribute("typeNames", nsPrefixTargetNamespace + ":" + typename), filterElement));               
+            }                      
+        }            
     }
 }
