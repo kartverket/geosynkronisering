@@ -87,16 +87,14 @@
     <Compile Include="SubscriberDatasetManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
+    </None>
     <EntityDeploy Include="GeoClientModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>GeoClientModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <None Include="App.Config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="GeoClientModel.edmx.diagram">
-      <DependentUpon>GeoClientModel.edmx</DependentUpon>
-    </None>
+    <None Include="geosyncDBEntities.datasource" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -130,9 +128,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="geosyncDB.sdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="geosyncDB.sdf" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

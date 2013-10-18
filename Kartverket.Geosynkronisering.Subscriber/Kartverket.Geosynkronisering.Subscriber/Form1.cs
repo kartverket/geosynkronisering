@@ -37,7 +37,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
             try
             {
                 #region GetCapabilities - Hent datasett fra tilbyder.
-                // todo
                 //txbUser.Cue = "Type username.";
                 //txbPassword.Cue = "Type password.";
                 #endregion
@@ -88,7 +87,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 //webBrowser1.Refresh();
                 webBrowser1.Navigate(fileName);
                 //webBrowser1.Navigate(new Uri(fileName));
-
             }
             catch (Exception ex)
             {
@@ -112,17 +110,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 }
 
                 cboDatasetName.SelectedIndex = datasetId - 1;
-                //if (txtDataset.Text.Length > 0)
-                //{
-                //    if (cboDatasetName.Items.Contains(txtDataset.Text))
-                //    {
-                //        cboDatasetName.SelectedIndex = cboDatasetName.Items.IndexOf(txtDataset.Text);
-                //    }
-                //}
-                //else
-                //{
-                //    cboDatasetName.SelectedIndex = -1;
-                //}
             }
         }
 
@@ -486,5 +473,26 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
         }
+
+
+        private void btnOfflineSync_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+                string zipFile = "";
+                zipFile = @"C:\Users\leg\AppData\Local\Temp\abonnent\31304452-5349-475e-b377-e34c56525e90.zip";
+                this.tabControl1.SelectTab(0);
+                bool status = _synchController.TestOfflineSyncronizationComplete(zipFile, datasetId);
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + ex.StackTrace, "btnOfflneSync_Click");
+
+                //   throw;
+            }
+        }
+
     }
 }

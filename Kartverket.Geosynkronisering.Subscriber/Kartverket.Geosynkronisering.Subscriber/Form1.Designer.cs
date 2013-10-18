@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -48,6 +49,7 @@
             this.txbLastIndex = new System.Windows.Forms.TextBox();
             this.btnGetLastIndex = new System.Windows.Forms.Button();
             this.btnSimplify = new System.Windows.Forms.Button();
+            this.btnOfflineSync = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.buttonSave = new System.Windows.Forms.Button();
             this.dgDataset = new System.Windows.Forms.DataGridView();
@@ -234,6 +236,7 @@
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel3, 3, 1);
             this.tableLayoutPanel2.Controls.Add(this.btnGetLastIndex, 3, 0);
             this.tableLayoutPanel2.Controls.Add(this.btnSimplify, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.btnOfflineSync, 1, 1);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 5;
@@ -309,6 +312,16 @@
         "atures for GeoServer");
             this.btnSimplify.UseVisualStyleBackColor = true;
             this.btnSimplify.Click += new System.EventHandler(this.btnSimplify_Click);
+            // 
+            // btnOfflineSync
+            // 
+            this.btnOfflineSync.Location = new System.Drawing.Point(217, 31);
+            this.btnOfflineSync.Name = "btnOfflineSync";
+            this.btnOfflineSync.Size = new System.Drawing.Size(75, 23);
+            this.btnOfflineSync.TabIndex = 17;
+            this.btnOfflineSync.Text = "Offline sync";
+            this.btnOfflineSync.UseVisualStyleBackColor = true;
+            this.btnOfflineSync.Click += new System.EventHandler(this.btnOfflineSync_Click);
             // 
             // tabPage3
             // 
@@ -426,7 +439,7 @@
             this.tableLayoutPanel9.ColumnCount = 3;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82.26744F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.73256F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 367F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 372F));
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel9.Location = new System.Drawing.Point(181, 23);
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
@@ -518,6 +531,7 @@
             this.ClientSize = new System.Drawing.Size(884, 722);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "Geosynkronisering Subscriber";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
@@ -584,9 +598,7 @@
         private System.Windows.Forms.DataGridView dgvProviderDataset;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel9;
         private System.Windows.Forms.Label label5;
-        // todo 
-        //private Kartverket.Geosynkronisering.Subscriber.CueTextBox txbUser;
-        //private Kartverket.Geosynkronisering.Subscriber.CueTextBox txbPassword;
+        private System.Windows.Forms.Button btnOfflineSync;        
     }
 }
 

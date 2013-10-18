@@ -142,7 +142,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
-        private bool unpackZipFile(string zipfile, string utpath)
+        public bool unpackZipFile(string zipfile, string utpath)
         {
             try
             {

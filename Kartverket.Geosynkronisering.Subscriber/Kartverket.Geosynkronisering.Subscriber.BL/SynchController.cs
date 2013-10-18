@@ -70,11 +70,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// <param name="datasetId"></param>
         /// <param name="changelogId"></param>
         /// <returns></returns>
-        public string GetChangelogStatusResponse(int datasetId, int changelogId)
+        public ChangelogStatusType GetChangelogStatusResponse(int datasetId, int changelogId)
         {
             try
             {
-                var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
+                var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
                 var client = new WebFeatureServiceReplicationPortClient();
                 client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
@@ -83,7 +83,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 ChangelogStatusType resp = client.GetChangelogStatus(id);
 
-                return resp.ToString();
+                return resp;
             }
             catch (Exception ex)
             {
@@ -279,6 +279,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return dataset.LastIndex;
         }
 
+
+
         public bool DoSynchronization(int datasetId)
         {
             //            GetLastIndex (ikke endre verdi)
@@ -328,6 +330,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                                                            lastChangeIndexSubscriber.ToString());
                        
                         int changeLogId = OrderChangelog(datasetId, startIndex);
+
+                        // Check status for changelog production at provider site
+                        if (!CheckStatusForChangelogOnProvider(datasetId, changeLogId)) return false;                      
 
                         DownloadController downloadController;
                         GetChangelog(datasetId, changeLogId, out downloadController);
@@ -391,6 +396,113 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 throw new Exception(ex.Message);             
             }            
+        }
+
+        private bool CheckStatusForChangelogOnProvider(int datasetId, int changeLogId)
+        {
+            try
+            {
+                var changeLogStatus = GetChangelogStatusResponse(datasetId, changeLogId);
+
+                DateTime starttid = DateTime.Now;
+                long elapsedTicks = DateTime.Now.Ticks - starttid.Ticks;
+
+                var elapsedSpan = new TimeSpan(elapsedTicks);
+                int timeout = 5;
+
+                while ((changeLogStatus == ChangelogStatusType.started || changeLogStatus == ChangelogStatusType.working) &&
+                       elapsedSpan.Minutes < timeout)
+                {
+                    System.Threading.Thread.Sleep(3000);
+                    elapsedTicks = DateTime.Now.Ticks - starttid.Ticks;
+                    elapsedSpan = new TimeSpan(elapsedTicks);
+                    changeLogStatus = GetChangelogStatusResponse(datasetId, changeLogId);
+                }
+                if (changeLogStatus != ChangelogStatusType.finished)
+                {
+                    logger.Info("Timeout");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException(string.Format("Failed to get ChangeLog Status for changelog {0} from provider {1}", changeLogId, "TEST"),ex);
+                return false;
+            }
+            return true;
+        }
+
+
+
+        public bool TestOfflineSyncronizationComplete(string zipFile, int datasetId)
+        {
+            //TODO: TestOfflineSyncronizationComplete NOT finished
+            try
+            {
+
+                bool status = false;
+
+                var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
+
+                int lastChangeIndexSubscriber = (int)dataset.LastIndex;
+                if (lastChangeIndexSubscriber > 0)
+                {
+                    logger.Info("TestOfflineSyncronizationComplete colud only be run if lastChangeIndexSubscriber = 0");
+                    return false;
+                }
+
+                //string outPath = Path.GetDirectoryName(zipFile);
+                //this.unpackZipFile(zipFile, outPath);
+                //// TODO: Could be more than one file
+                //string xmlFile = Path.ChangeExtension(zipFile, ".xml");
+                ////_downLoadedChangelogName = xmlFile;
+
+                ////
+                //// Schema transformation
+                //// Mapping from the nested structure of one or more simple features to the simple features for GeoServer.
+                ////
+                //string fileName = xmlFile; // txbDownloadedFile.Text;
+
+                //var schemaTransform = new SchemaTransform();
+                //var newFileName = schemaTransform.SchemaTransformSimplify(fileName, datasetId);
+
+                ////var newFileName = SchemaTransformSimplify(fileName);
+                //if (!string.IsNullOrEmpty(newFileName))
+                //{
+                //    fileName = newFileName;
+                //}
+
+                //// load an XML document from a file
+                //XElement changeLog = XElement.Load(fileName);
+
+                //// Build wfs-t transaction from changelog, and do the transaction          
+                //if (DoWfsTransactions(changeLog))
+                //{
+                //    status = true;
+
+                //    int numberMatched = (int)changeLog.Attribute("numberMatched");
+                //    int numberReturned = (int)changeLog.Attribute("numberReturned");
+                //    int startIndex = (int)changeLog.Attribute("startIndex");
+                //    int endIndex = (int)changeLog.Attribute("endIndex"); //NOT correct, always the latest!
+                //    int lastIndexSubscriber = startIndex + numberReturned; //endIndex - startIndex + 1;
+
+                //    dataset.LastIndex = lastIndexSubscriber;
+                //    _localDb.SaveChanges();
+                //    txbSubscrLastindex.Text = lastIndexSubscriber.ToString();
+
+                //    // Update datagridview control with changes
+                //    dgDataset.DataSource = _localDb.Dataset;
+                //}
+
+                return status;
+            }
+
+            catch (Exception ex)
+            {
+                logger.ErrorException("TestOfflineSyncronizationComplete:", ex);
+                throw;
+            }
+
         }
     }
 }

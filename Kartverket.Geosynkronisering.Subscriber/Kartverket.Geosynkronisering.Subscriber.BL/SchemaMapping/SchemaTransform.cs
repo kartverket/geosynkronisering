@@ -39,6 +39,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
                 string namespaceUri = dataset.TargetNamespace;
                 mappingFileName = path.Substring(0, path.LastIndexOf("bin")) + dataset.MappingFile; //"SchemaMapping" + @"\" + dataset.MappingFile;
 
+                // 20131016-Leg
+                if (string.IsNullOrEmpty(dataset.MappingFile))
+                {
+                    stopWatch.Stop();
+                    return fileName;
+                }
 
                 // Set up GeoServer mapping
                 // TODO: GetCapabilities should deliver NamespaceUri? Once, or get every time?
@@ -60,8 +66,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
                     msg += "\r\n" + "Mappingfile: " + mappingFileName;
                     msg += "\r\n" + "Schema: " + geoserverMap.NamespaceUri;
                     logger.Info("SchemaTransform Schema transformation OK {0}", msg);
-                    //MessageBox.Show("Sucsessfull schema transformation." + "\r\n" + msg, "TestSimplifyChangelog");
-
                 }
 
                 stopWatch.Stop();
