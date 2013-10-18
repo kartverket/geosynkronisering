@@ -269,12 +269,12 @@ namespace Kartverket.Geosynkronisering.Subscriber
             try
             {
                 string path = System.Environment.CurrentDirectory;
-                string fileName = path.Substring(0, path.LastIndexOf("bin")) + "SchemaMapping" + @"\_wfsT-test1.xml";
+                string fileName = path.Substring(0, path.LastIndexOf("bin")) + @"..\Kartverket.Geosynkronisering.Subscriber.BL\SchemaMapping" + @"\_wfsT-test1.xml";
 
                 // Test empty changelog
                 // fileName = path.Substring(0, path.LastIndexOf("bin")) + "SchemaMapping" + @"\ar5-tom-07a8e3ef-7315-409f-862d-6417b4275368.xml";
 
-                string mappingFileName = path.Substring(0, path.LastIndexOf("bin")) + "SchemaMapping" + @"\ar5FeatureType-mapping-file.xml";
+                string mappingFileName = path.Substring(0, path.LastIndexOf("bin")) + @"..\Kartverket.Geosynkronisering.Subscriber.BL\SchemaMapping" + @"\ar5FeatureType-mapping-file.xml";
            
                 // load the changelog XML document from file
                 // XElement changeLog = XElement.Load(fileName);
@@ -288,7 +288,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 XElement newChangeLog = geoserverMap.Simplify(fileName);
                 if (newChangeLog != null)
                 {
-                    string newFileName = path.Substring(0, path.LastIndexOf("bin")) + "SchemaMapping" + @"\New_wfsT-test1.xml";
+                    string newFileName = path.Substring(0, path.LastIndexOf("bin")) + @"..\Kartverket.Geosynkronisering.Subscriber.BL\SchemaMapping" + @"\New_wfsT-test1.xml";
                     newChangeLog.Save(newFileName);
 
                     string msg = "Source: " + fileName;
