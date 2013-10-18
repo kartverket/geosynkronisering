@@ -486,9 +486,18 @@ namespace Kartverket.Geosynkronisering.Subscriber
             {
 
                 string zipFile = "";
-                zipFile = @"C:\Users\leg\AppData\Local\Temp\abonnent\31304452-5349-475e-b377-e34c56525e90.zip";
+                // zipFile = @"C:\Users\leg\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
+                zipFile = @"C:\Users\b543836\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
+
                 this.tabControl1.SelectTab(0);
                 bool status = _synchController.TestOfflineSyncronizationComplete(zipFile, datasetId);
+
+                if (status)
+                {
+                    // Oppdaterer dgDataset
+                    dgDataset.DataSource = DL.SubscriberDatasetManager.GetAllDataset();
+                }
+
             }
 
             catch (Exception ex)

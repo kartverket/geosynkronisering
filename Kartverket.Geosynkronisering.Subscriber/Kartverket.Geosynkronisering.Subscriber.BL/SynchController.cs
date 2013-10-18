@@ -359,9 +359,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             return false;
                         }                   
 #endif
-                        var wfsManager = new WfsManager();
+                        var wfsController = new WfsController();
 
-                        if (wfsManager.DoWfsTransactions(changeLog, datasetId))
+                        if (wfsController.DoWfsTransactions(changeLog, datasetId))
                         {
                             // sucsess - update subscriber lastChangeIndex
                             int lastIndexSubscriber = lastChangeIndexProvider;
@@ -379,8 +379,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             
                             var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
                             dataset.LastIndex = lastIndexSubscriber;
-                            // todo. feiler i oppdatering av LastIndex
-                            //              DL.SubscriberDatasetManager.UpdateDataset(dataset);
+                            DL.SubscriberDatasetManager.UpdateDataset(dataset);
 
                             AcknowledgeChangelogDownloaded(datasetId, changeLogId);
                         }
@@ -420,7 +419,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 }
                 if (changeLogStatus != ChangelogStatusType.finished)
                 {
-                    logger.Info("Timeout");
+                    if (changeLogStatus == ChangelogStatusType.cancelled)
+                    {
+                        logger.Info("Cancelled by Server! Call provider.");
+                    }
+                    else
+                    {
+                        logger.Info("Timeout");               
+                    }
                     return false;
                 }
             }
@@ -432,17 +438,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return true;
         }
 
-
-
         public bool TestOfflineSyncronizationComplete(string zipFile, int datasetId)
         {
             //TODO: TestOfflineSyncronizationComplete NOT finished
             try
             {
-
                 bool status = false;
 
-                var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
+                var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
                 int lastChangeIndexSubscriber = (int)dataset.LastIndex;
                 if (lastChangeIndexSubscriber > 0)
@@ -451,48 +454,49 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     return false;
                 }
 
-                //string outPath = Path.GetDirectoryName(zipFile);
-                //this.unpackZipFile(zipFile, outPath);
-                //// TODO: Could be more than one file
-                //string xmlFile = Path.ChangeExtension(zipFile, ".xml");
-                ////_downLoadedChangelogName = xmlFile;
 
-                ////
-                //// Schema transformation
-                //// Mapping from the nested structure of one or more simple features to the simple features for GeoServer.
-                ////
-                //string fileName = xmlFile; // txbDownloadedFile.Text;
+                string outPath = Path.GetDirectoryName(zipFile);
 
-                //var schemaTransform = new SchemaTransform();
-                //var newFileName = schemaTransform.SchemaTransformSimplify(fileName, datasetId);
+                var downloadController = new DownloadController();
+                downloadController.UnpackZipFile(zipFile, outPath);
 
-                ////var newFileName = SchemaTransformSimplify(fileName);
-                //if (!string.IsNullOrEmpty(newFileName))
-                //{
-                //    fileName = newFileName;
-                //}
+                // TODO: Could be more than one file
+                string xmlFile = Path.ChangeExtension(zipFile, ".xml");
+                //_downLoadedChangelogName = xmlFile;
 
-                //// load an XML document from a file
-                //XElement changeLog = XElement.Load(fileName);
+                //
+                // Schema transformation
+                // Mapping from the nested structure of one or more simple features to the simple features for GeoServer.
+                //
+                string fileName = xmlFile; // txbDownloadedFile.Text;
 
-                //// Build wfs-t transaction from changelog, and do the transaction          
-                //if (DoWfsTransactions(changeLog))
-                //{
-                //    status = true;
+                var schemaTransform = new SchemaTransform();
+                var newFileName = schemaTransform.SchemaTransformSimplify(fileName, datasetId);
+                   
+                if (!string.IsNullOrEmpty(newFileName))
+                {
+                    fileName = newFileName;
+                }
 
-                //    int numberMatched = (int)changeLog.Attribute("numberMatched");
-                //    int numberReturned = (int)changeLog.Attribute("numberReturned");
-                //    int startIndex = (int)changeLog.Attribute("startIndex");
-                //    int endIndex = (int)changeLog.Attribute("endIndex"); //NOT correct, always the latest!
-                //    int lastIndexSubscriber = startIndex + numberReturned; //endIndex - startIndex + 1;
+                // load an XML document from a file
+                XElement changeLog = XElement.Load(fileName);
 
-                //    dataset.LastIndex = lastIndexSubscriber;
-                //    _localDb.SaveChanges();
-                //    txbSubscrLastindex.Text = lastIndexSubscriber.ToString();
+                // Build wfs-t transaction from changelog, and do the transaction    
+                var wfsController = new WfsController();
 
-                //    // Update datagridview control with changes
-                //    dgDataset.DataSource = _localDb.Dataset;
-                //}
+                if (wfsController.DoWfsTransactions(changeLog, datasetId))
+                {
+                    status = true;
+
+                    int numberMatched = (int)changeLog.Attribute("numberMatched");
+                    int numberReturned = (int)changeLog.Attribute("numberReturned");
+                    int startIndex = (int)changeLog.Attribute("startIndex");
+                    int endIndex = (int)changeLog.Attribute("endIndex"); //NOT correct, always the latest!
+                    int lastIndexSubscriber = startIndex + numberReturned; //endIndex - startIndex + 1;
+
+                    dataset.LastIndex = lastIndexSubscriber;
+                    DL.SubscriberDatasetManager.UpdateDataset(dataset);
+                }
 
                 return status;
             }
@@ -504,5 +508,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
 
         }
+
+      
     }
 }

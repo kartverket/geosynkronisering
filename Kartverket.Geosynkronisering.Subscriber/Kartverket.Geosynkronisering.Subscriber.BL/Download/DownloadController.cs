@@ -56,7 +56,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 }
 
                 string outPath = Path.GetDirectoryName(ChangelogFilename);
-                this.unpackZipFile(ChangelogFilename, outPath);
+                this.UnpackZipFile(ChangelogFilename, outPath);
                 string xmlFile = Path.ChangeExtension(ChangelogFilename, ".xml");
                 ChangelogFilename = xmlFile;
 
@@ -127,7 +127,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     System.Diagnostics.Debug.WriteLine("client_DownloadFileCompleted failed");
                 }
 
-                this.unpackZipFile(ChangelogFilename, outPath);
+                this.UnpackZipFile(ChangelogFilename, outPath);
 
                 string localFileName = Path.ChangeExtension(ChangelogFilename, ".xml");
                 ChangelogFilename = localFileName;
@@ -142,7 +142,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
-        public bool unpackZipFile(string zipfile, string utpath)
+        public bool UnpackZipFile(string zipfile, string utpath)
         {
             try
             {
@@ -157,7 +157,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             catch (Exception ex)
             {
-                logger.ErrorException("unpackZipFile failed for file :" + zipfile, ex);
+                logger.ErrorException("UnpackZipFile failed for file :" + zipfile, ex);
                 return false;
             }
 

@@ -10,7 +10,7 @@ using NLog;
 
 namespace Kartverket.Geosynkronisering.Subscriber.BL
 {
-    public class WfsManager
+    public class WfsController
     {
         public static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
