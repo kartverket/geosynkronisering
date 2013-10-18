@@ -2474,10 +2474,20 @@ namespace Kartverket.Geosynkronisering.Subscriber2
                             }
                             if (changeLogStatus != ChangelogStatusType.finished)
                             {
-                                logger.Info("Timeout");
-                                toolStripStatusLabel1.Text = "Timeout or cancelled ChangeLog from Provider..";
-                                statusStrip1.Refresh();
-                                listBoxLog.Items.Add("ChangelogId:" + schangelogid);
+                                if (changeLogStatus == ChangelogStatusType.cancelled)
+                                {
+                                    logger.Info("Cancelled by Server! Call provider.");
+                                    toolStripStatusLabel1.Text = "Cancelled ChangeLog from Provider. Contact the proivider. ";
+                                    statusStrip1.Refresh();
+                                    listBoxLog.Items.Add("ChangelogId:" + schangelogid);
+                                }
+                                else
+                                {
+                                    logger.Info("Timeout");
+                                    toolStripStatusLabel1.Text = "Timeout waiting for ChangeLog from Provider..";
+                                    statusStrip1.Refresh();
+                                    listBoxLog.Items.Add("ChangelogId:" + schangelogid);
+                                }
                                 return false;
                             }
                             toolStripStatusLabel1.Text = "ChangeLog from Provider ready for download.";

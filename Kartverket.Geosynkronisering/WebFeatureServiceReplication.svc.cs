@@ -264,11 +264,19 @@ namespace Kartverket.Geosynkronisering
 
         public Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangeLogAsync(IChangelogProvider changelogprovider, int startindex, int count, string to_doFilter, int datasetID)
         {
-            var resp = changelogprovider.OrderChangelog(startindex, count, "", datasetID);
+            try
+            {
+                var resp = changelogprovider.OrderChangelog(startindex, count, "", datasetID);
+                Kartverket.GeosyncWCF.ChangelogIdentificationType res = new Kartverket.GeosyncWCF.ChangelogIdentificationType();
+                res.changelogId = resp.changelogId.ToString();
+                return res;
+            }
+            catch (System.Exception ex)
+            {
+                logger.ErrorException(ex.Message, ex);
 
-            Kartverket.GeosyncWCF.ChangelogIdentificationType res = new Kartverket.GeosyncWCF.ChangelogIdentificationType();
-            res.changelogId = resp.changelogId.ToString();
-            return res;
+                return null;
+            }
 
         }
 

@@ -197,7 +197,15 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             //System.IO.File.Copy(Utils.BaseVirtualAppPath + sourceFileName, Utils.BaseVirtualAppPath + destFileName);
             string dbConnectInfo = Database.DatasetsData.DatasetConnection(datasetId);
             string wfsURL = Database.DatasetsData.TransformationConnection(datasetId);
-            MakeChangeLog(startIndex, count, dbConnectInfo, wfsURL, BaseVirtualPath + destFileName + ".xml", datasetId);
+            try
+            {
+                MakeChangeLog(startIndex, count, dbConnectInfo, wfsURL, BaseVirtualPath + destFileName + ".xml", datasetId);
+            }catch (Exception ex)
+            {
+               chlmng.SetStatus(CurrentOrderChangeLog.changelogId, ChangelogStatusType.cancelled);
+               logger.ErrorException(string.Format("Failed to make Change Log {0}", BaseVirtualPath + destFileName + ".xml"), ex);               
+               throw ex;
+            }
 
             // New code to handle FTP download
              changeLogHandler chgLogHandler = new changeLogHandler(logger);
