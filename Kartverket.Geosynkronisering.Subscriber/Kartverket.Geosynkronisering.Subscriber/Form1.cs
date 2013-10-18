@@ -207,10 +207,15 @@ namespace Kartverket.Geosynkronisering.Subscriber
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnTestSyncronizationComplete_Click(object sender, EventArgs e)
+        private void btnSyncronizationComplete_Click(object sender, EventArgs e)
         {
+            listBoxLog.Items.Clear();
             // Create new stopwatch
             var stopwatch = Stopwatch.StartNew();
+            listBoxLog.Items.Add("Syncronization Started");
+            logger.Info("Syncronization Started");
+            toolStripStatusLabel1.Text = "GetLastIndexFromProvider";
+            statusStrip1.Refresh();
 
             bool sucsess = _synchController.DoSynchronization(datasetId);
 
@@ -222,8 +227,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
             stopwatch.Stop();
             TimeSpan ts = stopwatch.Elapsed;
             string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
-            listBoxLog.Items.Add("TestSyncronizationComplete RunTime: " + elapsedTime);
-            logger.Info("TestSyncronizationComplete RunTime: {0}", elapsedTime);
+            listBoxLog.Items.Add("Syncronization Completed. Elapsed time: " + elapsedTime);
+            logger.Info("Syncronization Completed. Elapsed time: {0}", elapsedTime);
 
             // Display in geoserver openlayers
             toolStripStatusLabel1.Text = "DisplayMap";

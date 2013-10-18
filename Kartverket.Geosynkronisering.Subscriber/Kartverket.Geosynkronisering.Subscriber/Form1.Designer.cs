@@ -198,7 +198,7 @@
             this.btnTestSyncronizationComplete.Text = "Test complete sync";
             this.toolTip1.SetToolTip(this.btnTestSyncronizationComplete, "Test complete syncronization");
             this.btnTestSyncronizationComplete.UseVisualStyleBackColor = true;
-            this.btnTestSyncronizationComplete.Click += new System.EventHandler(this.btnTestSyncronizationComplete_Click);
+            this.btnTestSyncronizationComplete.Click += new System.EventHandler(this.btnSyncronizationComplete_Click);
             // 
             // tabPage2
             // 
