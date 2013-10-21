@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Xml.Linq;
 using NLog;
 
@@ -37,7 +38,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
                 // Get Mappingfile and TargetNamespace from database
                 var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
                 string namespaceUri = dataset.TargetNamespace;
-                mappingFileName = path.Substring(0, path.LastIndexOf("bin")) + dataset.MappingFile; //"SchemaMapping" + @"\" + dataset.MappingFile;
+                //mappingFileName = path.Substring(0, path.LastIndexOf("bin")) + dataset.MappingFile; //"SchemaMapping" + @"\" + dataset.MappingFile;
+                var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                mappingFileName = Path.Combine(assemblyPath, dataset.MappingFile);
 
                 // 20131016-Leg
                 if (string.IsNullOrEmpty(dataset.MappingFile))

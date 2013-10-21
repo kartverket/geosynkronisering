@@ -126,8 +126,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SchemaMapping\ar5FeatureType-mapping-file.xml" />
-    <Content Include="SchemaMapping\kystFeatureType-mapping-file.xml" />
+    <Content Include="SchemaMapping\ar5FeatureType-mapping-file.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SchemaMapping\kystFeatureType-mapping-file.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
