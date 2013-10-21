@@ -20,7 +20,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
         private int _lastIndexProvider = 0;
-        private int datasetId;
+        private int _currentDatasetId;
 
         private SynchController _synchController;
 
@@ -54,28 +54,16 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 //string dataDict = System.IO.Path.GetFullPath(System.IO.Path.Combine(referencePath, relativePath));
                 //AppDomain.CurrentDomain.SetData("DataDirectory", dataDict);
 
-                try
-                {
-                    dgDataset.DataSource = DL.SubscriberDatasetManager.GetAllDataset();
-                }
-                catch (Exception ex)
-                {
-                    string errMsg = "Form1_Load failed when opening database:" + DL.SubscriberDatasetManager.GetDatasource();
+                InitializeDatasetGrid();
 
-                    logger.ErrorException(errMsg, ex);
-                    errMsg += "\r\n" + "Remeber to copy the databse to the the folder:" + AppDomain.CurrentDomain.GetData("APPBASE").ToString();
-                    MessageBox.Show(ex.Message + "\r\n" + errMsg);
-                    return;
-                }
-
-                // Initialize datasetId
-                datasetId = 1;
+                // Initialize _currentDatasetId
+                _currentDatasetId = Properties.Subscriber.Default.DefaultDatasetId;
                 
                 // Fill the cboDatasetName comboBox with the dataset names
                 FillComboBoxDatasetName();
 
                 // Get subscribers last index from db
-                txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetLastIndex(datasetId);
+                txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetLastIndex(_currentDatasetId);
                
                 // nlog start
                 logger.Info("===== Kartverket.Geosynkronisering.Subscriber Start =====");
@@ -95,6 +83,23 @@ namespace Kartverket.Geosynkronisering.Subscriber
             }
         }
 
+        private void InitializeDatasetGrid()
+        {
+            try
+            {
+                dgDataset.DataSource = DL.SubscriberDatasetManager.GetAllDataset();
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Form1_Load failed when opening database:" + DL.SubscriberDatasetManager.GetDatasource();
+
+                logger.ErrorException(errMsg, ex);
+                errMsg += "\r\n" + "Remeber to copy the databse to the the folder:" +
+                          AppDomain.CurrentDomain.GetData("APPBASE").ToString();
+                MessageBox.Show(ex.Message + "\r\n" + errMsg);                
+            }            
+        }
+
         /// <summary>
         /// Fills the cboDatasetName comboBox with the dataset names
         /// </summary>
@@ -109,7 +114,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                     cboDatasetName.Items.Add(name);
                 }
 
-                cboDatasetName.SelectedIndex = datasetId - 1;
+                cboDatasetName.SelectedIndex = _currentDatasetId - 1;
             }
         }
 
@@ -120,13 +125,12 @@ namespace Kartverket.Geosynkronisering.Subscriber
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void cboDatasetName_SelectedIndexChanged(object sender, EventArgs e)
         {
-            datasetId = cboDatasetName.SelectedIndex + 1;
-            // todo: endre defaultdataset til å lagre datasetId.
-            //Properties.Settings.Default.defaultDataset = txtDataset.Text;
-            //Properties.Settings.Default.Save();
-            txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetDataset(datasetId).LastIndex.ToString();
+            _currentDatasetId = cboDatasetName.SelectedIndex + 1;
+            Properties.Subscriber.Default.DefaultDatasetId = _currentDatasetId; 
+            Properties.Subscriber.Default.Save();
+            txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetDataset(_currentDatasetId).LastIndex.ToString();
         }
-
+      
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             logger.Info("===== Kartverket.Geosynkronisering.Subscriber End =====");
@@ -174,11 +178,11 @@ namespace Kartverket.Geosynkronisering.Subscriber
             DialogResult result = MessageBox.Show("Do you really want to reset the subscriber lastIdex?", "Warning", MessageBoxButtons.YesNo);
             if (result == DialogResult.Yes)
             {
-                _synchController.ResetSubscriberLastIndex(datasetId);
+                _synchController.ResetSubscriberLastIndex(_currentDatasetId);
 
                 txbSubscrLastindex.Text = "0";
 
-                dgDataset.DataSource = DL.SubscriberDatasetManager.GetDataset(datasetId);
+                InitializeDatasetGrid();
             }
         }
 
@@ -187,7 +191,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-                _lastIndexProvider = _synchController.GetLastIndexFromProvider(datasetId);
+                _lastIndexProvider = _synchController.GetLastIndexFromProvider(_currentDatasetId);
 
                 txbLastIndex.Text = _lastIndexProvider.ToString();
            }
@@ -217,11 +221,10 @@ namespace Kartverket.Geosynkronisering.Subscriber
             toolStripStatusLabel1.Text = "GetLastIndexFromProvider";
             statusStrip1.Refresh();
 
-            bool sucsess = _synchController.DoSynchronization(datasetId);
+            bool sucsess = _synchController.DoSynchronization(_currentDatasetId);
 
-            // Update datagridview control with changes
-            dgDataset.DataSource = DL.SubscriberDatasetManager.GetDataset(datasetId);
-            dgDataset.Refresh();
+            // Update Dataset-datagridview control with changes
+            InitializeDatasetGrid();
 
             // Stop timing
             stopwatch.Stop();
@@ -233,7 +236,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             // Display in geoserver openlayers
             toolStripStatusLabel1.Text = "DisplayMap";
             statusStrip1.Refresh();
-            var currentDataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
+            var currentDataset = DL.SubscriberDatasetManager.GetDataset(_currentDatasetId);
             DisplayMap(epsgCode: "EPSG:32633", datasetName: currentDataset.Name); //DisplayMap(epsgCode: "EPSG:32633");
             toolStripStatusLabel1.Text = "Ready";
             statusStrip1.Refresh();
@@ -468,8 +471,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 MessageBox.Show(this, "Saved selected datasets to the internal Database.", "Get Provider Datasets", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 dgDataset.DataSource = null;
 
-                dgDataset.DataSource = DL.SubscriberDatasetManager.GetDataset(datasetId);
-                dgDataset.Refresh();
+                InitializeDatasetGrid();
+                FillComboBoxDatasetName();
             }
         }
 
@@ -490,7 +493,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 zipFile = @"C:\Users\b543836\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
 
                 this.tabControl1.SelectTab(0);
-                bool status = _synchController.TestOfflineSyncronizationComplete(zipFile, datasetId);
+                bool status = _synchController.TestOfflineSyncronizationComplete(zipFile, _currentDatasetId);
 
                 if (status)
                 {

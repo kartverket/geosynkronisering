@@ -13,11 +13,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.Properties {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "11.0.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class Subscriber : global::System.Configuration.ApplicationSettingsBase {
         
-        private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
+        private static Subscriber defaultInstance = ((Subscriber)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Subscriber())));
         
-        public static Settings Default {
+        public static Subscriber Default {
             get {
                 return defaultInstance;
             }
@@ -25,13 +25,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Ar5")]
-        public string defaultDataset {
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int DefaultDatasetId {
             get {
-                return ((string)(this["defaultDataset"]));
+                return ((int)(this["DefaultDatasetId"]));
             }
             set {
-                this["defaultDataset"] = value;
+                this["DefaultDatasetId"] = value;
             }
         }
     }
