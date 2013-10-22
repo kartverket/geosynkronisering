@@ -30,9 +30,12 @@
                   <asp:Image ID="Image1" runat="server" Height="61px" 
                       ImageUrl="~/Images/Geosynk.png" Width="64px" />
                 </td>
-                <td width="80%">                        
+                <td width="60%">                        
                     <asp:Label ID="Label2" runat="server" CssClass="HeaderText" 
                         Text="Geosynkronisering Administrator"></asp:Label>
+                </td>
+                <td width="20%">                        
+                    <asp:Button ID="btnSignOut" runat="server" OnClick="btnSignOut_Click" Text="Logg ut" />
                 </td>
                 <td width="10%">                        
                 </td>

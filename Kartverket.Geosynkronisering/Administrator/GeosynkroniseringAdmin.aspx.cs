@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.Security;
 using Kartverket.Geosynkronisering.Database;
 
 namespace Kartverket.Geosynkronisering
@@ -16,7 +17,7 @@ namespace Kartverket.Geosynkronisering
         protected void Page_Load(object sender, EventArgs e)
         {
           
-
+            
 
         }
 
@@ -136,6 +137,12 @@ namespace Kartverket.Geosynkronisering
 
             }
 
+        }
+
+        protected void btnSignOut_Click(object sender, EventArgs e)
+        {
+            FormsAuthentication.SignOut();
+            FormsAuthentication.RedirectToLoginPage();
         }
 
       

@@ -88,6 +88,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Administrator\Login.aspx" />
     <Content Include="App_Data\DescribeFeatureType.xml" />
     <Content Include="App_Data\geosync.sdf" />
     <Content Include="App_Data\GetCapabilities.xml" />
@@ -97,8 +98,8 @@
     <Content Include="Changelogfiles\42_changelog.xml" />
     <Content Include="Changelogfiles\41_changelog.xml" />
     <Content Include="Changelogfiles\changelog_flytebryggestart.xml" />
-    <Content Include="GeosynkroniseringAdmin.aspx" />
-    <Content Include="GeoSynkWebStyleSheet.css" />
+    <Content Include="Administrator\GeosynkroniseringAdmin.aspx" />
+    <Content Include="Administrator\GeoSynkWebStyleSheet.css" />
     <Content Include="Global.asax" />
     <Content Include="Changelogfiles\changelog_empty.xml" />
     <Content Include="Images\AddTableHS.png" />
@@ -160,6 +161,13 @@
     <None Include="_bin_deployableAssemblies\x86\Microsoft.VC90.CRT\Microsoft.VC90.CRT.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Administrator\Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administrator\Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ChangelogManager.cs" />
     <Compile Include="ChangelogProviders\ChangelogWFS.cs" />
     <Compile Include="ChangelogProviders\MockChangelog.cs" />
@@ -172,11 +180,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GeosyncModel.edmx</DependentUpon>
     </Compile>
-    <Compile Include="GeosynkroniseringAdmin.aspx.cs">
+    <Compile Include="Administrator\GeosynkroniseringAdmin.aspx.cs">
       <DependentUpon>GeosynkroniseringAdmin.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="GeosynkroniseringAdmin.aspx.designer.cs">
+    <Compile Include="Administrator\GeosynkroniseringAdmin.aspx.designer.cs">
       <DependentUpon>GeosynkroniseringAdmin.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
