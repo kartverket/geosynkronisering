@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -13,7 +14,7 @@ using NLog;
 
 namespace Kartverket.Geosynkronisering.Subscriber.BL
 {
-    public class SynchController
+    public class SynchController : Progress
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
        
@@ -248,7 +249,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         public int GetLastIndexFromProvider(int datasetId)
         {
             try
-            {               
+            {
                 var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
 
                 var client = new WebFeatureServiceReplicationPortClient();
@@ -257,6 +258,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var lastIndexString = client.GetLastIndex(dataset.ProviderDatasetId.ToString());
                 int lastIndex;
                 Int32.TryParse(lastIndexString, out lastIndex);
+
                 return lastIndex;
             }
 
@@ -282,31 +284,59 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return dataset.LastIndex;
         }
 
+        public void SynchronizeAsThread(int datasetId)
+        {
+            var _backgroundWorker = new BackgroundWorker()
+            {
+                WorkerReportsProgress = true,
+                WorkerSupportsCancellation = true
+            };
+
+            _backgroundWorker.DoWork += bw_DoSynchronization;
+            _backgroundWorker.RunWorkerAsync(datasetId);        
+        }
+
 
         /// <summary>
         /// Synchronizing of a given dataset
-        /// 
         /// </summary>
-        /// <param name="datasetId"></param>
-        /// <returns></returns>
-        public bool DoSynchronization(int datasetId)
-        {           
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void bw_DoSynchronization(object sender, DoWorkEventArgs e)
+        {
             try
-            {                
-                logger.Info("DoSynchronization start");
+            {
+                var datasetId = (int)e.Argument;
 
+                // Create new stopwatch
+                var stopwatch = Stopwatch.StartNew();
+
+                this.OnNewSynchMilestoneReached("GetLastIndexFromProvider");
                 var lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
-                logger.Info("GetLastIndexFromProvider lastIndex :{0}{1}", "\t", lastChangeIndexProvider);
 
+                var logMessage ="GetLastIndexFromProvider lastIndex: "+ lastChangeIndexProvider;
+                logger.Info(logMessage);
+                this.OnUpdateLogList(logMessage);
+                this.OnNewSynchMilestoneReached("GetLastIndexFromProvider OK");
+                
+                this.OnNewSynchMilestoneReached("GetLastIndexFromSubscriber");
                 int lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
-                logger.Info("GetLastChangeIndexSubscriber lastIndex :{0}{1}", "\t", lastChangeIndexSubscriber);
+
+                logMessage = "GetLastChangeIndexSubscriber lastIndex: "+lastChangeIndexSubscriber;
+                logger.Info(logMessage);
+                this.OnUpdateLogList(logMessage);
+                this.OnNewSynchMilestoneReached("GetLastIndexFromSubscriber OK");
 
                 if (lastChangeIndexSubscriber >= lastChangeIndexProvider)
                 {
-                    string message = "Changelog has already been downloaded and handled:";
-                    logger.Info(message + " Provider lastIndex:{0} Subscriber lastChangeIndex:{1}", lastChangeIndexProvider, lastChangeIndexSubscriber);
-                    return false;
+                    logMessage = "Changelog has already been downloaded and handled:";
+                    this.OnNewSynchMilestoneReached(logMessage);
+                    logMessage += " Provider lastIndex:" +lastChangeIndexProvider+ " Subscriber lastChangeIndex: "+ lastChangeIndexSubscriber;
+                    logger.Info(logMessage);                    
+                    return;
                 }
+
+                this.OnNewSynchMilestoneReached("Order Changelog. Wait...");
 
                 int maxCount = DL.SubscriberDatasetManager.GetMaxCount(datasetId);
 
@@ -315,13 +345,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 if (numberOfFeatures % maxCount > 0)
                     ++numberOfOrders;
 
-                logger.Info("TestSyncronizationComplete: numberOfFeatures:{0} numberOfOrders:{1} maxCount:{2}", numberOfFeatures, numberOfOrders, maxCount);
-
+                logger.Info("DoSyncronization: numberOfFeatures:{0} numberOfOrders:{1} maxCount:{2}", numberOfFeatures, numberOfOrders, maxCount);
+                this.OnUpdateLogList("MacCount: " + maxCount);
+                
                 if (lastChangeIndexSubscriber < lastChangeIndexProvider)
                 {
+                    this.OnOrderProcessingStart(numberOfOrders);
                     for (int i = 0; i < numberOfOrders; i++)
                     {
-
+                        this.OnOrderProcessingChange(i+1);
                         // 20130822-Leg: Fix for initial/first syncronization: Provider startIndex (GetLastIndex) starts at 1
                         int startIndex = lastChangeIndexSubscriber + 1;
 
@@ -330,17 +362,30 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             startIndex = (i * maxCount) + lastChangeIndexSubscriber + 1;
                         }
 
-                        System.Diagnostics.Debug.WriteLine("startIndex:" + startIndex.ToString() + " lastChangeIndex:" +
-                                                           lastChangeIndexSubscriber.ToString());
-                       
+                        // this.OnUpdateLogList("Subscriber startIndex:" + startIndex.ToString());
+
                         int changeLogId = OrderChangelog(datasetId, startIndex);
 
-                        // Check status for changelog production at provider site
-                        if (!CheckStatusForChangelogOnProvider(datasetId, changeLogId)) return false;                      
+                        // this.OnUpdateLogList("ChangeLogId: "+changeLogId.ToString());
 
+                        // Check status for changelog production at provider site
+                        this.OnNewSynchMilestoneReached("Waiting for ChangeLog from Provider...");
+
+                        if (!CheckStatusForChangelogOnProvider(datasetId, changeLogId)) return;
+
+                        this.OnNewSynchMilestoneReached("GetChangelog "+  (i+1) +" for dataset " + datasetId + ". Wait...");
                         DownloadController downloadController;
-                        GetChangelog(datasetId, changeLogId, out downloadController);
-                        logger.Info("GetChangelog for dataset {0} OK", datasetId);   
+                        var responseOk = GetChangelog(datasetId, changeLogId, out downloadController);
+                        if (!responseOk)
+                        {
+                            logger.Info("GetChangelog " + (i + 1) + " for dataset " + datasetId + " failed");
+                            return;
+                        }
+
+                        var message = "GetChangelog "+ (i+1) +" for dataset " + datasetId + " OK";
+                        logger.Info(message);
+                        // this.OnUpdateLogList(message);
+                        this.OnNewSynchMilestoneReached(message);
                           
                         //
                         // Schema transformation
@@ -365,6 +410,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 #endif
                         var wfsController = new WfsController();
 
+                        this.OnNewSynchMilestoneReached("DoWfsTransactions starting...");
+
                         if (wfsController.DoWfsTransactions(changeLog, datasetId))
                         {
                             // sucsess - update subscriber lastChangeIndex
@@ -373,10 +420,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             {
                                 lastIndexSubscriber = (i * maxCount) + lastChangeIndexSubscriber;
                                 logger.Info("DoWfsTransactions OK, pass {0}", (i + 1));
+
+                                this.OnNewSynchMilestoneReached("DoWfsTransactions OK");                                
+                                // this.OnUpdateLogList("DoWfsTransactions OK, pass " + (i + 1).ToString());
                             }
                             else
                             {
-                                logger.Info("DoSynchronization sucsess");
+                                logger.Info("DoSynchronization success");
                             }
 
                             SubscriberDataset subscriberDataset;
@@ -388,8 +438,17 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             AcknowledgeChangelogDownloaded(datasetId, changeLogId);
                         }
                     }
-                }             
-                return true;
+                }
+
+                // Stop timing
+                stopwatch.Stop();
+                TimeSpan ts = stopwatch.Elapsed;
+                string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
+
+                this.OnUpdateLogList("Syncronization Completed. Elapsed time: " + elapsedTime);
+                logger.Info("Syncronization Completed. Elapsed time: {0}", elapsedTime);
+
+                this.OnNewSynchMilestoneReached("Ready");
             }
             catch (WebException webEx)
             {
@@ -432,13 +491,19 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     if (changeLogStatus == ChangelogStatusType.cancelled)
                     {
                         logger.Info("Cancelled by Server! Call provider.");
+                        this.OnNewSynchMilestoneReached("Cancelled ChangeLog from Provider. Contact the proivider.");
+                        this.OnUpdateLogList("ChangelogId:" + changeLogId);
                     }
                     else
                     {
-                        logger.Info("Timeout");               
+                        logger.Info("Timeout");
+                        this.OnNewSynchMilestoneReached("Timeout waiting for ChangeLog from Provider.");
+                        this.OnUpdateLogList("ChangelogId:" + changeLogId);
                     }
                     return false;
                 }
+                this.OnNewSynchMilestoneReached("ChangeLog from Provider ready for download.");
+                this.OnUpdateLogList("ChangelogId:" + changeLogId);
             }
             catch (Exception ex)
             {
@@ -517,5 +582,85 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 throw;
             }
         }      
+    }
+
+
+
+    public class Progress
+    {
+        public event System.EventHandler NewSynchMilestoneReached;
+        public event System.EventHandler UpdateLogList;
+        public event System.EventHandler OrderProcessingStart;        
+        public event System.EventHandler OrderProcessingChange;
+        
+        public string MilestoneDescription;
+        public string NewLogListItem;
+        public int TotalNumberOfOrders;
+        public int OrdersProcessedCount;
+
+        // NewSynchMilestoneReached
+        public void OnNewSynchMilestoneReached(string description)
+        {
+            if (NewSynchMilestoneReached == null) { return; }
+            this.MilestoneDescription = description;
+
+            NewSynchMilestoneReached.BeginInvoke(this, new EventArgs(),
+                      new AsyncCallback(NewSynchMilestoneReachedCompleted), null);
+        }
+
+        private void NewSynchMilestoneReachedCompleted(IAsyncResult ar)
+        {
+            if (NewSynchMilestoneReached == null) { return; }
+            NewSynchMilestoneReached.EndInvoke(ar);
+        }
+
+        // UpdateLogList
+        public void OnUpdateLogList(string info)
+        {
+            if (UpdateLogList == null) { return; }
+            this.NewLogListItem = info;
+
+            UpdateLogList.BeginInvoke(this, new EventArgs(),
+                      new AsyncCallback(UpdateLogListCompleted), null);
+        }
+
+        private void UpdateLogListCompleted(IAsyncResult ar)
+        {
+            if (UpdateLogList == null) { return; }
+            UpdateLogList.EndInvoke(ar);
+        }
+
+        // OrderProcessingStart
+        public void OnOrderProcessingStart(int totalNumberOfOrders)
+        {
+            if (OrderProcessingStart == null) { return; }
+            this.TotalNumberOfOrders = totalNumberOfOrders;
+            this.OrdersProcessedCount = 0;
+
+            OrderProcessingStart.BeginInvoke(this, new EventArgs(),
+                      new AsyncCallback(OrderProcessingStartCompleted), null);
+        }
+
+        private void OrderProcessingStartCompleted(IAsyncResult ar)
+        {
+            if (OrderProcessingStart == null) { return; }
+            OrderProcessingStart.EndInvoke(ar);
+        }
+
+        // OrderProcessingChange
+        public void OnOrderProcessingChange(int count)
+        {
+            if (OrderProcessingChange == null) { return; }
+            this.OrdersProcessedCount = count;
+
+            OrderProcessingChange.BeginInvoke(this, new EventArgs(),
+                      new AsyncCallback(OrderProcessingChangeCompleted), null);
+        }
+
+        private void OrderProcessingChangeCompleted(IAsyncResult ar)
+        {
+            if (OrderProcessingChange == null) { return; }
+            OrderProcessingChange.EndInvoke(ar);
+        }
     }
 }

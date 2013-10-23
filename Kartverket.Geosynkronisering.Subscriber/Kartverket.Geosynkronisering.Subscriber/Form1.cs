@@ -35,53 +35,10 @@ namespace Kartverket.Geosynkronisering.Subscriber
         private void InitSynchController()
         {
             _synchController = new SynchController();
-        }
-
-        #region Form events
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            try
-            {
-                #region GetCapabilities - Hent datasett fra tilbyder.
-                //txbUser.Cue = "Type username.";
-                //txbPassword.Cue = "Type password.";
-                #endregion
-               
-                toolStripStatusLabel1.Text = "Ready";
-
-                // TODO: remember to geosyncDB.sdf to the build folder e.g. bin\debug
-                // Consider changing geosyncDBEntities(geosyncDB.sdf) database folder. 
-                // today the geosyncDB.sdf must be copied to the build folder e.g. bin\debug
-                //// 20130528-Leg
-                //// Set DataDirectory to match our choice (root folder) to prevent using output directory for build e.g. bin\debug\ folder.
-                //// Must be set before the first use of the database.
-                //string referencePath = AppDomain.CurrentDomain.GetData("APPBASE").ToString();
-                //string relativePath = @"..\..\";
-                //string dataDict = System.IO.Path.GetFullPath(System.IO.Path.Combine(referencePath, relativePath));
-                //AppDomain.CurrentDomain.SetData("DataDirectory", dataDict);
-              
-                // Fill the cboDatasetName comboBox with the dataset names
-                FillComboBoxDatasetName();
-           
-                // nlog start
-                logger.Info("===== Kartverket.Geosynkronisering.Subscriber Start =====");
-                listBoxLog.Items.Clear();
-               
-                string path = System.Environment.CurrentDirectory;
-                string fileName = path.Substring(0, path.LastIndexOf("bin")) + "Images" + "\\Geosynk.ico";
-                webBrowser1.Navigate(fileName);
-            }
-            catch (Exception ex)
-            {
-                logger.ErrorException("Form1_Load failed:", ex);
-                MessageBox.Show(ex.Message + ex.StackTrace);
-            }
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            logger.Info("===== Kartverket.Geosynkronisering.Subscriber End =====");
+            _synchController.NewSynchMilestoneReached += new System.EventHandler(this.Progress_OnMilestoneReached);
+            _synchController.UpdateLogList += new System.EventHandler(this.Progress_UpdateLogList);
+            _synchController.OrderProcessingStart += new System.EventHandler(this.Progress_OrderProcessingStart);
+            _synchController.OrderProcessingChange += new System.EventHandler(this.Progress_OrderProcessingChange);
         }
 
         private void InitializeDatasetGrid()
@@ -95,10 +52,9 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 string errMsg = "Form1_Load failed when opening database:" + DL.SubscriberDatasetManager.GetDatasource();
 
                 logger.ErrorException(errMsg, ex);
-                errMsg += "\r\n" + "Remeber to copy the databse to the the folder:" +
-                          AppDomain.CurrentDomain.GetData("APPBASE").ToString();
-                MessageBox.Show(ex.Message + "\r\n" + errMsg);                
-            }            
+                errMsg += "\r\n" + "Remeber to copy the databse to the the folder:" + AppDomain.CurrentDomain.GetData("APPBASE").ToString();
+                MessageBox.Show(ex.Message + "\r\n" + errMsg);
+            }
         }
 
         /// <summary>
@@ -112,6 +68,138 @@ namespace Kartverket.Geosynkronisering.Subscriber
             txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetLastIndex(_currentDatasetId);
         }
 
+
+        /// <summary>
+        /// Updates the toolstrip with new milestone info
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void Progress_OnMilestoneReached(object sender, System.EventArgs e)
+        {
+            try
+            {
+                var prg = (Progress)sender;
+
+                var newMilestoneDescription = prg.MilestoneDescription;
+                
+                this.toolStripStatusLabel.Text = newMilestoneDescription;              
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Updates listBoxLog
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void Progress_UpdateLogList(object sender, System.EventArgs e)
+        {
+            try
+            {
+                var prg = (Progress)sender;
+
+                var newMilestoneDescription = prg.MilestoneDescription;
+
+                Action action = () => listBoxLog.Items.Add(newMilestoneDescription);
+                this.Invoke(action);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Initialize progressbar
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void Progress_OrderProcessingStart(object sender, System.EventArgs e)
+        {
+            try
+            {
+                var prg = (Progress)sender;
+
+                Action action = () => this.progressBar.Maximum = prg.TotalNumberOfOrders;
+                this.Invoke(action);
+
+                action = () => this.progressBar.Value = 0;
+                this.Invoke(action);
+            }
+            catch (Exception ex)
+            {}
+        }
+
+        /// <summary>
+        /// Updates progressbar
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void Progress_OrderProcessingChange(object sender, System.EventArgs e)
+        {
+            try
+            {
+                var prg = (Progress)sender;
+
+                Action action = () => this.progressBar.Value = prg.OrdersProcessedCount;
+                this.Invoke(action);
+            }
+            catch (Exception ex)
+            { }
+        }
+
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                #region GetCapabilities - Hent datasett fra tilbyder. 
+                //txbUser.Cue = "Type username.";
+                //txbPassword.Cue = "Type password.";
+                #endregion
+                              
+                // TODO: remember to geosyncDB.sdf to the build folder e.g. bin\debug
+                // Consider changing geosyncDBEntities(geosyncDB.sdf) database folder. 
+                // today the geosyncDB.sdf must be copied to the build folder e.g. bin\debug
+                //// 20130528-Leg
+                //// Set DataDirectory to match our choice (root folder) to prevent using output directory for build e.g. bin\debug\ folder.
+                //// Must be set before the first use of the database.
+                //string referencePath = AppDomain.CurrentDomain.GetData("APPBASE").ToString();
+                //string relativePath = @"..\..\";
+                //string dataDict = System.IO.Path.GetFullPath(System.IO.Path.Combine(referencePath, relativePath));
+                //AppDomain.CurrentDomain.SetData("DataDirectory", dataDict);
+
+                UpdateToolStripStatusLabel("Initializing...");
+                
+                // Fill the cboDatasetName comboBox with the dataset names
+                FillComboBoxDatasetName();
+           
+                // nlog start
+                logger.Info("===== Kartverket.Geosynkronisering.Subscriber Start =====");
+                listBoxLog.Items.Clear();
+               
+                string path = System.Environment.CurrentDirectory;
+                string fileName = path.Substring(0, path.LastIndexOf("bin")) + "Images" + "\\Geosynk.ico";
+                webBrowser1.Navigate(fileName);
+
+                UpdateToolStripStatusLabel("Ready");
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException("Form1_Load failed:", ex);
+                MessageBox.Show(ex.Message + ex.StackTrace);
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            logger.Info("===== Kartverket.Geosynkronisering.Subscriber End =====");
+        }
+
+   
         /// <summary>
         /// Occurs after a data-binding operation has finished
         /// </summary>
@@ -178,8 +266,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
             }
         }
 
-
-
         // Reset subsrcriber lastChangeIndex
         private void btnResetSubscrLastindex_Click(object sender, EventArgs e)
         {
@@ -213,8 +299,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             }
         }
 
-
-
+       
         private void btnGetCapabilities_Click(object sender, EventArgs e)
         {
             string Url = txbProviderURL.Text;
@@ -295,6 +380,11 @@ namespace Kartverket.Geosynkronisering.Subscriber
             }
         }
 
+        protected void ShowError(string msg)
+        {
+            Hourglass(false);
+            MessageBox.Show(msg);
+        }
 
         
         /// <summary>
@@ -307,50 +397,29 @@ namespace Kartverket.Geosynkronisering.Subscriber
             Hourglass(true);
 
             listBoxLog.Items.Clear();
-            // Create new stopwatch
-            var stopwatch = Stopwatch.StartNew();
-            listBoxLog.Items.Add("Syncronization Started");
-            logger.Info("Syncronization Started");
-            toolStripStatusLabel1.Text = "GetLastIndexFromProvider";
-            statusStrip1.Refresh();
+            
+            var logMessage = "Syncronization Start";
+            listBoxLog.Items.Add(logMessage);
+            logger.Info(logMessage);          
 
-            bool sucsess = _synchController.DoSynchronization(_currentDatasetId);            
+            _synchController.SynchronizeAsThread(_currentDatasetId);            
 
             // Update Dataset-datagridview control with changes
-            InitializeDatasetGrid();
-
-            // Stop timing
-            stopwatch.Stop();
-            TimeSpan ts = stopwatch.Elapsed;
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
-            listBoxLog.Items.Add("Syncronization Completed. Elapsed time: " + elapsedTime);
-            logger.Info("Syncronization Completed. Elapsed time: {0}", elapsedTime);
+            InitializeDatasetGrid();         
 
             // Display in geoserver openlayers
-            toolStripStatusLabel1.Text = "DisplayMap";
-            statusStrip1.Refresh();
+            UpdateToolStripStatusLabel("Display Map");
+
             var currentDataset = DL.SubscriberDatasetManager.GetDataset(_currentDatasetId);
             DisplayMap(epsgCode: "EPSG:32633", datasetName: currentDataset.Name); //DisplayMap(epsgCode: "EPSG:32633");
-            toolStripStatusLabel1.Text = "Ready";
-            statusStrip1.Refresh();
 
             Hourglass(false);
         }
 
-
-        public void AddLoggmessageToLogbox(string message)
+        private void UpdateToolStripStatusLabel(string message)
         {
-            try
-            {
-                {
-                    Action action = () => listBoxLog.Items.Add("Hei på deg");
-                    this.Invoke(action);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Do nothing. Update of icons can wait...
-            }
+            toolStripStatusLabel.Text = message;
+            statusStrip1.Refresh();
         }
 
         /// <summary>
@@ -366,8 +435,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
             TestSchemaTransformSimplifyChangelog();
         }
 
-
-        #endregion
 
         #region Schema Transformation (for testing)
 
