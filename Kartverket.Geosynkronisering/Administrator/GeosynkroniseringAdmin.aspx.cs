@@ -7,6 +7,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.Security;
 using Kartverket.Geosynkronisering.Database;
+using System.Reflection;
 
 namespace Kartverket.Geosynkronisering
 {
@@ -143,6 +144,37 @@ namespace Kartverket.Geosynkronisering
         {
             FormsAuthentication.SignOut();
             FormsAuthentication.RedirectToLoginPage();
+        }
+
+        protected void btnCreateInitialData_Click(object sender, EventArgs e)
+        {
+            IChangelogProvider changelogprovider;            
+            int datasetId = Convert.ToInt32(vDataset.SelectedValue);
+            lblErrorText.Text = "";            
+             string initType = DatasetsData.DatasetProvider(datasetId);
+                //Initiate provider from config/dataset
+             using (geosyncEntities db = new geosyncEntities())
+             {
+                Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
+                changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
+                changelogprovider.SetDb(db);
+                try
+                {
+                    var resp = changelogprovider.GenerateInitialChangelog(datasetId);
+                }
+                catch (Exception ex)
+                {
+                    string innerExMsg = "";
+                    Exception innerExp = ex.InnerException;
+                    while (innerExp != null)
+                    {
+                        innerExMsg += string.Format("{0}. \n", innerExp.Message);
+                        innerExp = innerExp.InnerException;
+                    }                    
+                    string errorMsg = string.Format("Klarte ikke å lage initiell endringslogg. {0} \n {1}", ex.Message, innerExMsg);
+                    lblErrorText.Text = errorMsg;
+                }
+            }
         }
 
       

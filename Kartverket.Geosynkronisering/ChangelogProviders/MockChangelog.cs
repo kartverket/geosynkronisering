@@ -60,6 +60,10 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             return CurrentOrderChangeLog;
         }
 
+        public OrderChangelog GenerateInitialChangelog(int datasetId)
+        {
+            return null;
+        }
         public OrderChangelog OrderChangelog(int startIndex, int count, string todo_filter, int datasetId)
         {
             
