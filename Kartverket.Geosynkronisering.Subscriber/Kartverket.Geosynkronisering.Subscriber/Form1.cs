@@ -18,15 +18,22 @@ namespace Kartverket.Geosynkronisering.Subscriber
 {
     public partial class Form1 : Form
     {
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
-        private int _lastIndexProvider = 0;
-        private int _currentDatasetId;
-
         private SynchController _synchController;
-
+        
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
+        private int _lastIndexProvider;
+        private int _currentDatasetId;
+       
         public Form1()
         {
             InitializeComponent();
+            InitSynchController();
+            InitializeDatasetGrid();
+            InitializeCurrentDataset();
+        }
+
+        private void InitSynchController()
+        {
             _synchController = new SynchController();
         }
 
@@ -53,34 +60,28 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 //string relativePath = @"..\..\";
                 //string dataDict = System.IO.Path.GetFullPath(System.IO.Path.Combine(referencePath, relativePath));
                 //AppDomain.CurrentDomain.SetData("DataDirectory", dataDict);
-
-                InitializeDatasetGrid();
-
-                // Initialize _currentDatasetId
-                _currentDatasetId = Properties.Subscriber.Default.DefaultDatasetId;
-                
+              
                 // Fill the cboDatasetName comboBox with the dataset names
                 FillComboBoxDatasetName();
-
-                // Get subscribers last index from db
-                txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetLastIndex(_currentDatasetId);
-               
+           
                 // nlog start
                 logger.Info("===== Kartverket.Geosynkronisering.Subscriber Start =====");
                 listBoxLog.Items.Clear();
-
-                //webBrowser1.Navigating += new WebBrowserNavigatingEventHandler(webBrowser1_Navigating);
+               
                 string path = System.Environment.CurrentDirectory;
                 string fileName = path.Substring(0, path.LastIndexOf("bin")) + "Images" + "\\Geosynk.ico";
-                //webBrowser1.Refresh();
                 webBrowser1.Navigate(fileName);
-                //webBrowser1.Navigate(new Uri(fileName));
             }
             catch (Exception ex)
             {
                 logger.ErrorException("Form1_Load failed:", ex);
                 MessageBox.Show(ex.Message + ex.StackTrace);
             }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            logger.Info("===== Kartverket.Geosynkronisering.Subscriber End =====");
         }
 
         private void InitializeDatasetGrid()
@@ -98,6 +99,28 @@ namespace Kartverket.Geosynkronisering.Subscriber
                           AppDomain.CurrentDomain.GetData("APPBASE").ToString();
                 MessageBox.Show(ex.Message + "\r\n" + errMsg);                
             }            
+        }
+
+        /// <summary>
+        /// Initialize _currentDatasetId
+        /// </summary>
+        private void InitializeCurrentDataset()
+        {
+            _currentDatasetId = Properties.Subscriber.Default.DefaultDatasetId;
+
+            // Get subscribers last index from db
+            txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetLastIndex(_currentDatasetId);
+        }
+
+        /// <summary>
+        /// Occurs after a data-binding operation has finished
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dgDataset_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            // Set the primary ket field to ReadOnly
+            dgDataset.Columns["DatasetId"].ReadOnly = true;
         }
 
         /// <summary>
@@ -129,12 +152,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             Properties.Subscriber.Default.DefaultDatasetId = _currentDatasetId; 
             Properties.Subscriber.Default.Save();
             txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetDataset(_currentDatasetId).LastIndex.ToString();
-        }
-      
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            logger.Info("===== Kartverket.Geosynkronisering.Subscriber End =====");
-        }
+        }     
 
         /// <summary>
         /// Save settings database
@@ -160,16 +178,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
             }
         }
 
-        /// <summary>
-        /// Occurs after a data-binding operation has finished
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void dgDataset_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
-        {
-            // Set the primary ket field to ReadOnly
-            dgDataset.Columns["DatasetId"].ReadOnly = true;        
-        }
 
 
         // Reset subsrcriber lastChangeIndex
@@ -206,6 +214,89 @@ namespace Kartverket.Geosynkronisering.Subscriber
         }
 
 
+
+        private void btnGetCapabilities_Click(object sender, EventArgs e)
+        {
+            string Url = txbProviderURL.Text;
+            GetCapabilitiesXml(Url);
+            btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
+        }
+        private void btnGetProviderDatasets_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.Cursor = Cursors.WaitCursor;
+                GetCapabilitiesXml(txbProviderURL.Text);
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = this.DefaultCursor;
+                MessageBox.Show("Error : " + ex.Message);
+            }
+            finally
+            {
+                this.Cursor = this.DefaultCursor;
+            }
+        }
+
+        private void btnAddSelected_Click(object sender, EventArgs e)
+        {
+            IList<int> selectedDataset = new List<int>();
+            foreach (DataGridViewRow dgr in dgvProviderDataset.SelectedRows)
+            {
+                selectedDataset.Add(dgr.Index);
+            }
+            var blDataset = (IBindingList)dgvProviderDataset.DataSource;
+
+            if (!DL.SubscriberDatasetManager.AddDatasets(blDataset, selectedDataset))
+            {
+                MessageBox.Show(this, "Error saving selected datasets to internal Database.", "Get Provider Datasets", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                MessageBox.Show(this, "Saved selected datasets to the internal Database.", "Get Provider Datasets", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                dgDataset.DataSource = null;
+
+                InitializeDatasetGrid();
+                FillComboBoxDatasetName();
+            }
+        }
+
+
+        private void dgvProviderDataset_SelectionChanged(object sender, EventArgs e)
+        {
+            btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
+        }
+
+
+        private void btnOfflineSync_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string zipFile = "";
+                // zipFile = @"C:\Users\leg\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
+                zipFile = @"C:\Users\b543836\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
+
+                this.tabControl1.SelectTab(0);
+                bool status = _synchController.TestOfflineSyncronizationComplete(zipFile, _currentDatasetId);
+
+                if (status)
+                {
+                    // Oppdaterer dgDataset
+                    dgDataset.DataSource = DL.SubscriberDatasetManager.GetAllDataset();
+                }
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + ex.StackTrace, "btnOfflneSync_Click");
+
+                //   throw;
+            }
+        }
+
+
+        
         /// <summary>
         /// Test full Syncronization without executing the other commands.
         /// </summary>
@@ -213,6 +304,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
         /// <param name="e"></param>
         private void btnSyncronizationComplete_Click(object sender, EventArgs e)
         {
+            Hourglass(true);
+
             listBoxLog.Items.Clear();
             // Create new stopwatch
             var stopwatch = Stopwatch.StartNew();
@@ -221,7 +314,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             toolStripStatusLabel1.Text = "GetLastIndexFromProvider";
             statusStrip1.Refresh();
 
-            bool sucsess = _synchController.DoSynchronization(_currentDatasetId);
+            bool sucsess = _synchController.DoSynchronization(_currentDatasetId);            
 
             // Update Dataset-datagridview control with changes
             InitializeDatasetGrid();
@@ -241,14 +334,24 @@ namespace Kartverket.Geosynkronisering.Subscriber
             toolStripStatusLabel1.Text = "Ready";
             statusStrip1.Refresh();
 
-            Cursor.Current = Cursors.WaitCursor;
-
-            if (!sucsess)
-            {
-                MessageBox.Show("TestSyncronizationComplete failed!");
-            }
+            Hourglass(false);
         }
 
+
+        public void AddLoggmessageToLogbox(string message)
+        {
+            try
+            {
+                {
+                    Action action = () => listBoxLog.Items.Add("Hei på deg");
+                    this.Invoke(action);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Do nothing. Update of icons can wait...
+            }
+        }
 
         /// <summary>
         /// Handles the Click event of the btnSimplify control.
@@ -428,88 +531,19 @@ namespace Kartverket.Geosynkronisering.Subscriber
         #endregion
 
 
-
-        private void btnGetCapabilities_Click(object sender, EventArgs e)
+        protected void Hourglass(bool Show)
         {
-            string Url = txbProviderURL.Text;
-            GetCapabilitiesXml(Url);
-            btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
-        }
-        private void btnGetProviderDatasets_Click(object sender, EventArgs e)
-        {
-            try
+            if (Show == true)
             {
-                this.Cursor = Cursors.WaitCursor;
-                GetCapabilitiesXml(txbProviderURL.Text);
-            }
-            catch (Exception ex)
-            {
-                this.Cursor = this.DefaultCursor;
-                MessageBox.Show("Error : " + ex.Message);
-            }
-            finally
-            {
-                this.Cursor = this.DefaultCursor;
-            }
-        }
-
-        private void btnAddSelected_Click(object sender, EventArgs e)
-        {
-            IList<int> selectedDataset = new List<int>();
-            foreach (DataGridViewRow dgr in dgvProviderDataset.SelectedRows)
-            {
-                selectedDataset.Add(dgr.Index);
-            }
-            var blDataset = (IBindingList)dgvProviderDataset.DataSource;
-
-            if (!DL.SubscriberDatasetManager.AddDatasets(blDataset, selectedDataset))
-            {
-                MessageBox.Show(this, "Error saving selected datasets to internal Database.", "Get Provider Datasets", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor;
             }
             else
             {
-                MessageBox.Show(this, "Saved selected datasets to the internal Database.", "Get Provider Datasets", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                dgDataset.DataSource = null;
-
-                InitializeDatasetGrid();
-                FillComboBoxDatasetName();
+                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default;
             }
+            return;
         }
 
-
-        private void dgvProviderDataset_SelectionChanged(object sender, EventArgs e)
-        {
-            btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
-        }
-
-
-        private void btnOfflineSync_Click(object sender, EventArgs e)
-        {
-            try
-            {
-
-                string zipFile = "";
-                // zipFile = @"C:\Users\leg\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
-                zipFile = @"C:\Users\b543836\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
-
-                this.tabControl1.SelectTab(0);
-                bool status = _synchController.TestOfflineSyncronizationComplete(zipFile, _currentDatasetId);
-
-                if (status)
-                {
-                    // Oppdaterer dgDataset
-                    dgDataset.DataSource = DL.SubscriberDatasetManager.GetAllDataset();
-                }
-
-            }
-
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message + ex.StackTrace, "btnOfflneSync_Click");
-
-                //   throw;
-            }
-        }
 
     }
 }

@@ -16,20 +16,23 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
     public class SynchController
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
-
+       
         public IBindingList GetCapabilitiesProviderDataset(string url)
         {
             var cdb = new CapabilitiesDataBuilder(url);
             return cdb.ProviderDatasets;
         }
 
+        /// <summary>
+        /// Resets the subscribers last index for a given dataset
+        /// </summary>
+        /// <param name="datasetId"></param>
         public void ResetSubscriberLastIndex(int datasetId)
         {           
             var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
             dataset.LastIndex = 0;
             DL.SubscriberDatasetManager.UpdateDataset(dataset);
         }
-
 
         /// <summary>
         /// Get OrderChangelog Response and changelogid
@@ -118,7 +121,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 string fileName = tempDir + @"\" + changelogid + "_Changelog.xml";
 #else
                 const string ftpPath = "abonnent";
-                Utils.Misc.CreateFolderIfMissing(tempDir + @"\" + ftpPath); // Create the abonnent folder if missing               
+                BL.Utils.Misc.CreateFolderIfMissing(tempDir + @"\" + ftpPath); // Create the abonnent folder if missing               
 
                 string fileName = tempDir + @"\" + ftpPath + @"\" + Path.GetFileName(downloaduri) + ".zip";
 #endif
@@ -280,13 +283,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         }
 
 
-
+        /// <summary>
+        /// Synchronizing of a given dataset
+        /// 
+        /// </summary>
+        /// <param name="datasetId"></param>
+        /// <returns></returns>
         public bool DoSynchronization(int datasetId)
-        {
-            //            GetLastIndex (ikke endre verdi)
-            //            OrderChangelog
-            //            GetChangelog
-            //            DoTransaction
+        {           
             try
             {                
                 logger.Info("DoSynchronization start");
@@ -303,7 +307,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     logger.Info(message + " Provider lastIndex:{0} Subscriber lastChangeIndex:{1}", lastChangeIndexProvider, lastChangeIndexSubscriber);
                     return false;
                 }
-                   
+
                 int maxCount = DL.SubscriberDatasetManager.GetMaxCount(datasetId);
 
                 int numberOfFeatures = lastChangeIndexProvider - lastChangeIndexSubscriber;
@@ -397,6 +401,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }            
         }
 
+        /// <summary>
+        /// Waiting until a specific changelog is available
+        /// </summary>
+        /// <param name="datasetId"></param>
+        /// <param name="changeLogId"></param>
+        /// <returns></returns>
         private bool CheckStatusForChangelogOnProvider(int datasetId, int changeLogId)
         {
             try
@@ -506,9 +516,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 logger.ErrorException("TestOfflineSyncronizationComplete:", ex);
                 throw;
             }
-
-        }
-
-      
+        }      
     }
 }
