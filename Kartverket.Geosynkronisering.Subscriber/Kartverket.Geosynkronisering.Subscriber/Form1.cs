@@ -78,7 +78,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-                var prg = (Progress)sender;
+                var prg = (FeedbackController.Progress)sender;
 
                 var newMilestoneDescription = prg.MilestoneDescription;
                 
@@ -99,11 +99,11 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-                var prg = (Progress)sender;
+                var prg = (FeedbackController.Progress)sender;
 
-                var newMilestoneDescription = prg.MilestoneDescription;
+                var newLogListItem = prg.NewLogListItem;
 
-                Action action = () => listBoxLog.Items.Add(newMilestoneDescription);
+                Action action = () => listBoxLog.Items.Add(newLogListItem);
                 this.Invoke(action);
             }
             catch (Exception ex)
@@ -121,7 +121,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-                var prg = (Progress)sender;
+                var prg = (FeedbackController.Progress)sender;
 
                 Action action = () => this.progressBar.Maximum = prg.TotalNumberOfOrders;
                 this.Invoke(action);
@@ -142,7 +142,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-                var prg = (Progress)sender;
+                var prg = (FeedbackController.Progress)sender;
 
                 Action action = () => this.progressBar.Value = prg.OrdersProcessedCount;
                 this.Invoke(action);
@@ -181,9 +181,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 logger.Info("===== Kartverket.Geosynkronisering.Subscriber Start =====");
                 listBoxLog.Items.Clear();
                
-                string path = System.Environment.CurrentDirectory;
-                string fileName = path.Substring(0, path.LastIndexOf("bin")) + "Images" + "\\Geosynk.ico";
-                webBrowser1.Navigate(fileName);
+                ShowGeoSyncLogo();
 
                 UpdateToolStripStatusLabel("Ready");
             }
@@ -192,6 +190,13 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 logger.ErrorException("Form1_Load failed:", ex);
                 MessageBox.Show(ex.Message + ex.StackTrace);
             }
+        }
+
+        private void ShowGeoSyncLogo()
+        {
+            string path = System.Environment.CurrentDirectory;
+            string fileName = path.Substring(0, path.LastIndexOf("bin")) + "Images" + "\\Geosynk.ico";
+            webBrowser1.Navigate(fileName);
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -394,6 +399,10 @@ namespace Kartverket.Geosynkronisering.Subscriber
         /// <param name="e"></param>
         private void btnSyncronizationComplete_Click(object sender, EventArgs e)
         {
+            ShowGeoSyncLogo();
+
+            SetSynchButtonInactive();
+            
             Hourglass(true);
 
             listBoxLog.Items.Clear();
@@ -402,10 +411,37 @@ namespace Kartverket.Geosynkronisering.Subscriber
             listBoxLog.Items.Add(logMessage);
             logger.Info(logMessage);          
 
-            _synchController.SynchronizeAsThread(_currentDatasetId);            
+            SynchronizeAsThread(_currentDatasetId);                       
+        }
 
+        public void SynchronizeAsThread(int datasetId)
+        {
+            var _backgroundWorker = new BackgroundWorker()
+            {
+                WorkerReportsProgress = true,
+                WorkerSupportsCancellation = true
+            };
+           
+            _backgroundWorker.DoWork += bw_DoSynchronization;
+            _backgroundWorker.RunWorkerAsync(datasetId);        
+            _backgroundWorker.RunWorkerCompleted += bw_SynchronizeComplete;
+        }
+
+        /// <summary>
+        /// Synchronize a dataset
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void bw_DoSynchronization(object sender, DoWorkEventArgs e)
+        {
+            var datasetId = (int)e.Argument;
+            _synchController.DoSynchronization(datasetId);
+        }
+        
+        void bw_SynchronizeComplete(object sender, RunWorkerCompletedEventArgs e)
+        {
             // Update Dataset-datagridview control with changes
-            InitializeDatasetGrid();         
+            InitializeDatasetGrid();
 
             // Display in geoserver openlayers
             UpdateToolStripStatusLabel("Display Map");
@@ -413,9 +449,20 @@ namespace Kartverket.Geosynkronisering.Subscriber
             var currentDataset = DL.SubscriberDatasetManager.GetDataset(_currentDatasetId);
             DisplayMap(epsgCode: "EPSG:32633", datasetName: currentDataset.Name); //DisplayMap(epsgCode: "EPSG:32633");
 
+            SetSynchButtonActive();
             Hourglass(false);
         }
 
+        public void SetSynchButtonActive()
+        {
+            btnTestSyncronizationComplete.Enabled = true;
+        }
+
+        public void SetSynchButtonInactive()
+        {
+            btnTestSyncronizationComplete.Enabled = false;
+        }   
+        
         private void UpdateToolStripStatusLabel(string message)
         {
             toolStripStatusLabel.Text = message;

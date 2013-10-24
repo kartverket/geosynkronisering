@@ -70,6 +70,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.label2 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -119,6 +120,7 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Controls.Add(this.progressBar);
             this.tabPage1.Controls.Add(this.cboDatasetName);
             this.tabPage1.Controls.Add(this.txtLimitNumberOfFeatures);
@@ -136,7 +138,7 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(7, 250);
+            this.progressBar.Location = new System.Drawing.Point(8, 261);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(857, 23);
             this.progressBar.TabIndex = 27;
@@ -205,7 +207,7 @@
             this.btnTestSyncronizationComplete.Name = "btnTestSyncronizationComplete";
             this.btnTestSyncronizationComplete.Size = new System.Drawing.Size(132, 23);
             this.btnTestSyncronizationComplete.TabIndex = 19;
-            this.btnTestSyncronizationComplete.Text = "Test complete sync";
+            this.btnTestSyncronizationComplete.Text = "Synchronize dataset";
             this.toolTip1.SetToolTip(this.btnTestSyncronizationComplete, "Test complete syncronization");
             this.btnTestSyncronizationComplete.UseVisualStyleBackColor = true;
             this.btnTestSyncronizationComplete.Click += new System.EventHandler(this.btnSyncronizationComplete_Click);
@@ -449,7 +451,7 @@
             this.tableLayoutPanel9.ColumnCount = 3;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82.26744F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.73256F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 377F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 378F));
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel9.Location = new System.Drawing.Point(181, 23);
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
@@ -535,6 +537,15 @@
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 245);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(111, 13);
+            this.label2.TabIndex = 28;
+            this.label2.Text = "Synchronize progress:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -612,7 +623,8 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button btnOfflineSync;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
-        private System.Windows.Forms.ProgressBar progressBar;        
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Label label2;        
     }
 }
 

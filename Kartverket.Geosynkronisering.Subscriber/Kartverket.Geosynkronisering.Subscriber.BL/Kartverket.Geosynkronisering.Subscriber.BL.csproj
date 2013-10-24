@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="Download\DownloadController.cs" />
     <Compile Include="Download\FileTransferHandler.cs" />
+    <Compile Include="FeedbackController.cs" />
     <Compile Include="SchemaMapping\GeoserverMapping.cs" />
     <Compile Include="SchemaMapping\ITypeMappings.cs" />
     <Compile Include="SchemaMapping\SchemaTransform.cs" />

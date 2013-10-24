@@ -14,7 +14,7 @@ using NLog;
 
 namespace Kartverket.Geosynkronisering.Subscriber.BL
 {
-    public class SynchController : Progress
+    public class SynchController : FeedbackController.Progress
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
        
@@ -284,30 +284,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return dataset.LastIndex;
         }
 
-        public void SynchronizeAsThread(int datasetId)
-        {
-            var _backgroundWorker = new BackgroundWorker()
-            {
-                WorkerReportsProgress = true,
-                WorkerSupportsCancellation = true
-            };
-
-            _backgroundWorker.DoWork += bw_DoSynchronization;
-            _backgroundWorker.RunWorkerAsync(datasetId);        
-        }
-
-
         /// <summary>
         /// Synchronizing of a given dataset
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void bw_DoSynchronization(object sender, DoWorkEventArgs e)
+        public void DoSynchronization(int datasetId)
         {
             try
-            {
-                var datasetId = (int)e.Argument;
-
+            {                
                 // Create new stopwatch
                 var stopwatch = Stopwatch.StartNew();
 
@@ -346,7 +331,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     ++numberOfOrders;
 
                 logger.Info("DoSyncronization: numberOfFeatures:{0} numberOfOrders:{1} maxCount:{2}", numberOfFeatures, numberOfOrders, maxCount);
-                this.OnUpdateLogList("MacCount: " + maxCount);
+                this.OnUpdateLogList("MaxCount: " + maxCount);
                 
                 if (lastChangeIndexSubscriber < lastChangeIndexProvider)
                 {
@@ -362,29 +347,28 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             startIndex = (i * maxCount) + lastChangeIndexSubscriber + 1;
                         }
 
-                        // this.OnUpdateLogList("Subscriber startIndex:" + startIndex.ToString());
+                        this.OnUpdateLogList("Subscriber startIndex:" + startIndex.ToString());
 
                         int changeLogId = OrderChangelog(datasetId, startIndex);
 
-                        // this.OnUpdateLogList("ChangeLogId: "+changeLogId.ToString());
+                        this.OnUpdateLogList("ChangeLogId: "+changeLogId.ToString());
 
                         // Check status for changelog production at provider site
                         this.OnNewSynchMilestoneReached("Waiting for ChangeLog from Provider...");
 
                         if (!CheckStatusForChangelogOnProvider(datasetId, changeLogId)) return;
 
-                        this.OnNewSynchMilestoneReached("GetChangelog "+  (i+1) +" for dataset " + datasetId + ". Wait...");
+                        this.OnNewSynchMilestoneReached("GetChangelog "+  (i+1) +". Wait...");
                         DownloadController downloadController;
                         var responseOk = GetChangelog(datasetId, changeLogId, out downloadController);
                         if (!responseOk)
                         {
-                            logger.Info("GetChangelog " + (i + 1) + " for dataset " + datasetId + " failed");
+                            logger.Info("GetChangelog " + (i + 1) + " failed");
                             return;
                         }
 
-                        var message = "GetChangelog "+ (i+1) +" for dataset " + datasetId + " OK";
+                        var message = "GetChangelog "+ (i+1) +" OK";
                         logger.Info(message);
-                        // this.OnUpdateLogList(message);
                         this.OnNewSynchMilestoneReached(message);
                           
                         //
@@ -448,7 +432,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 this.OnUpdateLogList("Syncronization Completed. Elapsed time: " + elapsedTime);
                 logger.Info("Syncronization Completed. Elapsed time: {0}", elapsedTime);
 
-                this.OnNewSynchMilestoneReached("Ready");
+                this.OnNewSynchMilestoneReached("Synch completed");
             }
             catch (WebException webEx)
             {
@@ -492,18 +476,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     {
                         logger.Info("Cancelled by Server! Call provider.");
                         this.OnNewSynchMilestoneReached("Cancelled ChangeLog from Provider. Contact the proivider.");
-                        this.OnUpdateLogList("ChangelogId:" + changeLogId);
                     }
                     else
                     {
                         logger.Info("Timeout");
                         this.OnNewSynchMilestoneReached("Timeout waiting for ChangeLog from Provider.");
-                        this.OnUpdateLogList("ChangelogId:" + changeLogId);
                     }
                     return false;
                 }
                 this.OnNewSynchMilestoneReached("ChangeLog from Provider ready for download.");
-                this.OnUpdateLogList("ChangelogId:" + changeLogId);
             }
             catch (Exception ex)
             {
@@ -582,85 +563,5 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 throw;
             }
         }      
-    }
-
-
-
-    public class Progress
-    {
-        public event System.EventHandler NewSynchMilestoneReached;
-        public event System.EventHandler UpdateLogList;
-        public event System.EventHandler OrderProcessingStart;        
-        public event System.EventHandler OrderProcessingChange;
-        
-        public string MilestoneDescription;
-        public string NewLogListItem;
-        public int TotalNumberOfOrders;
-        public int OrdersProcessedCount;
-
-        // NewSynchMilestoneReached
-        public void OnNewSynchMilestoneReached(string description)
-        {
-            if (NewSynchMilestoneReached == null) { return; }
-            this.MilestoneDescription = description;
-
-            NewSynchMilestoneReached.BeginInvoke(this, new EventArgs(),
-                      new AsyncCallback(NewSynchMilestoneReachedCompleted), null);
-        }
-
-        private void NewSynchMilestoneReachedCompleted(IAsyncResult ar)
-        {
-            if (NewSynchMilestoneReached == null) { return; }
-            NewSynchMilestoneReached.EndInvoke(ar);
-        }
-
-        // UpdateLogList
-        public void OnUpdateLogList(string info)
-        {
-            if (UpdateLogList == null) { return; }
-            this.NewLogListItem = info;
-
-            UpdateLogList.BeginInvoke(this, new EventArgs(),
-                      new AsyncCallback(UpdateLogListCompleted), null);
-        }
-
-        private void UpdateLogListCompleted(IAsyncResult ar)
-        {
-            if (UpdateLogList == null) { return; }
-            UpdateLogList.EndInvoke(ar);
-        }
-
-        // OrderProcessingStart
-        public void OnOrderProcessingStart(int totalNumberOfOrders)
-        {
-            if (OrderProcessingStart == null) { return; }
-            this.TotalNumberOfOrders = totalNumberOfOrders;
-            this.OrdersProcessedCount = 0;
-
-            OrderProcessingStart.BeginInvoke(this, new EventArgs(),
-                      new AsyncCallback(OrderProcessingStartCompleted), null);
-        }
-
-        private void OrderProcessingStartCompleted(IAsyncResult ar)
-        {
-            if (OrderProcessingStart == null) { return; }
-            OrderProcessingStart.EndInvoke(ar);
-        }
-
-        // OrderProcessingChange
-        public void OnOrderProcessingChange(int count)
-        {
-            if (OrderProcessingChange == null) { return; }
-            this.OrdersProcessedCount = count;
-
-            OrderProcessingChange.BeginInvoke(this, new EventArgs(),
-                      new AsyncCallback(OrderProcessingChangeCompleted), null);
-        }
-
-        private void OrderProcessingChangeCompleted(IAsyncResult ar)
-        {
-            if (OrderProcessingChange == null) { return; }
-            OrderProcessingChange.EndInvoke(ar);
-        }
     }
 }
