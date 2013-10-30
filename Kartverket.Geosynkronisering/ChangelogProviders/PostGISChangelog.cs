@@ -70,6 +70,11 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         public OrderChangelog GenerateInitialChangelog(int datasetId)
         {
+            var initialChangelog = (from d in p_db.StoredChangelogs where d.DatasetId == datasetId && d.StartIndex == 1 && d.Stored == true orderby d.DateCreated descending select d).FirstOrDefault();
+            //Uri uri = new Uri(initialChangelog.DownloadUri);
+            //ChangelogManager.DeleteFileOnServer(uri);
+           // p_db.StoredChangelogs.DeleteObject(initialChangelog);
+
             int startIndex = 1; // StartIndex always 1 on initial changelog
             int endIndex = Convert.ToInt32(GetLastIndex(datasetId));
             int count = 1000; // TODO: Get from dataset table
@@ -107,7 +112,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             // Loop and create xml files
             int i = 1;
             int test = Convert.ToInt32(Math.Ceiling((double)endIndex / count));
-            while (i++ <= 1)//Convert.ToInt32(Math.Ceiling((double)endIndex/count)))
+            while (i++ <= Convert.ToInt32(Math.Ceiling((double)endIndex/count)))
             {                
                 string partFileName = DateTime.Now.Ticks + ".xml";
 
@@ -327,18 +332,18 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         public OrderChangelog OrderChangelog(int startIndex, int count, string todo_filter, int datasetId)
         {
-            // If startIndex == 0: Check if initital changelog exists
-            /*if (startIndex == 1)
+            // If startIndex == 1: Check if initital changelog exists
+            if (startIndex == 1)
             {
                 var initialChangelog = (from d in p_db.StoredChangelogs where d.DatasetId == datasetId && d.StartIndex == 1 && d.Stored == true orderby d.DateCreated descending select d).FirstOrDefault();                
                 
                 if (initialChangelog != null)
                 {
                     OrderChangelog resp = new OrderChangelog();
-                    resp.changelogId = initialChangelog.ChangelogId.ToString();
+                    resp.changelogId = initialChangelog.ChangelogId;
                     return resp;
                 }
-            }*/
+            }
 
             // If initial changelog don't exists or startIndex != 1
             return _OrderChangelog(startIndex, count, todo_filter, datasetId);            
@@ -561,7 +566,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     }
                 }
 
-                AddAllTransactionsToChangeLog(updatesGmlIds, insertsGmlIds, deletesGmlIds, wfsUrl, changeLog, datasetId );
+                AddAllTransactionsToChangeLog(updatesGmlIds, insertsGmlIds, deletesGmlIds, wfsUrl, changeLog, datasetId, ref endChangeId);
 
                 //Update attributes in chlogf:TransactionCollection
                 UpdateRootAttributes(changeLog, counter, startChangeId, endChangeId);
@@ -584,18 +589,18 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             logger.Info("BuildChangeLogFile END");
         }
 
-        private void AddAllTransactionsToChangeLog(List<KeyValuePair<string, Tuple<string, long>>> updatesGmlIds, List<KeyValuePair<string, Tuple<string, long>>> insertsGmlIds, List<KeyValuePair<string, Tuple<string, long>>> deletesGmlIds, string wfsUrl, XElement changeLog, int datasetId)
+        private void AddAllTransactionsToChangeLog(List<KeyValuePair<string, Tuple<string, long>>> updatesGmlIds, List<KeyValuePair<string, Tuple<string, long>>> insertsGmlIds, List<KeyValuePair<string, Tuple<string, long>>> deletesGmlIds, string wfsUrl, XElement changeLog, int datasetId, ref Int64 endChangeId)
         {
             int transCounter = 0;
             if( deletesGmlIds.Count > 0)
-                AddDeletesToChangeLog(deletesGmlIds, ref transCounter, changeLog, datasetId);
+                AddDeletesToChangeLog(deletesGmlIds, ref transCounter, changeLog, datasetId, ref endChangeId);
             if (insertsGmlIds.Count > 0)
-                AddInsertPortionsToChangeLog(insertsGmlIds, wfsUrl, changeLog, datasetId );
+                AddInsertPortionsToChangeLog(insertsGmlIds, wfsUrl, changeLog, datasetId, ref endChangeId);
             if (updatesGmlIds.Count > 0)
-                AddUpdatePortionsToChangeLog(updatesGmlIds, ref transCounter, wfsUrl, changeLog, datasetId);
+                AddUpdatePortionsToChangeLog(updatesGmlIds, ref transCounter, wfsUrl, changeLog, datasetId, ref endChangeId);
         }
 
-        private void AddInsertPortionsToChangeLog(List<KeyValuePair<string, Tuple<string, long>>> insertList, string wfsUrl, XElement changeLog, int datasetId)
+        private void AddInsertPortionsToChangeLog(List<KeyValuePair<string, Tuple<string, long>>> insertList, string wfsUrl, XElement changeLog, int datasetId, ref Int64 endChangeId)
         {
             int portionSize = 100;
 
@@ -607,18 +612,18 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 insertsListPortion.Add(insert);
                 if (portionCounter % portionSize == 0)
                 {
-                    AddInsertsToChangeLog(insertsListPortion, wfsUrl, changeLog, datasetId);
+                    AddInsertsToChangeLog(insertsListPortion, wfsUrl, changeLog, datasetId, ref endChangeId);
                     insertsListPortion.Clear();
                 }
             }
             if (insertsListPortion.Count() > 0)
             {
-                AddInsertsToChangeLog(insertsListPortion, wfsUrl, changeLog, datasetId);
+                AddInsertsToChangeLog(insertsListPortion, wfsUrl, changeLog, datasetId, ref endChangeId);
             }
             
         }
 
-        private void AddInsertsToChangeLog(List<KeyValuePair<string, Tuple<string, long>>> insertsGmlIds, string wfsUrl, XElement changeLog, int datasetId)
+        private void AddInsertsToChangeLog(List<KeyValuePair<string, Tuple<string, long>>> insertsGmlIds, string wfsUrl, XElement changeLog, int datasetId, ref Int64 endChangeId)
         {
             List<string> typeNames = new List<string>();
              
@@ -651,7 +656,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             string nsPrefixAppComplete = nsPrefixApp + ":";
 
             XElement insertElement = new XElement(nsWfs + "Insert", new XAttribute("handle", maxChangelogId), new XAttribute("inputFormat", "application/gml+xml; version=3.2"));
-
+            endChangeId = maxChangelogId;
             foreach (KeyValuePair<string,string> dictElement in typeIdDict)
             {
                 //string xpathExpressionLokalid = "//" + nsPrefixAppComplete + dictElement.Value + "[" + nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete + "Identifikasjon/" + nsPrefixAppComplete + "lokalId='"+dictElement.Key+"']";
@@ -696,7 +701,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             //}
         }
 
-        private void AddDeletesToChangeLog(List<KeyValuePair<string, Tuple<string, long>>> deletesGmlIds, ref int transCounter, XElement changeLog, int datasetId)
+        private void AddDeletesToChangeLog(List<KeyValuePair<string, Tuple<string, long>>> deletesGmlIds, ref int transCounter, XElement changeLog, int datasetId, ref Int64 endChangeId)
         {
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
             XNamespace nsChlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg";
@@ -730,16 +735,17 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                                   ));
 
                 changeLog.Element(nsChlogf + "transactions").Add(deleteElement);
+                endChangeId = delete.Value.Item2;
                 transCounter++;
             }
         }
 
-        private void AddUpdatePortionsToChangeLog(List<KeyValuePair<string, Tuple<string, long>>> updatesGmlIds, ref int transCounter, string wfsUrl, XElement changeLog, int datasetId)
+        private void AddUpdatePortionsToChangeLog(List<KeyValuePair<string, Tuple<string, long>>> updatesGmlIds, ref int transCounter, string wfsUrl, XElement changeLog, int datasetId, ref Int64 endChangeId)
         {
             foreach (KeyValuePair<string, Tuple<string, long>> update in updatesGmlIds)
             {
 
-                AddUpdatesToChangeLog(update, wfsUrl, changeLog, datasetId);
+                AddUpdatesToChangeLog(update, wfsUrl, changeLog, datasetId, ref endChangeId);
 
             }
             /*int portionSize = 100;
@@ -766,7 +772,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         }
 
-        private void AddUpdatesToChangeLog(KeyValuePair<string, Tuple<string, long>> update, string wfsUrl, XElement changeLog, int datasetId)
+        private void AddUpdatesToChangeLog(KeyValuePair<string, Tuple<string, long>> update, string wfsUrl, XElement changeLog, int datasetId, ref Int64 endChangelogId)
         {
             Dictionary<string, string> typeIdDict = new Dictionary<string, string>();
             string gmlId = update.Key;
@@ -835,6 +841,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                                             )
                                       ));
                     changeLog.Element(nsChlogf + "transactions").Add(updateElement);
+                    endChangelogId = update.Value.Item2;
                     //transCounter++;
                     //count++;
                 }
@@ -1674,7 +1681,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             try
             {
 
-                ftp.downloadFileFromFTPServer(SourceFileName, TargetFileName, user, password);
+                ftp.FileFromFTPServer(SourceFileName, TargetFileName, user, password);
 
             }
             catch (Exception exp)

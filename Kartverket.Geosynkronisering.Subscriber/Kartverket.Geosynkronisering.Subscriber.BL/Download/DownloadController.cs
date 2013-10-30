@@ -17,6 +17,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         public string ChangelogFilename { get; set; }
+        public bool isFolder = false;
 
         public DownloadController()
         {
@@ -57,8 +58,24 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 string outPath = Path.GetDirectoryName(ChangelogFilename);
                 this.UnpackZipFile(ChangelogFilename, outPath);
-                string xmlFile = Path.ChangeExtension(ChangelogFilename, ".xml");
-                ChangelogFilename = xmlFile;
+
+                // TODO: HS: Check if zip contains folder or file
+                string baseFilename = ChangelogFilename.Replace(".zip", "");
+
+                if (Directory.Exists(baseFilename))
+                {
+                    ChangelogFilename = baseFilename;
+                    isFolder = true;
+                }
+                else
+                {
+                    string xmlFile = Path.ChangeExtension(ChangelogFilename, ".xml");
+                    ChangelogFilename = xmlFile;
+                }
+
+
+                
+                
 
                 System.Diagnostics.Debug.WriteLine("client_DownloadFileCompleted: File downloaded");
                 return true;

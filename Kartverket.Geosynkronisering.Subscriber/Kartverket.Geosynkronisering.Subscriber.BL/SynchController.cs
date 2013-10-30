@@ -332,8 +332,79 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 logger.Info("DoSyncronization: numberOfFeatures:{0} numberOfOrders:{1} maxCount:{2}", numberOfFeatures, numberOfOrders, maxCount);
                 this.OnUpdateLogList("MaxCount: " + maxCount);
-                
-                if (lastChangeIndexSubscriber < lastChangeIndexProvider)
+
+                #region Håvard
+                bool temp = false;
+                while (lastChangeIndexSubscriber < lastChangeIndexProvider)
+                {
+                    int i = 0;
+                    // Do lots of stuff
+                    int startIndex = lastChangeIndexSubscriber + 1;
+                    int changeLogId = OrderChangelog(datasetId, startIndex);
+
+                    if (!CheckStatusForChangelogOnProvider(datasetId, changeLogId)) return;
+
+                    DownloadController downloadController;
+                    var responseOk = GetChangelog(datasetId, changeLogId, out downloadController);
+
+                    if (!responseOk)
+                    {
+                        //logger.Info("GetChangelog " + (i + 1) + " failed");
+                        return;
+                    }
+
+                    List<string> fileList = new List<string>();
+
+                    if (downloadController.isFolder)
+                    {
+                        string[] fileArray = Directory.GetFiles(downloadController.ChangelogFilename);
+                        Array.Sort(fileArray);
+                        fileList = fileArray.ToList();
+                    }
+                    else
+                    {
+                        fileList.Add(downloadController.ChangelogFilename);
+                    }
+
+
+                    foreach (string file in fileList)
+                    {
+                        // load an XML document from a file
+                        XElement changeLog = XElement.Load(downloadController.ChangelogFilename);
+
+                        this.OnNewSynchMilestoneReached("DoWfsTransactions starting...");
+
+                        var wfsController = new WfsController();
+
+                        if (wfsController.DoWfsTransactions2(changeLog, datasetId))
+                        {
+                            // sucsess - update subscriber lastChangeIndex
+                            int lastIndexSubscriber = lastChangeIndexProvider;
+                            if (numberOfOrders > 1 && i < (numberOfOrders - 1))
+                            {
+                                lastIndexSubscriber = (i * maxCount) + lastChangeIndexSubscriber;
+                                logger.Info("DoWfsTransactions OK, pass {0}", (i + 1));
+
+                                this.OnNewSynchMilestoneReached("DoWfsTransactions OK");
+                                // this.OnUpdateLogList("DoWfsTransactions OK, pass " + (i + 1).ToString());
+                            }
+                            else
+                            {
+                                logger.Info("DoSynchronization success");
+                            }                            
+
+                            if (!downloadController.isFolder)
+                            {
+                                AcknowledgeChangelogDownloaded(datasetId, changeLogId);
+                            }
+                        }
+                    }
+                    lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
+                    lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
+                }
+                #endregion
+
+                /*if (lastChangeIndexSubscriber < lastChangeIndexProvider)
                 {
                     this.OnOrderProcessingStart(numberOfOrders);
                     for (int i = 0; i < numberOfOrders; i++)
@@ -361,11 +432,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         this.OnNewSynchMilestoneReached("GetChangelog "+  (i+1) +". Wait...");
                         DownloadController downloadController;
                         var responseOk = GetChangelog(datasetId, changeLogId, out downloadController);
+                       
                         if (!responseOk)
                         {
                             logger.Info("GetChangelog " + (i + 1) + " failed");
                             return;
-                        }
+                        }                        
 
                         var message = "GetChangelog "+ (i+1) +" OK";
                         logger.Info(message);
@@ -396,7 +468,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                         this.OnNewSynchMilestoneReached("DoWfsTransactions starting...");
 
-                        if (wfsController.DoWfsTransactions(changeLog, datasetId))
+                        if (wfsController.DoWfsTransactions2(changeLog, datasetId))
                         {
                             // sucsess - update subscriber lastChangeIndex
                             int lastIndexSubscriber = lastChangeIndexProvider;
@@ -422,7 +494,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             AcknowledgeChangelogDownloaded(datasetId, changeLogId);
                         }
                     }
-                }
+                }*/
 
                 // Stop timing
                 stopwatch.Stop();
