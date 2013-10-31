@@ -12,7 +12,7 @@ using System.Xml.XPath;
 
 namespace Kartverket.Geosynkronisering.Subscriber.BL
 {
-    public class WfsController
+    public class WfsController : FeedbackController.Progress
     {
         public static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
@@ -239,10 +239,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                         if (transactionSummaries.Any())
                         {
-                            string message = "Geoserver WFS-T Transaction: ";
                             string transactionSummary = transactionSummaries.ElementAt(0).ToString(SaveOptions.DisableFormatting);
-                            //MessageBox.Show(message + "\r\n" + transactionSummary, "Transaction Status: " + httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription);
-                            logger.Info("DoWfsTransactions:" + message + " transactionSummary" + " Transaction Status:{0}" + "\r\n" + transactionSummary, httpWebResponse.StatusCode);
+
+                            string wfsMessage = "DoWfsTransactions: Geoserver WFS-T Transaction: transactionSummary" + " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + transactionSummary;
+
+                            logger.Info(wfsMessage);
+                            this.OnUpdateLogList(wfsMessage);
+
                             ////VisXML(tran.ToString(SaveOptions.DisableFormatting));
                             // For more debugging:
                             //logger.Info("DoWfsTransactions: " + message + " Transaction Status:{0}" + "\r\n" + resultString.ToString(), httpWebResponse.StatusCode);
@@ -274,15 +277,17 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             }
                         }
                         else
-                        {
-                            string message = "Geoserver WFS-T Transaction feilet: ";
-                            logger.Info("DoWfsTransactions:" + message + " transactionSummary" + " Transaction Status:{0}" + "\r\n" + "No transactions ", httpWebResponse.StatusCode);                            
+                        {                     
+                            string wfsMessage = "DoWfsTransactions: Geoserver WFS-T Transaction feilet:  transactionSummary" + " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + "No transactions ";
+                            logger.Info(wfsMessage);                            
+                            this.OnUpdateLogList(wfsMessage);
                         }
                     }
                     else
                     {
-                        string message = "Geoserver WFS-T Transaction feilet: ";
-                        logger.Info("DoWfsTransactions: " + message + " Transaction Status:{0}" + "\r\n" + resultString.ToString(), httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription);
+                        string wfsMessage = "DoWfsTransactions: Geoserver WFS-T Transaction feilet:  Transaction Status:" + httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription + "\r\n" + resultString.ToString();
+                        logger.Info(wfsMessage);
+                        this.OnUpdateLogList(wfsMessage);
                     }
                 }
                 catch (WebException webEx)
