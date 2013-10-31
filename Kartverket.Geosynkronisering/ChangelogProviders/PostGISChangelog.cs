@@ -76,6 +76,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 Uri uri = new Uri(initialChangelog.DownloadUri);
                 ChangelogManager.DeleteFileOnServer(uri);
                 p_db.StoredChangelogs.DeleteObject(initialChangelog);
+                p_db.SaveChanges();
             }
 
             int startIndex = 1; // StartIndex always 1 on initial changelog
@@ -142,11 +143,11 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 Common.FileTransferHandler ftpTool = new Common.FileTransferHandler();
                 string tmpzipFile = Path.Combine(System.IO.Path.GetTempPath(), zipFile);
                 logger.Info(string.Format("Upload of file {0} started", tmpzipFile));
-                ldbo.Status = "Started";
+                ldbo.Status = "started";
                 p_db.SaveChanges();
                 // chgLogHandler.UploadFileToFtp(zipFile, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpServer, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpUser, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpPassword);
                 if (!ftpTool.UploadFileToFtp(tmpzipFile, Database.ServerConfigData.FTPUrl(), Database.ServerConfigData.FTPUser(), Database.ServerConfigData.FTPPwd())) throw new Exception("Could not upload file to FTPServer!");
-                ldbo.Status = "Finished";
+                ldbo.Status = "finished";
                 p_db.SaveChanges();
             }
             catch (Exception ex)
@@ -187,6 +188,14 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         private string BaseVirtualPath;
         public OrderChangelog CreateChangelog(int startIndex, int count, string todo_filter, int datasetId)
         {
+            var initialChangelog = (from d in p_db.StoredChangelogs where d.DatasetId == datasetId && d.StartIndex == 1 && d.Stored == true && d.Status == "finished" orderby d.DateCreated descending select d).FirstOrDefault();
+            if (initialChangelog != null)
+            {
+                OrderChangelog resp = new OrderChangelog();
+                resp.changelogId = initialChangelog.ChangelogId;
+                return resp;
+            }
+
             logger.Info("CreateChangelog START");
             BaseVirtualPath = Utils.BaseVirtualAppPath;
             ChangelogManager chlmng = new ChangelogManager(p_db);
@@ -397,11 +406,11 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 Common.FileTransferHandler ftpTool = new Common.FileTransferHandler();
                 string tmpzipFile = Path.Combine(System.IO.Path.GetTempPath(), zipFile);
                 logger.Info(string.Format("Upload of file {0} started", tmpzipFile));
-                ldbo.Status = "Started";
+                ldbo.Status = "started";
                 p_db.SaveChanges();
                // chgLogHandler.UploadFileToFtp(zipFile, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpServer, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpUser, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpPassword);
                 if (!ftpTool.UploadFileToFtp(tmpzipFile, Database.ServerConfigData.FTPUrl(), Database.ServerConfigData.FTPUser(), Database.ServerConfigData.FTPPwd())) throw new Exception("Could not upload file to FTPServer!");
-                ldbo.Status = "Finished";                
+                ldbo.Status = "finished";                
                 p_db.SaveChanges();
             }
             catch (Exception ex)
