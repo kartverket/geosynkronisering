@@ -721,8 +721,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                                 dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
                                 int temp = Convert.ToInt32(endChangeId);
-                                dataset.LastIndex = temp;
-                                dataset.Name = "Kystcotur";
+                                dataset.LastIndex = temp;                               
                                 DL.SubscriberDatasetManager.UpdateDataset(dataset);
                             }
                             else
