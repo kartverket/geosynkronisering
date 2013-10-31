@@ -70,10 +70,13 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         public OrderChangelog GenerateInitialChangelog(int datasetId)
         {
-            var initialChangelog = (from d in p_db.StoredChangelogs where d.DatasetId == datasetId && d.StartIndex == 1 && d.Stored == true orderby d.DateCreated descending select d).FirstOrDefault();
-            //Uri uri = new Uri(initialChangelog.DownloadUri);
-            //ChangelogManager.DeleteFileOnServer(uri);
-           // p_db.StoredChangelogs.DeleteObject(initialChangelog);
+            var initialChangelog = (from d in p_db.StoredChangelogs where d.DatasetId == datasetId && d.StartIndex == 1 && d.Stored == true && d.Status == "finished" orderby d.DateCreated descending select d).FirstOrDefault();
+            if (initialChangelog != null)
+            {
+                Uri uri = new Uri(initialChangelog.DownloadUri);
+                ChangelogManager.DeleteFileOnServer(uri);
+                p_db.StoredChangelogs.DeleteObject(initialChangelog);
+            }
 
             int startIndex = 1; // StartIndex always 1 on initial changelog
             int endIndex = Convert.ToInt32(GetLastIndex(datasetId));
@@ -335,7 +338,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             // If startIndex == 1: Check if initital changelog exists
             if (startIndex == 1)
             {
-                var initialChangelog = (from d in p_db.StoredChangelogs where d.DatasetId == datasetId && d.StartIndex == 1 && d.Stored == true orderby d.DateCreated descending select d).FirstOrDefault();                
+                var initialChangelog = (from d in p_db.StoredChangelogs where d.DatasetId == datasetId && d.StartIndex == 1 && d.Stored == true && d.Status == "finished" orderby d.DateCreated descending select d).FirstOrDefault();                
                 
                 if (initialChangelog != null)
                 {
