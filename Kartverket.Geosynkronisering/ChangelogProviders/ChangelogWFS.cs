@@ -170,6 +170,11 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
             XElement orElement = new XElement("Or");
             string typename = "";
+
+            // 20131101-Leg: ValueReference content has namespace prefix
+            string lokalidValrefContent = nsPrefixTargetNamespaceComplete + "identifikasjon/" + nsPrefixTargetNamespaceComplete +
+                                           "Identifikasjon/" + nsPrefixTargetNamespaceComplete + "lokalId";
+            
             foreach (string gmlId in gmlIds)
             {
                 
@@ -180,7 +185,11 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 typeIdDict.Add(localId, typename);
 
                 XElement filterElement = new XElement(nsFes + "Filter");
-                filterElement.Add(new XElement("PropertyIsEqualTo", new XElement("ValueReference", "identifikasjon/Identifikasjon/lokalId"), new XElement("Literal", localId)));
+                
+                // 20131101-Leg: ValueReference content has namespace prefix
+                filterElement.Add(new XElement(nsFes + "PropertyIsEqualTo", new XElement(nsFes + "ValueReference", lokalidValrefContent), new XElement(nsFes + "Literal", localId)));
+                // filterElement.Add(new XElement("PropertyIsEqualTo", new XElement("ValueReference", "identifikasjon/Identifikasjon/lokalId"), new XElement("Literal", localId)));
+                
                 wfsGetFeatureDocument.Element(nsWfs + "GetFeature").Add(new XElement(nsWfs + "Query", new XAttribute("typeNames", nsPrefixTargetNamespace + ":" + typename), filterElement));               
             }                      
         }            
