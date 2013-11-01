@@ -507,9 +507,11 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                             //Remove if inserted or updated earlier in this sequence of transactions
                             if (optimizedChangeLog.TryGetValue(gmlId, out value))
                             {
+                                string tempTransType = value.Item1;
                                 optimizedChangeLog.Remove(gmlId);
-                                if (value.Equals("U"))
+                                if (tempTransType.Equals("U"))
                                 {
+                                    //Add delete if last operation was update. 
                                     optimizedChangeLog.Add(gmlId, new Tuple<string, long>(transType,changelogId));
                                 }
                             }
