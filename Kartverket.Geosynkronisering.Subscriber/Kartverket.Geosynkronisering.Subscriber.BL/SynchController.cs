@@ -335,9 +335,21 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 #region Håvard
                 bool temp = false;
+
+                #region Lars
+                this.OnOrderProcessingStart(numberOfOrders);
+                int progressCounter = 0;
+                #endregion
+
                 while (lastChangeIndexSubscriber < lastChangeIndexProvider)
                 {
                     int i = 0;
+
+                    #region Lars
+                    this.OnOrderProcessingChange(progressCounter + 1);
+                    ++progressCounter;
+                    #endregion
+
                     // Do lots of stuff
                     int startIndex = lastChangeIndexSubscriber + 1;
                     int changeLogId = OrderChangelog(datasetId, startIndex);
@@ -366,9 +378,24 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         fileList.Add(downloadController.ChangelogFilename);
                     }
 
-
+                    //TODO: file is newer used - error?
                     foreach (string file in fileList)
                     {
+                        #region Lars
+
+                       
+                        //
+                        // Schema transformation
+                        // Mapping from the nested structure of one or more simple features to the simple features for GeoServer.
+                        //
+                        var schemaTransform = new SchemaTransform();
+                        var newFileName = schemaTransform.SchemaTransformSimplify(downloadController.ChangelogFilename, datasetId);
+                        if (!string.IsNullOrEmpty(newFileName))
+                        {
+                            downloadController.ChangelogFilename = newFileName;
+                        }
+                        #endregion
+
                         // load an XML document from a file
                         XElement changeLog = XElement.Load(downloadController.ChangelogFilename);
 
