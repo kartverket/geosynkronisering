@@ -334,7 +334,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 this.OnUpdateLogList("MaxCount: " + maxCount);
 
                 #region Håvard
-                bool temp = false;
 
                 #region Lars
                 this.OnOrderProcessingStart(numberOfOrders);
@@ -381,44 +380,36 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     //TODO: file is newer used - error?
                     foreach (string file in fileList)
                     {
+                        string fileName = file;
                         #region Lars
-
+#endregion
                        
                         //
                         // Schema transformation
                         // Mapping from the nested structure of one or more simple features to the simple features for GeoServer.
                         //
                         var schemaTransform = new SchemaTransform();
-                        var newFileName = schemaTransform.SchemaTransformSimplify(downloadController.ChangelogFilename, datasetId);
+                        var newFileName = schemaTransform.SchemaTransformSimplify(fileName, datasetId);                     
+                        
                         if (!string.IsNullOrEmpty(newFileName))
                         {
-                            downloadController.ChangelogFilename = newFileName;
+                            fileName = newFileName;
                         }
-                        #endregion
 
+                        
                         // load an XML document from a file
-                        XElement changeLog = XElement.Load(downloadController.ChangelogFilename);
+                        XElement changeLog = XElement.Load(fileName);
 
                         this.OnNewSynchMilestoneReached("DoWfsTransactions starting...");
+
+
 
                         var wfsController = new WfsController();
 
                         if (wfsController.DoWfsTransactions2(changeLog, datasetId))
                         {
-                            // sucsess - update subscriber lastChangeIndex
-                            int lastIndexSubscriber = lastChangeIndexProvider;
-                            if (numberOfOrders > 1 && i < (numberOfOrders - 1))
-                            {
-                                lastIndexSubscriber = (i * maxCount) + lastChangeIndexSubscriber;
-                                logger.Info("DoWfsTransactions OK, pass {0}", (i + 1));
-
-                                this.OnNewSynchMilestoneReached("DoWfsTransactions OK");
-                                // this.OnUpdateLogList("DoWfsTransactions OK, pass " + (i + 1).ToString());
-                            }
-                            else
-                            {
-                                logger.Info("DoSynchronization success");
-                            }                            
+                            logger.Info("DoWfsTransactions OK, pass {0}", (i + 1));
+                            this.OnUpdateLogList(String.Format("DoWfsTransactions OK, pass {0}" , (i + 1)));
 
                             if (!downloadController.isFolder)
                             {
@@ -428,7 +419,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     }
                     lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
                     lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
+                    i++;
                 }
+
                 #endregion
 
                 /*if (lastChangeIndexSubscriber < lastChangeIndexProvider)
@@ -661,6 +654,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 logger.ErrorException("TestOfflineSyncronizationComplete:", ex);
                 throw;
             }
-        }      
+        }
     }
+                
 }
