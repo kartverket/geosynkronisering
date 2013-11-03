@@ -341,7 +341,15 @@ namespace Kartverket.Geosynkronisering.Database
                 if (res.First() != null) return res.First().ToString(); else return "";
             }
         }
-
+        //20131016-Leg
+        public static string TargetNamespacePrefix(Int32 DatasetID)
+        {
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from d in db.Datasets where d.DatasetId == DatasetID select d.TargetNamespacePrefix;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
+        }
     }
 
     public class StoredChangeLogIDData

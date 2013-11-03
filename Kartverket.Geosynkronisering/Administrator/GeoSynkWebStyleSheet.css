@@ -32,10 +32,17 @@ div
     font-weight: bold;
     font-style: italic;
 }
-.Button
+.ErrorLabel
 {
     font-family: 'MS Sans Serif';
-    font-size: xx-small;
+    font-size: x-small;
+    color: #FF0000;
+}
+.Button
+{
+    border: medium outset #FFFFFF;
+    font-family: 'MS Sans Serif';
+    font-size: x-small;
     background-color: #DBDBDB;
 }
 .LinkButton

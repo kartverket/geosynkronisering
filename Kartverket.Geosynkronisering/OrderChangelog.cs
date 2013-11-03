@@ -7,6 +7,6 @@ namespace Kartverket.Geosynkronisering
 {
     public class OrderChangelog
     {
-        public string changelogId;
+        public int changelogId;
     }
 }

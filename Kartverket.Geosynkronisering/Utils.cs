@@ -12,11 +12,17 @@ namespace Kartverket.Geosynkronisering
             get
             {
                 HttpContext context = HttpContext.Current;
-                string url = context.Request.PhysicalApplicationPath;
-                if (url.EndsWith("/"))
-                    return url;
-                else
-                    return url + "/";
+                try
+                {
+                    string url = context.Request.PhysicalApplicationPath;
+                    if (url.EndsWith("/"))
+                        return url;
+                    else
+                        return url + "/";
+                } catch (Exception ex)
+                {
+                    return "";
+                }
             }
         }
 

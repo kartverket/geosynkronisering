@@ -15,7 +15,9 @@ namespace Kartverket.Geosynkronisering
          string GetLastIndex(int datasetId);
         //XmlDocument DescribeFeatureType();
         //ListStoredChangelogsResponse ListStoredChangelogs();
-         OrderChangelog OrderChangelog(int startIndex, int count, string todo_filter, int datasetId);         
+         OrderChangelog CreateChangelog(int startIndex, int count, string todo_filter, int datasetId);   
+         OrderChangelog OrderChangelog(int startIndex, int count, string todo_filter, int datasetId);
+         OrderChangelog GenerateInitialChangelog(int datasetId);
         //GetChangelogStatusResponse GetChangelogStatus(int changelogid);
         //GetChangelogResponse GetChangelog(int changelogid);
         //void AcknowledgeChangelogDownloaded(int changelogid);

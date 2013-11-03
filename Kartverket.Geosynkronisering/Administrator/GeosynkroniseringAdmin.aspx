@@ -30,9 +30,12 @@
                   <asp:Image ID="Image1" runat="server" Height="61px" 
                       ImageUrl="~/Images/Geosynk.png" Width="64px" />
                 </td>
-                <td width="80%">                        
+                <td width="60%">                        
                     <asp:Label ID="Label2" runat="server" CssClass="HeaderText" 
                         Text="Geosynkronisering Administrator"></asp:Label>
+                </td>
+                <td width="20%">                        
+                    <asp:Button ID="btnSignOut" runat="server" OnClick="btnSignOut_Click" Text="Logg ut" CssClass="Button" />
                 </td>
                 <td width="10%">                        
                 </td>
@@ -202,7 +205,7 @@
                                             <asp:Label ID="Label1" runat="server" Text="Dataset:" 
                                                 CssClass="TableHeaderText"></asp:Label>
                                         </div>                                               
-                                        <div style="height: 80%">                                          
+                                        <div style="height: 50%">                                          
                                             <asp:DetailsView ID="vDataset" runat="server" AllowPaging="True" 
                                                 CssClass="GridView" DataSourceID="edsDataset" Height="50px" Width="125px" 
                                                 AutoGenerateRows="False" DataKeyNames="DatasetId" 
@@ -233,6 +236,8 @@
                                                         SortExpression="LowerCornerCoords" />
                                                     <asp:BoundField DataField="TargetNamespace" HeaderText="TargetNamespace" 
                                                         SortExpression="TargetNamespace" />
+                                                         <asp:BoundField DataField="TargetNamespacePrefix" HeaderText="TargetNamespacePrefix" 
+                                                        SortExpression="TargetNamespacePrefix" />
                                                     <asp:CommandField ShowDeleteButton="True" ShowEditButton="True" 
                                                         ShowInsertButton="True" ButtonType="Image" 
                                                         CancelImageUrl="~/Images/Edit_UndoHS.png" CancelText="Avbryt" 
@@ -257,8 +262,26 @@
                                                 <PagerStyle CssClass="GridView" />
                                             </asp:DetailsView>
                                         </div>
-                                        <div style="height: 10%"> 
-                                         </div>                          
+                                       <div style="height: 10%"> 
+                                           &nbsp;
+                                           &nbsp;
+                                       </div>  
+                                       <div style="height: 20%">
+                                           <table width="50%">
+                                                <tr>
+                                            <td>
+                                            <asp:Button ID="btnCreateInitialData" runat="server" Text="Opprett initielle data" CssClass="Button" OnClick="btnCreateInitialData_Click" Width="147px" />
+                                                </td>
+                                            <td width ="50%">
+
+                                                <asp:Label ID="lblErrorText" runat="server" CssClass="ErrorLabel"></asp:Label>
+
+                                            </td>
+                                            </tr>
+                                               </table>                                           
+                                       </div>                                                                 
+                                       <div style="height: 10%"> 
+                                       </div>                          
                                     </asp:View>
                                     <asp:View ID="vwChangeLog" runat="server">
                                          <div id="divChangeLog" style="display: block; height: 30%;"  > 

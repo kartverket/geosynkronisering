@@ -42,6 +42,7 @@
             this.btnResetSubscrLastindex = new System.Windows.Forms.Button();
             this.btnTestSyncronizationComplete = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.btnSimplify = new System.Windows.Forms.Button();
             this.btnGetCapabilities = new System.Windows.Forms.Button();
@@ -69,43 +70,43 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.buttonSave = new System.Windows.Forms.Button();
             this.dgDataset = new System.Windows.Forms.DataGridView();
-            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
-            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
             this.txbProviderURL = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.btnGetProviderDatasets = new System.Windows.Forms.Button();
-            this.dgvProviderDataset = new System.Windows.Forms.DataGridView();
-            this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnAddSelected = new System.Windows.Forms.Button();
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
-            this.label5 = new System.Windows.Forms.Label();
             this.txbUser = new Kartverket.Geosynkronisering.Subscriber2.CueTextBox();
             this.txbPassword = new Kartverket.Geosynkronisering.Subscriber2.CueTextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
+            this.btnAddSelected = new System.Windows.Forms.Button();
+            this.dgvProviderDataset = new System.Windows.Forms.DataGridView();
+            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.btnOfflneSync = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgDataset)).BeginInit();
-            this.statusStrip1.SuspendLayout();
-            this.tableLayoutPanel5.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
             this.tableLayoutPanel7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvProviderDataset)).BeginInit();
-            this.tableLayoutPanel8.SuspendLayout();
             this.tableLayoutPanel9.SuspendLayout();
+            this.tableLayoutPanel8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvProviderDataset)).BeginInit();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -243,6 +244,20 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Detailed test";
             // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.ColumnCount = 1;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel2, 0, 0);
+            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.RowCount = 2;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 56.1828F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 43.8172F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(864, 353);
+            this.tableLayoutPanel5.TabIndex = 3;
+            // 
             // tableLayoutPanel2
             // 
             this.tableLayoutPanel2.ColumnCount = 4;
@@ -267,6 +282,7 @@
             this.tableLayoutPanel2.Controls.Add(this.txbDownloadedFile, 0, 3);
             this.tableLayoutPanel2.Controls.Add(this.btnDoTransaction, 2, 3);
             this.tableLayoutPanel2.Controls.Add(this.btnSoapGLI, 3, 3);
+            this.tableLayoutPanel2.Controls.Add(this.btnOfflneSync, 1, 4);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 5;
@@ -549,53 +565,6 @@
             this.dgDataset.TabIndex = 0;
             this.dgDataset.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgDataset_DataBindingComplete);
             // 
-            // webBrowser1
-            // 
-            this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser1.Location = new System.Drawing.Point(3, 394);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(878, 325);
-            this.webBrowser1.TabIndex = 1;
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1,
-            this.toolStripProgressBar1});
-            this.statusStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.statusStrip1.Location = new System.Drawing.Point(0, 700);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(884, 22);
-            this.statusStrip1.TabIndex = 1;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
-            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
-            // 
-            // toolStripProgressBar1
-            // 
-            this.toolStripProgressBar1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
-            this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
-            // 
-            // tableLayoutPanel5
-            // 
-            this.tableLayoutPanel5.ColumnCount = 1;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel2, 0, 0);
-            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(3, 3);
-            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
-            this.tableLayoutPanel5.RowCount = 2;
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 56.1828F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 43.8172F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(864, 353);
-            this.tableLayoutPanel5.TabIndex = 3;
-            // 
             // tabPage4
             // 
             this.tabPage4.Controls.Add(this.tableLayoutPanel6);
@@ -674,15 +643,50 @@
             this.btnGetProviderDatasets.UseVisualStyleBackColor = true;
             this.btnGetProviderDatasets.Click += new System.EventHandler(this.btnGetProviderDatasets_Click);
             // 
-            // dgvProviderDataset
+            // tableLayoutPanel9
             // 
-            this.dgvProviderDataset.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvProviderDataset.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvProviderDataset.Location = new System.Drawing.Point(3, 96);
-            this.dgvProviderDataset.Name = "dgvProviderDataset";
-            this.dgvProviderDataset.Size = new System.Drawing.Size(858, 166);
-            this.dgvProviderDataset.TabIndex = 18;
-            this.dgvProviderDataset.SelectionChanged += new System.EventHandler(this.dgvProviderDataset_SelectionChanged);
+            this.tableLayoutPanel9.ColumnCount = 3;
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82.26744F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.73256F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 361F));
+            this.tableLayoutPanel9.Controls.Add(this.txbUser, 0, 0);
+            this.tableLayoutPanel9.Controls.Add(this.txbPassword, 2, 0);
+            this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel9.Location = new System.Drawing.Point(181, 23);
+            this.tableLayoutPanel9.Name = "tableLayoutPanel9";
+            this.tableLayoutPanel9.RowCount = 1;
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel9.Size = new System.Drawing.Size(674, 28);
+            this.tableLayoutPanel9.TabIndex = 3;
+            // 
+            // txbUser
+            // 
+            this.txbUser.Dock = System.Windows.Forms.DockStyle.Top;
+            this.txbUser.Location = new System.Drawing.Point(3, 3);
+            this.txbUser.Name = "txbUser";
+            this.txbUser.Size = new System.Drawing.Size(251, 20);
+            this.txbUser.TabIndex = 0;
+            // 
+            // txbPassword
+            // 
+            this.txbPassword.Dock = System.Windows.Forms.DockStyle.Top;
+            this.txbPassword.Location = new System.Drawing.Point(315, 3);
+            this.txbPassword.Name = "txbPassword";
+            this.txbPassword.PasswordChar = '*';
+            this.txbPassword.Size = new System.Drawing.Size(356, 20);
+            this.txbPassword.TabIndex = 1;
+            this.txbPassword.UseSystemPasswordChar = true;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label5.Location = new System.Drawing.Point(3, 20);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(172, 34);
+            this.label5.TabIndex = 4;
+            this.label5.Text = "Authentication:\r\n(Not Implemented)\r\n";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tableLayoutPanel8
             // 
@@ -709,50 +713,58 @@
             this.btnAddSelected.UseVisualStyleBackColor = true;
             this.btnAddSelected.Click += new System.EventHandler(this.btnAddSelected_Click);
             // 
-            // tableLayoutPanel9
+            // dgvProviderDataset
             // 
-            this.tableLayoutPanel9.ColumnCount = 3;
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82.26744F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.73256F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 358F));
-            this.tableLayoutPanel9.Controls.Add(this.txbUser, 0, 0);
-            this.tableLayoutPanel9.Controls.Add(this.txbPassword, 2, 0);
-            this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel9.Location = new System.Drawing.Point(181, 23);
-            this.tableLayoutPanel9.Name = "tableLayoutPanel9";
-            this.tableLayoutPanel9.RowCount = 1;
-            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel9.Size = new System.Drawing.Size(674, 28);
-            this.tableLayoutPanel9.TabIndex = 3;
+            this.dgvProviderDataset.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvProviderDataset.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvProviderDataset.Location = new System.Drawing.Point(3, 96);
+            this.dgvProviderDataset.Name = "dgvProviderDataset";
+            this.dgvProviderDataset.Size = new System.Drawing.Size(858, 166);
+            this.dgvProviderDataset.TabIndex = 18;
+            this.dgvProviderDataset.SelectionChanged += new System.EventHandler(this.dgvProviderDataset_SelectionChanged);
             // 
-            // label5
+            // webBrowser1
             // 
-            this.label5.AutoSize = true;
-            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label5.Location = new System.Drawing.Point(3, 20);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(172, 34);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "Authentication:\r\n(Not Implemented)\r\n";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webBrowser1.Location = new System.Drawing.Point(3, 394);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.Size = new System.Drawing.Size(878, 325);
+            this.webBrowser1.TabIndex = 1;
             // 
-            // txbUser
+            // statusStrip1
             // 
-            this.txbUser.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txbUser.Location = new System.Drawing.Point(3, 3);
-            this.txbUser.Name = "txbUser";
-            this.txbUser.Size = new System.Drawing.Size(253, 20);
-            this.txbUser.TabIndex = 0;
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1,
+            this.toolStripProgressBar1});
+            this.statusStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            this.statusStrip1.Location = new System.Drawing.Point(0, 700);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(884, 22);
+            this.statusStrip1.TabIndex = 1;
+            this.statusStrip1.Text = "statusStrip1";
             // 
-            // txbPassword
+            // toolStripStatusLabel1
             // 
-            this.txbPassword.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txbPassword.Location = new System.Drawing.Point(318, 3);
-            this.txbPassword.Name = "txbPassword";
-            this.txbPassword.PasswordChar = '*';
-            this.txbPassword.Size = new System.Drawing.Size(353, 20);
-            this.txbPassword.TabIndex = 1;
-            this.txbPassword.UseSystemPasswordChar = true;
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
+            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            // 
+            // toolStripProgressBar1
+            // 
+            this.toolStripProgressBar1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
+            this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
+            // 
+            // btnOfflneSync
+            // 
+            this.btnOfflneSync.Location = new System.Drawing.Point(217, 116);
+            this.btnOfflneSync.Name = "btnOfflneSync";
+            this.btnOfflneSync.Size = new System.Drawing.Size(75, 23);
+            this.btnOfflneSync.TabIndex = 17;
+            this.btnOfflneSync.Text = "Offline sync";
+            this.btnOfflneSync.UseVisualStyleBackColor = true;
+            this.btnOfflneSync.Click += new System.EventHandler(this.btnOfflneSync_Click);
             // 
             // Form1
             // 
@@ -771,6 +783,7 @@
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
+            this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
@@ -781,17 +794,16 @@
             this.panel1.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgDataset)).EndInit();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
-            this.tableLayoutPanel5.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
             this.tableLayoutPanel6.ResumeLayout(false);
             this.tableLayoutPanel7.ResumeLayout(false);
             this.tableLayoutPanel7.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvProviderDataset)).EndInit();
-            this.tableLayoutPanel8.ResumeLayout(false);
             this.tableLayoutPanel9.ResumeLayout(false);
             this.tableLayoutPanel9.PerformLayout();
+            this.tableLayoutPanel8.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvProviderDataset)).EndInit();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -857,6 +869,7 @@
         private System.Windows.Forms.Label label5;
         private CueTextBox txbUser;
         private CueTextBox txbPassword;
+        private System.Windows.Forms.Button btnOfflneSync;
     }
 }
 
