@@ -14,10 +14,32 @@ using NLog;
 
 namespace Kartverket.Geosynkronisering.Subscriber.BL
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class SynchController : FeedbackController.Progress
     {
+        public SynchController()
+        {
+            InitTransactionsSummary();
+
+            //var wfsController = new WfsController();
+        }
+
+        public void InitTransactionsSummary()
+        {
+            TransactionsSummary = new TransactionSummary();
+            TransactionsSummary.TotalDeleted = 0;
+            TransactionsSummary.TotalInserted = 0;
+            TransactionsSummary.TotalReplaced = 0;
+            TransactionsSummary.TotalUpdated = 0;
+        }
+
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
-       
+        
+        public TransactionSummary TransactionsSummary;
+      
+   
         public IBindingList GetCapabilitiesProviderDataset(string url)
         {
             var cdb = new CapabilitiesDataBuilder(url);
@@ -29,7 +51,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// </summary>
         /// <param name="datasetId"></param>
         public void ResetSubscriberLastIndex(int datasetId)
-        {           
+        {
             var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
             dataset.LastIndex = 0;
             DL.SubscriberDatasetManager.UpdateDataset(dataset);
@@ -44,7 +66,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         public int OrderChangelog(int datasetId, int startIndex)
         {
             try
-            {                
+            {
                 var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
 
                 var client = new WebFeatureServiceReplicationPortClient();
@@ -185,7 +207,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var client = new WebFeatureServiceReplicationPortClient();
                 client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
 
-                var id = new ChangelogIdentificationType {changelogId = changelogId.ToString()};
+                var id = new ChangelogIdentificationType { changelogId = changelogId.ToString() };
                 client.AcknowlegeChangelogDownloaded(id);
 
                 return true;
@@ -214,7 +236,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         public bool CancelChangelog(int datasetId, string changelogId)
         {
             try
-            {               
+            {
                 var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
 
                 var client = new WebFeatureServiceReplicationPortClient();
@@ -292,22 +314,22 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         public void DoSynchronization(int datasetId)
         {
             try
-            {                
+            {
                 // Create new stopwatch
                 var stopwatch = Stopwatch.StartNew();
 
                 this.OnNewSynchMilestoneReached("GetLastIndexFromProvider");
                 var lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
 
-                var logMessage ="GetLastIndexFromProvider lastIndex: "+ lastChangeIndexProvider;
+                var logMessage = "GetLastIndexFromProvider lastIndex: " + lastChangeIndexProvider;
                 logger.Info(logMessage);
                 this.OnUpdateLogList(logMessage);
                 this.OnNewSynchMilestoneReached("GetLastIndexFromProvider OK");
-                
+
                 this.OnNewSynchMilestoneReached("GetLastIndexFromSubscriber");
                 int lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
 
-                logMessage = "GetLastChangeIndexSubscriber lastIndex: "+lastChangeIndexSubscriber;
+                logMessage = "GetLastChangeIndexSubscriber lastIndex: " + lastChangeIndexSubscriber;
                 logger.Info(logMessage);
                 this.OnUpdateLogList(logMessage);
                 this.OnNewSynchMilestoneReached("GetLastIndexFromSubscriber OK");
@@ -315,9 +337,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 if (lastChangeIndexSubscriber >= lastChangeIndexProvider)
                 {
                     logMessage = "Changelog has already been downloaded and handled:";
+                    //this.OnUpdateLogList(logMessage); // Raise event to UI
+                    //this.OnNewSynchMilestoneReached(logMessage);
+                    logMessage += " Provider lastIndex:" + lastChangeIndexProvider + " Subscriber lastChangeIndex: " + lastChangeIndexSubscriber;
+                    logger.Info(logMessage);
+                    this.OnUpdateLogList(logMessage); // Raise event to UI
                     this.OnNewSynchMilestoneReached(logMessage);
-                    logMessage += " Provider lastIndex:" +lastChangeIndexProvider+ " Subscriber lastChangeIndex: "+ lastChangeIndexSubscriber;
-                    logger.Info(logMessage);                    
                     return;
                 }
 
@@ -336,17 +361,17 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 #region Håvard
 
                 #region Lars
-                this.OnOrderProcessingStart(numberOfOrders);
+                this.OnOrderProcessingStart(numberOfOrders * 100);
                 int progressCounter = 0;
                 #endregion
-
+                int i = 0;
                 while (lastChangeIndexSubscriber < lastChangeIndexProvider)
                 {
-                    int i = 0;
+                    //int i = 0;
 
                     #region Lars
-                    this.OnOrderProcessingChange(progressCounter + 1);
-                    ++progressCounter;
+                    this.OnOrderProcessingChange((progressCounter + 1) * 100 / 2);
+                    //++progressCounter;
                     #endregion
 
                     // Do lots of stuff
@@ -377,26 +402,25 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         fileList.Add(downloadController.ChangelogFilename);
                     }
 
-                    //TODO: file is newer used - error?
                     foreach (string file in fileList)
                     {
                         string fileName = file;
                         #region Lars
-#endregion
-                       
+                        #endregion
+
                         //
                         // Schema transformation
                         // Mapping from the nested structure of one or more simple features to the simple features for GeoServer.
                         //
                         var schemaTransform = new SchemaTransform();
-                        var newFileName = schemaTransform.SchemaTransformSimplify(fileName, datasetId);                     
-                        
+                        var newFileName = schemaTransform.SchemaTransformSimplify(fileName, datasetId);
+
                         if (!string.IsNullOrEmpty(newFileName))
                         {
                             fileName = newFileName;
                         }
 
-                        
+
                         // load an XML document from a file
                         XElement changeLog = XElement.Load(fileName);
 
@@ -405,21 +429,49 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
 
                         var wfsController = new WfsController();
+                        wfsController.ParentSynchController = this; // TODO: This is a little dirty, but we can reuse the events of the SynchController parent for UI feedback
 
-                        if (wfsController.DoWfsTransactions2(changeLog, datasetId))
+
+                        // 20131102-Leg: Must use DoWfsTransactions, DoWfsTransactions2 is to slow on Updae/Delete
+                        if (wfsController.DoWfsTransactions(changeLog, datasetId))
+                        //if (wfsController.DoWfsTransactions2(changeLog, datasetId))
                         {
                             logger.Info("DoWfsTransactions OK, pass {0}", (i + 1));
-                            this.OnUpdateLogList(String.Format("DoWfsTransactions OK, pass {0}" , (i + 1)));
+                            this.OnUpdateLogList(String.Format("DoWfsTransactions OK, pass {0}", (i + 1)));
 
                             if (!downloadController.isFolder)
                             {
                                 AcknowledgeChangelogDownloaded(datasetId, changeLogId);
                             }
+
+                            // 20131102-Leg
+                            var dataset = SubscriberDatasetManager.GetDataset(datasetId);
+                            // TODO: Error in "endIndex" if both Update and Delete. Change later?
+                            int endChangeId = (int)changeLog.Attribute("endIndex");
+                            //
+                            int numberReturned = (int)changeLog.Attribute("numberReturned");
+                            int startChangeId = (int)changeLog.Attribute("startIndex");
+                            //int endIndex = (int)changeLog.Attribute("endIndex"); 
+                            endChangeId = startChangeId + numberReturned-1;
+
+                            dataset.LastIndex = endChangeId;
+                            DL.SubscriberDatasetManager.UpdateDataset(dataset);
+                        }
+                        else
+                        {
+                            // TODO: What to do here? We must at least break?
+                            return;
+
                         }
                     }
                     lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
                     lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
                     i++;
+
+                    #region Lars
+                    this.OnOrderProcessingChange((progressCounter + 1) * 100);
+                    ++progressCounter;
+                    #endregion
                 }
 
                 #endregion
@@ -532,8 +584,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);             
-            }            
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -580,7 +632,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                logger.ErrorException(string.Format("Failed to get ChangeLog Status for changelog {0} from provider {1}", changeLogId, "TEST"),ex);
+                logger.ErrorException(string.Format("Failed to get ChangeLog Status for changelog {0} from provider {1}", changeLogId, "TEST"), ex);
                 return false;
             }
             return true;
@@ -620,7 +672,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 var schemaTransform = new SchemaTransform();
                 var newFileName = schemaTransform.SchemaTransformSimplify(fileName, datasetId);
-                   
+
                 if (!string.IsNullOrEmpty(newFileName))
                 {
                     fileName = newFileName;
@@ -639,10 +691,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     int numberMatched = (int)changeLog.Attribute("numberMatched");
                     int numberReturned = (int)changeLog.Attribute("numberReturned");
                     int startIndex = (int)changeLog.Attribute("startIndex");
-                    int endIndex = (int)changeLog.Attribute("endIndex"); //NOT correct, always the latest!
+                    int endIndex = (int)changeLog.Attribute("endIndex"); //now correct
                     int lastIndexSubscriber = startIndex + numberReturned; //endIndex - startIndex + 1;
 
-                    dataset.LastIndex = lastIndexSubscriber;
+                    dataset.LastIndex = endIndex; //lastIndexSubscriber;
                     DL.SubscriberDatasetManager.UpdateDataset(dataset);
                 }
 
@@ -656,5 +708,16 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
     }
-                
+
+    /// <summary>
+    /// TransactionSummary helper class
+    /// </summary>
+    public class TransactionSummary
+    {
+        public int TotalInserted;
+        public int TotalUpdated;
+        public int TotalDeleted;
+        public int TotalReplaced;
+    }
+
 }

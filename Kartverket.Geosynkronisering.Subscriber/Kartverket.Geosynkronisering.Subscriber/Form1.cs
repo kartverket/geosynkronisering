@@ -146,6 +146,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
 
                 Action action = () => this.progressBar.Value = prg.OrdersProcessedCount;
                 this.Invoke(action);
+                //this.Update();
+                //Application.DoEvents();
             }
             catch (Exception ex)
             { }
@@ -171,6 +173,13 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 //string relativePath = @"..\..\";
                 //string dataDict = System.IO.Path.GetFullPath(System.IO.Path.Combine(referencePath, relativePath));
                 //AppDomain.CurrentDomain.SetData("DataDirectory", dataDict);
+
+                // TODO: For development comment out these 2 lines
+                TabPage page2 = tabControl1.TabPages[1];
+                tabControl1.TabPages.Remove(page2);
+                ////page2.Visible = false;
+                ////page2.Hide();
+                ////page2.Enabled = false;
 
                 UpdateToolStripStatusLabel("Initializing...");
                 
@@ -434,6 +443,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         /// <param name="e"></param>
         public void bw_DoSynchronization(object sender, DoWorkEventArgs e)
         {
+            _synchController.InitTransactionsSummary();
             var datasetId = (int)e.Argument;
             _synchController.DoSynchronization(datasetId);
         }
@@ -443,14 +453,34 @@ namespace Kartverket.Geosynkronisering.Subscriber
             // Update Dataset-datagridview control with changes
             InitializeDatasetGrid();
 
+            // update subscribers last index from db
+            txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetLastIndex(_currentDatasetId);
+
             // Display in geoserver openlayers
             UpdateToolStripStatusLabel("Display Map");
 
             var currentDataset = DL.SubscriberDatasetManager.GetDataset(_currentDatasetId);
             DisplayMap(epsgCode: "EPSG:32633", datasetName: currentDataset.Name); //DisplayMap(epsgCode: "EPSG:32633");
 
+            UpdateToolStripStatusLabel("Ready");
             SetSynchButtonActive();
             Hourglass(false);
+            if (_synchController.TransactionsSummary != null)
+            {
+               
+                var logMessage = "Syncronization Transaction summary:";
+                listBoxLog.Items.Add(logMessage);
+                logMessage = "TotalInserted: " + _synchController.TransactionsSummary.TotalInserted.ToString();
+                listBoxLog.Items.Add(logMessage);
+                logMessage = "TotalUpdated: " + _synchController.TransactionsSummary.TotalUpdated.ToString();
+                listBoxLog.Items.Add(logMessage);
+                logMessage = "TotalDeleted: " + _synchController.TransactionsSummary.TotalDeleted.ToString();
+                listBoxLog.Items.Add(logMessage);
+                logMessage = "TotalReplaced: " + _synchController.TransactionsSummary.TotalReplaced.ToString();
+                listBoxLog.Items.Add(logMessage);
+                
+            }
+            
         }
 
         public void SetSynchButtonActive()

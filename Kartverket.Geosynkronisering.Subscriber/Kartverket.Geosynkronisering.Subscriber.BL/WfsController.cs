@@ -16,6 +16,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
     {
         public static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
+        public SynchController ParentSynchController; // TODO: This is a little dirty, but we can reuse the events of the SynchController parent for UI feedback
        /// <summary>
         /// Get all wfs:Insert
        /// </summary>
@@ -163,7 +164,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
 
                 var xDoc = BuildWfsTransaction(changeLog);
-                var xDoc2 = BuildWfsTransactionList(changeLog);
+                //var xDoc2 = BuildWfsTransactionList(changeLog);
                 if (xDoc == null)
                 {
                     return false;
@@ -175,7 +176,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 //
                 try
                 {
-                    Int64 endChangeId = Convert.ToInt64(xDoc2[0].XPathSelectElement("//*[@handle][1]").Attribute("handle").Value);
+                    // TODO: Change this to changeLog.Attribute("endIndex") ?
+                    //Int64 endChangeId = Convert.ToInt64(xDoc2[0].XPathSelectElement("//*[@handle][1]").Attribute("handle").Value);
                     //20121122-Leg::  Get subscriber GeoServer url from db
                  
                     var dataset = SubscriberDatasetManager.GetDataset(datasetId);
@@ -244,7 +246,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             string wfsMessage = "DoWfsTransactions: Geoserver WFS-T Transaction: transactionSummary" + " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + transactionSummary;
 
                             logger.Info(wfsMessage);
-                            this.OnUpdateLogList(wfsMessage);
+                            //this.ParentSynchController.OnUpdateLogList(wfsMessage);
+                            //this.ParentSynchController.OnNewSynchMilestoneReached(wfsMessage);  
 
                             ////VisXML(tran.ToString(SaveOptions.DisableFormatting));
                             // For more debugging:
@@ -255,39 +258,69 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                                 from item in transactionResponseElement.Descendants()
                                 where item.Name == nsWfs + "totalInserted" || item.Name == nsWfs + "totalUpdated" || item.Name == nsWfs + "totalReplaced" || item.Name == nsWfs + "totalDeleted"
                                 select item;
+                            string tranResult = "";
                             foreach (var tran in transactions)
                             {
-                                string tranResult = "unknown";
+                                //string tranResult = "unknown";
+                                if (tranResult.Length > 0)
+                                {
+                                    tranResult += " ";
+                                }
                                 if (tran.Name == nsWfs + "totalInserted")
                                 {
-                                    tranResult = "totalInserted";
+                                    tranResult += "totalInserted" + ":" + tran.Value;
+                                    this.ParentSynchController.TransactionsSummary.TotalInserted += Convert.ToInt32(tran.Value);
                                 }
                                 else if (tran.Name == nsWfs + "totalUpdated")
                                 {
-                                    tranResult = "totalUpdated";
+                                    tranResult += "totalUpdated" + ":" + tran.Value;
+                                    //tranResult = "totalUpdated";
+                                    this.ParentSynchController.TransactionsSummary.TotalUpdated += Convert.ToInt32(tran.Value);
                                 }
                                 else if (tran.Name == nsWfs + "totalDeleted")
                                 {
-                                    tranResult = "totalDeleted";
+                                    tranResult += "totalDeleted" + ":" + tran.Value;
+                                    this.ParentSynchController.TransactionsSummary.TotalDeleted += Convert.ToInt32(tran.Value);
                                 }
                                 else if (tran.Name == nsWfs + "totalReplaced")
                                 {
-                                    tranResult = "totalReplaced";
+                                    tranResult += "totalReplaced" + ":" + tran.Value;
+                                    this.ParentSynchController.TransactionsSummary.TotalReplaced += Convert.ToInt32(tran.Value);
                                 }
+                                else
+                                {
+                                    tranResult = "unknown";
+                                }
+                                // Raise event to UI
+                                //int numTrans = Convert.ToInt32(tran.Value);
+                                //if (numTrans > 0)
+                                //{
+                                //    var logMessage = tranResult + ":" + tran.Value;
+                                //    //this.OnUpdateLogList(logMessage); 
+                                //    //this.OnNewSynchMilestoneReached(logMessage);
+                                //    this.ParentSynchController.OnUpdateLogList(logMessage);
+                                //    //this._synchController.OnNewSynchMilestoneReached(logMessage);
+                                //}
+                        
                             }
+
+                            // Raise event to eventual UI
+                            var logMessage = tranResult;
+                            this.ParentSynchController.OnUpdateLogList(logMessage);
+
                         }
                         else
                         {                     
                             string wfsMessage = "DoWfsTransactions: Geoserver WFS-T Transaction feilet:  transactionSummary" + " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + "No transactions ";
-                            logger.Info(wfsMessage);                            
-                            this.OnUpdateLogList(wfsMessage);
+                            logger.Info(wfsMessage);
+                            this.ParentSynchController.OnUpdateLogList(wfsMessage);
                         }
                     }
                     else
                     {
                         string wfsMessage = "DoWfsTransactions: Geoserver WFS-T Transaction feilet:  Transaction Status:" + httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription + "\r\n" + resultString.ToString();
                         logger.Info(wfsMessage);
-                        this.OnUpdateLogList(wfsMessage);
+                        this.ParentSynchController.OnUpdateLogList(wfsMessage);
                     }
                 }
                 catch (WebException webEx)
@@ -621,6 +654,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                     foreach (XDocument xDoc in xDocList)
                     {
+                        // TODO: Change this to changeLog.Attribute("endIndex") ?
                         Int64 endChangeId = Convert.ToInt64(xDoc.XPathSelectElement("//*[@handle][1]").Attribute("handle").Value);
                         var reader = xDoc.CreateReader();
                         XmlNamespaceManager manager = new XmlNamespaceManager(reader.NameTable);
@@ -722,6 +756,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                                     {
                                         tranResult = "totalReplaced";
                                     }
+                               
                                 }
 
                                 dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);

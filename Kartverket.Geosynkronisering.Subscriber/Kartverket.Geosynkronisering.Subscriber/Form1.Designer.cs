@@ -33,10 +33,11 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.cboDatasetName = new System.Windows.Forms.ComboBox();
             this.txtLimitNumberOfFeatures = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.labelLimitNumberOfFeatures = new System.Windows.Forms.Label();
             this.listBoxLog = new System.Windows.Forms.ListBox();
             this.txbSubscrLastindex = new System.Windows.Forms.TextBox();
             this.btnResetSubscrLastindex = new System.Windows.Forms.Button();
@@ -70,7 +71,6 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
-            this.label2 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -124,7 +124,7 @@
             this.tabPage1.Controls.Add(this.progressBar);
             this.tabPage1.Controls.Add(this.cboDatasetName);
             this.tabPage1.Controls.Add(this.txtLimitNumberOfFeatures);
-            this.tabPage1.Controls.Add(this.label3);
+            this.tabPage1.Controls.Add(this.labelLimitNumberOfFeatures);
             this.tabPage1.Controls.Add(this.listBoxLog);
             this.tabPage1.Controls.Add(this.txbSubscrLastindex);
             this.tabPage1.Controls.Add(this.btnResetSubscrLastindex);
@@ -135,6 +135,15 @@
             this.tabPage1.Size = new System.Drawing.Size(870, 359);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Normal";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 245);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(111, 13);
+            this.label2.TabIndex = 28;
+            this.label2.Text = "Synchronize progress:";
             // 
             // progressBar
             // 
@@ -162,15 +171,17 @@
             this.txtLimitNumberOfFeatures.TabIndex = 25;
             this.txtLimitNumberOfFeatures.Text = "-1";
             this.toolTip1.SetToolTip(this.txtLimitNumberOfFeatures, "For debugging limit number of objects");
+            this.txtLimitNumberOfFeatures.Visible = false;
             // 
-            // label3
+            // labelLimitNumberOfFeatures
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(618, 22);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(98, 13);
-            this.label3.TabIndex = 24;
-            this.label3.Text = "Limit no. of objects:";
+            this.labelLimitNumberOfFeatures.AutoSize = true;
+            this.labelLimitNumberOfFeatures.Location = new System.Drawing.Point(618, 22);
+            this.labelLimitNumberOfFeatures.Name = "labelLimitNumberOfFeatures";
+            this.labelLimitNumberOfFeatures.Size = new System.Drawing.Size(98, 13);
+            this.labelLimitNumberOfFeatures.TabIndex = 24;
+            this.labelLimitNumberOfFeatures.Text = "Limit no. of objects:";
+            this.labelLimitNumberOfFeatures.Visible = false;
             // 
             // listBoxLog
             // 
@@ -451,7 +462,7 @@
             this.tableLayoutPanel9.ColumnCount = 3;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82.26744F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.73256F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 378F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 379F));
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel9.Location = new System.Drawing.Point(181, 23);
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
@@ -537,15 +548,6 @@
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 245);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(111, 13);
-            this.label2.TabIndex = 28;
-            this.label2.Text = "Synchronize progress:";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -606,7 +608,7 @@
         private System.Windows.Forms.DataGridView dgDataset;
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.TextBox txtLimitNumberOfFeatures;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label labelLimitNumberOfFeatures;
         private System.Windows.Forms.Button btnSimplify;
         private System.Windows.Forms.ComboBox cboDatasetName;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
