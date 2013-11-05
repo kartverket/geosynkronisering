@@ -452,7 +452,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             int numberReturned = (int)changeLog.Attribute("numberReturned");
                             int startChangeId = (int)changeLog.Attribute("startIndex");
                             //int endIndex = (int)changeLog.Attribute("endIndex"); 
-                            endChangeId = startChangeId + numberReturned-1;
+                            //endChangeId = startChangeId + numberReturned-1;
 
                             dataset.LastIndex = endChangeId;
                             DL.SubscriberDatasetManager.UpdateDataset(dataset);
