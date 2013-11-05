@@ -575,7 +575,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 int counter = 0;
 
                 List<OptimizedChangeLogElement> inserts = new List<OptimizedChangeLogElement>();
-                
+                long portionEndIndex = 0;
                 for( int i=0; i<optimizedChangeLog.Count; i++)
                 {
                     OptimizedChangeLogElement current = optimizedChangeLog.ElementAt(i);
@@ -594,6 +594,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                         OptimizedChangeLogElement next = optimizedChangeLog.ElementAt(i + 1);
                         handle = next._changeId - 1;
                     }
+                    portionEndIndex = handle;
 
                     counter++;
                     
@@ -637,7 +638,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 }
 
                 //Update attributes in chlogf:TransactionCollection
-                UpdateRootAttributes(changeLog, counter, startChangeId, endChangeId);
+                UpdateRootAttributes(changeLog, counter, startChangeId, portionEndIndex);
 
                 if (!CheckChangelogHasFeatures(changeLog))
                 {
