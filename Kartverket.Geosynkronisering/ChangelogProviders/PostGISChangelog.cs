@@ -712,7 +712,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             mgr.AddNamespace(nsPrefixApp, nsApp.NamespaceName);
             string nsPrefixAppComplete = nsPrefixApp + ":";
 
-            XElement insertElement = new XElement(nsWfs + "Insert", new XAttribute("handle", handle), new XAttribute("inputFormat", "application/gml+xml; version=3.2"));
+            XElement insertElement = new XElement(nsWfs + "Insert", new XAttribute("handle", handle)); //new XAttribute("inputFormat", "application/gml+xml; version=3.2") TKN:funker ikke på deegree
             
             foreach (KeyValuePair<string,string> dictElement in typeIdDict)
             {
@@ -743,9 +743,9 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             int pos = gmlId.IndexOf(".");
             string typename = gmlId.Substring(0, pos);
             string lokalId = gmlId.Substring(pos + 1);
-
+            //new XAttribute("inputFormat", "application/gml+xml; version=3.2"), 
             XElement deleteElement = new XElement(nsWfs + "Delete", new XAttribute("handle", handle), new XAttribute("typeName", nsPrefixApp + ":" + typename), //new XAttribute("typeName", "app:" + typename),
-                new XAttribute("inputFormat", "application/gml+xml; version=3.2"), new XAttribute(XNamespace.Xmlns + nsPrefixApp, nsApp));
+                 new XAttribute(XNamespace.Xmlns + nsPrefixApp, nsApp));
             //XElement deleteElement = new XElement(nsWfs + "Delete", new XAttribute("handle", transCounter), new XAttribute("typeName", typename),
             //    new XAttribute("inputFormat", "application/gml+xml; version=3.2"));
 
@@ -797,9 +797,10 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 //var featuresOfType = getFeatureResponse.Descendants(nsApp + typename);
                 //foreach (XElement feature in featuresOfType)
                 {
+                    //new XAttribute("inputFormat", "application/gml+xml; version=3.2"),
                     XElement updateElement = new XElement(nsWfs + "Update", new XAttribute("typeName", nsPrefixAppComplete + dictElement.Value), //new XAttribute("typeName", "app:" + typename),
                                     new XAttribute("handle", handle),
-                                    new XAttribute("inputFormat", "application/gml+xml; version=3.2"), new XAttribute(XNamespace.Xmlns + nsPrefixApp, nsApp));
+                                     new XAttribute(XNamespace.Xmlns + nsPrefixApp, nsApp));
                     //XElement updateElement = new XElement(nsWfs + "Update", new XAttribute("typeName", typename), new XAttribute("handle", transCounter),
                     //                                    new XAttribute("inputFormat", "application/gml+xml; version=3.2"), new XAttribute(XNamespace.Xmlns + "App", nsApp));
                     //string lokalId = feature.Element(nsApp + "lokalId").Value;
