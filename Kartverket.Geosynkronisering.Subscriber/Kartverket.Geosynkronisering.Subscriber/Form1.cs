@@ -264,12 +264,12 @@ namespace Kartverket.Geosynkronisering.Subscriber
         private void buttonSave_Click(object sender, EventArgs e)
         {
             try
-            {
+            {   
                 var subscriberDatasets = (List<DL.SubscriberDataset>) dgDataset.DataSource;
                 foreach (var subscriberDataset in subscriberDatasets)
                 {
                     DL.SubscriberDatasetManager.UpdateDataset(subscriberDataset);
-                }                
+                }
 
                 // Fill the cboDatasetName comboBox with the dataset names
                 FillComboBoxDatasetName();
@@ -361,7 +361,35 @@ namespace Kartverket.Geosynkronisering.Subscriber
             }
         }
 
+        /// <summary>
+        /// Delete selected dataset from database
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void btnDeleteSelected_Click(object sender, EventArgs e)
+        {
+            IList<int> selectedDataset = new List<int>();
+            foreach (DataGridViewRow dgr in dgDataset.SelectedRows)
+            {
+                selectedDataset.Add(dgr.Index);
+            }
+            var subscriberDatasets = (List<DL.SubscriberDataset>)dgDataset.DataSource;
 
+            if (!DL.SubscriberDatasetManager.RemoveDatasets(subscriberDatasets, selectedDataset))
+            {
+                MessageBox.Show(this, "Error removing  selected datasets to internal Database.", "Remove Datasets", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                MessageBox.Show(this, "Saved after removing selected datasets to the internal Database.", "Remove Datasets", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                dgDataset.DataSource = null;
+
+                InitializeDatasetGrid();
+                FillComboBoxDatasetName();
+            }
+
+
+        }
         private void dgvProviderDataset_SelectionChanged(object sender, EventArgs e)
         {
             btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
@@ -687,6 +715,10 @@ namespace Kartverket.Geosynkronisering.Subscriber
             }
             return;
         }
+
+    
+
+   
 
 
     }

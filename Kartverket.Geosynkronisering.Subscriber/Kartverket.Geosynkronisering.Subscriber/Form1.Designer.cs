@@ -53,6 +53,7 @@
             this.btnSimplify = new System.Windows.Forms.Button();
             this.btnOfflineSync = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.btnDeleteSelected = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.dgDataset = new System.Windows.Forms.DataGridView();
             this.tabPage4 = new System.Windows.Forms.TabPage();
@@ -348,6 +349,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.btnDeleteSelected);
             this.tabPage3.Controls.Add(this.buttonSave);
             this.tabPage3.Controls.Add(this.dgDataset);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -358,14 +360,27 @@
             this.tabPage3.Text = "Dataset";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // btnDeleteSelected
+            // 
+            this.btnDeleteSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDeleteSelected.Location = new System.Drawing.Point(684, 313);
+            this.btnDeleteSelected.Name = "btnDeleteSelected";
+            this.btnDeleteSelected.Size = new System.Drawing.Size(75, 23);
+            this.btnDeleteSelected.TabIndex = 2;
+            this.btnDeleteSelected.Text = "Delete";
+            this.toolTip1.SetToolTip(this.btnDeleteSelected, "Delete selected dataset");
+            this.btnDeleteSelected.UseVisualStyleBackColor = true;
+            this.btnDeleteSelected.Click += new System.EventHandler(this.btnDeleteSelected_Click);
+            // 
             // buttonSave
             // 
             this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSave.Location = new System.Drawing.Point(789, 320);
+            this.buttonSave.Location = new System.Drawing.Point(789, 313);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(75, 23);
             this.buttonSave.TabIndex = 1;
             this.buttonSave.Text = "Save";
+            this.toolTip1.SetToolTip(this.buttonSave, "Save changes");
             this.buttonSave.UseVisualStyleBackColor = true;
             this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
@@ -462,7 +477,7 @@
             this.tableLayoutPanel9.ColumnCount = 3;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82.26744F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.73256F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 379F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 382F));
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel9.Location = new System.Drawing.Point(181, 23);
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
@@ -626,7 +641,8 @@
         private System.Windows.Forms.Button btnOfflineSync;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
         private System.Windows.Forms.ProgressBar progressBar;
-        private System.Windows.Forms.Label label2;        
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnDeleteSelected;        
     }
 }
 
