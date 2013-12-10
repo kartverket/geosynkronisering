@@ -202,32 +202,52 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
                             //XName xNameFeaturetype = null;
                             Console.WriteLine(ele.Name);
 
-                            // Get the objecttype name
-                            Console.WriteLine(ele.Elements().ElementAt(0).Name.LocalName);
-                            string featureType = ele.Elements().ElementAt(0).Name.LocalName; //Gets the local (unqualified) part of the name
-                            var xNameFeaturetype = ele.Elements().ElementAt(0).Name; // Gets the full name of this element.
+                            //20131210-Leg: There could be more than one featureType in one Insert
+                            var xNameFeaturetypeListQuery = from item in ele.Elements()
+                                                            group item.Name
+                                                                by item.Elements().ElementAt(0).Name
+                                                                into g
+                                                                select g.Distinct().ToList();
 
-                            //var featureElems = ele.Elements(featureType); //Returns a collection of the child elements of this element 
-                            var featureElems = ele.Elements(xNameFeaturetype);
-                            Console.WriteLine("feature elems.Count():{0}", featureElems.Count());
-
-                            foreach (var feature in featureElems.ToList())
+                            foreach (var xNameFeaturetypeGroup in xNameFeaturetypeListQuery)
                             {
-                                //Console.WriteLine(feature);
-                                foreach (var xEleAttributeMapping in _attributeMappings)
+                                // Because the IGrouping<TKey, TElement>objects produced by a group query are essentially a list of lists,
+                                // you must use a nested foreach loop to access the items in each group
+                                foreach (var xNameFeaturetype in xNameFeaturetypeGroup)
                                 {
-                                    // Simplifies the insert element.
-                                    // Replace the nodes with complex types in the gml-file with simple types found
-                                    //  in the mapping file
-                                    SimplifyInsertElement(xEleAttributeMapping, featureType, feature, nsmgrApp, nsApp);
-                                }
+                                    //var xNameFeaturetype = xNameFeaturetypeList.ElementAt(0).ElementAt(i); // Gets the full name of this element.
 
-                                foreach (var xEleAttributeMapping in _attributeMappingsGeom)
-                                {
-                                    // Special handling for geoms, e.g. Område should be omraade, change the xelement name
-                                    SimplifyInsertGeomElement(xEleAttributeMapping, featureType, feature, nsmgrApp, nsApp);
+                                    string featureType = xNameFeaturetype.LocalName; //Gets the local (unqualified) part of the name
+                                    Console.WriteLine(featureType);
+
+                                    //Console.WriteLine(ele.Elements().ElementAt(0).Name.LocalName);
+                                    //string featureType = ele.Elements().ElementAt(0).Name.LocalName; //Gets the local (unqualified) part of the name
+                                    //var xNameFeaturetype = ele.Elements().ElementAt(0).Name; // Gets the full name of this element.
+
+                                    //var featureElems = ele.Elements(featureType); //Returns a collection of the child elements of this element 
+                                    var featureElems = ele.Elements(xNameFeaturetype);
+                                    Console.WriteLine("feature elems.Count():{0}", featureElems.Count());
+
+                                    foreach (var feature in featureElems.ToList())
+                                    {
+                                        //Console.WriteLine(feature);
+                                        foreach (var xEleAttributeMapping in _attributeMappings)
+                                        {
+                                            // Simplifies the insert element.
+                                            // Replace the nodes with complex types in the gml-file with simple types found
+                                            //  in the mapping file
+                                            SimplifyInsertElement(xEleAttributeMapping, featureType, feature, nsmgrApp, nsApp);
+                                        }
+
+                                        foreach (var xEleAttributeMapping in _attributeMappingsGeom)
+                                        {
+                                            // Special handling for geoms, e.g. Område should be omraade, change the xelement name
+                                            SimplifyInsertGeomElement(xEleAttributeMapping, featureType, feature, nsmgrApp, nsApp);
+                                        }
+                                    }
                                 }
                             }
+
                             countTransactions++;
                         }
                         else if ((ele.Name == nsWfs + "Update" || ele.Name == nsWfs + "Delete") && !ele.IsEmpty)

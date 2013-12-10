@@ -19,11 +19,11 @@ namespace Kartverket.Geosynkronisering.Subscriber
     public partial class Form1 : Form
     {
         private SynchController _synchController;
-        
+
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
         private int _lastIndexProvider;
         private int _currentDatasetId;
-       
+
         public Form1()
         {
             InitializeComponent();
@@ -81,8 +81,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 var prg = (FeedbackController.Progress)sender;
 
                 var newMilestoneDescription = prg.MilestoneDescription;
-                
-                this.toolStripStatusLabel.Text = newMilestoneDescription;              
+
+                this.toolStripStatusLabel.Text = newMilestoneDescription;
             }
             catch (Exception ex)
             {
@@ -130,7 +130,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 this.Invoke(action);
             }
             catch (Exception ex)
-            {}
+            { }
         }
 
         /// <summary>
@@ -158,11 +158,11 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-                #region GetCapabilities - Hent datasett fra tilbyder. 
+                #region GetCapabilities - Hent datasett fra tilbyder.
                 //txbUser.Cue = "Type username.";
                 //txbPassword.Cue = "Type password.";
                 #endregion
-                              
+
                 // TODO: remember to geosyncDB.sdf to the build folder e.g. bin\debug
                 // Consider changing geosyncDBEntities(geosyncDB.sdf) database folder. 
                 // today the geosyncDB.sdf must be copied to the build folder e.g. bin\debug
@@ -175,21 +175,22 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 //AppDomain.CurrentDomain.SetData("DataDirectory", dataDict);
 
                 // TODO: For development comment out these 2 lines
-                TabPage page2 = tabControl1.TabPages[1];
-                tabControl1.TabPages.Remove(page2);
+                //TabPage page2 = tabControl1.TabPages[1];
+                //tabControl1.TabPages.Remove(page2);
+
                 ////page2.Visible = false;
                 ////page2.Hide();
                 ////page2.Enabled = false;
 
                 UpdateToolStripStatusLabel("Initializing...");
-                
+
                 // Fill the cboDatasetName comboBox with the dataset names
                 FillComboBoxDatasetName();
-           
+
                 // nlog start
                 logger.Info("===== Kartverket.Geosynkronisering.Subscriber Start =====");
                 listBoxLog.Items.Clear();
-               
+
                 ShowGeoSyncLogo();
 
                 UpdateToolStripStatusLabel("Ready");
@@ -213,7 +214,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             logger.Info("===== Kartverket.Geosynkronisering.Subscriber End =====");
         }
 
-   
+
         /// <summary>
         /// Occurs after a data-binding operation has finished
         /// </summary>
@@ -233,7 +234,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             cboDatasetName.Items.Clear();
             var datasetNameList = DL.SubscriberDatasetManager.GetDatasetNames();
             if (datasetNameList.Count > 0)
-            {                
+            {
                 foreach (string name in datasetNameList)
                 {
                     cboDatasetName.Items.Add(name);
@@ -251,10 +252,10 @@ namespace Kartverket.Geosynkronisering.Subscriber
         private void cboDatasetName_SelectedIndexChanged(object sender, EventArgs e)
         {
             _currentDatasetId = cboDatasetName.SelectedIndex + 1;
-            Properties.Subscriber.Default.DefaultDatasetId = _currentDatasetId; 
+            Properties.Subscriber.Default.DefaultDatasetId = _currentDatasetId;
             Properties.Subscriber.Default.Save();
             txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetDataset(_currentDatasetId).LastIndex.ToString();
-        }     
+        }
 
         /// <summary>
         /// Save settings database
@@ -264,8 +265,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
         private void buttonSave_Click(object sender, EventArgs e)
         {
             try
-            {   
-                var subscriberDatasets = (List<DL.SubscriberDataset>) dgDataset.DataSource;
+            {
+                var subscriberDatasets = (List<DL.SubscriberDataset>)dgDataset.DataSource;
                 foreach (var subscriberDataset in subscriberDatasets)
                 {
                     DL.SubscriberDatasetManager.UpdateDataset(subscriberDataset);
@@ -302,7 +303,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 _lastIndexProvider = _synchController.GetLastIndexFromProvider(_currentDatasetId);
 
                 txbLastIndex.Text = _lastIndexProvider.ToString();
-           }
+            }
             catch (WebException webEx)
             {
                 MessageBox.Show("Error : " + webEx.Message);
@@ -313,7 +314,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             }
         }
 
-       
+
         private void btnGetCapabilities_Click(object sender, EventArgs e)
         {
             string Url = txbProviderURL.Text;
@@ -428,7 +429,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             MessageBox.Show(msg);
         }
 
-        
+
         /// <summary>
         /// Test full Syncronization without executing the other commands.
         /// </summary>
@@ -439,16 +440,16 @@ namespace Kartverket.Geosynkronisering.Subscriber
             ShowGeoSyncLogo();
 
             SetSynchButtonInactive();
-            
+
             Hourglass(true);
 
             listBoxLog.Items.Clear();
-            
+
             var logMessage = "Syncronization Start";
             listBoxLog.Items.Add(logMessage);
-            logger.Info(logMessage);          
+            logger.Info(logMessage);
 
-            SynchronizeAsThread(_currentDatasetId);                       
+            SynchronizeAsThread(_currentDatasetId);
         }
 
         public void SynchronizeAsThread(int datasetId)
@@ -458,9 +459,9 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 WorkerReportsProgress = true,
                 WorkerSupportsCancellation = true
             };
-           
+
             _backgroundWorker.DoWork += bw_DoSynchronization;
-            _backgroundWorker.RunWorkerAsync(datasetId);        
+            _backgroundWorker.RunWorkerAsync(datasetId);
             _backgroundWorker.RunWorkerCompleted += bw_SynchronizeComplete;
         }
 
@@ -475,7 +476,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             var datasetId = (int)e.Argument;
             _synchController.DoSynchronization(datasetId);
         }
-        
+
         void bw_SynchronizeComplete(object sender, RunWorkerCompletedEventArgs e)
         {
             // Update Dataset-datagridview control with changes
@@ -495,7 +496,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             Hourglass(false);
             if (_synchController.TransactionsSummary != null)
             {
-               
+
                 var logMessage = "Syncronization Transaction summary:";
                 listBoxLog.Items.Add(logMessage);
                 logMessage = "TotalInserted: " + _synchController.TransactionsSummary.TotalInserted.ToString();
@@ -506,9 +507,9 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 listBoxLog.Items.Add(logMessage);
                 logMessage = "TotalReplaced: " + _synchController.TransactionsSummary.TotalReplaced.ToString();
                 listBoxLog.Items.Add(logMessage);
-                
+
             }
-            
+
         }
 
         public void SetSynchButtonActive()
@@ -519,8 +520,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
         public void SetSynchButtonInactive()
         {
             btnTestSyncronizationComplete.Enabled = false;
-        }   
-        
+        }
+
         private void UpdateToolStripStatusLabel(string message)
         {
             toolStripStatusLabel.Text = message;
@@ -544,7 +545,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         #region Schema Transformation (for testing)
 
         /// <summary>
-        /// Test Schema transformation - using hardcoded files
+        /// Test Schema transformation - using hardcoded mapping file and selecttable xml-file
         /// Mapping from the nested structure of one or more simple features to the simple features for GeoServer.
         /// </summary>
         private void TestSchemaTransformSimplifyChangelog()
@@ -552,13 +553,41 @@ namespace Kartverket.Geosynkronisering.Subscriber
             try
             {
                 string path = System.Environment.CurrentDirectory;
-                string fileName = path.Substring(0, path.LastIndexOf("bin")) + @"..\Kartverket.Geosynkronisering.Subscriber.BL\SchemaMapping" + @"\_wfsT-test1.xml";
+                string fileName = "";
+
+                OpenFileDialog openFileDialog1 = new OpenFileDialog();
+                openFileDialog1.InitialDirectory = path.Substring(0, path.LastIndexOf("bin")) +
+                                                   @"..\Kartverket.Geosynkronisering.Subscriber.BL\SchemaMapping"; //System.Environment.CurrentDirectory;
+                openFileDialog1.Filter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
+                openFileDialog1.FilterIndex = 2;
+                openFileDialog1.RestoreDirectory = true;
+                openFileDialog1.CheckFileExists = true;
+                openFileDialog1.Title = "Select file to transform";
+
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        fileName = openFileDialog1.FileName;
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                    }
+                }
+
+
+
+
+                
+                //string fileName = path.Substring(0, path.LastIndexOf("bin")) + @"..\Kartverket.Geosynkronisering.Subscriber.BL\SchemaMapping" + @"\MixFeaturetypes.Ar5-Insert.xml"; //@"\_wfsT-test1.xml";
 
                 // Test empty changelog
                 // fileName = path.Substring(0, path.LastIndexOf("bin")) + "SchemaMapping" + @"\ar5-tom-07a8e3ef-7315-409f-862d-6417b4275368.xml";
 
                 string mappingFileName = path.Substring(0, path.LastIndexOf("bin")) + @"..\Kartverket.Geosynkronisering.Subscriber.BL\SchemaMapping" + @"\ar5FeatureType-mapping-file.xml";
-           
+
                 // load the changelog XML document from file
                 // XElement changeLog = XElement.Load(fileName);
 
@@ -590,7 +619,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             }
         }
         #endregion
-     
+
         /// <summary>
         /// Returnerer det som tilbyder støtter av dataset, filter operatorer og objekttyper.
         /// </summary>
@@ -716,9 +745,9 @@ namespace Kartverket.Geosynkronisering.Subscriber
             return;
         }
 
-    
 
-   
+
+
 
 
     }
