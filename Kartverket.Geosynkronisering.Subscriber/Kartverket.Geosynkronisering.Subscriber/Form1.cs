@@ -397,13 +397,51 @@ namespace Kartverket.Geosynkronisering.Subscriber
         }
 
 
+        /// <summary>
+        /// Handles the Click event of the btnOfflineSync control.
+        /// Starts Offline sync.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void btnOfflineSync_Click(object sender, EventArgs e)
         {
             try
             {
+                string path = System.Environment.CurrentDirectory;
+                //string fileName = "";
                 string zipFile = "";
-                // zipFile = @"C:\Users\leg\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
-                zipFile = @"C:\Users\b543836\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
+
+                OpenFileDialog openFileDialog1 = new OpenFileDialog();
+                //openFileDialog1.InitialDirectory = path.Substring(0, path.LastIndexOf("bin")) +
+                //                                   @"..\Kartverket.Geosynkronisering.Subscriber.BL\SchemaMapping"; //System.Environment.CurrentDirectory;
+                openFileDialog1.Filter = "zip files (*.zip)|*.zip|All files (*.*)|*.*";
+                openFileDialog1.FilterIndex = 1;
+                openFileDialog1.RestoreDirectory = true;
+                openFileDialog1.CheckFileExists = true;
+                openFileDialog1.Title = "Select file for Offline Syncronization";
+
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        zipFile = openFileDialog1.FileName;
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error: Could not open file. Original error: " + ex.Message);
+                    }
+                  
+                
+                }
+                else
+                {
+                    return;
+                }
+                
+                //string zipFile = "";
+                //// zipFile = @"C:\Users\leg\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
+                //zipFile = @"C:\Users\b543836\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
 
                 this.tabControl1.SelectTab(0);
                 bool status = _synchController.TestOfflineSyncronizationComplete(zipFile, _currentDatasetId);
@@ -412,6 +450,24 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 {
                     // Oppdaterer dgDataset
                     dgDataset.DataSource = DL.SubscriberDatasetManager.GetAllDataset();
+                    // update subscribers last index from db
+                    txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetLastIndex(_currentDatasetId);
+                    
+                    if (_synchController.TransactionsSummary != null)
+                    {
+
+                        var logMessage = "Offline Syncronization Transaction summary:";
+                        listBoxLog.Items.Add(logMessage);
+                        logMessage = "TotalInserted: " + _synchController.TransactionsSummary.TotalInserted.ToString();
+                        listBoxLog.Items.Add(logMessage);
+                        logMessage = "TotalUpdated: " + _synchController.TransactionsSummary.TotalUpdated.ToString();
+                        listBoxLog.Items.Add(logMessage);
+                        logMessage = "TotalDeleted: " + _synchController.TransactionsSummary.TotalDeleted.ToString();
+                        listBoxLog.Items.Add(logMessage);
+                        logMessage = "TotalReplaced: " + _synchController.TransactionsSummary.TotalReplaced.ToString();
+                        listBoxLog.Items.Add(logMessage);
+
+                    }
                 }
             }
 
@@ -559,7 +615,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 openFileDialog1.InitialDirectory = path.Substring(0, path.LastIndexOf("bin")) +
                                                    @"..\Kartverket.Geosynkronisering.Subscriber.BL\SchemaMapping"; //System.Environment.CurrentDirectory;
                 openFileDialog1.Filter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
-                openFileDialog1.FilterIndex = 2;
+                openFileDialog1.FilterIndex = 1;
                 openFileDialog1.RestoreDirectory = true;
                 openFileDialog1.CheckFileExists = true;
                 openFileDialog1.Title = "Select file to transform";
@@ -573,10 +629,14 @@ namespace Kartverket.Geosynkronisering.Subscriber
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                        MessageBox.Show("Error: Could not open file. Original error: " + ex.Message);
                     }
+                
                 }
-
+                else
+                {
+                    return;
+                }
 
 
 

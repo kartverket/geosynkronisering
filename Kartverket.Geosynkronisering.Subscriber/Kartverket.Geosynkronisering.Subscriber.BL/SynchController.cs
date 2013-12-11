@@ -446,7 +446,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                             // 20131102-Leg
                             var dataset = SubscriberDatasetManager.GetDataset(datasetId);
-                            // TODO: Error in "endIndex" if both Update and Delete. Change later?
                             int endChangeId = (int)changeLog.Attribute("endIndex");
                             //
                             int numberReturned = (int)changeLog.Attribute("numberReturned");
@@ -638,9 +637,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return true;
         }
 
+        /// <summary>
+        /// Tests the offline syncronization complete.
+        /// </summary>
+        /// <param name="zipFile">The zip file.</param>
+        /// <param name="datasetId">The dataset identifier.</param>
+        /// <returns>True if OK.</returns>
         public bool TestOfflineSyncronizationComplete(string zipFile, int datasetId)
         {
-            //TODO: TestOfflineSyncronizationComplete NOT finished
             try
             {
                 bool status = false;
@@ -660,43 +664,78 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var downloadController = new DownloadController();
                 downloadController.UnpackZipFile(zipFile, outPath);
 
-                // TODO: Could be more than one file
-                string xmlFile = Path.ChangeExtension(zipFile, ".xml");
-                //_downLoadedChangelogName = xmlFile;
 
-                //
-                // Schema transformation
-                // Mapping from the nested structure of one or more simple features to the simple features for GeoServer.
-                //
-                string fileName = xmlFile; // txbDownloadedFile.Text;
-
-                var schemaTransform = new SchemaTransform();
-                var newFileName = schemaTransform.SchemaTransformSimplify(fileName, datasetId);
-
-                if (!string.IsNullOrEmpty(newFileName))
+                // Check if zip contains folder or file - Could be more than one file
+                string baseFilename = zipFile.Replace(".zip", "");
+                string xmlFile;
+                bool isFolder = false;
+                if (Directory.Exists(baseFilename))
                 {
-                    fileName = newFileName;
+                    xmlFile = baseFilename;
+                    isFolder = true;
+                }
+                else
+                {
+                    xmlFile = Path.ChangeExtension(zipFile, ".xml");
+                    //ChangelogFilename = xmlFile;
                 }
 
-                // load an XML document from a file
-                XElement changeLog = XElement.Load(fileName);
+                List<string> fileList = new List<string>();
 
-                // Build wfs-t transaction from changelog, and do the transaction    
-                var wfsController = new WfsController();
-
-                if (wfsController.DoWfsTransactions(changeLog, datasetId))
+                if (isFolder)
                 {
-                    status = true;
-
-                    int numberMatched = (int)changeLog.Attribute("numberMatched");
-                    int numberReturned = (int)changeLog.Attribute("numberReturned");
-                    int startIndex = (int)changeLog.Attribute("startIndex");
-                    int endIndex = (int)changeLog.Attribute("endIndex"); //now correct
-                    int lastIndexSubscriber = startIndex + numberReturned; //endIndex - startIndex + 1;
-
-                    dataset.LastIndex = endIndex; //lastIndexSubscriber;
-                    DL.SubscriberDatasetManager.UpdateDataset(dataset);
+                    string[] fileArray = Directory.GetFiles(xmlFile);
+                    Array.Sort(fileArray);
+                    fileList = fileArray.ToList();
                 }
+                else
+                {
+                    fileList.Add(xmlFile);
+                }
+
+                foreach (string file in fileList)
+                {
+                    string fileName = file;
+
+
+                    //string xmlFile = Path.ChangeExtension(zipFile, ".xml");
+                    ////_downLoadedChangelogName = xmlFile;
+
+                    //
+                    // Schema transformation
+                    // Mapping from the nested structure of one or more simple features to the simple features for GeoServer.
+                    //
+                    var schemaTransform = new SchemaTransform();
+                    var newFileName = schemaTransform.SchemaTransformSimplify(fileName, datasetId);
+                    if (!string.IsNullOrEmpty(newFileName))
+                    {
+                        fileName = newFileName;
+                    }
+
+
+
+                    // load an XML document from a file
+                    XElement changeLog = XElement.Load(fileName);
+
+                    // Build wfs-t transaction from changelog, and do the transaction    
+                    var wfsController = new WfsController();
+                    wfsController.ParentSynchController = this; // TODO: This is a little dirty, but we can reuse the events of the SynchController parent for UI feedback
+
+                    if (wfsController.DoWfsTransactions(changeLog, datasetId))
+                    {
+                        status = true;
+
+                        int numberMatched = (int)changeLog.Attribute("numberMatched");
+                        int numberReturned = (int)changeLog.Attribute("numberReturned");
+                        int startIndex = (int)changeLog.Attribute("startIndex");
+                        int endIndex = (int)changeLog.Attribute("endIndex"); //now correct
+                        int lastIndexSubscriber = startIndex + numberReturned; //endIndex - startIndex + 1;
+
+                        dataset.LastIndex = endIndex; //lastIndexSubscriber;
+                        DL.SubscriberDatasetManager.UpdateDataset(dataset);
+                    }
+                }
+              
 
                 return status;
             }

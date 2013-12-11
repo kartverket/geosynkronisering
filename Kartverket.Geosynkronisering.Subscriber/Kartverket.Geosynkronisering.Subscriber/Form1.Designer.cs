@@ -344,6 +344,7 @@
             this.btnOfflineSync.Size = new System.Drawing.Size(75, 23);
             this.btnOfflineSync.TabIndex = 17;
             this.btnOfflineSync.Text = "Offline sync";
+            this.toolTip1.SetToolTip(this.btnOfflineSync, "Offline syncronization, input is a changelog zip-file.");
             this.btnOfflineSync.UseVisualStyleBackColor = true;
             this.btnOfflineSync.Click += new System.EventHandler(this.btnOfflineSync_Click);
             // 
@@ -477,7 +478,7 @@
             this.tableLayoutPanel9.ColumnCount = 3;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82.26744F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.73256F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 383F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 385F));
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel9.Location = new System.Drawing.Point(181, 23);
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
