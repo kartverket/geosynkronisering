@@ -545,7 +545,13 @@ namespace Kartverket.Geosynkronisering.Subscriber
             UpdateToolStripStatusLabel("Display Map");
 
             var currentDataset = DL.SubscriberDatasetManager.GetDataset(_currentDatasetId);
-            DisplayMap(epsgCode: "EPSG:32633", datasetName: currentDataset.Name); //DisplayMap(epsgCode: "EPSG:32633");
+
+            if (currentDataset.ClientWfsUrl.Contains("geoserver"))
+            {
+                // only for GeoServer
+                DisplayMap(epsgCode: "EPSG:32633", datasetName: currentDataset.Name); //DisplayMap(epsgCode: "EPSG:32633"); 
+            }
+            
 
             UpdateToolStripStatusLabel("Ready");
             SetSynchButtonActive();
@@ -747,6 +753,11 @@ namespace Kartverket.Geosynkronisering.Subscriber
             // app:Skjær will not display due to "æ"
             string layers = "app:Flytebrygge,app:Flytebryggekant,app:Kystkontur,app:HavElvSperre,app:KystkonturTekniskeAnlegg";
             string hostWms = "http://localhost:8081/geoserver/app/wms?service=WMS&version=1.1.0&request=GetMap";
+
+            if (!hostWms.Contains("geoserver"))
+            {
+                return; // return if not GeoServer
+            }
 
             if (datasetName.ToLower() == "ar5")
             {
