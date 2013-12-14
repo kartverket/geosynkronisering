@@ -203,14 +203,17 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         private string BaseVirtualPath;
         public OrderChangelog CreateChangelog(int startIndex, int count, string todo_filter, int datasetId)
         {
-            var initialChangelog = (from d in p_db.StoredChangelogs where d.DatasetId == datasetId && d.StartIndex == 1 && d.Stored == true && d.Status == "finished" orderby d.DateCreated descending select d).FirstOrDefault();
-            if (initialChangelog != null)
+            if (startIndex == 1)
             {
-                OrderChangelog resp = new OrderChangelog();
-                resp.changelogId = initialChangelog.ChangelogId;
-                return resp;
+                var initialChangelog = (from d in p_db.StoredChangelogs where d.DatasetId == datasetId && d.StartIndex == 1 && d.Stored == true && d.Status == "finished" orderby d.DateCreated descending select d).FirstOrDefault();
+                if (initialChangelog != null)
+                {
+                    OrderChangelog resp = new OrderChangelog();
+                    resp.changelogId = initialChangelog.ChangelogId;
+                    CurrentOrderChangeLog = resp;
+                    return resp;
+                }
             }
-
             logger.Info("CreateChangelog START");
             BaseVirtualPath = Utils.BaseVirtualAppPath;
             ChangelogManager chlmng = new ChangelogManager(p_db);
@@ -376,91 +379,6 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             return _OrderChangelog(startIndex, count, todo_filter, datasetId);            
         }
 
-        private OrderChangelog OrderChangelog2(int startIndex, int count, string todo_filter, int datasetId)
-        {
-            logger.Info("OrderChangelog START");
-            StoredChangelog ldbo = new StoredChangelog();
-            ldbo.Stored = false;
-            ldbo.Status = "started";
-            ldbo.StartIndex = startIndex;
-            ldbo.EndIndex = startIndex + count; //TODO fix
-
-            ldbo.DatasetId = datasetId;
-            ldbo.DateCreated = DateTime.Now;
-
-            //TODO make filter 
-            //TODO check if similar stored changelog is already done
-            p_db.StoredChangelogs.AddObject(ldbo);
-            p_db.SaveChanges();
-
-            OrderChangelog resp = new OrderChangelog();
-            resp.changelogId = ldbo.ChangelogId;
-
-            //New thread and do the work....
-            // We're coming back to the thread handling later...
-            //string sourceFileName = "Changelogfiles/41_changelog.xml";
-
-            // Generate unique filename
-            string destFileName = Guid.NewGuid().ToString();
-
-            //System.IO.File.Copy(Utils.BaseVirtualAppPath + sourceFileName, Utils.BaseVirtualAppPath + destFileName);
-            string dbConnectInfo = Database.DatasetsData.DatasetConnection(datasetId);
-            string wfsURL = Database.DatasetsData.TransformationConnection(datasetId);
-            MakeChangeLog(startIndex, count, dbConnectInfo, wfsURL, Utils.BaseVirtualAppPath + destFileName + ".xml", datasetId);
-
-            // New code to handle FTP download
-
-            changeLogHandler chgLogHandler = new changeLogHandler(ldbo, p_db, logger);
-            string inFile = "";
-            string zipFile = "";
-            try
-            {
-                inFile = Utils.BaseVirtualAppPath + destFileName + ".xml";
-                zipFile = destFileName + ".zip";
-                chgLogHandler.createZipFile(inFile, zipFile);
-                Common.FileTransferHandler ftpTool = new Common.FileTransferHandler();
-                string tmpzipFile = Path.Combine(System.IO.Path.GetTempPath(), zipFile);
-                logger.Info(string.Format("Upload of file {0} started", tmpzipFile));
-                ldbo.Status = "started";
-                p_db.SaveChanges();
-               // chgLogHandler.UploadFileToFtp(zipFile, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpServer, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpUser, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpPassword);
-                if (!ftpTool.UploadFileToFtp(tmpzipFile, Database.ServerConfigData.FTPUrl(), Database.ServerConfigData.FTPUser(), Database.ServerConfigData.FTPPwd())) throw new Exception("Could not upload file to FTPServer!");
-                ldbo.Status = "finished";                
-                p_db.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                logger.ErrorException(string.Format("Failed to create or upload file {0}", zipFile), ex);
-                throw ex;
-            }
-
-            try
-            {
-                string downLoadUri = string.Format(@"ftp://{0}:{1}@{2}/{3}", Database.ServerConfigData.FTPUser(), Database.ServerConfigData.FTPPwd(), Database.ServerConfigData.FTPUrl(), destFileName);
-
-                ldbo.DownloadUri = downLoadUri;
-            }
-            catch (Exception ex)
-            {
-                logger.ErrorException(string.Format("Failed to create or upload file {0}", zipFile), ex);
-                throw ex;
-            }
-
-
-            try
-            {
-                p_db.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                logger.ErrorException(string.Format("Failed on SaveChanges, Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog startIndex:{0} count:{1} changelogId:{2}", startIndex, count, ldbo.ChangelogId), ex);
-                throw ex;
-            }
-            logger.Info("Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog" + " startIndex:{0}" + " count:{1}" + " changelogId:{2}", startIndex, count, ldbo.ChangelogId);
-
-            logger.Info("OrderChangelog END");
-            return resp;
-        }
 
         //Build changelog responsefile
         private void MakeChangeLog(int startChangeId, int count, string dbConnectInfo, string wfsUrl, string changeLogFileName, int datasetId )
