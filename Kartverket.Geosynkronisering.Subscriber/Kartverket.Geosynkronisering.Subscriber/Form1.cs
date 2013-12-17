@@ -105,6 +105,9 @@ namespace Kartverket.Geosynkronisering.Subscriber
 
                 Action action = () => listBoxLog.Items.Add(newLogListItem);
                 this.Invoke(action);
+                // Scroll down automatically
+                action = () => listBoxLog.SelectedIndex = listBoxLog.Items.Count - 1;
+                this.Invoke(action);
             }
             catch (Exception ex)
             {
@@ -466,6 +469,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
                         listBoxLog.Items.Add(logMessage);
                         logMessage = "TotalReplaced: " + _synchController.TransactionsSummary.TotalReplaced.ToString();
                         listBoxLog.Items.Add(logMessage);
+                        // Scroll down automatically
+                        listBoxLog.SelectedIndex = listBoxLog.Items.Count - 1;
 
                     }
                 }
@@ -569,6 +574,9 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 listBoxLog.Items.Add(logMessage);
                 logMessage = "TotalReplaced: " + _synchController.TransactionsSummary.TotalReplaced.ToString();
                 listBoxLog.Items.Add(logMessage);
+                // Scroll down automatically
+                listBoxLog.SelectedIndex = listBoxLog.Items.Count - 1;
+
 
             }
 

@@ -36,10 +36,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         }
 
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
-        
+
         public TransactionSummary TransactionsSummary;
-      
-   
+
+
         public IBindingList GetCapabilitiesProviderDataset(string url)
         {
             var cdb = new CapabilitiesDataBuilder(url);
@@ -462,15 +462,16 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             return;
 
                         }
-                    }
-                    lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
-                    lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
-                    i++;
 
-                    #region Lars
-                    this.OnOrderProcessingChange((progressCounter + 1) * 100);
-                    ++progressCounter;
-                    #endregion
+                        lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
+                        lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
+                        i++;
+
+                        #region Lars
+                        this.OnOrderProcessingChange((progressCounter + 1) * 100);
+                        ++progressCounter;
+                        #endregion
+                    }
                 }
 
                 #endregion
@@ -735,7 +736,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         DL.SubscriberDatasetManager.UpdateDataset(dataset);
                     }
                 }
-              
+
 
                 return status;
             }
