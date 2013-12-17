@@ -81,10 +81,10 @@ namespace TestProject
             PostGISChangelog target = new PostGISChangelog(); // TODO: Initialize to an appropriate value
             target.SetDb(db);
             int startIndex = 0; // TODO: Initialize to an appropriate value
-            int count = 0; // TODO: Initialize to an appropriate value
+            int count = 100; // TODO: Initialize to an appropriate value
             string todo_filter = string.Empty; // TODO: Initialize to an appropriate value
 
-            var actual = target.OrderChangelog(startIndex, count, todo_filter,1);
+            var actual = target.OrderChangelog(startIndex, count, todo_filter,3);
             Assert.IsNotNull(actual);
         }
     }

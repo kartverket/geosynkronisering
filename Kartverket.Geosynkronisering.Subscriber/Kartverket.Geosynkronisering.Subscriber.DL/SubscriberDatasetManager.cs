@@ -9,10 +9,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
     public static class SubscriberDatasetManager
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
-     
+
         public static SubscriberDataset GetDataset(string datasetName)
         {
-            using (var localDb = new  geosyncDBEntities())
+            using (var localDb = new geosyncDBEntities())
             {
                 Dataset dataset = (from d in localDb.Dataset where d.Name == datasetName select d).FirstOrDefault();
                 if (dataset == null)
@@ -42,7 +42,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             using (var localDb = new geosyncDBEntities())
             {
                 List<Dataset> datasets = (from d in localDb.Dataset select d).ToList();
-             
+
                 var geoClientDatasets = new List<SubscriberDataset>();
 
                 foreach (var dataset in datasets)
@@ -62,7 +62,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         }
 
 
-      
+
         public static bool UpdateDataset(SubscriberDataset geoClientDataset)
         {
             using (var localDb = new geosyncDBEntities())
@@ -107,7 +107,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         public static int GetNextDatasetID()
         {
             int max = 0;
-            using (var localDb = new  geosyncDBEntities())
+            using (var localDb = new geosyncDBEntities())
             {
                 var res = from d in localDb.Dataset select d.DatasetId;
                 foreach (Int32 id in res)
@@ -170,7 +170,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         {
             using (var localDb = new geosyncDBEntities())
             {
-                var res = from d in localDb.Dataset where d.DatasetId ==datasetID select d.LastIndex;
+                var res = from d in localDb.Dataset where d.DatasetId == datasetID select d.LastIndex;
                 if (res.First() != null) return res.First().ToString(); else return "";
             }
         }
@@ -205,10 +205,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         public static bool AddDatasets(IBindingList datasetBindingList, IList<int> selectedDatasets)
         {
             using (var localDb = new geosyncDBEntities())
-            {           
+            {
                 foreach (int selected in selectedDatasets)
                 {
-                    var ds = (Dataset) datasetBindingList[selected];
+                    var ds = (Dataset)datasetBindingList[selected];
                     try
                     {
                         ds.DatasetId = GetNextDatasetID();
@@ -228,5 +228,44 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
             return true;
         }
+
+        /// <summary>
+        /// Removes the selected datasets from database.
+        /// </summary>
+        /// <param name="datasetBindingList">The dataset binding list.</param>
+        /// <param name="selectedDatasets">The selected datasets.</param>
+        /// <returns>True if OK, else False</returns>
+        public static bool RemoveDatasets(List<SubscriberDataset> datasetBindingList, IList<int> selectedDatasets)
+        {
+            using (var localDb = new geosyncDBEntities())
+            {
+                foreach (int selected in selectedDatasets)
+                {
+
+                    var geoClientDataset = (SubscriberDataset)datasetBindingList[selected];
+
+                    Dataset dataset =
+                         (from d in localDb.Dataset where d.DatasetId == geoClientDataset.DatasetId select d)
+                             .FirstOrDefault();
+                    if (dataset == null)
+                        return false;
+                    try
+                    {
+                        localDb.DeleteObject(dataset);
+                        localDb.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogException(LogLevel.Error, "Error removing selected datasets!", ex);
+                        return false;
+                    }
+        
+                }
+            }
+
+            return true;
+        }
+
+   
     }
 }
