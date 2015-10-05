@@ -189,6 +189,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
                     nsmgrApp.AddNamespace(_namespacePrefix, _namespaceUri);
                     XNamespace nsWfs = "http://www.opengis.net/wfs/2.0"; // "wfs";
                     XNamespace nsFes = "http://www.opengis.net/fes/2.0";
+                    nsmgrApp.AddNamespace("wfs", "http://www.opengis.net/wfs/2.0");
 
                     foreach (var ele in transactions.ToList()) //foreach (var ele in docWfs.Descendants(nsWfs + "Insert")) //.Descendants("ArealressursGrense"))  //foreach (var ele in wfs.ToList())
                     {
@@ -252,7 +253,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
                         }
                         else if ((ele.Name == nsWfs + "Update" || ele.Name == nsWfs + "Delete") && !ele.IsEmpty)
                         {
-                            // TODO: More here for Update and Delete
+                            //
+                            //TODO: 20140324-Leg: This code (wws:update) is checked back 20151005, but NOT comletely tested for GeoServer.
+                            //
+
                             // Get the objecttype name
                             string featureType = ele.Attribute("typeName").Value; //Gets the local (unqualified) part of the name
                             var xNameFeaturetype = ele.Attribute("typeName").Name; ; // Gets the full name of this element.
@@ -260,15 +264,24 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
 
                             List<string> valueReferenceToRemove = new List<string>();
 
-                            var values = ele.Descendants(nsWfs + "Value"); // Update only
+                            //var values = ele.Descendants(nsWfs + "Value"); // Update only
+                            var properties = ele.Descendants(nsWfs + "Property"); // Update only
+                            //var valueReferences = ele.Descendants(nsWfs + "ValueReference"); // Update only - 20140323-Leg
+
                             var valueReferencesFilter = ele.DescendantsAndSelf(nsFes + "ValueReference"); // Delete and Update Filter part
                             IEnumerable<XElement> xElements = null;
                             for (int i = 0; i < 2; i++)
                             {
-                                if (i == 0 && values.Any())
+                                if (i == 0 && properties.Any())
                                 {
-                                    xElements = values;
+                                    xElements = properties;
                                 }
+                                /*
+                                 *  if (i == 0 && values.Any())
+                            {
+                                xElements = values;
+                            }
+                                 */
                                 else if (i == 1 && valueReferencesFilter.Any())
                                 {
                                     xElements = valueReferencesFilter;
@@ -289,7 +302,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
                                         // Replace the nodes with complex types in the gml-file with simple types found
                                         // in the mapping file: 
                                         //
-
                                         string targetAttrVal = xEleAttributeMapping.Element("targetAttribute").Value;
                                         string[] targetAttrArr = targetAttrVal.Split('/');
                                         //Console.WriteLine("targetAttrArr[0]: {0}", targetAttrArr[0]);
@@ -337,8 +349,84 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
                                                 //
                                                 // Value part - wfs:update only
                                                 //
+                                   
+                                                //var values = elePropOrFilter.Descendants(nsWfs + "Value");
+                                                
+                                                var valueReference = elePropOrFilter.Element(nsWfs + "ValueReference");
+                                                
+                                                //XElement xEleTargetValrefElement = valueReference.XPathSelectElement(targetAttrFirstNode, nsmgrApp) as XElement;
+                                                if (valueReference.Value == targetAttrFirstNode) // if (xEleTargetValrefElement != null && !xEleTargetValrefElement.IsEmpty)
+                                                {
+                                                    foreach (var val in elePropOrFilter.Descendants(nsWfs + "Value"))
+                                                    {
+                                                        XElement xEleTargetAttr = val.XPathSelectElement(targetAttr, nsmgrApp) as XElement;
+
+                                                        // mask of namespace prefix
+                                                        //string targetAttrMinusNamespacePrefix = RemoveNamespacePrefixOfXPathExpression(targetAttr, _namespacePrefix);
+                                                        //xEleTargetAttr = elePropOrFilter.XPathSelectElement(targetAttrMinusNamespacePrefix, nsmgrApp) as XElement;
+
+                                                        //XElement x = ele.XPathSelectElement(targetAttrFirstNode, mgr) as XElement;
+                                                        if (xEleTargetAttr != null && !xEleTargetAttr.IsEmpty)
+                                                        {
+                                                            XElement xEleTargetAttrFirstNode = val.XPathSelectElement(targetAttrFirstNode, nsmgrApp);
+
+                                                            // Create a new element where we use the element name from the mapping file.
+                                                            // Add it before the Property node, then remove the current Value node.
+                                                            // e.g. xEleTargetAttrFirstNode is here <app:identifikasjon>, xEleTargetAttr is <app:lokalId>:
+                                                            //  <wfs:Property>
+                                                            //    <wfs:ValueReference>app:identifikasjon</wfs:ValueReference>
+                                                            //    <wfs:Value>
+                                                            //      <app:identifikasjon>
+                                                            //        <app:Identifikasjon>
+                                                            //          <app:lokalId>4eb2d1e4-bf9f-45f2-875f-b9707dd9f885</app:lokalId>
+                                                            //          <app:navnerom>no.skogoglandskap.ar5.ArealressursFlate</app:navnerom>
+                                                            //          <app:versjonId>1.0</app:versjonId>
+                                                            //        </app:Identifikasjon>
+                                                            //      </app:identifikasjon>
+                                                            //    </wfs:Value>
+                                                            //  </wfs:Property>
+
+                                                            // namespace mangler på ValueReference tag. Legger vi på det, så fjernes de med ett nivå i "ValueReference for removal".
+                                                            // løsning er å oppdatere det på slutten.
+
+                                                            // 20131015-Leg: ValueReference content with namespace prefix
+                                                            XElement newEle = new XElement(nsWfs + "Property",
+                                                                new XElement("ValueReference", _namespacePrefix + ":" + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value),
+                                                                //new XElement("ValueReference", xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value),
+                                                                new XElement(nsWfs + "Value",
+                                                                new XElement(nsApp + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value, xEleTargetAttr.Value)));
+
+                                                            //XElement newEle = new XElement(nsWfs + "Property",
+                                                            //    new XElement("ValueReference", xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value),
+                                                            //    new XElement(nApp + xEleAttributeMapping.Element("sourceExpression").Element("OCQL").Value, xEleTargetAttr.Value));
+
+                                                            xEleTargetAttrFirstNode.Parent.Parent.AddBeforeSelf(newEle); //before node Property.Value
+                                                            xEleTargetAttr.Remove();
+
+                                                            // Mark <ValueReference> for removal
+                                                            if (targetAttrArr.Length > 0) //if (targetAttrArr.Length > 2)
+                                                            {
+                                                                // 20131015-Leg: ValueReference content with namespace prefix
+                                                                valueReferenceToRemove.Add(_namespacePrefix + ":" + targetAttrFirstNode);  //valueReferenceToRemove.Add(targetAttrFirstNode);
+                                                            }
+
+                                                        }
+
+
+
+                                                    }
+                                                }
+                                                
+                                                #if (false)
+                                                
+                                               
 
                                                 XElement xEleTargetAttr = elePropOrFilter.XPathSelectElement(targetAttr, nsmgrApp) as XElement;
+
+                                                // mask of namespace prefix
+                                                //string targetAttrMinusNamespacePrefix = RemoveNamespacePrefixOfXPathExpression(targetAttr, _namespacePrefix);
+                                                //xEleTargetAttr = elePropOrFilter.XPathSelectElement(targetAttrMinusNamespacePrefix, nsmgrApp) as XElement;
+
                                                 //XElement x = ele.XPathSelectElement(targetAttrFirstNode, mgr) as XElement;
                                                 if (xEleTargetAttr != null && !xEleTargetAttr.IsEmpty)
                                                 {
@@ -385,6 +473,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
                                                     }
 
                                                 }
+#endif
                                             }
                                         }
                                     }
@@ -398,14 +487,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
                                 // Remove all the ValueReference marked for removing to clean up.
                                 foreach (var valRef in valueReferenceToRemove)
                                 {
-                                    var properties = from item in ele.Descendants(nsWfs + "Property")
+                                    var propertiesToRemove = from item in ele.Descendants(nsWfs + "Property")
                                                      let element = item.Element(nsWfs + "ValueReference")
                                                      where element != null && _namespacePrefix + ":" + element.Value == valRef //"identifikasjon"
                                                      select item;
 
-                                    if (properties != null && properties.Any())
+                                    if (propertiesToRemove != null && propertiesToRemove.Any())
                                     {
-                                        properties.Remove();
+                                        propertiesToRemove.Remove();
                                     }
                                 }
                                 valueReferenceToRemove.Clear();
