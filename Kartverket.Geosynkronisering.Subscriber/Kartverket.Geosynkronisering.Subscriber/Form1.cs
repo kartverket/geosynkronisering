@@ -147,8 +147,12 @@ namespace Kartverket.Geosynkronisering.Subscriber
             {
                 var prg = (FeedbackController.Progress)sender;
 
-                Action action = () => this.progressBar.Value = prg.OrdersProcessedCount;
+                // For some reason, the progressbar value could seldom be larger that the Maximum
+                int value = Math.Min(prg.OrdersProcessedCount, this.progressBar.Maximum);
+                Action action = () => this.progressBar.Value = value; //prg.OrdersProcessedCount;
                 this.Invoke(action);
+
+
                 //this.Update();
                 //Application.DoEvents();
             }
@@ -434,14 +438,14 @@ namespace Kartverket.Geosynkronisering.Subscriber
                     {
                         MessageBox.Show("Error: Could not open file. Original error: " + ex.Message);
                     }
-                  
-                
+
+
                 }
                 else
                 {
                     return;
                 }
-                
+
                 //string zipFile = "";
                 //// zipFile = @"C:\Users\leg\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
                 //zipFile = @"C:\Users\b543836\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
@@ -455,7 +459,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                     dgDataset.DataSource = DL.SubscriberDatasetManager.GetAllDataset();
                     // update subscribers last index from db
                     txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetLastIndex(_currentDatasetId);
-                    
+
                     if (_synchController.TransactionsSummary != null)
                     {
 
@@ -556,7 +560,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 // only for GeoServer
                 DisplayMap(epsgCode: "EPSG:32633", datasetName: currentDataset.Name); //DisplayMap(epsgCode: "EPSG:32633"); 
             }
-            
+
 
             UpdateToolStripStatusLabel("Ready");
             SetSynchButtonActive();
@@ -645,7 +649,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                     {
                         MessageBox.Show("Error: Could not open file. Original error: " + ex.Message);
                     }
-                
+
                 }
                 else
                 {
@@ -654,7 +658,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
 
 
 
-                
+
                 //string fileName = path.Substring(0, path.LastIndexOf("bin")) + @"..\Kartverket.Geosynkronisering.Subscriber.BL\SchemaMapping" + @"\MixFeaturetypes.Ar5-Insert.xml"; //@"\_wfsT-test1.xml";
 
                 // Test empty changelog
