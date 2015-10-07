@@ -606,7 +606,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var elapsedSpan = new TimeSpan(elapsedTicks);
                 int timeout = 5;
 
-                while ((changeLogStatus == ChangelogStatusType.started || changeLogStatus == ChangelogStatusType.working) &&
+                while ((changeLogStatus == ChangelogStatusType.queued || changeLogStatus == ChangelogStatusType.working) &&
                        elapsedSpan.Minutes < timeout)
                 {
                     System.Threading.Thread.Sleep(3000);

@@ -58,7 +58,6 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         public string GetLastIndex(int datasetId)
         {
-
             Int64 endChangeId = 0;
             try
             {
@@ -80,7 +79,6 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 throw new System.Exception("GetLastIndex function failed", exp);
             }
 
-
             return endChangeId.ToString();
         }
 
@@ -101,7 +99,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             logger.Info("GenerateInitialChangelog START");
             StoredChangelog ldbo = new StoredChangelog();
             ldbo.Stored = true;
-            ldbo.Status = "started";
+            ldbo.Status = "queued";
             ldbo.StartIndex = startIndex;
 
             ldbo.DatasetId = datasetId;
@@ -115,7 +113,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             p_db.SaveChanges();
 
             OrderChangelog resp = new OrderChangelog();
-            resp.changelogId = ldbo.ChangelogId;
+            resp.changelogId = ldbo.ChangelogId.ToString();
 
             //New thread and do the work....
             // We're coming back to the thread handling later...
@@ -159,7 +157,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 Common.FileTransferHandler ftpTool = new Common.FileTransferHandler();
                 string tmpzipFile = Path.Combine(System.IO.Path.GetTempPath(), zipFile);
                 logger.Info(string.Format("Upload of file {0} started", tmpzipFile));
-                ldbo.Status = "started";
+                ldbo.Status = "queued";
                 p_db.SaveChanges();
                 // chgLogHandler.UploadFileToFtp(zipFile, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpServer, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpUser, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpPassword);
                 if (!ftpTool.UploadFileToFtp(tmpzipFile, Database.ServerConfigData.FTPUrl(), Database.ServerConfigData.FTPUser(), Database.ServerConfigData.FTPPwd())) throw new Exception("Could not upload file to FTPServer!");
@@ -210,7 +208,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 if (initialChangelog != null)
                 {
                     OrderChangelog resp = new OrderChangelog();
-                    resp.changelogId = initialChangelog.ChangelogId;
+                    resp.changelogId = initialChangelog.ChangelogId.ToString();
                     CurrentOrderChangeLog = resp;
                     return resp;
                 }
@@ -219,7 +217,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             BaseVirtualPath = Utils.BaseVirtualAppPath;
             ChangelogManager chlmng = new ChangelogManager(p_db);
             CurrentOrderChangeLog = chlmng.CreateChangeLog(startIndex, count, datasetId);
-            chlmng.SetStatus(CurrentOrderChangeLog.changelogId, ChangelogStatusType.started);
+            chlmng.SetStatus(CurrentOrderChangeLog.changelogId, ChangelogStatusType.queued);
             return CurrentOrderChangeLog;
         }
 
@@ -298,7 +296,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             return CurrentOrderChangeLog;
         }
 
-        public bool CreateDataExtraction(int startIndex, int count, string todo_filter, int datasetId, int ChangelogID)
+        public bool CreateDataExtraction(int startIndex, int count, string todo_filter, int datasetId, string ChangelogID)
         {
             // Generate unique filename
             string destFileName = Guid.NewGuid().ToString();
@@ -372,7 +370,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 if (initialChangelog != null)
                 {
                     OrderChangelog resp = new OrderChangelog();
-                    resp.changelogId = initialChangelog.ChangelogId;
+                    resp.changelogId = initialChangelog.ChangelogId.ToString();
                     return resp;
                 }
             }

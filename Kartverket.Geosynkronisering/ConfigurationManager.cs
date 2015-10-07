@@ -356,61 +356,68 @@ namespace Kartverket.Geosynkronisering.Database
     {
 
        
-        public static string Name(Int32 ChangelogID)
+        public static string Name(string ChangelogID)
         {
+            int nchangelogid = Int32.Parse(ChangelogID);
             using (geosyncEntities db = new geosyncEntities())
             {
-                var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.Name;
+                var res = from cl in db.StoredChangelogs where cl.ChangelogId == nchangelogid select cl.Name;
                 if (res.First() != null) return res.First().ToString(); else return "";
             }
         }
-        public static string OrderUri(Int32 ChangelogID)
+        public static string OrderUri(string ChangelogID)
         {
+            int nchangelogid = Int32.Parse(ChangelogID);
             using (geosyncEntities db = new geosyncEntities())
             {
-                var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.OrderUri;
-                if (res.First() != null) return res.First().ToString(); else return "";
-            }
-        }
-
-        public static string StartIndex(Int32 ChangelogID)
-        {
-            using (geosyncEntities db = new geosyncEntities())
-            {
-                var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.StartIndex;
-                if (res.First() != null) return res.First().ToString(); else return "";
-            }
-        }
-        public static string DownloadUri(Int32 ChangelogID)
-        {
-            using (geosyncEntities db = new geosyncEntities())
-            {
-                var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.DownloadUri;
-                if (res.First() != null) return res.First().ToString(); else return "";
-            }
-        }
-        public static string EndIndex(Int32 ChangelogID)
-        {
-            using (geosyncEntities db = new geosyncEntities())
-            {
-                var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.EndIndex;
-                if (res.First() != null) return res.First().ToString(); else return "";
-            }
-        }
-        public static string Status(Int32 ChangelogID)
-        {
-            using (geosyncEntities db = new geosyncEntities())
-            {
-                var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.Status;
+                var res = from cl in db.StoredChangelogs where cl.ChangelogId == nchangelogid select cl.OrderUri;
                 if (res.First() != null) return res.First().ToString(); else return "";
             }
         }
 
-        public static string Stored(Int32 ChangelogID)
+        public static string StartIndex(string ChangelogID)
         {
+            int nchangelogid = Int32.Parse(ChangelogID);
             using (geosyncEntities db = new geosyncEntities())
             {
-                var res = from cl in db.StoredChangelogs where cl.ChangelogId == ChangelogID select cl.Stored;
+                var res = from cl in db.StoredChangelogs where cl.ChangelogId == nchangelogid select cl.StartIndex;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
+        }
+        public static string DownloadUri(string ChangelogID)
+        {
+            int nchangelogid = Int32.Parse(ChangelogID);
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from cl in db.StoredChangelogs where cl.ChangelogId == nchangelogid select cl.DownloadUri;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
+        }
+        public static string EndIndex(string ChangelogID)
+        {
+            int nchangelogid = Int32.Parse(ChangelogID);
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from cl in db.StoredChangelogs where cl.ChangelogId == nchangelogid select cl.EndIndex;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
+        }
+        public static string Status(string ChangelogID)
+        {
+            int nchangelogid = Int32.Parse(ChangelogID);
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from cl in db.StoredChangelogs where cl.ChangelogId == nchangelogid select cl.Status;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
+        }
+
+        public static string Stored(string ChangelogID)
+        {
+            int nchangelogid = Int32.Parse(ChangelogID);
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from cl in db.StoredChangelogs where cl.ChangelogId == nchangelogid select cl.Stored;
                 if (res.First() != null) return res.First().ToString(); else return "";
             }
         } 

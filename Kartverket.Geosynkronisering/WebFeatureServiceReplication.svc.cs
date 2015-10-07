@@ -115,18 +115,14 @@ namespace Kartverket.Geosynkronisering
         {
             try
             {
-                int id;
-                if (int.TryParse(changelogId.changelogId, out id))
+                using (geosyncEntities db = new geosyncEntities())
                 {
-                    using (geosyncEntities db = new geosyncEntities())
-                    {
-                        ChangelogManager mng = new ChangelogManager(db);
-                        mng.AcknowledgeChangelogDownloaded(id);
-                    }
-                    //geosyncEntities db = new geosyncEntities();
-                    //ChangelogManager mng = new ChangelogManager(db);
-                    //mng.AcknowledgeChangelogDownloaded(id);
+                    ChangelogManager mng = new ChangelogManager(db);
+                    mng.AcknowledgeChangelogDownloaded(changelogId.changelogId);
                 }
+                //geosyncEntities db = new geosyncEntities();
+                //ChangelogManager mng = new ChangelogManager(db);
+                //mng.AcknowledgeChangelogDownloaded(id);
             }
             catch (System.Exception ex)
             {
@@ -138,14 +134,10 @@ namespace Kartverket.Geosynkronisering
         {
             try
             {
-                int id;
-                if (int.TryParse(changelogid.changelogId, out id))
+                using (geosyncEntities db = new geosyncEntities())
                 {
-                    using (geosyncEntities db = new geosyncEntities())
-                    {
-                        ChangelogManager mng = new ChangelogManager(db);
-                        mng.AcknowledgeChangelogDownloaded(id);
-                    }
+                    ChangelogManager mng = new ChangelogManager(db);
+                    mng.AcknowledgeChangelogDownloaded(changelogid.changelogId);
                 }
             }
             catch (System.Exception ex)
@@ -158,17 +150,10 @@ namespace Kartverket.Geosynkronisering
         {
             try
             {
-                int id = -1;
-                int.TryParse(changelogid.changelogId, out id);
-
-                if (id == -1)
-                {
-                    throw new System.Exception("MissingParameterValue : changelogid");
-                }
                 using (geosyncEntities db = new geosyncEntities())
                 {
                     ChangelogManager mng = new ChangelogManager(db);
-                    return mng.GetChangelog(id);
+                    return mng.GetChangelog(changelogid.changelogId);
                 }
                 //geosyncEntities db = new geosyncEntities();
                 //ChangelogManager mng = new ChangelogManager(db);
@@ -184,17 +169,10 @@ namespace Kartverket.Geosynkronisering
         {
             try
             {
-                int id = -1;
-                int.TryParse(changelogid.changelogId, out id);
-
-                if (id == -1)
-                {
-                    throw new System.Exception("MissingParameterValue : changelogid");
-                }
                 using (geosyncEntities db = new geosyncEntities())
                 {
                     ChangelogManager mng = new ChangelogManager(db);
-                    return mng.GetChangelogStatus(id);
+                    return mng.GetChangelogStatus(changelogid.changelogId);
                 }
             }
             catch (System.Exception ex)
@@ -250,7 +228,7 @@ namespace Kartverket.Geosynkronisering
                 var resp = changelogprovider.OrderChangelog(startindex, count, "", id);
 
                 Kartverket.GeosyncWCF.ChangelogIdentificationType res = new Kartverket.GeosyncWCF.ChangelogIdentificationType();
-                res.changelogId = resp.changelogId.ToString();
+                res.changelogId = resp.changelogId;
                 return res;
             }
             catch (System.Exception ex)
@@ -268,7 +246,7 @@ namespace Kartverket.Geosynkronisering
             {
                 var resp = changelogprovider.OrderChangelog(startindex, count, "", datasetID);
                 Kartverket.GeosyncWCF.ChangelogIdentificationType res = new Kartverket.GeosyncWCF.ChangelogIdentificationType();
-                res.changelogId = resp.changelogId.ToString();
+                res.changelogId = resp.changelogId;
                 return res;
             }
             catch (System.Exception ex)
@@ -326,7 +304,7 @@ namespace Kartverket.Geosynkronisering
             IAsyncResult result = caller.BeginInvoke(changelogprovider, startindex, count, "", id, new AsyncCallback(CallbackProcessStatus), state);
 
             Kartverket.GeosyncWCF.ChangelogIdentificationType res = new Kartverket.GeosyncWCF.ChangelogIdentificationType();
-            res.changelogId = resp.changelogId.ToString();
+            res.changelogId = resp.changelogId;
             return res;
 
 
@@ -351,11 +329,11 @@ namespace Kartverket.Geosynkronisering
         {
             private Kartverket.Geosynkronisering.OrderChangelogAsync m_request;
             private bool completed = false;
-            private int id;
+            private string id;
 
             private Kartverket.GeosyncWCF.ChangelogIdentificationType _Result;
 
-            public ProcessState(int ID)
+            public ProcessState(string ID)
             {
                 id = ID;
             }
@@ -366,7 +344,7 @@ namespace Kartverket.Geosynkronisering
                 set { _Result = value; }
             }
 
-            public int ID
+            public string ID
             {
                 get { return id; }
                 set { id = value; }
@@ -384,11 +362,6 @@ namespace Kartverket.Geosynkronisering
                 set { completed = value; }
             }
         }
-
-
-
-
-
     }
 
     public delegate Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelogAsync(IChangelogProvider changelogprovider, int startindex, int count, string to_doFilter, int datasetID);

@@ -85,7 +85,7 @@ namespace TestProject
 
             MockChangelog target = new MockChangelog(); // TODO: Initialize to an appropriate value
             target.SetDb(db);
-            int changelogid = 0; // TODO: Initialize to an appropriate value
+            string changelogid="0"; // TODO: Initialize to an appropriate value
             int count = 0;
             //From next changenumber
 
@@ -149,7 +149,7 @@ namespace TestProject
             geosyncEntities db = new geosyncEntities();
             ChangelogManager target = new ChangelogManager(db);
                         
-            int changelogid = 0; // TODO: Initialize to an appropriate value
+            string changelogid = "0"; // TODO: Initialize to an appropriate value
             target.AcknowledgeChangelogDownloaded(changelogid);
             //Assert.Inconclusive("A method that does not return a value cannot be verified.");
 
@@ -163,7 +163,7 @@ namespace TestProject
         {
             geosyncEntities db = new geosyncEntities();
             ChangelogManager target = new ChangelogManager(db);
-            int changelogid = 42; // TODO: Initialize to an appropriate value
+            string changelogid = "42"; // TODO: Initialize to an appropriate value
             target.CancelChangelog(changelogid);
             //Assert.Inconclusive("A method that does not return a value cannot be verified.");
         }
@@ -224,7 +224,7 @@ namespace TestProject
         {
             geosyncEntities db = new geosyncEntities();
             ChangelogManager target = new ChangelogManager(db);
-            int changelogid = 42; // TODO: Initialize to an appropriate value
+            string changelogid = "42"; // TODO: Initialize to an appropriate value
             //XmlDocument expected = null; // TODO: Initialize to an appropriate value
           
             var actual = target.GetChangelog(changelogid);
@@ -244,7 +244,7 @@ namespace TestProject
         {
             geosyncEntities db = new geosyncEntities();
             ChangelogManager target = new ChangelogManager(db);
-            int changelogid = 42; // TODO: Initialize to an appropriate value
+            string changelogid = "42"; // TODO: Initialize to an appropriate value
             string expected = "finished"; // TODO: Initialize to an appropriate value
             
             var actual = target.GetChangelogStatus(changelogid);

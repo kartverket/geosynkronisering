@@ -168,10 +168,10 @@ namespace Kartverket.Geosynkronisering
                         xmlDoc = GetChangelogStatus(queryParameters, ref mng);
                         break;
                     case "AcknowledgeChangelogDownloaded":
-                        mng.AcknowledgeChangelogDownloaded(2);
+                        mng.AcknowledgeChangelogDownloaded("2");
                         break;
                     case "CancelChangelog":
-                        mng.CancelChangelog(2);
+                        mng.CancelChangelog("2");
                         break;
                 }
 
@@ -244,7 +244,7 @@ namespace Kartverket.Geosynkronisering
                 throw new System.Exception("MissingParameterValue : changelogid");
             }
 
-            var resp = changelogprovider.GetChangelogStatus(changelogid);
+            var resp = changelogprovider.GetChangelogStatus(changelogid.ToString());
             
             XmlSerializer serializer = new XmlSerializer(resp.GetType());
 
@@ -321,7 +321,7 @@ namespace Kartverket.Geosynkronisering
             {
                 throw new System.Exception("MissingParameterValue : changelogid");
             }
-            var resp = changelogprovider.GetChangelog(changelogid);
+            var resp = changelogprovider.GetChangelog(changelogid.ToString());
 
             XmlSerializer serializer = new XmlSerializer(resp.GetType());
 
