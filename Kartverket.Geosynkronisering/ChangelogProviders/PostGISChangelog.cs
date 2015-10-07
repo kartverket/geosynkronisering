@@ -522,7 +522,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     }
                     else if (transType == "U")
                     {
-                        AddUpdateToChangeLog(gmlId, handle, wfsUrl, changeLog, datasetId);
+                        AddReplaceToChangeLog(gmlId, handle, wfsUrl, changeLog, datasetId);
                     }
                     else if (transType == "I")
                     {
@@ -547,7 +547,6 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                             AddInsertPortionsToChangeLog(inserts, wfsUrl, changeLog, datasetId);
                             inserts.Clear();
                         }
-
                     }
                     if (counter == count)
                     {
@@ -682,6 +681,43 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             changeLog.Element(nsChlogf + "transactions").Add(deleteElement);
         }
 
+        private void AddReplaceToChangeLog(string gmlId, long handle, string wfsUrl, XElement changeLog, int datasetId)
+        {
+            Dictionary<string, string> typeIdDict = new Dictionary<string, string>();
+            ChangelogWFS wfs = new ChangelogWFS();
+            XElement getFeatureResponse = wfs.GetFeatureCollectionFromWFS(wfsUrl, ref typeIdDict, new List<string>() { gmlId }, datasetId);
+            XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
+            XNamespace nsChlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg";
+            XNamespace nsFes = "http://www.opengis.net/fes/2.0";
+
+            XNamespace nsApp = Database.DatasetsData.TargetNamespace(datasetId);
+            // 20130917-Leg: Fix
+            string nsPrefixApp = changeLog.GetPrefixOfNamespace(nsApp);
+            XmlNamespaceManager mgr = new XmlNamespaceManager(new NameTable());
+            mgr.AddNamespace(nsPrefixApp, nsApp.NamespaceName);
+            string nsPrefixAppComplete = nsPrefixApp + ":";
+            string xpathExpressionLokalidFilter = nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete +
+                                "Identifikasjon/" + nsPrefixAppComplete + "lokalId";
+
+            foreach (KeyValuePair<string, string> dictElement in typeIdDict)
+            {
+                string xpathExpressionLokalid = "//" + nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete + "Identifikasjon[" + nsPrefixAppComplete + "lokalId='" + dictElement.Key + "']/../..";
+                XElement feature = getFeatureResponse.XPathSelectElement(xpathExpressionLokalid, mgr);
+                XElement replaceElement = new XElement(nsWfs + "Replace", new XAttribute("handle", handle));
+                XElement lokalidElement = feature.XPathSelectElement(xpathExpressionLokalidFilter, mgr);
+                string lokalId = lokalidElement.Value;
+
+                replaceElement.Add(feature);
+
+                replaceElement.Add(new XElement(nsFes + "Filter",
+                                        new XElement(nsFes + "PropertyIsEqualTo",
+                                            new XElement(nsFes + "ValueReference", xpathExpressionLokalidFilter), //new XElement(nsFes + "ValueReference", "identifikasjon/Identifikasjon/lokalId"),
+                                            new XElement(nsFes + "Literal", lokalId)
+                                        )
+                                  ));
+                changeLog.Element(nsChlogf + "transactions").Add(replaceElement);
+            }
+        }
 
         private void AddUpdateToChangeLog(string gmlId, long handle, string wfsUrl, XElement changeLog, int datasetId)
         {
