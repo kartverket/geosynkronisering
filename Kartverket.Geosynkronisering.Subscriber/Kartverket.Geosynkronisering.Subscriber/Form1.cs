@@ -450,6 +450,18 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 //// zipFile = @"C:\Users\leg\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
                 //zipFile = @"C:\Users\b543836\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
 
+                var dataset = DL.SubscriberDatasetManager.GetDataset(_currentDatasetId);
+                int lastChangeIndexSubscriber = (int)dataset.LastIndex;
+                if (lastChangeIndexSubscriber > 0)
+                {
+                    MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                    DialogResult result = MessageBox.Show("TestOfflineSyncronizationComplete could fail if lastChangeIndexSubscriber > 0. Do you want to continue?", "", buttons);
+                    if (result != System.Windows.Forms.DialogResult.Yes)
+                    {
+                        return;
+                    }
+                }
+
                 this.tabControl1.SelectTab(0);
                 bool status = _synchController.TestOfflineSyncronizationComplete(zipFile, _currentDatasetId);
 

@@ -653,11 +653,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
                 int lastChangeIndexSubscriber = (int)dataset.LastIndex;
-                if (lastChangeIndexSubscriber > 0)
+                if (false) // TODO: Remove?
                 {
-                    logger.Info("TestOfflineSyncronizationComplete colud only be run if lastChangeIndexSubscriber = 0");
-                    return false;
+                    if (lastChangeIndexSubscriber > 0)
+                    {
+                        logger.Info("TestOfflineSyncronizationComplete colud only be run if lastChangeIndexSubscriber = 0");
+                        return false;
+                    }
                 }
+             
 
 
                 string outPath = Path.GetDirectoryName(zipFile);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml.Linq;
 using Kartverket.Geosynkronisering.Subscriber.DL;
@@ -17,11 +18,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         public static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         public SynchController ParentSynchController; // TODO: This is a little dirty, but we can reuse the events of the SynchController parent for UI feedback
-       /// <summary>
+        /// <summary>
         /// Get all wfs:Insert
-       /// </summary>
-       /// <param name="changeLog"></param>
-       /// <returns></returns>
+        /// </summary>
+        /// <param name="changeLog"></param>
+        /// <returns></returns>
         private int GetWfsInsert(XElement changeLog)
         {
             try
@@ -32,7 +33,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message + ex.StackTrace);              
+                throw new Exception(ex.Message + ex.StackTrace);
             }
         }
 
@@ -57,7 +58,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message + ex.StackTrace);              
+                throw new Exception(ex.Message + ex.StackTrace);
             }
         }
 
@@ -95,7 +96,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message + ex.StackTrace);          
+                throw new Exception(ex.Message + ex.StackTrace);
             }
         }
 
@@ -147,7 +148,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message + ex.StackTrace);            
+                throw new Exception(ex.Message + ex.StackTrace);
             }
         }
 
@@ -163,7 +164,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             try
             {
 
-                var xDoc = BuildWfsTransaction(changeLog);
+                var xDoc = BuildWfsTransaction(changeLog, datasetId);
                 //var xDoc2 = BuildWfsTransactionList(changeLog);
                 if (xDoc == null)
                 {
@@ -172,18 +173,18 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
 
                 //
-                // Post to GeoServer
+                // Post to WFS-T server (e.g. deegree or GeoServer)
                 //
                 try
                 {
                     // TODO: Change this to changeLog.Attribute("endIndex") ?
                     //Int64 endChangeId = Convert.ToInt64(xDoc2[0].XPathSelectElement("//*[@handle][1]").Attribute("handle").Value);
-                    //20121122-Leg::  Get subscriber GeoServer url from db
-                 
+                    //20121122-Leg::  Get subscriber deegree / GeoServer url from db
+
                     var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
                     String url = dataset.ClientWfsUrl;
-              
+
                     //String url = Properties.Settings.Default.urlGeoserverSubscriber; // "http://localhost:8081/geoserver/app/ows?service=WFS";
 
                     var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -243,7 +244,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         {
                             string transactionSummary = transactionSummaries.ElementAt(0).ToString(SaveOptions.DisableFormatting);
 
-                            string wfsMessage = "DoWfsTransactions: Geoserver WFS-T Transaction: transactionSummary" + " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + transactionSummary;
+                            string wfsMessage = "DoWfsTransactions: deegree/Geoserver WFS-T Transaction: transactionSummary" + " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + transactionSummary;
 
                             logger.Info(wfsMessage);
                             //this.ParentSynchController.OnUpdateLogList(wfsMessage);
@@ -301,7 +302,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                                 //    this.ParentSynchController.OnUpdateLogList(logMessage);
                                 //    //this._synchController.OnNewSynchMilestoneReached(logMessage);
                                 //}
-                        
+
                             }
 
                             // Raise event to eventual UI
@@ -310,15 +311,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                         }
                         else
-                        {                     
-                            string wfsMessage = "DoWfsTransactions: Geoserver WFS-T Transaction feilet:  transactionSummary" + " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + "No transactions ";
+                        {
+                            string wfsMessage = "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  transactionSummary" + " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + "No transactions ";
                             logger.Info(wfsMessage);
                             this.ParentSynchController.OnUpdateLogList(wfsMessage);
                         }
                     }
                     else
                     {
-                        string wfsMessage = "DoWfsTransactions: Geoserver WFS-T Transaction feilet:  Transaction Status:" + httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription + "\r\n" + resultString.ToString();
+                        string wfsMessage = "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  Transaction Status:" + httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription + "\r\n" + resultString.ToString();
                         logger.Info(wfsMessage);
                         this.ParentSynchController.OnUpdateLogList(wfsMessage);
                     }
@@ -352,8 +353,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// Buld WFS Transaction XDocument from Changelog
         /// </summary>
         /// <param name="changeLog"></param>
+        /// 
+        /// <param name="datasetId"></param>
         /// <returns></returns>
-        private XDocument BuildWfsTransaction(XElement changeLog)
+        private XDocument BuildWfsTransaction(XElement changeLog, int datasetId = 0)
         {
             try
             {
@@ -379,6 +382,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 // Get the WFS-T transactions and add them to the root
                 //
                 IEnumerable<XElement> transactions = GetWfsTransactions(changeLog);
+
+                #region substitute_Replace_with_DeleteandInsert
+                // 20151006-Leg: Substutute wfs:replace with wfs:Delete and wfs:Insert.
+                bool replaced = WfsSubstituteReplaceWithDeleteAndInsert(changeLog, datasetId, transactions);
+                logger.Info("WfsSubstituteReplaceWithDeleteAndInsert() returned {0}",replaced);
+
+                #endregion // substitute_Replace_with_DeleteandInsert
+
                 XElement xRootElement = xDoc.Root;
 
                 foreach (var tran in transactions)
@@ -418,6 +429,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                               by item.Attribute("typeName").Value //(Key) typeName-for Delete it follows in the typeName attribute
                                        into g
                                        select g;
+
+                //20151006-Leg: wfs:Replace
+                var replaceGroups = from item in changeLog.Descendants(nsWfs + "Replace")
+                                    group item.Name.LocalName                 //operation
+                               by item.Elements().ElementAt(0).Name.LocalName //(Key) typeName-for Insert it follows in the next Element 
+                                        into g
+                                        select g;
+
                 if (insertGroups.Any())
                 {
                     foreach (var group in insertGroups)
@@ -442,6 +461,17 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(), group.Key);
                     }
                 }
+
+                //20151006-Leg: wfs:Replace
+                if (replaceGroups.Any())
+                {
+                    foreach (var group in replaceGroups)
+                    {
+                        // Insert: count of number of Insert transactions:
+                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(), group.Key);
+                    }
+                }
+
 
                 //
                 // Get the namespaces, and update the XDocument:
@@ -471,7 +501,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 if (transactions.Count() <= 50)
                 {
                     string tempDir = System.Environment.GetEnvironmentVariable("TEMP");
-                    string fileName = tempDir + @"\" + "_wfsT-test1.xml";             
+                    string fileName = tempDir + @"\" + "_wfsT-test1.xml";
                     xDoc.Save(fileName);
                 }
 
@@ -481,6 +511,100 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             catch (Exception ex)
             {
                 throw new Exception(ex.Message + ex.StackTrace + "BuildWfsTransaction");
+            }
+        }
+
+        /// <summary>
+        /// Substutute wfs:replace with wfs:Delete and wfs:Insert.
+        /// </summary>
+        /// <param name="changeLog">The change log.</param>
+        /// <param name="datasetId">The dataset identifier.</param>
+        /// <param name="transactions">The transactions.</param>
+        private static bool WfsSubstituteReplaceWithDeleteAndInsert(XElement changeLog, int datasetId, IEnumerable<XElement> transactions)
+        {
+            bool replaced = false;
+            try
+            {
+
+
+
+                XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
+                // 20151006-Leg: wfs:Replace
+                // Substutute wfs:replace with wfs:Delete and wfs:Insert
+                // wfs:Delete: Filter part of wfs:Replace
+                // wfs:Insert: All execpt Filter of wfs:Replace
+
+                string nsPrefixApp = "";
+                XNamespace nsApp = null;
+                if (datasetId > 0)
+                {
+                    var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
+                    string namespaceUri = dataset.TargetNamespace;
+                    nsPrefixApp = changeLog.GetPrefixOfNamespace(namespaceUri);
+                    nsApp = namespaceUri;
+                }
+
+                foreach (var ele in transactions.ToList())
+                {
+                    if ((ele.Name == nsWfs + "Replace") && !ele.IsEmpty)
+                    {
+                        XNamespace nsFes = "http://www.opengis.net/fes/2.0";
+
+                        //
+                        // wfs:delete part
+                        //
+                        var filter = ele.DescendantsAndSelf(nsFes + "Filter");
+                        var typename = ele.Elements().ElementAt(0).Name.LocalName;
+                        var xNameFeaturetype = ele.Elements().ElementAt(0).Name; // Gets the full name of this element.
+                        Console.WriteLine("featureType: {0} wfs:{1}", typename, ele.Name);
+                        var handle = ele.Attribute("handle").Value;
+                        Console.WriteLine("handle: {0}", handle);
+                        var ns = ele.Elements().ElementAt(0).Name;
+                        XElement deleteElement;
+                        if (nsApp == null)
+                        {
+                            // nameSpace must be set for deegree, so wthis will not work
+                            deleteElement = new XElement(nsWfs + "Delete", new XAttribute("handle", handle),
+                                new XAttribute("typeName", typename));
+                        }
+                        else
+                        {
+                            deleteElement = new XElement(nsWfs + "Delete", new XAttribute("handle", handle),
+                                new XAttribute("typeName", nsPrefixApp + ":" + typename),
+                                new XAttribute(XNamespace.Xmlns + nsPrefixApp, nsApp));
+                        }
+
+
+                        deleteElement.Add(filter); // Filter part
+                        //deleteElement.Add(new XElement(nsFes + "Filter",
+                        //            new XElement(nsFes + "PropertyIsEqualTo",
+                        //                new XElement(nsFes + "ValueReference", xpathExpressionLokalid), //new XElement(nsFes + "ValueReference", "identifikasjon/Identifikasjon/lokalId"),
+                        //                new XElement(nsFes + "Literal", lokalId)
+                        //            )
+                        //        ));
+
+                        ele.Parent.AddBeforeSelf(deleteElement);
+
+                        //
+                        // wfs:Insert part
+                        //
+                        XElement insertElement = new XElement(nsWfs + "Insert", new XAttribute("handle", handle));
+                        IEnumerable<XElement> replaceElem = ele.Descendants().Take(1);
+
+                        insertElement.Add(replaceElem);
+                        ele.Parent.AddBeforeSelf(insertElement);
+
+                        ele.Remove(); //remove wfs:replace
+                        replaced = true;
+                    }
+                }
+                return replaced;
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException("WfsSubstituteReplaceWithDeleteAndInsert failed:", ex);
+                throw new Exception(ex.Message + ex.StackTrace + "WfsSubstituteReplaceWithDeleteAndInsert");
+                return false;
             }
         }
 
@@ -508,21 +632,21 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 foreach (var tran in transactions)
                 {
-                //
-                // Generate the XDocument
-                //
-                XDocument xDoc = new XDocument(
-                    new XElement(nsWfs + "Transaction", new XAttribute("version", "2.0.0"), new XAttribute("service", "WFS"),
-                                 new XAttribute(XNamespace.Xmlns + "wfs", "http://www.opengis.net/wfs/2.0"), xAttributeXsi)
-                    );
+                    //
+                    // Generate the XDocument
+                    //
+                    XDocument xDoc = new XDocument(
+                        new XElement(nsWfs + "Transaction", new XAttribute("version", "2.0.0"), new XAttribute("service", "WFS"),
+                                     new XAttribute(XNamespace.Xmlns + "wfs", "http://www.opengis.net/wfs/2.0"), xAttributeXsi)
+                        );
 
-                //
-                // Get the WFS-T transactions and add them to the root
-                //
-               
-                XElement xRootElement = xDoc.Root;
+                    //
+                    // Get the WFS-T transactions and add them to the root
+                    //
 
-                
+                    XElement xRootElement = xDoc.Root;
+
+
                     xRootElement.Add(tran);
 
                     //
@@ -609,7 +733,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     }
                 }
 
-                
+
 
                 // TODO: It's not necesary to save the file here, but nice for debugging
                 /*if (transactions.Count() <= 50)
@@ -756,12 +880,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                                     {
                                         tranResult = "totalReplaced";
                                     }
-                               
+
                                 }
 
                                 dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
                                 int temp = Convert.ToInt32(endChangeId);
-                                dataset.LastIndex = temp;                               
+                                dataset.LastIndex = temp;
                                 DL.SubscriberDatasetManager.UpdateDataset(dataset);
                             }
                             else
