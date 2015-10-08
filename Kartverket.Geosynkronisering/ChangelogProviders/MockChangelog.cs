@@ -30,7 +30,12 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         //{
         //    p_db = _db;
         //}
-        
+
+        public void Intitalize(int datasetId)
+        {
+
+        }
+
         public void SetDb(geosyncEntities db)
         {
             p_db = db;

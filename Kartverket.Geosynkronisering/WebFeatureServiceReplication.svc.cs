@@ -93,8 +93,9 @@ namespace Kartverket.Geosynkronisering
                     //Initiate provider from config/dataset
                     Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
                     changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
-                    changelogprovider.SetDb(db);
+                    //changelogprovider.SetDb(db);
                     int datasetId = Convert.ToInt32(dataset);
+                    changelogprovider.Intitalize(datasetId);
 
                     resp = changelogprovider.GetLastIndex(datasetId);
                 }
@@ -207,7 +208,8 @@ namespace Kartverket.Geosynkronisering
                     //Initiate provider from config/dataset
                     Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
                     changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
-                    changelogprovider.SetDb(db);
+                    //changelogprovider.SetDb(db);
+                    changelogprovider.Intitalize(id);
 
                 }
                 int startindex = -1;
@@ -277,9 +279,7 @@ namespace Kartverket.Geosynkronisering
             //Initiate provider from config/dataset
             Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
             changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
-            changelogprovider.SetDb(db);
-
-
+            changelogprovider.Intitalize(id);
 
 
             int.TryParse(order.startIndex, out startindex);

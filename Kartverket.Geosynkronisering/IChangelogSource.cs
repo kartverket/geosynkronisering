@@ -9,7 +9,8 @@ namespace Kartverket.Geosynkronisering
 {
     public interface IChangelogProvider
     {
-         void SetDb(geosyncEntities db);
+
+        void Intitalize( int datasetId);
 
         //XmlDocument GetCapabilities();
          string GetLastIndex(int datasetId);
