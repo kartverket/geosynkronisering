@@ -88,6 +88,9 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         public OrderChangelog GenerateInitialChangelog(int datasetId)
         {
+            string ftpURL = Database.ServerConfigData.FTPUrl();
+            string ftpUser = Database.ServerConfigData.FTPUser();
+            string ftpPwd = Database.ServerConfigData.FTPPwd();
             using (geosyncEntities db = new geosyncEntities())
             {
                 var initialChangelog = (from d in db.StoredChangelogs where d.DatasetId == datasetId && d.StartIndex == 1 && d.Stored == true && d.Status == "finished" orderby d.DateCreated descending select d).FirstOrDefault();
@@ -119,9 +122,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             //System.IO.File.Copy(Utils.BaseVirtualAppPath + sourceFileName, Utils.BaseVirtualAppPath + destFileName);
 
             string destPath = System.IO.Path.Combine(Utils.BaseVirtualAppPath, destFileName);
-            string ftpURL = Database.ServerConfigData.FTPUrl();
-            string ftpUser = Database.ServerConfigData.FTPUser();
-            string ftpPwd = Database.ServerConfigData.FTPPwd();
+           
 
             using (geosyncEntities db = new geosyncEntities())
             {
@@ -287,7 +288,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 try
                 {
-                    string downLoadUri = string.Format(@"ftp://{0}:{1}@{2}/{3}", Database.ServerConfigData.FTPUser(), Database.ServerConfigData.FTPPwd(), Database.ServerConfigData.FTPUrl(), destFileName);
+                    string downLoadUri = string.Format(@"ftp://{0}:{1}@{2}/{3}",ftpUser, ftpPwd, ftpURL, destFileName);
                     chlmng.SetStatus(CurrentOrderChangeLog.changelogId, ChangelogStatusType.finished);
                     chlmng.SetDownloadURI(CurrentOrderChangeLog.changelogId, downLoadUri);
                 }
@@ -320,13 +321,13 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             string destFileName = Guid.NewGuid().ToString();
 
             //System.IO.File.Copy(Utils.BaseVirtualAppPath + sourceFileName, Utils.BaseVirtualAppPath + destFileName);
-
+            string ftpURL = Database.ServerConfigData.FTPUrl();
+            string ftpUser = Database.ServerConfigData.FTPUser();
+            string ftpPwd = Database.ServerConfigData.FTPPwd();
             MakeChangeLog(startIndex, count, p_dbConnectInfo, p_wfsURL, Utils.BaseVirtualAppPath + destFileName + ".xml", datasetId);
 
             // New code to handle FTP download
-            string ftpURL = Database.ServerConfigData.FTPUrl();
-            string ftpUser = Database.ServerConfigData.FTPUser();
-            string ftpPwd= Database.ServerConfigData.FTPPwd();
+           
 
             using (geosyncEntities db = new geosyncEntities())
             {
@@ -357,7 +358,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 try
                 {
-                    string downLoadUri = string.Format(@"ftp://{0}:{1}@{2}/{3}", Database.ServerConfigData.FTPUser(), Database.ServerConfigData.FTPPwd(), Database.ServerConfigData.FTPUrl(), destFileName);
+                    string downLoadUri = string.Format(@"ftp://{0}:{1}@{2}/{3}", ftpUser, ftpPwd, ftpURL, destFileName);
 
                     ldbo.DownloadUri = downLoadUri;
                 }
