@@ -74,9 +74,11 @@ namespace Kartverket.Geosynkronisering
             return resp;
         }
 
-        public Kartverket.GeosyncWCF.ChangelogStatusType GetChangelogStatus(int changelogid)
+        public Kartverket.GeosyncWCF.ChangelogStatusType GetChangelogStatus(string changelogid)
         {
-            var result = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c);
+            int nchangelogid = Int32.Parse(changelogid);
+
+            var result = (from c in db.StoredChangelogs where c.ChangelogId == nchangelogid select c);
             
             Kartverket.GeosyncWCF.ChangelogStatusType resp = new GeosyncWCF.ChangelogStatusType();
             if (result.Count() > 0)
@@ -85,7 +87,7 @@ namespace Kartverket.Geosynkronisering
                 switch (changelog.Status)
                 {
 
-                    case "started": resp = Kartverket.GeosyncWCF.ChangelogStatusType.started; break;
+                    case "queued": resp = Kartverket.GeosyncWCF.ChangelogStatusType.queued; break;
                     case "working": resp = Kartverket.GeosyncWCF.ChangelogStatusType.working; break;
                     case "cancelled": resp = Kartverket.GeosyncWCF.ChangelogStatusType.cancelled; break;
                     case "finished": resp = Kartverket.GeosyncWCF.ChangelogStatusType.finished; break;
@@ -94,9 +96,10 @@ namespace Kartverket.Geosynkronisering
             return resp;
         }
 
-        public Kartverket.GeosyncWCF.ChangelogType GetChangelog(int changelogid)
+        public Kartverket.GeosyncWCF.ChangelogType GetChangelog(string changelogid)
         {
-            var result = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c);
+            int nchangelogid = Int32.Parse(changelogid);
+            var result = (from c in db.StoredChangelogs where c.ChangelogId == nchangelogid select c);
             
             Kartverket.GeosyncWCF.ChangelogType resp = new Kartverket.GeosyncWCF.ChangelogType();
             if (result.Count() > 0)
@@ -114,12 +117,12 @@ namespace Kartverket.Geosynkronisering
             return resp;
          }
 
-        public void AcknowledgeChangelogDownloaded(int changelogid)
+        public void AcknowledgeChangelogDownloaded( string changelogid)
         {                   
             DateTime deleteDate = DateTime.Now.AddDays(-10); // TODO: Add to dataset settings
 
             // Find and delete obsolete files from database and server
-            var obsoleteFiles = (from c in db.StoredChangelogs where c.Status == "started" && c.DateCreated < deleteDate select c);
+            var obsoleteFiles = (from c in db.StoredChangelogs where c.Status == "queued" && c.DateCreated < deleteDate select c);
             // TODO: Should be replaced by: var obsoleteFiles = (from c in db.StoredChangelogs where (c.Status == "started" || (c.Status == "Finished" && c.Stored == false)) && c.DateCreated < deleteDate select c);
 
             foreach (var of in obsoleteFiles)
@@ -137,7 +140,8 @@ namespace Kartverket.Geosynkronisering
 
             //Delete files and db row if not a stored one...
             //var changelog = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c).First();
-            var result = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c);
+            int nchangelogid = Int32.Parse(changelogid);
+            var result = (from c in db.StoredChangelogs where c.ChangelogId == nchangelogid select c);
             if (result != null && result.Count()>0)
             {
                 var changelog = result.First();
@@ -175,7 +179,7 @@ namespace Kartverket.Geosynkronisering
             }
         }
 
-        public void CancelChangelog(int changelogid)
+        public void CancelChangelog(string changelogid)
         {
             this.AcknowledgeChangelogDownloaded(changelogid);
         }
@@ -185,7 +189,7 @@ namespace Kartverket.Geosynkronisering
             StoredChangelog ldbo = new StoredChangelog();
             ldbo.Stored = false;            
             
-            ldbo.Status = ((string)System.Enum.GetName(typeof(Kartverket.GeosyncWCF.ChangelogStatusType),Kartverket.GeosyncWCF.ChangelogStatusType.started));
+            ldbo.Status = ((string)System.Enum.GetName(typeof(Kartverket.GeosyncWCF.ChangelogStatusType),Kartverket.GeosyncWCF.ChangelogStatusType.queued));
             ldbo.StartIndex = startIndex;
             ldbo.EndIndex = startIndex + count; //TODO fix
 
@@ -198,19 +202,21 @@ namespace Kartverket.Geosynkronisering
             db.SaveChanges();
 
             OrderChangelog resp = new OrderChangelog();
-            resp.changelogId = ldbo.ChangelogId;
+            resp.changelogId = ldbo.ChangelogId.ToString();
             return resp;            
         }
 
-        public StoredChangelog GetStoredChangelogRow(int changelogid)
+        public StoredChangelog GetStoredChangelogRow(string changelogid)
         {
-            var changelog = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c).First();
+            int nchangelogid = Int32.Parse(changelogid);
+            var changelog = (from c in db.StoredChangelogs where c.ChangelogId == nchangelogid select c).First();
             return changelog;
         }
 
-        public bool SetStatus(int changelogid, Kartverket.GeosyncWCF.ChangelogStatusType status)
+        public bool SetStatus(string changelogid, Kartverket.GeosyncWCF.ChangelogStatusType status)
         {
-            var changelog = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c).First();
+            int nchangelogid = Int32.Parse(changelogid);
+            var changelog = (from c in db.StoredChangelogs where c.ChangelogId == nchangelogid select c).First();
 
             changelog.Status = ((string)System.Enum.GetName(typeof(Kartverket.GeosyncWCF.ChangelogStatusType), status));
             try
@@ -224,9 +230,10 @@ namespace Kartverket.Geosynkronisering
             return true;
         }
 
-        public bool SetDownloadURI(int changelogid, string URI)
+        public bool SetDownloadURI(string changelogid, string URI)
         {
-            var changelog = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c).First();
+            int nchangelogid = Int32.Parse(changelogid);
+            var changelog = (from c in db.StoredChangelogs where c.ChangelogId == nchangelogid select c).First();
 
             changelog.DownloadUri = URI;
             try

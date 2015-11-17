@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kartverket.Geosynkronisering.Services", "Kartverket.Geosynkronisering\Kartverket.Geosynkronisering.Services.csproj", "{57502AAF-881B-4939-B311-720FC3B447AC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject", "TestProject\TestProject.csproj", "{83440077-7A6B-4613-BC9D-5F4DEA65FECB}"
@@ -31,9 +33,6 @@ Global
 		SccProjectUniqueName2 = TestProject\\TestProject.csproj
 		SccProjectName2 = TestProject
 		SccLocalPath2 = TestProject
-	EndGlobalSection
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = Kartverket.Geosynkronisering.vsmdi
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,5 +66,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = Kartverket.Geosynkronisering.vsmdi
 	EndGlobalSection
 EndGlobal

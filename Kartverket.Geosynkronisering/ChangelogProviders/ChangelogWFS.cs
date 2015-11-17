@@ -13,16 +13,13 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
-        public XElement GetFeatureCollectionFromWFS(string wfsUrl, ref Dictionary<string, string> typeIdDict, List<string> gmlIds, int datasetId)
+        public XElement GetFeatureCollectionFromWFS(string nsPrefixTargetNamespace, string nsAppStr, string wfsUrl, ref Dictionary<string, string> typeIdDict, List<string> gmlIds, int datasetId)
         {
             logger.Info("GetFeatureCollectionFromWFS START");
-            XNamespace nsApp = Database.DatasetsData.TargetNamespace(datasetId);
+            XNamespace nsApp = nsAppStr;
             XNamespace nsFes = "http://www.opengis.net/fes/2.0";
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
             XNamespace nsXsi = "http://www.w3.org/2001/XMLSchema-instance";
-            
-            
-
             
             //
             // NameSpace prefix must be equal to providers prefix, get it from the settings database.
@@ -30,7 +27,6 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             //
             //string nsPrefixApp = changeLog.GetPrefixOfNamespace(nsApp);
             //changeLog.GetPrefixOfNamespace(nsApp);
-            string nsPrefixTargetNamespace  = Database.DatasetsData.TargetNamespacePrefix(datasetId);
             if (String.IsNullOrWhiteSpace(nsPrefixTargetNamespace))
             {
                 nsPrefixTargetNamespace = "app"; //Shouldn't happen, but works with GeoServer, and is compatible with earlier versions of code
@@ -43,7 +39,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 )
             );
 
-            PopulateDocumentForGetFeatureRequest(gmlIds, ref typeIdDict, wfsGetFeatureDocument, datasetId);
+            PopulateDocumentForGetFeatureRequest(nsPrefixTargetNamespace, gmlIds, ref typeIdDict, wfsGetFeatureDocument, datasetId);
 
             try
             {
@@ -71,9 +67,9 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             }
         }
 
-        private void PopulateDocumentForGetFeatureRequest(List<string> gmlIds, ref Dictionary<string, string> typeIdDict, XDocument wfsGetFeatureDocument, int datasetId)
+        private void PopulateDocumentForGetFeatureRequest(string nsPrefixTargetNamespace, List<string> gmlIds, ref Dictionary<string, string> typeIdDict, XDocument wfsGetFeatureDocument, int datasetId)
         {
-            PopulateDocumentForGetFeatureRequest_simple(gmlIds, ref typeIdDict, wfsGetFeatureDocument, datasetId);
+            PopulateDocumentForGetFeatureRequest_simple(nsPrefixTargetNamespace, gmlIds, ref typeIdDict, wfsGetFeatureDocument, datasetId);
             /*XNamespace nsFes = "http://www.opengis.net/fes/2.0";
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
 
@@ -155,12 +151,11 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         /// <param name="gmlIds">List of gml ids</param>
         /// <param name="typeIdDict">Dictonary containing type and gml id</param>
         /// <param name="wfsGetFeatureDocument"></param>
-        private void PopulateDocumentForGetFeatureRequest_simple(List<string> gmlIds, ref Dictionary<string, string> typeIdDict, XDocument wfsGetFeatureDocument, int datasetId)
+        private void PopulateDocumentForGetFeatureRequest_simple(string nsPrefixTargetNamespace, List<string> gmlIds, ref Dictionary<string, string> typeIdDict, XDocument wfsGetFeatureDocument, int datasetId)
         {            
             XNamespace nsFes = "http://www.opengis.net/fes/2.0";
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
 
-            string nsPrefixTargetNamespace = Database.DatasetsData.TargetNamespacePrefix(datasetId);
             string nsPrefixTargetNamespaceComplete = nsPrefixTargetNamespace + ":";
             if (String.IsNullOrWhiteSpace(nsPrefixTargetNamespace))
             {

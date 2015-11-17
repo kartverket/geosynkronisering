@@ -606,7 +606,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var elapsedSpan = new TimeSpan(elapsedTicks);
                 int timeout = 5;
 
-                while ((changeLogStatus == ChangelogStatusType.started || changeLogStatus == ChangelogStatusType.working) &&
+                while ((changeLogStatus == ChangelogStatusType.queued || changeLogStatus == ChangelogStatusType.working) &&
                        elapsedSpan.Minutes < timeout)
                 {
                     System.Threading.Thread.Sleep(3000);
@@ -653,11 +653,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
                 int lastChangeIndexSubscriber = (int)dataset.LastIndex;
-                if (lastChangeIndexSubscriber > 0)
+                if (false) // TODO: Remove?
                 {
-                    logger.Info("TestOfflineSyncronizationComplete colud only be run if lastChangeIndexSubscriber = 0");
-                    return false;
+                    if (lastChangeIndexSubscriber > 0)
+                    {
+                        logger.Info("TestOfflineSyncronizationComplete colud only be run if lastChangeIndexSubscriber = 0");
+                        return false;
+                    }
                 }
+             
 
 
                 string outPath = Path.GetDirectoryName(zipFile);

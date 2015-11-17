@@ -79,7 +79,7 @@ namespace TestProject
         {
             geosyncEntities db = new geosyncEntities();
             PostGISChangelog target = new PostGISChangelog(); // TODO: Initialize to an appropriate value
-            target.SetDb(db);
+            target.Intitalize(1);
             int startIndex = 0; // TODO: Initialize to an appropriate value
             int count = 100; // TODO: Initialize to an appropriate value
             string todo_filter = string.Empty; // TODO: Initialize to an appropriate value

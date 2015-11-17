@@ -134,7 +134,8 @@ namespace Kartverket.Geosynkronisering
                 //Initiate provider from config/dataset
                 Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
                 changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
-                changelogprovider.SetDb(db);
+                //changelogprovider.SetDb(db);
+                changelogprovider.Intitalize(datasetId);
 
                 ChangelogManager mng = new ChangelogManager(db);
 
@@ -168,10 +169,10 @@ namespace Kartverket.Geosynkronisering
                         xmlDoc = GetChangelogStatus(queryParameters, ref mng);
                         break;
                     case "AcknowledgeChangelogDownloaded":
-                        mng.AcknowledgeChangelogDownloaded(2);
+                        mng.AcknowledgeChangelogDownloaded("2");
                         break;
                     case "CancelChangelog":
-                        mng.CancelChangelog(2);
+                        mng.CancelChangelog("2");
                         break;
                 }
 
@@ -244,7 +245,7 @@ namespace Kartverket.Geosynkronisering
                 throw new System.Exception("MissingParameterValue : changelogid");
             }
 
-            var resp = changelogprovider.GetChangelogStatus(changelogid);
+            var resp = changelogprovider.GetChangelogStatus(changelogid.ToString());
             
             XmlSerializer serializer = new XmlSerializer(resp.GetType());
 
@@ -321,7 +322,7 @@ namespace Kartverket.Geosynkronisering
             {
                 throw new System.Exception("MissingParameterValue : changelogid");
             }
-            var resp = changelogprovider.GetChangelog(changelogid);
+            var resp = changelogprovider.GetChangelog(changelogid.ToString());
 
             XmlSerializer serializer = new XmlSerializer(resp.GetType());
 

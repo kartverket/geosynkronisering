@@ -30,7 +30,12 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         //{
         //    p_db = _db;
         //}
-        
+
+        public void Intitalize(int datasetId)
+        {
+
+        }
+
         public void SetDb(geosyncEntities db)
         {
             p_db = db;
@@ -56,7 +61,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             BaseVirtualPath = Utils.BaseVirtualAppPath;
             ChangelogManager chlmng = new ChangelogManager(p_db);
             CurrentOrderChangeLog = chlmng.CreateChangeLog(startIndex, count, datasetId);
-            chlmng.SetStatus(CurrentOrderChangeLog.changelogId, ChangelogStatusType.started);
+            chlmng.SetStatus(CurrentOrderChangeLog.changelogId, ChangelogStatusType.queued);
             return CurrentOrderChangeLog;
         }
 
@@ -77,7 +82,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
             //New thread and do the work....
             string sourceFileName = "Changelogfiles/changelog_flytebryggestart.xml";
-            string destFileName = "Changelogfiles/" + CurrentOrderChangeLog.changelogId.ToString() + "_changelog.xml";
+            string destFileName = "Changelogfiles/" + CurrentOrderChangeLog.changelogId + "_changelog.xml";
             System.IO.File.Copy(BaseVirtualPath + sourceFileName, BaseVirtualPath + destFileName);
 
             chlmng.SetStatus(CurrentOrderChangeLog.changelogId, ChangelogStatusType.finished);
@@ -93,7 +98,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         {
             StoredChangelog ldbo = new StoredChangelog();
             ldbo.Stored = false;
-            ldbo.Status = "started";
+            ldbo.Status = "queued";
             ldbo.StartIndex = startIndex;
             ldbo.EndIndex = startIndex + count; //TODO fix
             //TODO tester make filter
@@ -120,11 +125,11 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             p_db.SaveChanges();
 
            
-            r.changelogId = ldbo.ChangelogId;
+            r.changelogId = ldbo.ChangelogId.ToString();
 
             //New thread and do the work....
             string sourceFileName = "Changelogfiles/changelog_flytebryggestart.xml";
-                    string destFileName = "Changelogfiles/"+ ldbo.ChangelogId.ToString() + "_changelog.xml";
+                    string destFileName = "Changelogfiles/"+ ldbo.ChangelogId + "_changelog.xml";
                     System.IO.File.Copy(Utils.BaseVirtualAppPath + sourceFileName, Utils.BaseVirtualAppPath + destFileName);
                     
                     ldbo.DownloadUri = destFileName;
