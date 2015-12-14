@@ -48,7 +48,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 ds = db.CreateObject<Dataset>();
                 ds.EntityKey = db.CreateEntityKey("Dataset", ds);
                 
-                ds.ProviderDatasetId = Convert.ToInt32(dst.datasetId);
+                ds.ProviderDatasetId = dst.datasetId;
                 ds.Name = dst.name;
                 GeosyncWCF.DomainType dt = GetConstraint("CountDefault", rootCapabilities.OperationsMetadata.Constraint);       
                 if (dt!=null) ds.MaxCount = Convert.ToInt32(dt.DefaultValue.Value);

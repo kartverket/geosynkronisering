@@ -97,7 +97,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                                        SynchronizationUrl = dataset.SyncronizationUrl,
                                        ClientWfsUrl = dataset.ClientWfsUrl,
                                        MaxCount = dataset.MaxCount.HasValue ? dataset.MaxCount.Value : -1,
-                                       ProviderDatasetId = dataset.ProviderDatasetId.HasValue ? dataset.ProviderDatasetId.Value : -1,
+                                       ProviderDatasetId = dataset.ProviderDatasetId,
                                        TargetNamespace = dataset.TargetNamespace,
                                        MappingFile = dataset.MappingFile
                                    };
@@ -171,7 +171,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             using (var localDb = new geosyncDBEntities())
             {
                 var res = from d in localDb.Dataset where d.DatasetId == datasetID select d.LastIndex;
-                if (res.First() != null) return res.First().ToString(); else return "";
+                if (res.FirstOrDefault() != null) return res.First().ToString(); else return "";
             }
         }
 
