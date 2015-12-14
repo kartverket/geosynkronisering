@@ -63,7 +63,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// <param name="datasetId"></param>
         /// <param name="startIndex"></param>
         /// <returns></returns>
-        public int OrderChangelog(int datasetId, int startIndex)
+        public int OrderChangelog(int datasetId, long startIndex)
         {
             try
             {
@@ -268,7 +268,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// Henter siste endringsnr fra tilbyder. Brukes for at klient enkelt kan sjekke om det er noe nytt siden siste synkronisering
         /// </summary>
         /// <returns></returns>
-        public int GetLastIndexFromProvider(int datasetId)
+        public long GetLastIndexFromProvider(int datasetId)
         {
             try
             {
@@ -277,9 +277,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var client = new WebFeatureServiceReplicationPortClient();
                 client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
 
-                var lastIndexString = client.GetLastIndex(dataset.ProviderDatasetId.ToString());
-                int lastIndex;
-                Int32.TryParse(lastIndexString, out lastIndex);
+                var lastIndexString = client.GetLastIndex(dataset.ProviderDatasetId);
+                long lastIndex = Convert.ToInt64(lastIndexString);
 
                 return lastIndex;
             }
@@ -296,7 +295,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
-        public int GetLastIndexFromSubscriber(int datasetId)
+        public long GetLastIndexFromSubscriber(int datasetId)
         {
             var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
 
@@ -319,7 +318,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var stopwatch = Stopwatch.StartNew();
 
                 this.OnNewSynchMilestoneReached("GetLastIndexFromProvider");
-                var lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
+
+                long lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
 
                 var logMessage = "GetLastIndexFromProvider lastIndex: " + lastChangeIndexProvider;
                 logger.Info(logMessage);
@@ -327,7 +327,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 this.OnNewSynchMilestoneReached("GetLastIndexFromProvider OK");
 
                 this.OnNewSynchMilestoneReached("GetLastIndexFromSubscriber");
-                int lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
+                long lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
 
                 logMessage = "GetLastChangeIndexSubscriber lastIndex: " + lastChangeIndexSubscriber;
                 logger.Info(logMessage);
@@ -350,8 +350,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 int maxCount = DL.SubscriberDatasetManager.GetMaxCount(datasetId);
 
-                int numberOfFeatures = lastChangeIndexProvider - lastChangeIndexSubscriber;
-                int numberOfOrders = (numberOfFeatures / maxCount);
+                long numberOfFeatures = lastChangeIndexProvider - lastChangeIndexSubscriber;
+                long numberOfOrders = (numberOfFeatures / maxCount);
                 if (numberOfFeatures % maxCount > 0)
                     ++numberOfOrders;
 
@@ -375,7 +375,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     #endregion
 
                     // Do lots of stuff
-                    int startIndex = lastChangeIndexSubscriber + 1;
+                    long startIndex = lastChangeIndexSubscriber + 1;
                     int changeLogId = OrderChangelog(datasetId, startIndex);
 
                     if (!CheckStatusForChangelogOnProvider(datasetId, changeLogId)) return;

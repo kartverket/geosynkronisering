@@ -182,7 +182,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
-        public Nullable<global::System.Int32> LastIndex
+        public Nullable<global::System.Int64> LastIndex
         {
             get
             {
@@ -197,8 +197,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 OnLastIndexChanged();
             }
         }
-        private Nullable<global::System.Int32> _LastIndex;
-        partial void OnLastIndexChanging(Nullable<global::System.Int32> value);
+        private Nullable<global::System.Int64> _LastIndex;
+        partial void OnLastIndexChanging(Nullable<global::System.Int64> value);
         partial void OnLastIndexChanged();
     
         /// <summary>

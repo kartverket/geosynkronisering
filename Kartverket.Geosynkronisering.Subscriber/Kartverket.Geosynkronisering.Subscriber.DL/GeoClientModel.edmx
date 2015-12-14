@@ -14,7 +14,7 @@
           </Key>
           <Property Name="DatasetId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" />
-          <Property Name="LastIndex" Type="int" />
+          <Property Name="LastIndex" Type="bigint" />
           <Property Name="SyncronizationUrl" Type="nvarchar" MaxLength="250" />
           <Property Name="ClientWfsUrl" Type="nvarchar" MaxLength="250" />
           <Property Name="MaxCount" Type="int" />
@@ -35,7 +35,7 @@
           </Key>
           <Property Type="Int32" Name="DatasetId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="String" Name="Name" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Type="Int32" Name="LastIndex" />
+          <Property Type="Int64" Name="LastIndex" />
           <Property Type="String" Name="SyncronizationUrl" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="ClientWfsUrl" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="MaxCount" />

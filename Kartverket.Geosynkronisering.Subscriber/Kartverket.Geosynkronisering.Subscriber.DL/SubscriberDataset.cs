@@ -9,7 +9,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
     {
         public int DatasetId { get; set; }
         public string Name { get; set; }
-        public int LastIndex { get; set; }
+        public long LastIndex { get; set; }
         public string SynchronizationUrl { get; set; }
         public string ClientWfsUrl { get; set; }
         public int MaxCount { get; set; }

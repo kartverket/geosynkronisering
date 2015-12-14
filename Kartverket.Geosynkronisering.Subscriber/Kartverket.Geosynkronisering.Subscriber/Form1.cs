@@ -21,7 +21,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         private SynchController _synchController;
 
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
-        private int _lastIndexProvider;
+        private long _lastIndexProvider;
         private int _currentDatasetId;
 
         public Form1()
@@ -126,7 +126,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             {
                 var prg = (FeedbackController.Progress)sender;
 
-                Action action = () => this.progressBar.Maximum = prg.TotalNumberOfOrders;
+                Action action = () => this.progressBar.Maximum = (int)prg.TotalNumberOfOrders;
                 this.Invoke(action);
 
                 action = () => this.progressBar.Value = 0;
