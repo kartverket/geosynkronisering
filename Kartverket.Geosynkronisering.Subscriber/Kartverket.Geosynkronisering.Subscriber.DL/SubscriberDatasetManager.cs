@@ -213,7 +213,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                     {
                         ds.DatasetId = GetNextDatasetID();
                         ds.LastIndex = 0;
-                        ds.ClientWfsUrl = "http://localhost:8081/geoserver/wfs?"; //TODO: Flytt til config
+                        ds.ClientWfsUrl = "";
                         localDb.AddObject(ds.EntityKey.EntitySetName, ds);
                         localDb.SaveChanges();
                         localDb.AcceptAllChanges();
