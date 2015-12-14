@@ -63,7 +63,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// <param name="datasetId"></param>
         /// <param name="startIndex"></param>
         /// <returns></returns>
-        public int OrderChangelog(int datasetId, long startIndex)
+        public string OrderChangelog(int datasetId, long startIndex)
         {
             try
             {
@@ -78,9 +78,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 ChangelogIdentificationType resp = client.OrderChangelog(order);
 
-                int changeLogId;
-                Int32.TryParse(resp.changelogId, out changeLogId);
-                return changeLogId;
+                return resp.changelogId;
             }
             catch (Exception ex)
             {
@@ -96,7 +94,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// <param name="datasetId"></param>
         /// <param name="changelogId"></param>
         /// <returns></returns>
-        public ChangelogStatusType GetChangelogStatusResponse(int datasetId, int changelogId)
+        public ChangelogStatusType GetChangelogStatusResponse(int datasetId, string changelogId)
         {
             try
             {
@@ -105,7 +103,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var client = new WebFeatureServiceReplicationPortClient();
                 client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
 
-                var id = new ChangelogIdentificationType { changelogId = changelogId.ToString() };
+                var id = new ChangelogIdentificationType { changelogId = changelogId };
 
                 ChangelogStatusType resp = client.GetChangelogStatus(id);
 
@@ -125,7 +123,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// <param name="changelogId"></param>
         /// <param name="downloadController"></param>
         /// <returns></returns>
-        public bool GetChangelog(int datasetId, int changelogId, out DownloadController downloadController)
+        public bool GetChangelog(int datasetId, string changelogId, out DownloadController downloadController)
         {
             try
             {
@@ -134,7 +132,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var client = new WebFeatureServiceReplicationPortClient();
                 client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
 
-                var id = new ChangelogIdentificationType { changelogId = changelogId.ToString() };
+                var id = new ChangelogIdentificationType { changelogId = changelogId };
 
                 ChangelogType resp = client.GetChangelog(id);
 
@@ -198,7 +196,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// Bekrefte at endringslogg er lastet ned
         /// </summary>
         /// <returns></returns>
-        public bool AcknowledgeChangelogDownloaded(int datasetId, int changelogId)
+        public bool AcknowledgeChangelogDownloaded(int datasetId, string changelogId)
         {
             try
             {
@@ -207,7 +205,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var client = new WebFeatureServiceReplicationPortClient();
                 client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
 
-                var id = new ChangelogIdentificationType { changelogId = changelogId.ToString() };
+                var id = new ChangelogIdentificationType { changelogId = changelogId };
                 client.AcknowlegeChangelogDownloaded(id);
 
                 return true;
@@ -376,7 +374,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                     // Do lots of stuff
                     long startIndex = lastChangeIndexSubscriber + 1;
-                    int changeLogId = OrderChangelog(datasetId, startIndex);
+                    string changeLogId = OrderChangelog(datasetId, startIndex);
 
                     if (!CheckStatusForChangelogOnProvider(datasetId, changeLogId)) return;
 
@@ -594,7 +592,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// <param name="datasetId"></param>
         /// <param name="changeLogId"></param>
         /// <returns></returns>
-        private bool CheckStatusForChangelogOnProvider(int datasetId, int changeLogId)
+        private bool CheckStatusForChangelogOnProvider(int datasetId, string changeLogId)
         {
             try
             {
