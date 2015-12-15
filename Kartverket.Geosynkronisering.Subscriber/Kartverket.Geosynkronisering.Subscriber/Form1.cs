@@ -238,9 +238,9 @@ namespace Kartverket.Geosynkronisering.Subscriber
         /// </summary>
         private void FillComboBoxDatasetName()
         {
-            cboDatasetName.Items.Clear();           
+            //cboDatasetName.Items.Clear();           
             var datasetNameList = DL.SubscriberDatasetManager.GetDatasetNamesAsDictionary();
-            cboDatasetName.DataSource = new BindingSource(datasetNameList, null);
+            cboDatasetName.DataSource = datasetNameList.ToList(); //new BindingSource(datasetNameList, null);
             cboDatasetName.DisplayMember = "Value";
             cboDatasetName.ValueMember = "Key";
 
