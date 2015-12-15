@@ -193,6 +193,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             }
         }
 
+        public static IDictionary<int, string> GetDatasetNamesAsDictionary()
+        {
+            using (var localDb = new geosyncDBEntities())
+            {
+                var dict = localDb.Dataset.Select( t => new { t.DatasetId, t.Name } )
+                   .ToDictionary( t => t.DatasetId, t => t.Name );
+                return dict;
+            }
+        }
         public static string TargetNamespace(Int32 DatasetID)
         {
             using (var localDb = new geosyncDBEntities())

@@ -238,17 +238,21 @@ namespace Kartverket.Geosynkronisering.Subscriber
         /// </summary>
         private void FillComboBoxDatasetName()
         {
-            cboDatasetName.Items.Clear();
-            var datasetNameList = DL.SubscriberDatasetManager.GetDatasetNames();
-            if (datasetNameList.Count > 0)
-            {
-                foreach (string name in datasetNameList)
-                {
-                    cboDatasetName.Items.Add(name);
-                }
+            cboDatasetName.Items.Clear();           
+            var datasetNameList = DL.SubscriberDatasetManager.GetDatasetNamesAsDictionary();
+            cboDatasetName.DataSource = new BindingSource(datasetNameList, null);
+            cboDatasetName.DisplayMember = "Value";
+            cboDatasetName.ValueMember = "Key";
 
-                cboDatasetName.SelectedIndex = _currentDatasetId - 1;
-            }
+            //if (datasetNameList.Count > 0)
+            //{
+            //    foreach (string name in datasetNameList)
+            //    {
+            //        cboDatasetName.Items.Add(name);
+            //    }
+
+            //    cboDatasetName.SelectedIndex = _currentDatasetId - 1;
+            //}
         }
 
         /// <summary>
@@ -258,7 +262,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void cboDatasetName_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _currentDatasetId = cboDatasetName.SelectedIndex + 1;
+            _currentDatasetId = ((KeyValuePair<int, string>)cboDatasetName.SelectedItem).Key;//cboDatasetName.SelectedIndex + 1;
+
             Properties.Subscriber.Default.DefaultDatasetId = _currentDatasetId;
             Properties.Subscriber.Default.Save();
             txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetDataset(_currentDatasetId).LastIndex.ToString();
