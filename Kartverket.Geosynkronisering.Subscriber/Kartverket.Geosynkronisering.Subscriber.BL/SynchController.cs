@@ -147,7 +147,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 {
                     //downloaduriWithExtension = downloaduri;
                     logger.Info("GetChangelog downloaduri  contains fileextension:" + fileExtension);
-                    downloaduri = Path.GetFileNameWithoutExtension(downloaduri);
+                    // Hack to remove eventual .zip from filename
+                    downloaduri = downloaduri.Replace(Path.GetExtension(downloaduri),"");
                 }
 
 
