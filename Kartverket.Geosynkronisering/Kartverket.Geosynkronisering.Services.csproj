@@ -174,7 +174,10 @@
     <Compile Include="ChangelogManager.cs" />
     <Compile Include="ChangelogProviders\ChangelogWFS.cs" />
     <Compile Include="ChangelogProviders\MockChangelog.cs" />
+    <Compile Include="ChangelogProviders\OracleSpatialChangelog.cs" />
     <Compile Include="ChangelogProviders\PostGISChangelog.cs" />
+    <Compile Include="ChangelogProviders\SpatialDbChangelog.cs" />
+    <Compile Include="ChangelogProviders\SqlServerSpatialChangelog.cs" />
     <Compile Include="Common\FileTransferHandler.cs" />
     <Compile Include="ConfigurationManager.cs" />
     <Compile Include="Datacontract\GeosyncWCFproxy2.cs" />
