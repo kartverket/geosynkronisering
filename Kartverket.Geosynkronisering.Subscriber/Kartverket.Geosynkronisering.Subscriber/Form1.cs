@@ -233,26 +233,32 @@ namespace Kartverket.Geosynkronisering.Subscriber
             dgDataset.Columns["DatasetId"].ReadOnly = true;
         }
 
+
+        bool comboFill = false;
         /// <summary>
         /// Fills the cboDatasetName comboBox with the dataset names
         /// </summary>
+        /// 
         private void FillComboBoxDatasetName()
         {
-            //cboDatasetName.Items.Clear();           
-            var datasetNameList = DL.SubscriberDatasetManager.GetDatasetNamesAsDictionary();
-            cboDatasetName.DataSource = datasetNameList.ToList(); //new BindingSource(datasetNameList, null);
+            //cboDatasetName.Items.Clear();  
+            comboFill = true;
+            IDictionary<int,string> datasetNameList = DL.SubscriberDatasetManager.GetDatasetNamesAsDictionary();
+            cboDatasetName.DataSource = new BindingSource(datasetNameList, null);
             cboDatasetName.DisplayMember = "Value";
             cboDatasetName.ValueMember = "Key";
-
+            cboDatasetName.SelectedValue = _currentDatasetId;
             //if (datasetNameList.Count > 0)
             //{
             //    foreach (string name in datasetNameList)
             //    {
             //        cboDatasetName.Items.Add(name);
             //    }
-
-            //    cboDatasetName.SelectedIndex = _currentDatasetId - 1;
+           
+            
+            //cboDatasetName.SelectedIndex = _currentDatasetId - 1;
             //}
+            comboFill = false;
         }
 
         /// <summary>
@@ -262,11 +268,22 @@ namespace Kartverket.Geosynkronisering.Subscriber
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void cboDatasetName_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _currentDatasetId = ((KeyValuePair<int, string>)cboDatasetName.SelectedItem).Key;//cboDatasetName.SelectedIndex + 1;
+            if (!comboFill) _currentDatasetId = ((KeyValuePair<int, string>)cboDatasetName.SelectedItem).Key;//cboDatasetName.SelectedIndex + 1;
 
             Properties.Subscriber.Default.DefaultDatasetId = _currentDatasetId;
             Properties.Subscriber.Default.Save();
-            txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetDataset(_currentDatasetId).LastIndex.ToString();
+            try
+            { txbSubscrLastindex.Text = DL.SubscriberDatasetManager.GetDataset(_currentDatasetId).LastIndex.ToString(); }
+            catch (Exception ex)
+            {
+                cboDatasetName.SelectedIndex = 0;
+                _currentDatasetId = ((KeyValuePair<int, string>)cboDatasetName.SelectedItem).Key;
+                Properties.Subscriber.Default.DefaultDatasetId = _currentDatasetId;
+                Properties.Subscriber.Default.Save();
+
+            }
+              
+            
         }
 
         /// <summary>
@@ -285,6 +302,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 }
 
                 // Fill the cboDatasetName comboBox with the dataset names
+                cboDatasetName.SelectedIndex = 0;
                 FillComboBoxDatasetName();
             }
             catch (Exception ex)
@@ -398,6 +416,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 dgDataset.DataSource = null;
 
                 InitializeDatasetGrid();
+                cboDatasetName.SelectedIndex = 0;
                 FillComboBoxDatasetName();
             }
 
