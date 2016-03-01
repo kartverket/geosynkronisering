@@ -97,7 +97,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                                        SynchronizationUrl = dataset.SyncronizationUrl,
                                        ClientWfsUrl = dataset.ClientWfsUrl,
                                        MaxCount = dataset.MaxCount.HasValue ? dataset.MaxCount.Value : -1,
-                                       ProviderDatasetId = dataset.ProviderDatasetId.HasValue ? dataset.ProviderDatasetId.Value : -1,
+                                       ProviderDatasetId = dataset.ProviderDatasetId,
                                        TargetNamespace = dataset.TargetNamespace,
                                        MappingFile = dataset.MappingFile
                                    };
@@ -171,7 +171,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             using (var localDb = new geosyncDBEntities())
             {
                 var res = from d in localDb.Dataset where d.DatasetId == datasetID select d.LastIndex;
-                if (res.First() != null) return res.First().ToString(); else return "";
+                if (res.FirstOrDefault() != null) return res.First().ToString(); else return "";
             }
         }
 
@@ -193,6 +193,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             }
         }
 
+        public static IDictionary<int, string> GetDatasetNamesAsDictionary()
+        {
+            using (var localDb = new geosyncDBEntities())
+            {
+                var dict = localDb.Dataset.Select( t => new { t.DatasetId, t.Name } )
+                   .ToDictionary( t => t.DatasetId, t => t.Name );
+                return dict;
+            }
+        }
         public static string TargetNamespace(Int32 DatasetID)
         {
             using (var localDb = new geosyncDBEntities())
@@ -213,7 +222,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                     {
                         ds.DatasetId = GetNextDatasetID();
                         ds.LastIndex = 0;
-                        ds.ClientWfsUrl = "http://localhost:8081/geoserver/wfs?"; //TODO: Flytt til config
+                        ds.ClientWfsUrl = "";
                         localDb.AddObject(ds.EntityKey.EntitySetName, ds);
                         localDb.SaveChanges();
                         localDb.AcceptAllChanges();

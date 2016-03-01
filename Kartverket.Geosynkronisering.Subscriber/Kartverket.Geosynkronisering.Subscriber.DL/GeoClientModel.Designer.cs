@@ -182,7 +182,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
-        public Nullable<global::System.Int32> LastIndex
+        public Nullable<global::System.Int64> LastIndex
         {
             get
             {
@@ -197,8 +197,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 OnLastIndexChanged();
             }
         }
-        private Nullable<global::System.Int32> _LastIndex;
-        partial void OnLastIndexChanging(Nullable<global::System.Int32> value);
+        private Nullable<global::System.Int64> _LastIndex;
+        partial void OnLastIndexChanging(Nullable<global::System.Int64> value);
         partial void OnLastIndexChanged();
     
         /// <summary>
@@ -278,7 +278,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
-        public Nullable<global::System.Int32> ProviderDatasetId
+        public global::System.String ProviderDatasetId
         {
             get
             {
@@ -288,13 +288,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             {
                 OnProviderDatasetIdChanging(value);
                 ReportPropertyChanging("ProviderDatasetId");
-                _ProviderDatasetId = StructuralObject.SetValidValue(value);
+                _ProviderDatasetId = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("ProviderDatasetId");
                 OnProviderDatasetIdChanged();
             }
         }
-        private Nullable<global::System.Int32> _ProviderDatasetId;
-        partial void OnProviderDatasetIdChanging(Nullable<global::System.Int32> value);
+        private global::System.String _ProviderDatasetId;
+        partial void OnProviderDatasetIdChanging(global::System.String value);
         partial void OnProviderDatasetIdChanged();
     
         /// <summary>

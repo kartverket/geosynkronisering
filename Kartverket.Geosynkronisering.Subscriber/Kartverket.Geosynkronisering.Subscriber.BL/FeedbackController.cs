@@ -17,7 +17,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             public string MilestoneDescription;
             public string NewLogListItem;
-            public int TotalNumberOfOrders;
+            public long TotalNumberOfOrders;
             public int OrdersProcessedCount;
 
             // NewSynchMilestoneReached
@@ -53,7 +53,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
 
             // OrderProcessingStart
-            public void OnOrderProcessingStart(int totalNumberOfOrders)
+            public void OnOrderProcessingStart(long totalNumberOfOrders)
             {
                 if (OrderProcessingStart == null) { return; }
                 this.TotalNumberOfOrders = totalNumberOfOrders;

@@ -15,7 +15,7 @@ using NLog;
 namespace Kartverket.Geosynkronisering
 {
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
-    [ServiceBehavior(Namespace = "http://skjema.geonorge.no/standard/geosynkronisering/1.0/produkt")]
+    [ServiceBehavior(Namespace = "http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt")]
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "WebFeatureServiceReplication" in code, svc and config file together.
     public class WebFeatureServiceReplication : Kartverket.GeosyncWCF.WebFeatureServiceReplicationPort
     {

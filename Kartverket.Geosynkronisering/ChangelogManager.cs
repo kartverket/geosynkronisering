@@ -110,7 +110,7 @@ namespace Kartverket.Geosynkronisering
                     resp.id = new Kartverket.GeosyncWCF.ChangelogIdentificationType();
                     resp.id.changelogId = changelog.ChangelogId.ToString();
                     // resp.@return.downloadUri = Utils.BaseSiteUrl + changelog.DownloadUri;
-                    resp.downloadUri = changelog.DownloadUri; // OKA changed 20121030
+                    resp.downloadUri = changelog.DownloadUri + ".zip"; // JJP - added .zip 20151215
                     resp.endIndex = changelog.EndIndex.Value.ToString();
                 }
             }
