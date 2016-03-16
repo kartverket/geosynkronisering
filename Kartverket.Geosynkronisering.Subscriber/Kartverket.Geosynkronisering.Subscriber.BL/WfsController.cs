@@ -326,7 +326,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 }
                 catch (WebException webEx)
                 {
-                    logger.ErrorException("GetLastIndexFromProvider WebException:", webEx);
+                    logger.ErrorException("DoWfsTransactions WebException:", webEx);
                     throw new Exception("WebException error : " + webEx.Message);
                     return false;
                 }
@@ -334,16 +334,16 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 {
                     //Response.Write(exception.Message);
                     //Response.Write(exception.ToString());
-                    logger.ErrorException("GetLastIndexFromProvider WebException:", ex);
+                    logger.ErrorException("DoWfsTransactions Exception (inner):", ex);
                     return false;
                 }
 
                 return sucsess;
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                logger.ErrorException("DoWfsTransactions failed:", ex);
                 throw;
                 return false;
             }

@@ -365,6 +365,16 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 long numberOfFeatures = lastChangeIndexProvider - lastChangeIndexSubscriber;
                 long numberOfOrders = (numberOfFeatures / maxCount);
+
+                if (lastChangeIndexProvider > int.MaxValue )
+                {
+                    // TODO: Fix for Norkart QMS Provider, TotalNumberOfOrders is not available here
+                    // Assume Norkart QMS Provider, not a sequential number
+                    logger.Info("DoSyncronization: Probably QMS Provider,  Provider lastIndex is not sequential, just a transaction number!");
+                    numberOfOrders = 10; // Just a guess
+                }
+
+
                 if (numberOfFeatures % maxCount > 0)
                     ++numberOfOrders;
 
@@ -459,10 +469,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                             // 20131102-Leg
                             var dataset = SubscriberDatasetManager.GetDataset(datasetId);
-                            int endChangeId = (int)changeLog.Attribute("endIndex");
+                            long endChangeId = (long)changeLog.Attribute("endIndex"); //20160315-Leg: long replaces int 
                             //
-                            int numberReturned = (int)changeLog.Attribute("numberReturned");
-                            int startChangeId = (int)changeLog.Attribute("startIndex");
+                            long numberReturned = (long)changeLog.Attribute("numberReturned"); //20160315-Leg: long replaces int 
+                            long startChangeId = (long)changeLog.Attribute("startIndex"); //20160315-Leg: long replaces int 
+                            
                             //int endIndex = (int)changeLog.Attribute("endIndex"); 
                             //endChangeId = startChangeId + numberReturned-1;
 
@@ -589,14 +600,19 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 this.OnUpdateLogList("Syncronization Completed. Elapsed time: " + elapsedTime);
                 logger.Info("Syncronization Completed. Elapsed time: {0}", elapsedTime);
 
+                // To set the progressbar to complete / finished
+                this.OnOrderProcessingChange(int.MaxValue);
+
                 this.OnNewSynchMilestoneReached("Synch completed");
             }
             catch (WebException webEx)
             {
+                logger.ErrorException("DoSynchronization WebException:", webEx);
                 throw new Exception(webEx.Message);
             }
             catch (Exception ex)
             {
+                logger.ErrorException("DoSynchronization Exception:", ex);
                 throw new Exception(ex.Message);
             }
         }
@@ -618,6 +634,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 var elapsedSpan = new TimeSpan(elapsedTicks);
                 int timeout = 5;
+                //timeout = 50; // TODO: Fix for Norkart Provider,
 
                 while ((changeLogStatus == ChangelogStatusType.queued || changeLogStatus == ChangelogStatusType.working) &&
                        elapsedSpan.Minutes < timeout)
@@ -633,6 +650,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     {
                         logger.Info("Cancelled by Server! Call provider.");
                         this.OnNewSynchMilestoneReached("Cancelled ChangeLog from Provider. Contact the proivider.");
+                    }
+                    else if (changeLogStatus == ChangelogStatusType.failed)
+                    {
+                        logger.Info("ChangelogStatusType.failed waiting for ChangeLog from Provider");
+                        this.OnNewSynchMilestoneReached("Failed waiting for ChangeLog from Provider. Contact the proivider.");
                     }
                     else
                     {
