@@ -755,7 +755,10 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             XNamespace nsXsi = "http://www.w3.org/2001/XMLSchema-instance";
             XNamespace nsGml = "http://www.opengis.net/gml/3.2";
 
-            string schemaLocation = "http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg http://geosynkronisering.no/files/skjema/1.1/changelogfile.xsd ";
+            // 20150407-Leg: Correct xsd location
+            // TODO: Should not be hardcoded
+            string schemaLocation = "http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg/changelogfile.xsd ";
+            //string schemaLocation = "http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg http://geosynkronisering.no/files/skjema/1.1/changelogfile.xsd ";
             schemaLocation += p_nsApp + " " + p_SchemaFileUri;
 
             XElement changelogRoot =
