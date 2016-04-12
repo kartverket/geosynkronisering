@@ -197,7 +197,59 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     // get response from request
                     HttpWebResponse httpWebResponse = null;
                     Stream responseStream = null;
-                    httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                    //httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                    try //20160411-Leg: Improved error handling
+                    {
+                        httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                    }
+                    catch (WebException wex)
+                    {
+                        if (wex.Response != null)
+                        {
+                            using (var errorResponse = (HttpWebResponse)wex.Response)
+                            {
+                                using (var reader = new StreamReader(errorResponse.GetResponseStream()))
+                                {
+                                    string error = reader.ReadToEnd();
+                                    if (error.ToString().Contains("ExceptionReport"))
+                                    {
+
+                                        // Check if response is an exception
+                                        XmlDocument xmldoc = new XmlDocument();
+                                        xmldoc.LoadXml(error);
+                                        XmlNode root = xmldoc.DocumentElement;
+                                        if (root != null && root.Name.Contains("ows:ExceptionReport"))
+                                        {
+                                            string wfsMessage = "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  Transaction Status:" + errorResponse.StatusCode + " " + errorResponse.StatusDescription + "\r\n" + error.ToString();
+                                            logger.Info(wfsMessage);
+                                            logger.ErrorException("DoWfsTransactions WebException:" + wfsMessage, wex);
+                                            this.ParentSynchController.OnUpdateLogList(root.InnerText);
+                                            //// check the file info
+                                            //string tempDir = System.Environment.GetEnvironmentVariable("TEMP");
+                                            //string fileName = tempDir + @"\" + "_wfsT-test1.xml";
+                                            //this.ParentSynchController.OnUpdateLogList("Check the file:" + fileName);
+
+                                            //throw new Exception("WebException error : " + wex.Message);
+                                            throw new WebException(root.InnerText);
+                                        }
+                                        else
+                                        {
+                                            string wfsMessage = "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  Transaction Status:" + errorResponse.StatusCode + " " + errorResponse.StatusDescription + "\r\n" + error.ToString();
+                                            logger.Info(wfsMessage);
+                                            logger.ErrorException("DoWfsTransactions WebException:" + wfsMessage, wex);
+                                            this.ParentSynchController.OnUpdateLogList(wfsMessage);
+                                            throw new Exception("WebException error : " + wex.Message);
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        logger.ErrorException("DoWfsTransactions WebException:", wex);
+
+                        throw new Exception("WebException error : " + wex.Message);
+                    }
+
 
                     var resultString = new StringBuilder("");
                     using (var resultStream = httpWebResponse.GetResponseStream())
@@ -386,7 +438,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 #region substitute_Replace_with_DeleteandInsert
                 // 20151006-Leg: Substutute wfs:replace with wfs:Delete and wfs:Insert.
                 bool replaced = WfsSubstituteReplaceWithDeleteAndInsert(changeLog, datasetId, transactions);
-                logger.Info("WfsSubstituteReplaceWithDeleteAndInsert() returned {0}",replaced);
+                logger.Info("WfsSubstituteReplaceWithDeleteAndInsert() returned {0}", replaced);
 
                 #endregion // substitute_Replace_with_DeleteandInsert
 
