@@ -767,9 +767,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                         int numberMatched = (int)changeLog.Attribute("numberMatched");
                         int numberReturned = (int)changeLog.Attribute("numberReturned");
-                        int startIndex = (int)changeLog.Attribute("startIndex");
-                        int endIndex = (int)changeLog.Attribute("endIndex"); //now correct
-                        int lastIndexSubscriber = startIndex + numberReturned; //endIndex - startIndex + 1;
+                        long startIndex = (long)changeLog.Attribute("startIndex");
+                        long endIndex = (long)changeLog.Attribute("endIndex"); //now correct
+                        long lastIndexSubscriber = startIndex + numberReturned; //endIndex - startIndex + 1;
 
                         dataset.LastIndex = endIndex; //lastIndexSubscriber;
                         DL.SubscriberDatasetManager.UpdateDataset(dataset);
