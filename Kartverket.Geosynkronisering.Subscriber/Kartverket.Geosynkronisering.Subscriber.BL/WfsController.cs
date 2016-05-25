@@ -246,6 +246,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                                         }
                                     }
+                                    else
+                                    {
+                                        logger.Info(error);
+                                        logger.ErrorException("DoWfsTransactions WebException:" + error, wex);
+                                        this.ParentSynchController.OnUpdateLogList("Error occured. Message from server: " + error);
+                                        throw new Exception("WebException error : " + wex);
+                                    }
                                 }
                             }
                         }
