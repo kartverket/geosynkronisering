@@ -190,10 +190,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
                     httpWebRequest.Method = "POST";
                     httpWebRequest.ContentType = "text/xml"; //"application/x-www-form-urlencoded";
+                    httpWebRequest.Timeout = System.Threading.Timeout.Infinite;
+                    httpWebRequest.AllowWriteStreamBuffering = false;
+                    httpWebRequest.SendChunked = true;
                     var writer = new StreamWriter(httpWebRequest.GetRequestStream());
-                    xDoc.Save(writer);
+                    xDoc.Save(writer, SaveOptions.DisableFormatting);
+                    xDoc.Root.RemoveAll();
                     writer.Close();
-
+                    //GC.Collect();
                     // get response from request
                     HttpWebResponse httpWebResponse = null;
                     Stream responseStream = null;
