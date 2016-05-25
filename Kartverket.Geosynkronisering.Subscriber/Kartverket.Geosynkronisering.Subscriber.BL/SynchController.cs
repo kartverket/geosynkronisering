@@ -425,77 +425,40 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         fileList.Add(downloadController.ChangelogFilename);
                     }
 
-                    foreach (string file in fileList)
+                    SubscriberDataset dataset = SubscriberDatasetManager.GetDataset(datasetId);
+
+                    //Rewrite files according to mappingfile if given
+                    if (!String.IsNullOrEmpty(dataset.MappingFile))
                     {
-                        string fileName = file;
-                        #region Lars
-                        #endregion
+                        fileList = changeLogMapper(fileList, datasetId);
+                    }
 
-                        //
-                        // Schema transformation
-                        // Mapping from the nested structure of one or more simple features to the simple features for GeoServer.
-                        //
-                        var schemaTransform = new SchemaTransform();
-                        var newFileName = schemaTransform.SchemaTransformSimplify(fileName, datasetId);
-
-                        if (!string.IsNullOrEmpty(newFileName))
+                    XElement changeLog = null;
+                    if (fileList.Count > 1 && lastChangeIndexSubscriber > 0)
+                    {
+                        changeLog = mergeChangelogs(fileList);
+                        PerformWfsTransaction(changeLog, datasetId, dataset);
+                    }
+                    else
+                        foreach (string fileName in fileList)
                         {
-                            fileName = newFileName;
-                        }
-
-
-                        // load an XML document from a file
-                        XElement changeLog = XElement.Load(fileName);
-
-                        this.OnNewSynchMilestoneReached("DoWfsTransactions starting...");
-
-
-
-                        var wfsController = new WfsController();
-                        wfsController.ParentSynchController = this; // TODO: This is a little dirty, but we can reuse the events of the SynchController parent for UI feedback
-
-
-                        // 20131102-Leg: Must use DoWfsTransactions, DoWfsTransactions2 is to slow on Updae/Delete
-                        if (wfsController.DoWfsTransactions(changeLog, datasetId))
-                        //if (wfsController.DoWfsTransactions2(changeLog, datasetId))
-                        {
-                            logger.Info("DoWfsTransactions OK, pass {0}", (i + 1));
-                            this.OnUpdateLogList(String.Format("DoWfsTransactions OK, pass {0}", (i + 1)));
+                            changeLog = XElement.Load(fileName);
+                            if (!PerformWfsTransaction(changeLog, datasetId, dataset))
+                                throw new Exception("WfsTransaction failed");
 
                             if (!downloadController.isFolder)
                             {
                                 AcknowledgeChangelogDownloaded(datasetId, changeLogId);
                             }
-
-                            // 20131102-Leg
-                            var dataset = SubscriberDatasetManager.GetDataset(datasetId);
-                            long endChangeId = (long)changeLog.Attribute("endIndex"); //20160315-Leg: long replaces int 
-                            //
-                            long numberReturned = (long)changeLog.Attribute("numberReturned"); //20160315-Leg: long replaces int 
-                            long startChangeId = (long)changeLog.Attribute("startIndex"); //20160315-Leg: long replaces int 
-                            
-                            //int endIndex = (int)changeLog.Attribute("endIndex"); 
-                            //endChangeId = startChangeId + numberReturned-1;
-
-                            dataset.LastIndex = endChangeId;
-                            DL.SubscriberDatasetManager.UpdateDataset(dataset);
-                        }
-                        else
-                        {
-                            // TODO: What to do here? We must at least break?
-                            return;
-
+                            logger.Info("DoWfsTransactions OK, pass {0}", (i + 1));
+                            this.OnUpdateLogList(String.Format("DoWfsTransactions OK, pass {0}", (i + 1)));
+                            this.OnOrderProcessingChange((progressCounter + 1)*100);
+                            ++progressCounter;
+                            i++;
                         }
 
-                        lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
-                        lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
-                        i++;
-
-                        #region Lars
-                        this.OnOrderProcessingChange((progressCounter + 1) * 100);
-                        ++progressCounter;
-                        #endregion
-                    }
+                    lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
+                    lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
                 }
 
                 #endregion
@@ -673,6 +636,97 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return true;
         }
 
+        private List<string> changeLogMapper(List<string> fileList, int datasetId)
+        {
+            List<string> newFileList= new List<string>();
+            foreach (string file in fileList)
+            {
+                string fileName = file;
+
+                #region Lars
+
+                #endregion
+
+                //
+                // Schema transformation
+                // Mapping from the nested structure of one or more simple features to the simple features for GeoServer.
+                //
+                var schemaTransform = new SchemaTransform();
+                var newFileName = schemaTransform.SchemaTransformSimplify(fileName, datasetId);
+
+                if (!string.IsNullOrEmpty(newFileName))
+                {
+                    fileName = newFileName;
+                }
+                newFileList.Add(fileName);
+            }
+            return newFileList;
+        }
+
+        private XElement mergeChangelogs(List<string> fileList)
+        {
+            bool firstFile = true;
+            XDocument mergedChangelog = new XDocument();
+            XElement originalChangelog;
+
+            foreach (string fileName in fileList)
+            {
+                if (firstFile)
+                {
+                    mergedChangelog.AddFirst(XElement.Load(fileName));
+                    firstFile = false;
+                }
+                else
+                {
+                    originalChangelog = XElement.Load(fileName);
+                    foreach (
+                        XElement wfsOperationElement in
+                            originalChangelog.Element(
+                                "{http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg}transactions")
+                                .Elements())
+                        mergedChangelog.Root.Element(
+                            "{http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg}transactions")
+                            .LastNode.AddAfterSelf(
+                                wfsOperationElement);
+                }
+            }
+            return mergedChangelog.Root;
+        }
+
+        private bool PerformWfsTransaction(XElement changeLog, int datasetId, SubscriberDataset dataset)
+        {
+            try
+            {
+                bool status = false;
+
+                int numberMatched = (int) changeLog.Attribute("numberMatched");
+                int numberReturned = (int) changeLog.Attribute("numberReturned");
+                long startIndex = (long) changeLog.Attribute("startIndex");
+                long endIndex = (long) changeLog.Attribute("endIndex"); //now correct
+                long lastIndexSubscriber = startIndex + numberReturned; //endIndex - startIndex + 1;
+
+
+                // Build wfs-t transaction from changelog, and do the transaction   
+                var wfsController = new WfsController();
+                wfsController.ParentSynchController = this;
+                // TODO: This is a little dirty, but we can reuse the events of the SynchController parent for UI feedback
+                this.OnNewSynchMilestoneReached("DoWfsTransactions starting...");
+
+                if (wfsController.DoWfsTransactions(changeLog, datasetId))
+                {
+                    status = true;
+                    dataset.LastIndex = endIndex; //lastIndexSubscriber;
+                    DL.SubscriberDatasetManager.UpdateDataset(dataset);
+                }
+                return status;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+                
+        }
+
         /// <summary>
         /// Tests the offline syncronization complete.
         /// </summary>
@@ -696,7 +750,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         return false;
                     }
                 }
-             
+
 
 
                 string outPath = Path.GetDirectoryName(zipFile);
@@ -733,48 +787,18 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     fileList.Add(xmlFile);
                 }
 
-                foreach (string file in fileList)
+                XElement changeLog = null;
+                if (fileList.Count > 1 && lastChangeIndexSubscriber > 0)
                 {
-                    string fileName = file;
-
-
-                    //string xmlFile = Path.ChangeExtension(zipFile, ".xml");
-                    ////_downLoadedChangelogName = xmlFile;
-
-                    //
-                    // Schema transformation
-                    // Mapping from the nested structure of one or more simple features to the simple features for GeoServer.
-                    //
-                    var schemaTransform = new SchemaTransform();
-                    var newFileName = schemaTransform.SchemaTransformSimplify(fileName, datasetId);
-                    if (!string.IsNullOrEmpty(newFileName))
-                    {
-                        fileName = newFileName;
-                    }
-
-
-
-                    // load an XML document from a file
-                    XElement changeLog = XElement.Load(fileName);
-
-                    // Build wfs-t transaction from changelog, and do the transaction    
-                    var wfsController = new WfsController();
-                    wfsController.ParentSynchController = this; // TODO: This is a little dirty, but we can reuse the events of the SynchController parent for UI feedback
-
-                    if (wfsController.DoWfsTransactions(changeLog, datasetId))
-                    {
-                        status = true;
-
-                        int numberMatched = (int)changeLog.Attribute("numberMatched");
-                        int numberReturned = (int)changeLog.Attribute("numberReturned");
-                        long startIndex = (long)changeLog.Attribute("startIndex");
-                        long endIndex = (long)changeLog.Attribute("endIndex"); //now correct
-                        long lastIndexSubscriber = startIndex + numberReturned; //endIndex - startIndex + 1;
-
-                        dataset.LastIndex = endIndex; //lastIndexSubscriber;
-                        DL.SubscriberDatasetManager.UpdateDataset(dataset);
-                    }
+                    changeLog = mergeChangelogs(fileList);
+                    status = PerformWfsTransaction(changeLog, datasetId, dataset);
                 }
+                else
+                    foreach (string fileName in fileList)
+                    {
+                        changeLog = XElement.Load(fileName);
+                        status = PerformWfsTransaction(changeLog, datasetId, dataset);
+                    }
 
 
                 return status;
