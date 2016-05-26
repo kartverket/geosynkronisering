@@ -25,11 +25,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         public void InitTransactionsSummary()
         {
-            TransactionsSummary = new TransactionSummary();
-            TransactionsSummary.TotalDeleted = 0;
-            TransactionsSummary.TotalInserted = 0;
-            TransactionsSummary.TotalReplaced = 0;
-            TransactionsSummary.TotalUpdated = 0;
+            TransactionsSummary = new TransactionSummary
+            {
+                TotalDeleted = 0,
+                TotalInserted = 0,
+                TotalReplaced = 0,
+                TotalUpdated = 0
+            };
         }
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
@@ -588,8 +590,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 else
                 {
                     originalChangelog = XElement.Load(fileName);
-                    foreach (XElement wfsOperationElement in originalChangelog.Element(transactionsElementPath).Elements())
-                        mergedChangelog.Root.Element(transactionsElementPath).LastNode.AddAfterSelf(wfsOperationElement);
+                    var originalTransactions = originalChangelog.Element(transactionsElementPath);
+                    if (originalTransactions != null)
+                        foreach (XElement wfsOperation in originalTransactions.Elements())
+                            if (mergedChangelog.Root != null)
+                            {
+                                var mergedTransactions = mergedChangelog.Root.Element(transactionsElementPath);
+                                if (mergedTransactions != null)
+                                    mergedTransactions.LastNode.AddAfterSelf(wfsOperation);
+                            }
                 }
             }
             return mergedChangelog.Root;
@@ -677,7 +686,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     fileList.Add(xmlFile);
                 }
 
-                XElement changeLog = null;
+                XElement changeLog;
                 int passNr = 1;
                 if (fileList.Count > 1 && lastChangeIndexSubscriber > 0)
                 {
