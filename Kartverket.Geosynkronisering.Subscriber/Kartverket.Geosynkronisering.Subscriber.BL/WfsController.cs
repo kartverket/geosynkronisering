@@ -14,7 +14,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 {
     public class WfsController : FeedbackController.Progress
     {
-        public static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
+        public static readonly Logger Logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         // TODO: This is a little dirty, but we can reuse the events of the SynchController parent for UI feedback
         public SynchController ParentSynchController;
@@ -23,15 +23,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// Build wfs-t transaction from changelog, and do the transaction
         /// </summary>
         /// <param name="changeLog"></param>
+        /// <param name="datasetId"></param>
         /// <returns></returns>
         public bool DoWfsTransactions(XElement changeLog, int datasetId)
         {
-            bool success = false;
-
             try
             {
-
-                var xDoc = constructWfsTransaction(changeLog);
+                bool success;
+                var xDoc = ConstructWfsTransaction(changeLog);
 
 
                 if (xDoc == null)
@@ -59,22 +58,20 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     //httpWebRequest.SendChunked = true;
                     var writer = new StreamWriter(httpWebRequest.GetRequestStream());
                     xDoc.Save(writer, SaveOptions.DisableFormatting);
-                    xDoc.Root.RemoveAll();
                     writer.Close();
                     //GC.Collect();
                     // get response from request
                     HttpWebResponse httpWebResponse = CheckResponseForErrors(httpWebRequest);
-                    success = createTransactionSummary(httpWebResponse);
+                    success = CreateTransactionSummary(httpWebResponse);
                 }
                 catch (WebException webEx)
                 {
-                    logger.ErrorException("DoWfsTransactions WebException:", webEx);
+                    Logger.ErrorException("DoWfsTransactions WebException:", webEx);
                     throw new Exception("WebException error : " + webEx.Message);
-                    return false;
                 }
                 catch (Exception ex)
                 {
-                    logger.ErrorException("DoWfsTransactions Exception (inner):", ex);
+                    Logger.ErrorException("DoWfsTransactions Exception (inner):", ex);
                     return false;
                 }
 
@@ -83,9 +80,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                logger.ErrorException("DoWfsTransactions failed:", ex);
+                Logger.ErrorException("DoWfsTransactions failed:", ex);
                 throw;
-                return false;
             }
         }
 
@@ -104,7 +100,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         using (var reader = new StreamReader(errorResponse.GetResponseStream()))
                         {
                             string error = reader.ReadToEnd();
-                            if (error.ToString().Contains("ExceptionReport"))
+                            if (error.Contains("ExceptionReport"))
                             {
 
                                 // Check if response is an exception
@@ -116,9 +112,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                                     string wfsMessage =
                                         "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  Transaction Status:" +
                                         errorResponse.StatusCode + " " + errorResponse.StatusDescription +
-                                        "\r\n" + error.ToString();
-                                    logger.Info(wfsMessage);
-                                    logger.ErrorException("DoWfsTransactions WebException:" + wfsMessage, wex);
+                                        "\r\n" + error;
+                                    Logger.Info(wfsMessage);
+                                    Logger.ErrorException("DoWfsTransactions WebException:" + wfsMessage, wex);
                                     this.ParentSynchController.OnUpdateLogList(root.InnerText);
                                     throw new WebException(root.InnerText);
                                 }
@@ -127,38 +123,38 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                                     string wfsMessage =
                                         "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  Transaction Status:" +
                                         errorResponse.StatusCode + " " + errorResponse.StatusDescription +
-                                        "\r\n" + error.ToString();
-                                    logger.Info(wfsMessage);
-                                    logger.ErrorException("DoWfsTransactions WebException:" + wfsMessage, wex);
-                                    this.ParentSynchController.OnUpdateLogList(wfsMessage);
+                                        "\r\n" + error;
+                                    Logger.Info(wfsMessage);
+                                    Logger.ErrorException("DoWfsTransactions WebException:" + wfsMessage, wex);
+                                    ParentSynchController.OnUpdateLogList(wfsMessage);
                                     throw new Exception("WebException error : " + wex.Message);
 
                                 }
                             }
                             //Not an exception-report. Likely the service could not be found at the given url.
-                            logger.Info(error);
-                            logger.ErrorException("DoWfsTransactions WebException:" + error, wex);
-                            this.ParentSynchController.OnUpdateLogList(
+                            Logger.Info(error);
+                            Logger.ErrorException("DoWfsTransactions WebException:" + error, wex);
+                            ParentSynchController.OnUpdateLogList(
                                 "Error occured. Message from server: " + error);
                             throw new Exception("WebException error : " + wex);
 
                         }
                     }
                 }
-                logger.ErrorException("DoWfsTransactions WebException:", wex);
+                Logger.ErrorException("DoWfsTransactions WebException:", wex);
 
                 throw new Exception("WebException error : " + wex.Message);
             }
         }
 
-        private XDocument constructWfsTransaction(XElement changeLog)
+        private XDocument ConstructWfsTransaction(XElement changeLog)
         {
             string geosyncNs = "{http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg}";
 
             string geosyncNsOld = "{http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg}";
 
             List<string> skipList =
-                new List<string>(new string[] {"startIndex", "endIndex", "numberMatched", "numberReturned", "timeStamp"});
+                new List<string>(new[] {"startIndex", "endIndex", "numberMatched", "numberReturned", "timeStamp"});
 
             XElement root = new XElement("{http://www.opengis.net/wfs/2.0}Transaction");
 
@@ -177,7 +173,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             if (changeLog.Element(geosyncNs + "transactions") == null)
             {
                 ParentSynchController.OnUpdateLogList(
-                    "WARNING: No transactions found for namespace " + geosyncNs + ". Trying to run transaction using " + geosyncNsOld);
+                    "WARNING: No transactions found for namespace " + geosyncNs + ". Trying to run transaction using " +
+                    geosyncNsOld);
                 geosyncNs = geosyncNsOld;
             }
 
@@ -197,10 +194,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return xDoc;
         }
 
-        private bool createTransactionSummary(HttpWebResponse httpWebResponse)
+        private bool CreateTransactionSummary(HttpWebResponse httpWebResponse)
         {
             bool success = false;
-            Stream responseStream = null;
             var resultString = new StringBuilder("");
             using (var resultStream = httpWebResponse.GetResponseStream())
             {
@@ -218,7 +214,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             httpWebResponse.Close();
             if (httpWebResponse.StatusCode == HttpStatusCode.OK &&
-                        resultString.ToString().Contains("ExceptionReport") == false)
+                resultString.ToString().Contains("ExceptionReport") == false)
             {
 
                 success = true;
@@ -238,7 +234,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         "DoWfsTransactions: deegree/Geoserver WFS-T Transaction: transactionSummary" +
                         " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + transactionSummary;
 
-                    logger.Info(wfsMessage);
+                    Logger.Info(wfsMessage);
                     IEnumerable<XElement> transactions =
                         from item in transactionResponseElement.Descendants()
                         where
@@ -248,45 +244,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     string tranResult = "";
                     foreach (var tran in transactions)
                     {
-                        //string tranResult = "unknown";
-                        if (tranResult.Length > 0)
-                        {
-                            tranResult += " ";
-                        }
-                        if (tran.Name == nsWfs + "totalInserted")
-                        {
-                            tranResult += "totalInserted" + ":" + tran.Value;
-                            this.ParentSynchController.TransactionsSummary.TotalInserted +=
-                                Convert.ToInt32(tran.Value);
-                        }
-                        else if (tran.Name == nsWfs + "totalUpdated")
-                        {
-                            tranResult += "totalUpdated" + ":" + tran.Value;
-                            //tranResult = "totalUpdated";
-                            this.ParentSynchController.TransactionsSummary.TotalUpdated +=
-                                Convert.ToInt32(tran.Value);
-                        }
-                        else if (tran.Name == nsWfs + "totalDeleted")
-                        {
-                            tranResult += "totalDeleted" + ":" + tran.Value;
-                            this.ParentSynchController.TransactionsSummary.TotalDeleted +=
-                                Convert.ToInt32(tran.Value);
-                        }
-                        else if (tran.Name == nsWfs + "totalReplaced")
-                        {
-                            tranResult += "totalReplaced" + ":" + tran.Value;
-                            this.ParentSynchController.TransactionsSummary.TotalReplaced +=
-                                Convert.ToInt32(tran.Value);
-                        }
-                        else
-                        {
-                            tranResult = "unknown";
-                        }
+                        tranResult += UpdateSyncTransactionSummary(tran);
                     }
 
                     // Raise event to eventual UI
                     var logMessage = tranResult;
-                    this.ParentSynchController.OnUpdateLogList(logMessage);
+                    ParentSynchController.OnUpdateLogList(logMessage);
 
                 }
                 else
@@ -294,8 +257,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     string wfsMessage =
                         "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  transactionSummary" +
                         " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + "No transactions ";
-                    logger.Info(wfsMessage);
-                    this.ParentSynchController.OnUpdateLogList(wfsMessage);
+                    Logger.Info(wfsMessage);
+                    ParentSynchController.OnUpdateLogList(wfsMessage);
                 }
             }
             else
@@ -303,11 +266,37 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 string wfsMessage =
                     "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  Transaction Status:" +
                     httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription + "\r\n" +
-                    resultString.ToString();
-                logger.Info(wfsMessage);
-                this.ParentSynchController.OnUpdateLogList(wfsMessage);
+                    resultString;
+                Logger.Info(wfsMessage);
+                ParentSynchController.OnUpdateLogList(wfsMessage);
             }
             return success;
+        }
+
+        private string UpdateSyncTransactionSummary(XElement tran)
+        {
+            switch (tran.Name.LocalName)
+            {
+                case "totalInserted":
+                    ParentSynchController.TransactionsSummary.TotalInserted +=
+                        Convert.ToInt32(tran.Value);
+                    break;
+                case "totalUpdated":
+                    ParentSynchController.TransactionsSummary.TotalUpdated +=
+                        Convert.ToInt32(tran.Value);
+                    break;
+                case "totalDeleted":
+                    ParentSynchController.TransactionsSummary.TotalDeleted +=
+                        Convert.ToInt32(tran.Value);
+                    break;
+                case "totalReplaced":
+                    ParentSynchController.TransactionsSummary.TotalReplaced +=
+                        Convert.ToInt32(tran.Value);
+                    break;
+                default:
+                    return "unknown ";
+            }
+            return tran.Name.LocalName + " ";
         }
     }
 }
