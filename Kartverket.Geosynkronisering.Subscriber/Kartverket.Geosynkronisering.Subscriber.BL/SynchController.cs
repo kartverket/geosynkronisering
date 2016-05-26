@@ -32,7 +32,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             TransactionsSummary.TotalUpdated = 0;
         }
 
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         public TransactionSummary TransactionsSummary;
 
@@ -49,9 +49,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// <param name="datasetId"></param>
         public void ResetSubscriberLastIndex(int datasetId)
         {
-            var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
+            var dataset = SubscriberDatasetManager.GetDataset(datasetId);
             dataset.LastIndex = 0;
-            DL.SubscriberDatasetManager.UpdateDataset(dataset);
+            SubscriberDatasetManager.UpdateDataset(dataset);
         }
 
         /// <summary>
@@ -64,12 +64,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         {
             try
             {
-                var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
+                var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
                 var client = new WebFeatureServiceReplicationPortClient();
                 client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
                 var order = new ChangelogOrderType();
-                order.datasetId = dataset.ProviderDatasetId.ToString();
+                order.datasetId = dataset.ProviderDatasetId;
                 order.count = dataset.MaxCount.ToString();
                 order.startIndex = startIndex.ToString();
 
@@ -79,7 +79,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                logger.ErrorException("OrderChangelog failed:", ex);
+                Logger.ErrorException("OrderChangelog failed:", ex);
                 throw;
             }
         }
@@ -108,7 +108,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                logger.ErrorException("GetChangelogStatusResponse failed:", ex);
+                Logger.ErrorException("GetChangelogStatusResponse failed:", ex);
                 throw;
             }
         }
@@ -124,7 +124,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         {
             try
             {
-                var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
+                var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
                 var client = new WebFeatureServiceReplicationPortClient();
                 client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
@@ -136,11 +136,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 string downloaduri = resp.downloadUri;
 
                 // 20151215-Leg: Norkart downloaduri may contain .zip
-                logger.Info("GetChangelog downloaduri: " + downloaduri);
+                Logger.Info("GetChangelog downloaduri: " + downloaduri);
                 string fileExtension = Path.GetExtension(downloaduri);
                 if (fileExtension != String.Empty)
                 {
-                    logger.Info("GetChangelog downloaduri  contains fileextension:" + fileExtension);
+                    Logger.Info("GetChangelog downloaduri  contains fileextension:" + fileExtension);
                     // Hack to remove eventual .zip from filename
                     downloaduri = downloaduri.Replace(Path.GetExtension(downloaduri), "");
                 }
@@ -151,7 +151,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 string fileName = tempDir + @"\" + changelogid + "_Changelog.xml";
 #else
                 const string ftpPath = "abonnent";
-                BL.Utils.Misc.CreateFolderIfMissing(tempDir + @"\" + ftpPath);
+                Utils.Misc.CreateFolderIfMissing(tempDir + @"\" + ftpPath);
                 // Create the abonnent folder if missing               
 
                 string fileName = tempDir + @"\" + ftpPath + @"\" + Path.GetFileName(downloaduri) + ".zip";
@@ -162,12 +162,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (WebException webEx)
             {
-                logger.ErrorException("GetChangelog failed:", webEx);
+                Logger.ErrorException("GetChangelog failed:", webEx);
                 throw;
             }
             catch (Exception ex)
             {
-                logger.ErrorException("GetChangelog failed:", ex);
+                Logger.ErrorException("GetChangelog failed:", ex);
                 throw;
             }
             return true;
@@ -191,12 +191,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (WebException webEx)
             {
-                logger.ErrorException("ListStoredChangelogs WebException:", webEx);
+                Logger.ErrorException("ListStoredChangelogs WebException:", webEx);
                 throw;
             }
             catch (Exception ex)
             {
-                logger.ErrorException("ListStoredChangelogs failed:", ex);
+                Logger.ErrorException("ListStoredChangelogs failed:", ex);
                 throw;
             }
         }
@@ -227,12 +227,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     return false;
                 }
 
-                logger.ErrorException("AcknowledgeChangelogDownloaded WebException:", webEx);
+                Logger.ErrorException("AcknowledgeChangelogDownloaded WebException:", webEx);
                 throw;
             }
             catch (Exception ex)
             {
-                logger.ErrorException("AcknowledgeChangelogDownloaded failed:", ex);
+                Logger.ErrorException("AcknowledgeChangelogDownloaded failed:", ex);
                 throw;
             }
         }
@@ -264,12 +264,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     return true;
                 }
 
-                logger.ErrorException("CancelChangelog WebException:", webEx);
+                Logger.ErrorException("CancelChangelog WebException:", webEx);
                 throw;
             }
             catch (Exception ex)
             {
-                logger.ErrorException("CancelChangelog failed:", ex);
+                Logger.ErrorException("CancelChangelog failed:", ex);
                 throw;
             }
         }
@@ -295,19 +295,19 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             catch (WebException webEx)
             {
-                logger.ErrorException("GetLastIndexFromProvider WebException:", webEx);
+                Logger.ErrorException("GetLastIndexFromProvider WebException:", webEx);
                 throw;
             }
             catch (Exception ex)
             {
-                logger.ErrorException("GetLastIndexFromProvider failed:", ex);
+                Logger.ErrorException("GetLastIndexFromProvider failed:", ex);
                 throw;
             }
         }
 
         public long GetLastIndexFromSubscriber(int datasetId)
         {
-            var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
+            var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
             if (dataset == null)
                 return -1;
@@ -318,8 +318,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// <summary>
         /// Synchronizing of a given dataset
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="datasetId"></param>
         public void DoSynchronization(int datasetId)
         {
             try
@@ -332,7 +331,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 long lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
 
                 var logMessage = "GetLastIndexFromProvider lastIndex: " + lastChangeIndexProvider;
-                logger.Info(logMessage);
+                Logger.Info(logMessage);
                 OnUpdateLogList(logMessage);
                 OnNewSynchMilestoneReached("GetLastIndexFromProvider OK");
 
@@ -340,7 +339,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 long lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
 
                 logMessage = "GetLastChangeIndexSubscriber lastIndex: " + lastChangeIndexSubscriber;
-                logger.Info(logMessage);
+                Logger.Info(logMessage);
                 OnUpdateLogList(logMessage);
                 OnNewSynchMilestoneReached("GetLastIndexFromSubscriber OK");
 
@@ -351,7 +350,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     //this.OnNewSynchMilestoneReached(logMessage);
                     logMessage += " Provider lastIndex:" + lastChangeIndexProvider + " Subscriber lastChangeIndex: " +
                                   lastChangeIndexSubscriber;
-                    logger.Info(logMessage);
+                    Logger.Info(logMessage);
                     OnUpdateLogList(logMessage); // Raise event to UI
                     OnNewSynchMilestoneReached(logMessage);
                     return;
@@ -368,7 +367,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 {
                     // TODO: Fix for Norkart QMS Provider, TotalNumberOfOrders is not available here
                     // Assume Norkart QMS Provider, not a sequential number
-                    logger.Info(
+                    Logger.Info(
                         "DoSyncronization: Probably QMS Provider,  Provider lastIndex is not sequential, just a transaction number!");
                     numberOfOrders = 10; // Just a guess
                 }
@@ -377,7 +376,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 if (numberOfFeatures%maxCount > 0)
                     ++numberOfOrders;
 
-                logger.Info("DoSyncronization: numberOfFeatures:{0} numberOfOrders:{1} maxCount:{2}", numberOfFeatures,
+                Logger.Info("DoSyncronization: numberOfFeatures:{0} numberOfOrders:{1} maxCount:{2}", numberOfFeatures,
                     numberOfOrders, maxCount);
                 OnUpdateLogList("MaxCount: " + maxCount);
 
@@ -434,7 +433,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         fileList = changeLogMapper(fileList, datasetId);
                     }
 
-                    XElement changeLog = null;
+                    XElement changeLog;
                     if (fileList.Count > 1 && lastChangeIndexSubscriber > 0)
                     {
                         changeLog = mergeChangelogs(fileList);
@@ -469,7 +468,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
 
                 OnUpdateLogList("Syncronization Completed. Elapsed time: " + elapsedTime);
-                logger.Info("Syncronization Completed. Elapsed time: {0}", elapsedTime);
+                Logger.Info("Syncronization Completed. Elapsed time: {0}", elapsedTime);
 
                 // To set the progressbar to complete / finished
                 OnOrderProcessingChange(int.MaxValue);
@@ -478,12 +477,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (WebException webEx)
             {
-                logger.ErrorException("DoSynchronization WebException:", webEx);
+                Logger.ErrorException("DoSynchronization WebException:", webEx);
                 throw new Exception(webEx.Message);
             }
             catch (Exception ex)
             {
-                logger.ErrorException("DoSynchronization Exception:", ex);
+                Logger.ErrorException("DoSynchronization Exception:", ex);
                 OnUpdateLogList(ex.Message);
                 throw new Exception(ex.Message);
             }
@@ -505,7 +504,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 long elapsedTicks = DateTime.Now.Ticks - starttid.Ticks;
 
                 var elapsedSpan = new TimeSpan(elapsedTicks);
-                int timeout = 5;
+                int timeout = 15;
                 //timeout = 50; // TODO: Fix for Norkart Provider,
 
                 while ((changeLogStatus == ChangelogStatusType.queued || changeLogStatus == ChangelogStatusType.working) &&
@@ -520,18 +519,18 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 {
                     if (changeLogStatus == ChangelogStatusType.cancelled)
                     {
-                        logger.Info("Cancelled by Server! Call provider.");
+                        Logger.Info("Cancelled by Server! Call provider.");
                         OnNewSynchMilestoneReached("Cancelled ChangeLog from Provider. Contact the proivider.");
                     }
                     else if (changeLogStatus == ChangelogStatusType.failed)
                     {
-                        logger.Info("ChangelogStatusType.failed waiting for ChangeLog from Provider");
+                        Logger.Info("ChangelogStatusType.failed waiting for ChangeLog from Provider");
                         OnNewSynchMilestoneReached(
                             "Failed waiting for ChangeLog from Provider. Contact the proivider.");
                     }
                     else
                     {
-                        logger.Info("Timeout");
+                        Logger.Info("Timeout");
                         OnNewSynchMilestoneReached("Timeout waiting for ChangeLog from Provider.");
                     }
                     return false;
@@ -540,7 +539,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                logger.ErrorException(
+                Logger.ErrorException(
                     string.Format("Failed to get ChangeLog Status for changelog {0} from provider {1}", changeLogId,
                         "TEST"), ex);
                 return false;
@@ -573,6 +572,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         private XElement mergeChangelogs(List<string> fileList)
         {
+            string transactionsElementPath =
+                "{http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg}transactions";
             bool firstFile = true;
             XDocument mergedChangelog = new XDocument();
             XElement originalChangelog;
@@ -587,15 +588,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 else
                 {
                     originalChangelog = XElement.Load(fileName);
-                    foreach (
-                        XElement wfsOperationElement in
-                            originalChangelog.Element(
-                                "{http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg}transactions")
-                                .Elements())
-                        mergedChangelog.Root.Element(
-                            "{http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg}transactions")
-                            .LastNode.AddAfterSelf(
-                                wfsOperationElement);
+                    foreach (XElement wfsOperationElement in originalChangelog.Element(transactionsElementPath).Elements())
+                        mergedChangelog.Root.Element(transactionsElementPath).LastNode.AddAfterSelf(wfsOperationElement);
                 }
             }
             return mergedChangelog.Root;
@@ -619,7 +613,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 if (wfsController.DoWfsTransactions(changeLog, datasetId))
                 {
-                    logger.Info("DoWfsTransactions OK, pass {0}", passNr);
+                    Logger.Info("DoWfsTransactions OK, pass {0}", passNr);
                     OnUpdateLogList(String.Format("DoWfsTransactions OK, pass {0}", passNr));
                     status = true;
                     dataset.LastIndex = endIndex;
@@ -704,7 +698,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             catch (Exception ex)
             {
-                logger.ErrorException("TestOfflineSyncronizationComplete:", ex);
+                Logger.ErrorException("TestOfflineSyncronizationComplete:", ex);
                 throw;
             }
         }
