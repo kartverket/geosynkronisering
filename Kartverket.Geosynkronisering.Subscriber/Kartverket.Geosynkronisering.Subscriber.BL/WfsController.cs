@@ -17,7 +17,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
     {
         public static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
-        public SynchController ParentSynchController; // TODO: This is a little dirty, but we can reuse the events of the SynchController parent for UI feedback
+        public SynchController ParentSynchController;
+            // TODO: This is a little dirty, but we can reuse the events of the SynchController parent for UI feedback
+
         /// <summary>
         /// Get all wfs:Insert
         /// </summary>
@@ -51,7 +53,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 IEnumerable<XElement> transactions =
                     from item in changeLog.Descendants()
-                    where item.Name == nsWfs + "Insert" || item.Name == nsWfs + "Delete" || item.Name == nsWfs + "Update" || item.Name == nsWfs + "Replace"
+                    where
+                        item.Name == nsWfs + "Insert" || item.Name == nsWfs + "Delete" || item.Name == nsWfs + "Update" ||
+                        item.Name == nsWfs + "Replace"
                     select item;
 
                 return transactions;
@@ -133,7 +137,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 // Distinct() doesn't work with namespaces decleared as var!!
                 IEnumerable<XNamespace> namespaces = (from x in changeLog.DescendantsAndSelf()
-                                                      select x.Name.Namespace).Distinct();
+                    select x.Name.Namespace).Distinct();
 
                 sb.AppendLine("namespaces:");
                 foreach (var ns in namespaces)
@@ -187,7 +191,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                     //String url = Properties.Settings.Default.urlGeoserverSubscriber; // "http://localhost:8081/geoserver/app/ows?service=WFS";
 
-                    var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                    var httpWebRequest = (HttpWebRequest) WebRequest.Create(url);
                     httpWebRequest.Method = "POST";
                     httpWebRequest.ContentType = "text/xml"; //"application/x-www-form-urlencoded";
                     httpWebRequest.Timeout = System.Threading.Timeout.Infinite;
@@ -205,13 +209,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     //httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
                     try //20160411-Leg: Improved error handling
                     {
-                        httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                        httpWebResponse = (HttpWebResponse) httpWebRequest.GetResponse();
                     }
                     catch (WebException wex)
                     {
                         if (wex.Response != null)
                         {
-                            using (var errorResponse = (HttpWebResponse)wex.Response)
+                            using (var errorResponse = (HttpWebResponse) wex.Response)
                             {
                                 using (var reader = new StreamReader(errorResponse.GetResponseStream()))
                                 {
@@ -225,7 +229,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                                         XmlNode root = xmldoc.DocumentElement;
                                         if (root != null && root.Name.Contains("ows:ExceptionReport"))
                                         {
-                                            string wfsMessage = "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  Transaction Status:" + errorResponse.StatusCode + " " + errorResponse.StatusDescription + "\r\n" + error.ToString();
+                                            string wfsMessage =
+                                                "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  Transaction Status:" +
+                                                errorResponse.StatusCode + " " + errorResponse.StatusDescription +
+                                                "\r\n" + error.ToString();
                                             logger.Info(wfsMessage);
                                             logger.ErrorException("DoWfsTransactions WebException:" + wfsMessage, wex);
                                             this.ParentSynchController.OnUpdateLogList(root.InnerText);
@@ -239,7 +246,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                                         }
                                         else
                                         {
-                                            string wfsMessage = "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  Transaction Status:" + errorResponse.StatusCode + " " + errorResponse.StatusDescription + "\r\n" + error.ToString();
+                                            string wfsMessage =
+                                                "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  Transaction Status:" +
+                                                errorResponse.StatusCode + " " + errorResponse.StatusDescription +
+                                                "\r\n" + error.ToString();
                                             logger.Info(wfsMessage);
                                             logger.ErrorException("DoWfsTransactions WebException:" + wfsMessage, wex);
                                             this.ParentSynchController.OnUpdateLogList(wfsMessage);
@@ -251,7 +261,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                                     {
                                         logger.Info(error);
                                         logger.ErrorException("DoWfsTransactions WebException:" + error, wex);
-                                        this.ParentSynchController.OnUpdateLogList("Error occured. Message from server: " + error);
+                                        this.ParentSynchController.OnUpdateLogList(
+                                            "Error occured. Message from server: " + error);
                                         throw new Exception("WebException error : " + wex);
                                     }
                                 }
@@ -280,7 +291,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     }
                     httpWebResponse.Close();
 
-                    if (httpWebResponse.StatusCode == HttpStatusCode.OK && resultString.ToString().Contains("ExceptionReport") == false)
+                    if (httpWebResponse.StatusCode == HttpStatusCode.OK &&
+                        resultString.ToString().Contains("ExceptionReport") == false)
                     {
                         //TODO en får alltid status 200 OK fra geoserver
                         //En må sjekke om en har fått ExceptionReport
@@ -306,9 +318,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                         if (transactionSummaries.Any())
                         {
-                            string transactionSummary = transactionSummaries.ElementAt(0).ToString(SaveOptions.DisableFormatting);
+                            string transactionSummary =
+                                transactionSummaries.ElementAt(0).ToString(SaveOptions.DisableFormatting);
 
-                            string wfsMessage = "DoWfsTransactions: deegree/Geoserver WFS-T Transaction: transactionSummary" + " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + transactionSummary;
+                            string wfsMessage =
+                                "DoWfsTransactions: deegree/Geoserver WFS-T Transaction: transactionSummary" +
+                                " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + transactionSummary;
 
                             logger.Info(wfsMessage);
                             //this.ParentSynchController.OnUpdateLogList(wfsMessage);
@@ -321,7 +336,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             //listBoxLog.Items.Add("TransactionSummary:");
                             IEnumerable<XElement> transactions =
                                 from item in transactionResponseElement.Descendants()
-                                where item.Name == nsWfs + "totalInserted" || item.Name == nsWfs + "totalUpdated" || item.Name == nsWfs + "totalReplaced" || item.Name == nsWfs + "totalDeleted"
+                                where
+                                    item.Name == nsWfs + "totalInserted" || item.Name == nsWfs + "totalUpdated" ||
+                                    item.Name == nsWfs + "totalReplaced" || item.Name == nsWfs + "totalDeleted"
                                 select item;
                             string tranResult = "";
                             foreach (var tran in transactions)
@@ -334,23 +351,27 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                                 if (tran.Name == nsWfs + "totalInserted")
                                 {
                                     tranResult += "totalInserted" + ":" + tran.Value;
-                                    this.ParentSynchController.TransactionsSummary.TotalInserted += Convert.ToInt32(tran.Value);
+                                    this.ParentSynchController.TransactionsSummary.TotalInserted +=
+                                        Convert.ToInt32(tran.Value);
                                 }
                                 else if (tran.Name == nsWfs + "totalUpdated")
                                 {
                                     tranResult += "totalUpdated" + ":" + tran.Value;
                                     //tranResult = "totalUpdated";
-                                    this.ParentSynchController.TransactionsSummary.TotalUpdated += Convert.ToInt32(tran.Value);
+                                    this.ParentSynchController.TransactionsSummary.TotalUpdated +=
+                                        Convert.ToInt32(tran.Value);
                                 }
                                 else if (tran.Name == nsWfs + "totalDeleted")
                                 {
                                     tranResult += "totalDeleted" + ":" + tran.Value;
-                                    this.ParentSynchController.TransactionsSummary.TotalDeleted += Convert.ToInt32(tran.Value);
+                                    this.ParentSynchController.TransactionsSummary.TotalDeleted +=
+                                        Convert.ToInt32(tran.Value);
                                 }
                                 else if (tran.Name == nsWfs + "totalReplaced")
                                 {
                                     tranResult += "totalReplaced" + ":" + tran.Value;
-                                    this.ParentSynchController.TransactionsSummary.TotalReplaced += Convert.ToInt32(tran.Value);
+                                    this.ParentSynchController.TransactionsSummary.TotalReplaced +=
+                                        Convert.ToInt32(tran.Value);
                                 }
                                 else
                                 {
@@ -376,14 +397,19 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         }
                         else
                         {
-                            string wfsMessage = "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  transactionSummary" + " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + "No transactions ";
+                            string wfsMessage =
+                                "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  transactionSummary" +
+                                " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + "No transactions ";
                             logger.Info(wfsMessage);
                             this.ParentSynchController.OnUpdateLogList(wfsMessage);
                         }
                     }
                     else
                     {
-                        string wfsMessage = "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  Transaction Status:" + httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription + "\r\n" + resultString.ToString();
+                        string wfsMessage =
+                            "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  Transaction Status:" +
+                            httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription + "\r\n" +
+                            resultString.ToString();
                         logger.Info(wfsMessage);
                         this.ParentSynchController.OnUpdateLogList(wfsMessage);
                     }
@@ -438,8 +464,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 // Generate the XDocument
                 //
                 XDocument xDoc = new XDocument(
-                    new XElement(nsWfs + "Transaction", new XAttribute("version", "2.0.0"), new XAttribute("service", "WFS"),
-                                 new XAttribute(XNamespace.Xmlns + "wfs", "http://www.opengis.net/wfs/2.0"), xAttributeXsi)
+                    new XElement(nsWfs + "Transaction", new XAttribute("version", "2.0.0"),
+                        new XAttribute("service", "WFS"),
+                        new XAttribute(XNamespace.Xmlns + "wfs", "http://www.opengis.net/wfs/2.0"), xAttributeXsi)
                     );
 
                 //
@@ -448,6 +475,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 IEnumerable<XElement> transactions = GetWfsTransactions(changeLog);
 
                 #region substitute_Replace_with_DeleteandInsert
+
                 // 20151006-Leg: Substutute wfs:replace with wfs:Delete and wfs:Insert.
                 bool replaced = WfsSubstituteReplaceWithDeleteAndInsert(changeLog, datasetId, transactions);
                 logger.Info("WfsSubstituteReplaceWithDeleteAndInsert() returned {0}", replaced);
@@ -467,10 +495,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
 
                 var insertGroups = from item in changeLog.Descendants(nsWfs + "Insert")
-                                   group item.Name.LocalName                 //operation
-                              by item.Elements().ElementAt(0).Name.LocalName //(Key) typeName-for Insert it follows in the next Element 
-                                       into g
-                                       select g;
+                    group item.Name.LocalName //operation
+                        by item.Elements().ElementAt(0).Name.LocalName
+                    //(Key) typeName-for Insert it follows in the next Element 
+                    into g
+                    select g;
                 // If wfs:member comes before typeName for Insert:
                 //var insertGroups = from item in changeLog.Descendants(nsWfs + "Insert")
                 //                   group item.GetDatasetName.LocalName                 //operation
@@ -483,30 +512,34 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 //System.Diagnostics.Debug.WriteLine("  features of {0}", inserts.Count());
 
                 var updateGroups = from item in changeLog.Descendants(nsWfs + "Update")
-                                   group item.Name.LocalName                 //operation
-                              by item.Attribute("typeName").Value //(Key) typeName-for Update it follows in the typeName attribute
-                                       into g
-                                       select g;
+                    group item.Name.LocalName //operation
+                        by item.Attribute("typeName").Value
+                    //(Key) typeName-for Update it follows in the typeName attribute
+                    into g
+                    select g;
 
                 var deleteGroups = from item in changeLog.Descendants(nsWfs + "Delete")
-                                   group item.Name.LocalName                 //operation
-                              by item.Attribute("typeName").Value //(Key) typeName-for Delete it follows in the typeName attribute
-                                       into g
-                                       select g;
+                    group item.Name.LocalName //operation
+                        by item.Attribute("typeName").Value
+                    //(Key) typeName-for Delete it follows in the typeName attribute
+                    into g
+                    select g;
 
                 //20151006-Leg: wfs:Replace
                 var replaceGroups = from item in changeLog.Descendants(nsWfs + "Replace")
-                                    group item.Name.LocalName                 //operation
-                               by item.Elements().ElementAt(0).Name.LocalName //(Key) typeName-for Insert it follows in the next Element 
-                                        into g
-                                        select g;
+                    group item.Name.LocalName //operation
+                        by item.Elements().ElementAt(0).Name.LocalName
+                    //(Key) typeName-for Insert it follows in the next Element 
+                    into g
+                    select g;
 
                 if (insertGroups.Any())
                 {
                     foreach (var group in insertGroups)
                     {
                         // Insert: count of number of Insert transactions:
-                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(), group.Key);
+                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(),
+                            group.Key);
                     }
                 }
 
@@ -514,7 +547,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 {
                     foreach (var group in updateGroups)
                     {
-                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(), group.Key);
+                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(),
+                            group.Key);
                     }
                 }
 
@@ -522,7 +556,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 {
                     foreach (var group in deleteGroups)
                     {
-                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(), group.Key);
+                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(),
+                            group.Key);
                     }
                 }
 
@@ -532,7 +567,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     foreach (var group in replaceGroups)
                     {
                         // Insert: count of number of Insert transactions:
-                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(), group.Key);
+                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(),
+                            group.Key);
                     }
                 }
 
@@ -544,9 +580,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var result = changeLog.Attributes().
                     Where(a => a.IsNamespaceDeclaration).
                     GroupBy(a => a.Name.Namespace == XNamespace.None ? String.Empty : a.Name.LocalName,
-                            a => XNamespace.Get(a.Value)).
+                        a => XNamespace.Get(a.Value)).
                     ToDictionary(g => g.Key,
-                                 g => g.First());
+                        g => g.First());
 
                 XElement xEl = xDoc.Root;
                 foreach (var xns in result)
@@ -584,7 +620,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// <param name="changeLog">The change log.</param>
         /// <param name="datasetId">The dataset identifier.</param>
         /// <param name="transactions">The transactions.</param>
-        private static bool WfsSubstituteReplaceWithDeleteAndInsert(XElement changeLog, int datasetId, IEnumerable<XElement> transactions)
+        private static bool WfsSubstituteReplaceWithDeleteAndInsert(XElement changeLog, int datasetId,
+            IEnumerable<XElement> transactions)
         {
             bool replaced = false;
             try
@@ -673,6 +710,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         }
 
         #region Håvard
+
         /// <summary>
         /// Buld WFS Transaction XDocument from Changelog
         /// </summary>
@@ -700,8 +738,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     // Generate the XDocument
                     //
                     XDocument xDoc = new XDocument(
-                        new XElement(nsWfs + "Transaction", new XAttribute("version", "2.0.0"), new XAttribute("service", "WFS"),
-                                     new XAttribute(XNamespace.Xmlns + "wfs", "http://www.opengis.net/wfs/2.0"), xAttributeXsi)
+                        new XElement(nsWfs + "Transaction", new XAttribute("version", "2.0.0"),
+                            new XAttribute("service", "WFS"),
+                            new XAttribute(XNamespace.Xmlns + "wfs", "http://www.opengis.net/wfs/2.0"), xAttributeXsi)
                         );
 
                     //
@@ -720,9 +759,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     var result = changeLog.Attributes().
                         Where(a => a.IsNamespaceDeclaration).
                         GroupBy(a => a.Name.Namespace == XNamespace.None ? String.Empty : a.Name.LocalName,
-                                a => XNamespace.Get(a.Value)).
+                            a => XNamespace.Get(a.Value)).
                         ToDictionary(g => g.Key,
-                                     g => g.First());
+                            g => g.First());
 
                     XElement xEl = xDoc.Root;
                     foreach (var xns in result)
@@ -746,10 +785,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
 
                 var insertGroups = from item in changeLog.Descendants(nsWfs + "Insert")
-                                   group item.Name.LocalName                 //operation
-                              by item.Elements().ElementAt(0).Name.LocalName //(Key) typeName-for Insert it follows in the next Element 
-                                       into g
-                                       select g;
+                    group item.Name.LocalName //operation
+                        by item.Elements().ElementAt(0).Name.LocalName
+                    //(Key) typeName-for Insert it follows in the next Element 
+                    into g
+                    select g;
                 // If wfs:member comes before typeName for Insert:
                 //var insertGroups = from item in changeLog.Descendants(nsWfs + "Insert")
                 //                   group item.GetDatasetName.LocalName                 //operation
@@ -762,22 +802,25 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 //System.Diagnostics.Debug.WriteLine("  features of {0}", inserts.Count());
 
                 var updateGroups = from item in changeLog.Descendants(nsWfs + "Update")
-                                   group item.Name.LocalName                 //operation
-                              by item.Attribute("typeName").Value //(Key) typeName-for Update it follows in the typeName attribute
-                                       into g
-                                       select g;
+                    group item.Name.LocalName //operation
+                        by item.Attribute("typeName").Value
+                    //(Key) typeName-for Update it follows in the typeName attribute
+                    into g
+                    select g;
 
                 var deleteGroups = from item in changeLog.Descendants(nsWfs + "Delete")
-                                   group item.Name.LocalName                 //operation
-                              by item.Attribute("typeName").Value //(Key) typeName-for Delete it follows in the typeName attribute
-                                       into g
-                                       select g;
+                    group item.Name.LocalName //operation
+                        by item.Attribute("typeName").Value
+                    //(Key) typeName-for Delete it follows in the typeName attribute
+                    into g
+                    select g;
                 if (insertGroups.Any())
                 {
                     foreach (var group in insertGroups)
                     {
                         // Insert: count of number of Insert transactions:
-                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(), group.Key);
+                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(),
+                            group.Key);
                     }
                 }
 
@@ -785,7 +828,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 {
                     foreach (var group in updateGroups)
                     {
-                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(), group.Key);
+                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(),
+                            group.Key);
                     }
                 }
 
@@ -793,7 +837,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 {
                     foreach (var group in deleteGroups)
                     {
-                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(), group.Key);
+                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(),
+                            group.Key);
                     }
                 }
 
@@ -843,12 +888,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     foreach (XDocument xDoc in xDocList)
                     {
                         // TODO: Change this to changeLog.Attribute("endIndex") ?
-                        Int64 endChangeId = Convert.ToInt64(xDoc.XPathSelectElement("//*[@handle][1]").Attribute("handle").Value);
+                        Int64 endChangeId =
+                            Convert.ToInt64(xDoc.XPathSelectElement("//*[@handle][1]").Attribute("handle").Value);
                         var reader = xDoc.CreateReader();
                         XmlNamespaceManager manager = new XmlNamespaceManager(reader.NameTable);
                         manager.AddNamespace("gml", "http://www.opengis.net/gml/3.2");
                         //Search recursively for first occurence of attribute gml:id 
-                        XElement element = xDoc.XPathSelectElement("//*[@handle][1]"/*, manager*/);
+                        XElement element = xDoc.XPathSelectElement("//*[@handle][1]" /*, manager*/);
                         //20121122-Leg::  Get subscriber GeoServer url from db
 
                         var dataset = SubscriberDatasetManager.GetDataset(datasetId);
@@ -857,7 +903,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                         //String url = Properties.Settings.Default.urlGeoserverSubscriber; // "http://localhost:8081/geoserver/app/ows?service=WFS";
 
-                        var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                        var httpWebRequest = (HttpWebRequest) WebRequest.Create(url);
                         httpWebRequest.Method = "POST";
                         httpWebRequest.ContentType = "text/xml"; //"application/x-www-form-urlencoded";
                         var writer = new StreamWriter(httpWebRequest.GetRequestStream());
@@ -867,7 +913,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         // get response from request
                         HttpWebResponse httpWebResponse = null;
                         Stream responseStream = null;
-                        httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                        httpWebResponse = (HttpWebResponse) httpWebRequest.GetResponse();
 
                         var resultString = new StringBuilder("");
                         using (var resultStream = httpWebResponse.GetResponseStream())
@@ -886,7 +932,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         }
                         httpWebResponse.Close();
 
-                        if (httpWebResponse.StatusCode == HttpStatusCode.OK && resultString.ToString().Contains("ExceptionReport") == false)
+                        if (httpWebResponse.StatusCode == HttpStatusCode.OK &&
+                            resultString.ToString().Contains("ExceptionReport") == false)
                         {
                             //TODO en får alltid status 200 OK fra geoserver
                             //En må sjekke om en har fått ExceptionReport
@@ -913,9 +960,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             if (transactionSummaries.Any())
                             {
                                 string message = "Geoserver WFS-T Transaction: ";
-                                string transactionSummary = transactionSummaries.ElementAt(0).ToString(SaveOptions.DisableFormatting);
+                                string transactionSummary =
+                                    transactionSummaries.ElementAt(0).ToString(SaveOptions.DisableFormatting);
                                 //MessageBox.Show(message + "\r\n" + transactionSummary, "Transaction Status: " + httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription);
-                                logger.Info("DoWfsTransactions:" + message + " transactionSummary" + " Transaction Status:{0}" + "\r\n" + transactionSummary, httpWebResponse.StatusCode);
+                                logger.Info(
+                                    "DoWfsTransactions:" + message + " transactionSummary" + " Transaction Status:{0}" +
+                                    "\r\n" + transactionSummary, httpWebResponse.StatusCode);
                                 ////VisXML(tran.ToString(SaveOptions.DisableFormatting));
                                 // For more debugging:
                                 //logger.Info("DoWfsTransactions: " + message + " Transaction Status:{0}" + "\r\n" + resultString.ToString(), httpWebResponse.StatusCode);
@@ -923,7 +973,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                                 //listBoxLog.Items.Add("TransactionSummary:");
                                 IEnumerable<XElement> transactions =
                                     from item in transactionResponseElement.Descendants()
-                                    where item.Name == nsWfs + "totalInserted" || item.Name == nsWfs + "totalUpdated" || item.Name == nsWfs + "totalReplaced" || item.Name == nsWfs + "totalDeleted"
+                                    where
+                                        item.Name == nsWfs + "totalInserted" || item.Name == nsWfs + "totalUpdated" ||
+                                        item.Name == nsWfs + "totalReplaced" || item.Name == nsWfs + "totalDeleted"
                                     select item;
                                 foreach (var tran in transactions)
                                 {
@@ -955,13 +1007,18 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             else
                             {
                                 string message = "Geoserver WFS-T Transaction feilet: ";
-                                logger.Info("DoWfsTransactions:" + message + " transactionSummary" + " Transaction Status:{0}" + "\r\n" + "No transactions ", httpWebResponse.StatusCode);
+                                logger.Info(
+                                    "DoWfsTransactions:" + message + " transactionSummary" + " Transaction Status:{0}" +
+                                    "\r\n" + "No transactions ", httpWebResponse.StatusCode);
                             }
                         }
                         else
                         {
                             string message = "Geoserver WFS-T Transaction feilet: ";
-                            logger.Info("DoWfsTransactions: " + message + " Transaction Status:{0}" + "\r\n" + resultString.ToString(), httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription);
+                            logger.Info(
+                                "DoWfsTransactions: " + message + " Transaction Status:{0}" + "\r\n" +
+                                resultString.ToString(),
+                                httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription);
                         }
                     }
                 }
@@ -989,6 +1046,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 return false;
             }
         }
+
         #endregion
     }
 }

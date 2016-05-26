@@ -103,7 +103,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var client = new WebFeatureServiceReplicationPortClient();
                 client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
 
-                var id = new ChangelogIdentificationType { changelogId = changelogId };
+                var id = new ChangelogIdentificationType {changelogId = changelogId};
 
                 ChangelogStatusType resp = client.GetChangelogStatus(id);
 
@@ -132,7 +132,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var client = new WebFeatureServiceReplicationPortClient();
                 client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
 
-                var id = new ChangelogIdentificationType { changelogId = changelogId };
+                var id = new ChangelogIdentificationType {changelogId = changelogId};
 
                 ChangelogType resp = client.GetChangelog(id);
 
@@ -148,7 +148,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     //downloaduriWithExtension = downloaduri;
                     logger.Info("GetChangelog downloaduri  contains fileextension:" + fileExtension);
                     // Hack to remove eventual .zip from filename
-                    downloaduri = downloaduri.Replace(Path.GetExtension(downloaduri),"");
+                    downloaduri = downloaduri.Replace(Path.GetExtension(downloaduri), "");
                 }
 
 
@@ -157,12 +157,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 string fileName = tempDir + @"\" + changelogid + "_Changelog.xml";
 #else
                 const string ftpPath = "abonnent";
-                BL.Utils.Misc.CreateFolderIfMissing(tempDir + @"\" + ftpPath); // Create the abonnent folder if missing               
+                BL.Utils.Misc.CreateFolderIfMissing(tempDir + @"\" + ftpPath);
+                    // Create the abonnent folder if missing               
 
                 string fileName = tempDir + @"\" + ftpPath + @"\" + Path.GetFileName(downloaduri) + ".zip";
 #endif
 
-                downloadController = new DownloadController { ChangelogFilename = fileName };
+                downloadController = new DownloadController {ChangelogFilename = fileName};
                 downloadController.DownloadChangelog2(downloaduri);
             }
             catch (WebException webEx)
@@ -220,7 +221,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var client = new WebFeatureServiceReplicationPortClient();
                 client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
 
-                var id = new ChangelogIdentificationType { changelogId = changelogId };
+                var id = new ChangelogIdentificationType {changelogId = changelogId};
                 client.AcknowlegeChangelogDownloaded(id);
 
                 return true;
@@ -352,7 +353,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     logMessage = "Changelog has already been downloaded and handled:";
                     //this.OnUpdateLogList(logMessage); // Raise event to UI
                     //this.OnNewSynchMilestoneReached(logMessage);
-                    logMessage += " Provider lastIndex:" + lastChangeIndexProvider + " Subscriber lastChangeIndex: " + lastChangeIndexSubscriber;
+                    logMessage += " Provider lastIndex:" + lastChangeIndexProvider + " Subscriber lastChangeIndex: " +
+                                  lastChangeIndexSubscriber;
                     logger.Info(logMessage);
                     this.OnUpdateLogList(logMessage); // Raise event to UI
                     this.OnNewSynchMilestoneReached(logMessage);
@@ -364,37 +366,44 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 int maxCount = DL.SubscriberDatasetManager.GetMaxCount(datasetId);
 
                 long numberOfFeatures = lastChangeIndexProvider - lastChangeIndexSubscriber;
-                long numberOfOrders = (numberOfFeatures / maxCount);
+                long numberOfOrders = (numberOfFeatures/maxCount);
 
-                if (lastChangeIndexProvider > int.MaxValue )
+                if (lastChangeIndexProvider > int.MaxValue)
                 {
                     // TODO: Fix for Norkart QMS Provider, TotalNumberOfOrders is not available here
                     // Assume Norkart QMS Provider, not a sequential number
-                    logger.Info("DoSyncronization: Probably QMS Provider,  Provider lastIndex is not sequential, just a transaction number!");
+                    logger.Info(
+                        "DoSyncronization: Probably QMS Provider,  Provider lastIndex is not sequential, just a transaction number!");
                     numberOfOrders = 10; // Just a guess
                 }
 
 
-                if (numberOfFeatures % maxCount > 0)
+                if (numberOfFeatures%maxCount > 0)
                     ++numberOfOrders;
 
-                logger.Info("DoSyncronization: numberOfFeatures:{0} numberOfOrders:{1} maxCount:{2}", numberOfFeatures, numberOfOrders, maxCount);
+                logger.Info("DoSyncronization: numberOfFeatures:{0} numberOfOrders:{1} maxCount:{2}", numberOfFeatures,
+                    numberOfOrders, maxCount);
                 this.OnUpdateLogList("MaxCount: " + maxCount);
 
                 #region Håvard
 
                 #region Lars
-                this.OnOrderProcessingStart(numberOfOrders * 100);
+
+                this.OnOrderProcessingStart(numberOfOrders*100);
                 int progressCounter = 0;
+
                 #endregion
+
                 int i = 0;
                 while (lastChangeIndexSubscriber < lastChangeIndexProvider)
                 {
                     //int i = 0;
 
                     #region Lars
-                    this.OnOrderProcessingChange((progressCounter + 1) * 100 / 2);
+
+                    this.OnOrderProcessingChange((progressCounter + 1)*100/2);
                     //++progressCounter;
+
                     #endregion
 
                     // Do lots of stuff
@@ -443,15 +452,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         foreach (string fileName in fileList)
                         {
                             changeLog = XElement.Load(fileName);
-                            if (!PerformWfsTransaction(changeLog, datasetId, dataset, i+1))
+                            if (!PerformWfsTransaction(changeLog, datasetId, dataset, i + 1))
                                 throw new Exception("WfsTransaction failed");
 
                             if (!downloadController.isFolder)
                             {
                                 AcknowledgeChangelogDownloaded(datasetId, changeLogId);
                             }
-                            
-                            this.OnOrderProcessingChange((progressCounter + 1) * 100);
+
+                            this.OnOrderProcessingChange((progressCounter + 1)*100);
                             ++progressCounter;
                             i++;
                         }
@@ -617,7 +626,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     else if (changeLogStatus == ChangelogStatusType.failed)
                     {
                         logger.Info("ChangelogStatusType.failed waiting for ChangeLog from Provider");
-                        this.OnNewSynchMilestoneReached("Failed waiting for ChangeLog from Provider. Contact the proivider.");
+                        this.OnNewSynchMilestoneReached(
+                            "Failed waiting for ChangeLog from Provider. Contact the proivider.");
                     }
                     else
                     {
@@ -630,7 +640,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                logger.ErrorException(string.Format("Failed to get ChangeLog Status for changelog {0} from provider {1}", changeLogId, "TEST"), ex);
+                logger.ErrorException(
+                    string.Format("Failed to get ChangeLog Status for changelog {0} from provider {1}", changeLogId,
+                        "TEST"), ex);
                 return false;
             }
             return true;
@@ -638,7 +650,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         private List<string> changeLogMapper(List<string> fileList, int datasetId)
         {
-            List<string> newFileList= new List<string>();
+            List<string> newFileList = new List<string>();
             foreach (string file in fileList)
             {
                 string fileName = file;
@@ -743,12 +755,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                int lastChangeIndexSubscriber = (int)dataset.LastIndex;
+                int lastChangeIndexSubscriber = (int) dataset.LastIndex;
                 if (false) // TODO: Remove?
                 {
                     if (lastChangeIndexSubscriber > 0)
                     {
-                        logger.Info("TestOfflineSyncronizationComplete colud only be run if lastChangeIndexSubscriber = 0");
+                        logger.Info(
+                            "TestOfflineSyncronizationComplete colud only be run if lastChangeIndexSubscriber = 0");
                         return false;
                     }
                 }
