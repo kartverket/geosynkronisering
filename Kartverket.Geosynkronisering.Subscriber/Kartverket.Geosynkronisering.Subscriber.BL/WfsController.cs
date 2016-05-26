@@ -26,7 +26,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// <returns></returns>
         public bool DoWfsTransactions(XElement changeLog, int datasetId)
         {
-            bool sucsess = false;
+            bool success = false;
 
             try
             {
@@ -64,114 +64,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     //GC.Collect();
                     // get response from request
                     HttpWebResponse httpWebResponse = CheckResponseForErrors(httpWebRequest);
-                    Stream responseStream = null;
-                    var resultString = new StringBuilder("");
-                    using (var resultStream = httpWebResponse.GetResponseStream())
-                    {
-                        if (resultStream != null)
-                        {
-                            int count;
-                            do
-                            {
-                                var buffer = new byte[8192];
-                                count = resultStream.Read(buffer, 0, buffer.Length);
-                                if (count == 0) continue;
-                                resultString.Append(Encoding.UTF8.GetString(buffer, 0, count));
-                            } while (count > 0);
-                        }
-                    }
-                    httpWebResponse.Close();
-
-                    if (httpWebResponse.StatusCode == HttpStatusCode.OK &&
-                        resultString.ToString().Contains("ExceptionReport") == false)
-                    {
-
-                        sucsess = true;
-                        XElement transactionResponseElement = XElement.Parse(resultString.ToString());
-
-                        XNamespace nsWfs = "http://www.opengis.net/wfs/2.0"; // "wfs";
-                        IEnumerable<XElement> transactionSummaries =
-                            from item in transactionResponseElement.Descendants(nsWfs + "TransactionSummary")
-                            select item;
-
-                        if (transactionSummaries.Any())
-                        {
-                            string transactionSummary =
-                                transactionSummaries.ElementAt(0).ToString(SaveOptions.DisableFormatting);
-
-                            string wfsMessage =
-                                "DoWfsTransactions: deegree/Geoserver WFS-T Transaction: transactionSummary" +
-                                " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + transactionSummary;
-
-                            logger.Info(wfsMessage);
-                            IEnumerable<XElement> transactions =
-                                from item in transactionResponseElement.Descendants()
-                                where
-                                    item.Name == nsWfs + "totalInserted" || item.Name == nsWfs + "totalUpdated" ||
-                                    item.Name == nsWfs + "totalReplaced" || item.Name == nsWfs + "totalDeleted"
-                                select item;
-                            string tranResult = "";
-                            foreach (var tran in transactions)
-                            {
-                                //string tranResult = "unknown";
-                                if (tranResult.Length > 0)
-                                {
-                                    tranResult += " ";
-                                }
-                                if (tran.Name == nsWfs + "totalInserted")
-                                {
-                                    tranResult += "totalInserted" + ":" + tran.Value;
-                                    this.ParentSynchController.TransactionsSummary.TotalInserted +=
-                                        Convert.ToInt32(tran.Value);
-                                }
-                                else if (tran.Name == nsWfs + "totalUpdated")
-                                {
-                                    tranResult += "totalUpdated" + ":" + tran.Value;
-                                    //tranResult = "totalUpdated";
-                                    this.ParentSynchController.TransactionsSummary.TotalUpdated +=
-                                        Convert.ToInt32(tran.Value);
-                                }
-                                else if (tran.Name == nsWfs + "totalDeleted")
-                                {
-                                    tranResult += "totalDeleted" + ":" + tran.Value;
-                                    this.ParentSynchController.TransactionsSummary.TotalDeleted +=
-                                        Convert.ToInt32(tran.Value);
-                                }
-                                else if (tran.Name == nsWfs + "totalReplaced")
-                                {
-                                    tranResult += "totalReplaced" + ":" + tran.Value;
-                                    this.ParentSynchController.TransactionsSummary.TotalReplaced +=
-                                        Convert.ToInt32(tran.Value);
-                                }
-                                else
-                                {
-                                    tranResult = "unknown";
-                                }
-                            }
-
-                            // Raise event to eventual UI
-                            var logMessage = tranResult;
-                            this.ParentSynchController.OnUpdateLogList(logMessage);
-
-                        }
-                        else
-                        {
-                            string wfsMessage =
-                                "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  transactionSummary" +
-                                " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + "No transactions ";
-                            logger.Info(wfsMessage);
-                            this.ParentSynchController.OnUpdateLogList(wfsMessage);
-                        }
-                    }
-                    else
-                    {
-                        string wfsMessage =
-                            "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  Transaction Status:" +
-                            httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription + "\r\n" +
-                            resultString.ToString();
-                        logger.Info(wfsMessage);
-                        this.ParentSynchController.OnUpdateLogList(wfsMessage);
-                    }
+                    success = createTransactionSummary(httpWebResponse);
                 }
                 catch (WebException webEx)
                 {
@@ -185,7 +78,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     return false;
                 }
 
-                return sucsess;
+                return success;
 
             }
             catch (Exception ex)
@@ -258,7 +151,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
-
         private XDocument constructWfsTransaction(XElement changeLog)
         {
             string geosyncNs = "{http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg}";
@@ -303,6 +195,119 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             xDoc.Save(fileName);
 
             return xDoc;
+        }
+
+        private bool createTransactionSummary(HttpWebResponse httpWebResponse)
+        {
+            bool success = false;
+            Stream responseStream = null;
+            var resultString = new StringBuilder("");
+            using (var resultStream = httpWebResponse.GetResponseStream())
+            {
+                if (resultStream != null)
+                {
+                    int count;
+                    do
+                    {
+                        var buffer = new byte[8192];
+                        count = resultStream.Read(buffer, 0, buffer.Length);
+                        if (count == 0) continue;
+                        resultString.Append(Encoding.UTF8.GetString(buffer, 0, count));
+                    } while (count > 0);
+                }
+            }
+            httpWebResponse.Close();
+            if (httpWebResponse.StatusCode == HttpStatusCode.OK &&
+                        resultString.ToString().Contains("ExceptionReport") == false)
+            {
+
+                success = true;
+                XElement transactionResponseElement = XElement.Parse(resultString.ToString());
+
+                XNamespace nsWfs = "http://www.opengis.net/wfs/2.0"; // "wfs";
+                IEnumerable<XElement> transactionSummaries =
+                    from item in transactionResponseElement.Descendants(nsWfs + "TransactionSummary")
+                    select item;
+
+                if (transactionSummaries.Any())
+                {
+                    string transactionSummary =
+                        transactionSummaries.ElementAt(0).ToString(SaveOptions.DisableFormatting);
+
+                    string wfsMessage =
+                        "DoWfsTransactions: deegree/Geoserver WFS-T Transaction: transactionSummary" +
+                        " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + transactionSummary;
+
+                    logger.Info(wfsMessage);
+                    IEnumerable<XElement> transactions =
+                        from item in transactionResponseElement.Descendants()
+                        where
+                            item.Name == nsWfs + "totalInserted" || item.Name == nsWfs + "totalUpdated" ||
+                            item.Name == nsWfs + "totalReplaced" || item.Name == nsWfs + "totalDeleted"
+                        select item;
+                    string tranResult = "";
+                    foreach (var tran in transactions)
+                    {
+                        //string tranResult = "unknown";
+                        if (tranResult.Length > 0)
+                        {
+                            tranResult += " ";
+                        }
+                        if (tran.Name == nsWfs + "totalInserted")
+                        {
+                            tranResult += "totalInserted" + ":" + tran.Value;
+                            this.ParentSynchController.TransactionsSummary.TotalInserted +=
+                                Convert.ToInt32(tran.Value);
+                        }
+                        else if (tran.Name == nsWfs + "totalUpdated")
+                        {
+                            tranResult += "totalUpdated" + ":" + tran.Value;
+                            //tranResult = "totalUpdated";
+                            this.ParentSynchController.TransactionsSummary.TotalUpdated +=
+                                Convert.ToInt32(tran.Value);
+                        }
+                        else if (tran.Name == nsWfs + "totalDeleted")
+                        {
+                            tranResult += "totalDeleted" + ":" + tran.Value;
+                            this.ParentSynchController.TransactionsSummary.TotalDeleted +=
+                                Convert.ToInt32(tran.Value);
+                        }
+                        else if (tran.Name == nsWfs + "totalReplaced")
+                        {
+                            tranResult += "totalReplaced" + ":" + tran.Value;
+                            this.ParentSynchController.TransactionsSummary.TotalReplaced +=
+                                Convert.ToInt32(tran.Value);
+                        }
+                        else
+                        {
+                            tranResult = "unknown";
+                        }
+                    }
+
+                    // Raise event to eventual UI
+                    var logMessage = tranResult;
+                    this.ParentSynchController.OnUpdateLogList(logMessage);
+
+                }
+                else
+                {
+                    string wfsMessage =
+                        "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  transactionSummary" +
+                        " Transaction Status:" + httpWebResponse.StatusCode + "\r\n" + "No transactions ";
+                    logger.Info(wfsMessage);
+                    this.ParentSynchController.OnUpdateLogList(wfsMessage);
+                }
+            }
+            else
+            {
+                string wfsMessage =
+                    "DoWfsTransactions: deegree/Geoserver WFS-T Transaction feilet:  Transaction Status:" +
+                    httpWebResponse.StatusCode + " " + httpWebResponse.StatusDescription + "\r\n" +
+                    resultString.ToString();
+                logger.Info(wfsMessage);
+                this.ParentSynchController.OnUpdateLogList(wfsMessage);
+            }
+            return success;
         }
     }
 }
