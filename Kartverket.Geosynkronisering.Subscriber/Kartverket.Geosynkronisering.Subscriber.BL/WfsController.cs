@@ -20,33 +20,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         public SynchController ParentSynchController;
 
         /// <summary>
-        /// Get all wfs transactions (Insert, Update,  Delete, Replace) from changelog
-        /// </summary>
-        /// <param name="changeLog"></param>
-        /// <returns></returns>
-        private IEnumerable<XElement> GetWfsTransactions(XElement changeLog)
-        {
-            try
-            {
-                // Namespace must be set: xmlns:wfs="http://www.opengis.net/wfs/2.0"
-                XNamespace nsWfs = "http://www.opengis.net/wfs/2.0"; // "wfs";
-
-                IEnumerable<XElement> transactions =
-                    from item in changeLog.Descendants()
-                    where
-                        item.Name == nsWfs + "Insert" || item.Name == nsWfs + "Delete" || item.Name == nsWfs + "Update" ||
-                        item.Name == nsWfs + "Replace"
-                    select item;
-
-                return transactions;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message + ex.StackTrace);
-            }
-        }
-
-        /// <summary>
         /// Build wfs-t transaction from changelog, and do the transaction
         /// </summary>
         /// <param name="changeLog"></param>
@@ -58,8 +31,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             try
             {
 
-                var xDoc = BuildWfsTransaction(changeLog, datasetId);
-                //var xDoc2 = BuildWfsTransactionList(changeLog);
+                var xDoc = constructWfsTransaction(changeLog);
+
+
                 if (xDoc == null)
                 {
                     return false;
@@ -222,253 +196,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
-        /// <summary>
-        /// Buld WFS Transaction XDocument from Changelog
-        /// </summary>
-        /// <param name="changeLog"></param>
-        /// 
-        /// <param name="datasetId"></param>
-        /// <returns></returns>
-        private XDocument BuildWfsTransaction(XElement changeLog, int datasetId = 0)
-        {
-            try
-            {
-                // NameSpace manipulation: http://msdn.microsoft.com/en-us/library/system.xml.linq.xnamespace.xmlns(v=vs.100).aspx
-                XNamespace nsWfs = "http://www.opengis.net/wfs/2.0"; // "wfs";
-
-
-                // Get the xsi:schemaLocation: http://www.falconwebtech.com/post/2010/06/03/Adding-schemaLocation-attribute-to-XElement-in-LINQ-to-XML.aspx
-                XNamespace xsi = XNamespace.Get("http://www.w3.org/2001/XMLSchema-instance");
-                XAttribute xAttributeXsi = changeLog.Attribute(xsi + "schemaLocation");
-
-                //
-                // Generate the XDocument
-                //
-                XDocument xDoc = new XDocument(
-                    new XElement(nsWfs + "Transaction", new XAttribute("version", "2.0.0"),
-                        new XAttribute("service", "WFS"),
-                        new XAttribute(XNamespace.Xmlns + "wfs", "http://www.opengis.net/wfs/2.0"), xAttributeXsi)
-                    );
-
-                //
-                // Get the WFS-T transactions and add them to the root
-                //
-                IEnumerable<XElement> transactions = GetWfsTransactions(changeLog);
-
-                #region substitute_Replace_with_DeleteandInsert
-
-                // 20151006-Leg: Substutute wfs:replace with wfs:Delete and wfs:Insert.
-                bool replaced = WfsSubstituteReplaceWithDeleteAndInsert(changeLog, datasetId, transactions);
-                logger.Info("WfsSubstituteReplaceWithDeleteAndInsert() returned {0}", replaced);
-
-                #endregion // substitute_Replace_with_DeleteandInsert
-
-                XElement xRootElement = xDoc.Root;
-
-                foreach (var tran in transactions)
-                {
-                    xRootElement.Add(tran);
-                }
-
-                //
-                // Estimate number of transactions for each feature type
-                //
-
-                var insertGroups = from item in changeLog.Descendants(nsWfs + "Insert")
-                    group item.Name.LocalName //operation
-                        by item.Elements().ElementAt(0).Name.LocalName
-                    //(Key) typeName-for Insert it follows in the next Element 
-                    into g
-                    select g;
-
-                var updateGroups = from item in changeLog.Descendants(nsWfs + "Update")
-                    group item.Name.LocalName //operation
-                        by item.Attribute("typeName").Value
-                    //(Key) typeName-for Update it follows in the typeName attribute
-                    into g
-                    select g;
-
-                var deleteGroups = from item in changeLog.Descendants(nsWfs + "Delete")
-                    group item.Name.LocalName //operation
-                        by item.Attribute("typeName").Value
-                    //(Key) typeName-for Delete it follows in the typeName attribute
-                    into g
-                    select g;
-
-                //20151006-Leg: wfs:Replace
-                var replaceGroups = from item in changeLog.Descendants(nsWfs + "Replace")
-                    group item.Name.LocalName //operation
-                        by item.Elements().ElementAt(0).Name.LocalName
-                    //(Key) typeName-for Insert it follows in the next Element 
-                    into g
-                    select g;
-
-                if (insertGroups.Any())
-                {
-                    foreach (var group in insertGroups)
-                    {
-                        // Insert: count of number of Insert transactions:
-                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(),
-                            group.Key);
-                    }
-                }
-
-                if (updateGroups.Any())
-                {
-                    foreach (var group in updateGroups)
-                    {
-                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(),
-                            group.Key);
-                    }
-                }
-
-                if (deleteGroups.Any())
-                {
-                    foreach (var group in deleteGroups)
-                    {
-                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(),
-                            group.Key);
-                    }
-                }
-
-                //20151006-Leg: wfs:Replace
-                if (replaceGroups.Any())
-                {
-                    foreach (var group in replaceGroups)
-                    {
-                        // Insert: count of number of Insert transactions:
-                        System.Diagnostics.Debug.WriteLine("{1}: {0} features of {2}", group.Count(), group.First(),
-                            group.Key);
-                    }
-                }
-
-
-                //
-                // Get the namespaces, and update the XDocument:
-                // See: http://www.hanselman.com/blog/GetNamespacesFromAnXMLDocumentWithXPathDocumentAndLINQToXML.aspx
-                // 
-                var result = changeLog.Attributes().
-                    Where(a => a.IsNamespaceDeclaration).
-                    GroupBy(a => a.Name.Namespace == XNamespace.None ? String.Empty : a.Name.LocalName,
-                        a => XNamespace.Get(a.Value)).
-                    ToDictionary(g => g.Key,
-                        g => g.First());
-
-                XElement xEl = xDoc.Root;
-                foreach (var xns in result)
-                {
-                    try
-                    {
-                        xEl.Add(new XAttribute(XNamespace.Xmlns + xns.Key, xns.Value));
-                    }
-                    catch (Exception)
-                    {
-                        //TODO: FIX
-                    }
-                }
-
-                // TODO: It's not necesary to save the file here, but nice for debugging
-                if (transactions.Count() <= 50)
-                {
-                    string tempDir = System.Environment.GetEnvironmentVariable("TEMP");
-                    string fileName = tempDir + @"\" + "_wfsT-test1.xml";
-                    xDoc.Save(fileName);
-                }
-
-                return xDoc;
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message + ex.StackTrace + "BuildWfsTransaction");
-            }
-        }
-
-        /// <summary>
-        /// Substutute wfs:replace with wfs:Delete and wfs:Insert.
-        /// </summary>
-        /// <param name="changeLog">The change log.</param>
-        /// <param name="datasetId">The dataset identifier.</param>
-        /// <param name="transactions">The transactions.</param>
-        private static bool WfsSubstituteReplaceWithDeleteAndInsert(XElement changeLog, int datasetId,
-            IEnumerable<XElement> transactions)
-        {
-            bool replaced = false;
-            try
-            {
-                XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
-                // 20151006-Leg: wfs:Replace
-                // Substutute wfs:replace with wfs:Delete and wfs:Insert
-                // wfs:Delete: Filter part of wfs:Replace
-                // wfs:Insert: All execpt Filter of wfs:Replace
-
-                string nsPrefixApp = "";
-                XNamespace nsApp = null;
-                if (datasetId > 0)
-                {
-                    var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
-                    string namespaceUri = dataset.TargetNamespace;
-                    nsPrefixApp = changeLog.GetPrefixOfNamespace(namespaceUri);
-                    nsApp = namespaceUri;
-                }
-
-                foreach (var ele in transactions.ToList())
-                {
-                    if ((ele.Name == nsWfs + "Replace") && !ele.IsEmpty)
-                    {
-                        XNamespace nsFes = "http://www.opengis.net/fes/2.0";
-
-                        //
-                        // wfs:delete part
-                        //
-                        var filter = ele.DescendantsAndSelf(nsFes + "Filter");
-                        var typename = ele.Elements().ElementAt(0).Name.LocalName;
-                        var xNameFeaturetype = ele.Elements().ElementAt(0).Name; // Gets the full name of this element.
-                        Console.WriteLine("featureType: {0} wfs:{1}", typename, ele.Name);
-                        var handle = ele.Attribute("handle").Value;
-                        Console.WriteLine("handle: {0}", handle);
-                        var ns = ele.Elements().ElementAt(0).Name;
-                        XElement deleteElement;
-                        if (nsApp == null)
-                        {
-                            // nameSpace must be set for deegree, so wthis will not work
-                            deleteElement = new XElement(nsWfs + "Delete", new XAttribute("handle", handle),
-                                new XAttribute("typeName", typename));
-                        }
-                        else
-                        {
-                            deleteElement = new XElement(nsWfs + "Delete", new XAttribute("handle", handle),
-                                new XAttribute("typeName", nsPrefixApp + ":" + typename),
-                                new XAttribute(XNamespace.Xmlns + nsPrefixApp, nsApp));
-                        }
-
-
-                        deleteElement.Add(filter); // Filter part
-                        ele.Parent.AddBeforeSelf(deleteElement);
-
-                        //
-                        // wfs:Insert part
-                        //
-                        XElement insertElement = new XElement(nsWfs + "Insert", new XAttribute("handle", handle));
-                        IEnumerable<XElement> replaceElem = ele.Descendants().Take(1);
-
-                        insertElement.Add(replaceElem);
-                        ele.Parent.AddBeforeSelf(insertElement);
-
-                        ele.Remove(); //remove wfs:replace
-                        replaced = true;
-                    }
-                }
-                return replaced;
-            }
-            catch (Exception ex)
-            {
-                logger.ErrorException("WfsSubstituteReplaceWithDeleteAndInsert failed:", ex);
-                throw new Exception(ex.Message + ex.StackTrace + "WfsSubstituteReplaceWithDeleteAndInsert");
-                return false;
-            }
-        }
-
         private HttpWebResponse CheckResponseForErrors(HttpWebRequest httpWebRequest)
         {
             try //20160411-Leg: Improved error handling
@@ -515,14 +242,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                                 }
                             }
-                            else
-                            {
-                                logger.Info(error);
-                                logger.ErrorException("DoWfsTransactions WebException:" + error, wex);
-                                this.ParentSynchController.OnUpdateLogList(
-                                    "Error occured. Message from server: " + error);
-                                throw new Exception("WebException error : " + wex);
-                            }
+                            //Not an exception-report. Likely the service could not be found at the given url.
+                            logger.Info(error);
+                            logger.ErrorException("DoWfsTransactions WebException:" + error, wex);
+                            this.ParentSynchController.OnUpdateLogList(
+                                "Error occured. Message from server: " + error);
+                            throw new Exception("WebException error : " + wex);
+
                         }
                     }
                 }
@@ -530,6 +256,53 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 throw new Exception("WebException error : " + wex.Message);
             }
+        }
+
+
+        private XDocument constructWfsTransaction(XElement changeLog)
+        {
+            string geosyncNs = "{http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg}";
+
+            string geosyncNsOld = "{http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg}";
+
+            List<string> skipList =
+                new List<string>(new string[] {"startIndex", "endIndex", "numberMatched", "numberReturned", "timeStamp"});
+
+            XElement root = new XElement("{http://www.opengis.net/wfs/2.0}Transaction");
+
+            XAttribute service = new XAttribute("service", "WFS");
+            root.Add(service);
+
+            XAttribute version = new XAttribute("version", "2.0.0");
+            root.Add(version);
+
+            foreach (XAttribute att in changeLog.Attributes())
+            {
+                if (skipList.Contains(att.Name.LocalName))
+                    continue;
+                root.Add(att);
+            }
+            if (changeLog.Element(geosyncNs + "transactions") == null)
+            {
+                ParentSynchController.OnUpdateLogList(
+                    "WARNING: No transactions found for namespace " + geosyncNs + ". Trying to run transaction using " + geosyncNsOld);
+                geosyncNs = geosyncNsOld;
+            }
+
+            foreach (XElement wfsOperation in changeLog.Element(
+                geosyncNs + "transactions")
+                .Elements())
+            {
+                root.Add(wfsOperation);
+            }
+
+            XDocument xDoc = new XDocument(root);
+
+            string tempDir = Environment.GetEnvironmentVariable("TEMP");
+            string fileName = tempDir + @"\" + "_wfsT-test1.xml";
+            xDoc.Save(fileName);
+
+            return xDoc;
         }
     }
 }
