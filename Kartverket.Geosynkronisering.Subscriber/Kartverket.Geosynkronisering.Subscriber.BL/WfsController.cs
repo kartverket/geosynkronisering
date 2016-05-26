@@ -191,8 +191,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     httpWebRequest.Method = "POST";
                     httpWebRequest.ContentType = "text/xml"; //"application/x-www-form-urlencoded";
                     httpWebRequest.Timeout = System.Threading.Timeout.Infinite;
-                    httpWebRequest.AllowWriteStreamBuffering = false;
-                    httpWebRequest.SendChunked = true;
+                    //httpWebRequest.ReadWriteTimeout = System.Threading.Timeout.Infinite;
+                    //httpWebRequest.AllowWriteStreamBuffering = false;
+                    //httpWebRequest.SendChunked = true;
                     var writer = new StreamWriter(httpWebRequest.GetRequestStream());
                     xDoc.Save(writer, SaveOptions.DisableFormatting);
                     xDoc.Root.RemoveAll();
