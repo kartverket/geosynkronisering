@@ -30,18 +30,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             try
             {
                 bool success;
+
                 var xDoc = ConstructWfsTransaction(changeLog);
 
+                if (xDoc == null) return false;
 
-                if (xDoc == null)
-                {
-                    return false;
-                }
-
-
-                //
                 // Post to WFS-T server (e.g. deegree or GeoServer)
-                //
                 try
                 {
                     //20121122-Leg::  Get subscriber deegree / GeoServer url from db
@@ -56,12 +50,17 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     //httpWebRequest.ReadWriteTimeout = System.Threading.Timeout.Infinite;
                     //httpWebRequest.AllowWriteStreamBuffering = false;
                     //httpWebRequest.SendChunked = true;
+
                     var writer = new StreamWriter(httpWebRequest.GetRequestStream());
+                    
                     xDoc.Save(writer, SaveOptions.DisableFormatting);
+                    
                     writer.Close();
                     //GC.Collect();
+
                     // get response from request
                     HttpWebResponse httpWebResponse = CheckResponseForErrors(httpWebRequest);
+
                     success = CreateTransactionSummary(httpWebResponse);
                 }
                 catch (WebException webEx)
@@ -149,14 +148,45 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         private XDocument ConstructWfsTransaction(XElement changeLog)
         {
-            string geosyncNs = "{http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg}";
-
-            string geosyncNsOld = "{http://skjema.geonorge.no/standard/geosynkronisering/1.0/endringslogg}";
+            XNamespace nsChlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg";
 
             List<string> skipList =
                 new List<string>(new[] {"startIndex", "endIndex", "numberMatched", "numberReturned", "timeStamp"});
 
-            XElement root = new XElement("{http://www.opengis.net/wfs/2.0}Transaction");
+            XElement root = ConstructWfsTransactionRoot();
+                
+            foreach (XAttribute att in changeLog.Attributes())
+            {
+                if (skipList.Contains(att.Name.LocalName))
+                    continue;
+                root.Add(att);
+            }
+
+            foreach (XElement wfsOperation in changeLog.Element(
+                nsChlogf + "transactions")
+                .Elements())
+            {
+                root.Add(wfsOperation);
+            }
+
+            SaveWfsTransactionToDisk(root);
+
+            return new XDocument(root);
+        }
+
+        private void SaveWfsTransactionToDisk(XElement root)
+        {
+            XDocument xDoc = new XDocument(root);
+            string tempDir = Environment.GetEnvironmentVariable("TEMP");
+            string fileName = tempDir + @"\" + "_wfsT-test1.xml";
+            xDoc.Save(fileName);
+        }
+
+        private XElement ConstructWfsTransactionRoot()
+        {
+            XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
+
+            XElement root = new XElement(nsWfs + "Transaction");
 
             XAttribute service = new XAttribute("service", "WFS");
             root.Add(service);
@@ -164,34 +194,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             XAttribute version = new XAttribute("version", "2.0.0");
             root.Add(version);
 
-            foreach (XAttribute att in changeLog.Attributes())
-            {
-                if (skipList.Contains(att.Name.LocalName))
-                    continue;
-                root.Add(att);
-            }
-            if (changeLog.Element(geosyncNs + "transactions") == null)
-            {
-                ParentSynchController.OnUpdateLogList(
-                    "WARNING: No transactions found for namespace " + geosyncNs + ". Trying to run transaction using " +
-                    geosyncNsOld);
-                geosyncNs = geosyncNsOld;
-            }
-
-            foreach (XElement wfsOperation in changeLog.Element(
-                geosyncNs + "transactions")
-                .Elements())
-            {
-                root.Add(wfsOperation);
-            }
-
-            XDocument xDoc = new XDocument(root);
-
-            string tempDir = Environment.GetEnvironmentVariable("TEMP");
-            string fileName = tempDir + @"\" + "_wfsT-test1.xml";
-            xDoc.Save(fileName);
-
-            return xDoc;
+            return root;
         }
 
         private bool CreateTransactionSummary(HttpWebResponse httpWebResponse)
@@ -243,9 +246,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         select item;
                     string tranResult = "";
                     foreach (var tran in transactions)
-                    {
                         tranResult += UpdateSyncTransactionSummary(tran);
-                    }
 
                     // Raise event to eventual UI
                     var logMessage = tranResult;
