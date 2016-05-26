@@ -437,22 +437,21 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     if (fileList.Count > 1 && lastChangeIndexSubscriber > 0)
                     {
                         changeLog = mergeChangelogs(fileList);
-                        PerformWfsTransaction(changeLog, datasetId, dataset);
+                        PerformWfsTransaction(changeLog, datasetId, dataset, 1);
                     }
                     else
                         foreach (string fileName in fileList)
                         {
                             changeLog = XElement.Load(fileName);
-                            if (!PerformWfsTransaction(changeLog, datasetId, dataset))
+                            if (!PerformWfsTransaction(changeLog, datasetId, dataset, i+1))
                                 throw new Exception("WfsTransaction failed");
 
                             if (!downloadController.isFolder)
                             {
                                 AcknowledgeChangelogDownloaded(datasetId, changeLogId);
                             }
-                            logger.Info("DoWfsTransactions OK, pass {0}", (i + 1));
-                            this.OnUpdateLogList(String.Format("DoWfsTransactions OK, pass {0}", (i + 1)));
-                            this.OnOrderProcessingChange((progressCounter + 1)*100);
+                            
+                            this.OnOrderProcessingChange((progressCounter + 1) * 100);
                             ++progressCounter;
                             i++;
                         }
@@ -576,6 +575,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             catch (Exception ex)
             {
                 logger.ErrorException("DoSynchronization Exception:", ex);
+                OnUpdateLogList(ex.Message);
                 throw new Exception(ex.Message);
             }
         }
@@ -693,7 +693,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return mergedChangelog.Root;
         }
 
-        private bool PerformWfsTransaction(XElement changeLog, int datasetId, SubscriberDataset dataset)
+        private bool PerformWfsTransaction(XElement changeLog, int datasetId, SubscriberDataset dataset, int passNr)
         {
             try
             {
@@ -714,6 +714,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 if (wfsController.DoWfsTransactions(changeLog, datasetId))
                 {
+                    logger.Info("DoWfsTransactions OK, pass {0}", passNr);
+                    this.OnUpdateLogList(String.Format("DoWfsTransactions OK, pass {0}", passNr));
                     status = true;
                     dataset.LastIndex = endIndex; //lastIndexSubscriber;
                     DL.SubscriberDatasetManager.UpdateDataset(dataset);
@@ -724,7 +726,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 throw new Exception(e.Message);
             }
-                
+
         }
 
         /// <summary>
@@ -788,16 +790,18 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 }
 
                 XElement changeLog = null;
+                int passNr = 1;
                 if (fileList.Count > 1 && lastChangeIndexSubscriber > 0)
                 {
                     changeLog = mergeChangelogs(fileList);
-                    status = PerformWfsTransaction(changeLog, datasetId, dataset);
+                    status = PerformWfsTransaction(changeLog, datasetId, dataset, passNr);
                 }
                 else
                     foreach (string fileName in fileList)
                     {
                         changeLog = XElement.Load(fileName);
-                        status = PerformWfsTransaction(changeLog, datasetId, dataset);
+                        status = PerformWfsTransaction(changeLog, datasetId, dataset, passNr);
+                        passNr += 1;
                     }
 
 
