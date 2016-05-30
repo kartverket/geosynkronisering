@@ -368,13 +368,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     //Rewrite files according to mappingfile if given
                     if (!String.IsNullOrEmpty(dataset.MappingFile))
                     {
-                        fileList = changeLogMapper(fileList, datasetId);
+                        fileList = ChangeLogMapper(fileList, datasetId);
                     }
 
                     XElement changeLog;
                     if (fileList.Count > 1 && lastChangeIndexSubscriber > 0)
                     {
-                        changeLog = mergeChangelogs(fileList);
+                        changeLog = MergeChangelogs(fileList);
                         PerformWfsTransaction(changeLog, datasetId, dataset, 1);
                     }
                     else
@@ -485,7 +485,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return true;
         }
 
-        private List<string> changeLogMapper(List<string> fileList, int datasetId)
+        private static List<string> ChangeLogMapper(IEnumerable<string> fileList, int datasetId)
         {
             List<string> newFileList = new List<string>();
             foreach (string file in fileList)
@@ -508,7 +508,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return newFileList;
         }
 
-        private XElement mergeChangelogs(List<string> fileList)
+        private static XElement MergeChangelogs(IEnumerable<string> fileList)
         {
             string transactionsElementPath =
                 "{http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg}transactions";
@@ -626,7 +626,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 int passNr = 1;
                 if (fileList.Count > 1 && lastChangeIndexSubscriber > 0)
                 {
-                    changeLog = mergeChangelogs(fileList);
+                    changeLog = MergeChangelogs(fileList);
                     status = PerformWfsTransaction(changeLog, datasetId, dataset, passNr);
                 }
                 else
