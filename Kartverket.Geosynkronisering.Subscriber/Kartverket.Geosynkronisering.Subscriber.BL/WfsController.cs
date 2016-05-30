@@ -276,28 +276,25 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         private string UpdateSyncTransactionSummary(XElement tran)
         {
+            int tmpValue = Convert.ToInt32(tran.Value);
             switch (tran.Name.LocalName)
             {
                 case "totalInserted":
-                    ParentSynchController.TransactionsSummary.TotalInserted +=
-                        Convert.ToInt32(tran.Value);
+                    ParentSynchController.TransactionsSummary.TotalInserted += tmpValue;
                     break;
                 case "totalUpdated":
-                    ParentSynchController.TransactionsSummary.TotalUpdated +=
-                        Convert.ToInt32(tran.Value);
+                    ParentSynchController.TransactionsSummary.TotalUpdated += tmpValue;
                     break;
                 case "totalDeleted":
-                    ParentSynchController.TransactionsSummary.TotalDeleted +=
-                        Convert.ToInt32(tran.Value);
+                    ParentSynchController.TransactionsSummary.TotalDeleted += tmpValue;
                     break;
                 case "totalReplaced":
-                    ParentSynchController.TransactionsSummary.TotalReplaced +=
-                        Convert.ToInt32(tran.Value);
+                    ParentSynchController.TransactionsSummary.TotalReplaced += tmpValue;
                     break;
                 default:
                     return "unknown ";
             }
-            return tran.Name.LocalName + " ";
+            return tran.Name.LocalName + " " + tmpValue + " ";
         }
     }
 }
