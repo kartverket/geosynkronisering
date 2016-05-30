@@ -175,34 +175,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return true;
         }
 
-        /// <summary>
-        /// ListStoredChangelogs
-        /// </summary>
-        /// <returns></returns>
-        public string ListStoredChangelogs(int datasetId)
-        {
-            try
-            {
-                var dataset = SubscriberDatasetManager.GetDataset(datasetId);
-
-                var client = new WebFeatureServiceReplicationPortClient();
-                client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
-
-                StoredChangelogType[] resp = client.ListStoredChangelogs(dataset.ProviderDatasetId);
-                return "Antall lagrede endringslogger:" + resp.Count();
-            }
-            catch (WebException webEx)
-            {
-                Logger.ErrorException("ListStoredChangelogs WebException:", webEx);
-                throw;
-            }
-            catch (Exception ex)
-            {
-                Logger.ErrorException("ListStoredChangelogs failed:", ex);
-                throw;
-            }
-        }
-
 
         /// <summary>
         /// Bekrefte at endringslogg er lastet ned
@@ -239,42 +211,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
-        /// <summary>
-        /// Avbryter endringslogg jobb hvis feks noe går galt.
-        /// </summary>
-        /// <returns></returns>
-        public bool CancelChangelog(int datasetId, string changelogId)
-        {
-            try
-            {
-                var dataset = SubscriberDatasetManager.GetDataset(datasetId);
-
-                var client = new WebFeatureServiceReplicationPortClient();
-                client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
-
-                var id = new ChangelogIdentificationType();
-                id.changelogId = changelogId;
-
-                client.CancelChangelog(id);
-
-                return true;
-            }
-            catch (WebException webEx)
-            {
-                if (webEx.Status == WebExceptionStatus.Success)
-                {
-                    return true;
-                }
-
-                Logger.ErrorException("CancelChangelog WebException:", webEx);
-                throw;
-            }
-            catch (Exception ex)
-            {
-                Logger.ErrorException("CancelChangelog failed:", ex);
-                throw;
-            }
-        }
 
         /// <summary>
         /// Henter siste endringsnr fra tilbyder. Brukes for at klient enkelt kan sjekke om det er noe nytt siden siste synkronisering
