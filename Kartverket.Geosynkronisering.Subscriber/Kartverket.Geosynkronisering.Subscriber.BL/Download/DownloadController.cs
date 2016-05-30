@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Mime;
-using System.Text;
-using System.Threading;
 using Ionic.Zip;
 using NLog;
 
@@ -14,7 +7,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 {
     public class DownloadController
     {
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         public string ChangelogFilename { get; set; }
         public bool IsFolder = false;
@@ -50,7 +43,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 if (Path.GetExtension(ChangelogFilename) != ".zip")
                 {
-                    logger.ErrorException("File " + ChangelogFilename + " is not a zip file", null);
+                    Logger.ErrorException("File " + ChangelogFilename + " is not a zip file", null);
                     return false;
                 }
 
@@ -100,7 +93,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             catch (Exception ex)
             {
-                logger.ErrorException("UnpackZipFile failed for file :" + zipfile, ex);
+                Logger.ErrorException("UnpackZipFile failed for file :" + zipfile, ex);
                 return false;
             }
 
