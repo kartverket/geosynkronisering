@@ -160,7 +160,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 #endif
 
                 downloadController = new DownloadController {ChangelogFilename = fileName};
-                downloadController.DownloadChangelog2(downloaduri);
+                downloadController.DownloadChangelog(downloaduri);
             }
             catch (WebException webEx)
             {
@@ -352,7 +352,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                     List<string> fileList = new List<string>();
 
-                    if (downloadController.isFolder)
+                    if (downloadController.IsFolder)
                     {
                         string[] fileArray = Directory.GetFiles(downloadController.ChangelogFilename);
                         Array.Sort(fileArray);
@@ -384,7 +384,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             if (!PerformWfsTransaction(changeLog, datasetId, dataset, i + 1))
                                 throw new Exception("WfsTransaction failed");
 
-                            if (!downloadController.isFolder)
+                            if (!downloadController.IsFolder)
                             {
                                 AcknowledgeChangelogDownloaded(datasetId, changeLogId);
                             }

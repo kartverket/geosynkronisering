@@ -17,7 +17,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         public string ChangelogFilename { get; set; }
-        public bool isFolder = false;
+        public bool IsFolder = false;
 
         public DownloadController()
         {
@@ -29,14 +29,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             ChangelogFilename = changelogFilename;
         }
 
-        private bool DownloadDone = false;
+        private bool _downloadDone = false;
 
         /// <summary>
         /// Download changelog
         /// </summary>
         /// <param name="downloadUri"></param>
-        /// <param name="localFileName"> Filename including path </param>
-        public bool DownloadChangelog2(string downloadUri)
+        public bool DownloadChangelog(string downloadUri)
         {
             string d = downloadUri;
             d = d.Substring(d.IndexOf('/') + 2);
@@ -46,8 +45,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             string ftpServer = par1[1].Split('/')[0];
             string ftpFileName = par1[1].Split('/')[1] + ".zip";
             var ftpHandler = new FileTransferHandler();
-            ftpHandler.ProgressChanged += new FileTransferHandler.ProgressHandler(ftpHandler_ProgressChanged);
-            ftpHandler.ProcessDone += new FileTransferHandler.ProcessDoneHandler(ftpHandler_ProcessDone);
+            ftpHandler.ProcessDone += ftpHandler_ProcessDone;
             if (ftpHandler.DownloadFileFromFtp(ChangelogFilename, ftpFileName, ftpServer, ftpUser, ftpPasswd))
             {
                 if (Path.GetExtension(ChangelogFilename) != ".zip")
@@ -57,7 +55,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 }
 
                 string outPath = Path.GetDirectoryName(ChangelogFilename);
-                this.UnpackZipFile(ChangelogFilename, outPath);
+                UnpackZipFile(ChangelogFilename, outPath);
 
                 // TODO: HS: Check if zip contains folder or file
                 string baseFilename = ChangelogFilename.Replace(".zip", "");
@@ -65,7 +63,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 if (Directory.Exists(baseFilename))
                 {
                     ChangelogFilename = baseFilename;
-                    isFolder = true;
+                    IsFolder = true;
                 }
                 else
                 {
@@ -73,89 +71,17 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     ChangelogFilename = xmlFile;
                 }
 
-
-                
-                
-
                 System.Diagnostics.Debug.WriteLine("client_DownloadFileCompleted: File downloaded");
                 return true;
             }
-            else
-            { return false; }
+            return false;
         }
 
         void ftpHandler_ProcessDone(object sender, FileTransferHandler.ProgressEventArgs e)
         {
             if (!e.error)
             {
-                DownloadDone = e.status == FileTransferHandler.ftpStatus.done;
-                //toolStripProgressBar1.Maximum = e.totalFiles;
-                //toolStripProgressBar1.Value = e.currentFile;
-                //toolStripStatusLabel1.Text = "Downloaded file: " + e.fileName;
-            }
-        }
-
-        void ftpHandler_ProgressChanged(object sender, FileTransferHandler.ProgressEventArgs e)
-        {
-            if (!e.error)
-            {
-                //toolStripProgressBar1.Maximum = e.totalFiles;
-                //toolStripProgressBar1.Value = e.currentFile;
-                //toolStripStatusLabel1.Text = "Downloading file: " + e.fileName;
-            }
-
-        }
-
-
-        /// <summary>
-        /// This event is raised each time an asynchronous file download operation completes
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-        {           
-            if (e.Error == null)
-            {
-                if (Path.GetExtension(ChangelogFilename) != ".zip")
-                {
-                    logger.ErrorException("File " + ChangelogFilename + " is not a zip file", null);
-                    return;
-                }
-
-                var client = (WebClient)sender;
-
-#if !(NOT_FTP)
-                string outPath = Path.GetDirectoryName(ChangelogFilename);
-
-                FileInfo fileInfo = new FileInfo(ChangelogFilename);
-                int retry_counter = 0;
-
-                while ((!fileInfo.Exists || fileInfo.Length == 0) && retry_counter < 5)
-                {
-                    logger.ErrorException("File " + ChangelogFilename + " is empty, counter = " + retry_counter, null);
-                    Thread.Sleep(2000);
-                    fileInfo.Refresh();
-                    retry_counter++;
-                }
-
-                if (retry_counter == 4)
-                {
-                    logger.ErrorException("File " + ChangelogFilename + " is empty", null);                  
-                    System.Diagnostics.Debug.WriteLine("client_DownloadFileCompleted failed");
-                }
-
-                this.UnpackZipFile(ChangelogFilename, outPath);
-
-                string localFileName = Path.ChangeExtension(ChangelogFilename, ".xml");
-                ChangelogFilename = localFileName;
-#endif
-              
-                System.Diagnostics.Debug.WriteLine("client_DownloadFileCompleted: File downloaded");
-            }
-            else
-            {
-                logger.ErrorException(e.Error.ToString(), null);            
-                System.Diagnostics.Debug.WriteLine("client_DownloadFileCompleted failed");
+                _downloadDone = e.status == FileTransferHandler.ftpStatus.done;
             }
         }
 
@@ -182,4 +108,3 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         }
     }
 }
-
