@@ -8,15 +8,15 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Data.Objects;
+using System.Data.Objects.DataClasses;
+using System.Data.EntityClient;
 using System.ComponentModel;
-using System.Data.Entity.Core.Objects;
-using System.Data.Entity.Core.Objects.DataClasses;
-using System.Data.Entity.Core.EntityClient;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using System.Runtime.Serialization;
 
 [assembly: EdmSchemaAttribute()]
+
 namespace Kartverket.Geosynkronisering
 {
     #region Contexts
@@ -130,7 +130,6 @@ namespace Kartverket.Geosynkronisering
         private ObjectSet<StoredChangelog> _StoredChangelogs;
 
         #endregion
-
         #region AddTo Methods
     
         /// <summary>
@@ -166,11 +165,11 @@ namespace Kartverket.Geosynkronisering
         }
 
         #endregion
-
     }
+    
 
     #endregion
-
+    
     #region Entities
     
     /// <summary>
@@ -195,8 +194,7 @@ namespace Kartverket.Geosynkronisering
         }
 
         #endregion
-
-        #region Simple Properties
+        #region Primitive Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -215,7 +213,7 @@ namespace Kartverket.Geosynkronisering
                 {
                     OnDatasetIdChanging(value);
                     ReportPropertyChanging("DatasetId");
-                    _DatasetId = StructuralObject.SetValidValue(value, "DatasetId");
+                    _DatasetId = StructuralObject.SetValidValue(value);
                     ReportPropertyChanged("DatasetId");
                     OnDatasetIdChanged();
                 }
@@ -240,7 +238,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnNameChanging(value);
                 ReportPropertyChanging("Name");
-                _Name = StructuralObject.SetValidValue(value, true, "Name");
+                _Name = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("Name");
                 OnNameChanged();
             }
@@ -264,7 +262,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnSchemaFileUriChanging(value);
                 ReportPropertyChanging("SchemaFileUri");
-                _SchemaFileUri = StructuralObject.SetValidValue(value, true, "SchemaFileUri");
+                _SchemaFileUri = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("SchemaFileUri");
                 OnSchemaFileUriChanged();
             }
@@ -288,7 +286,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnDatasetProviderChanging(value);
                 ReportPropertyChanging("DatasetProvider");
-                _DatasetProvider = StructuralObject.SetValidValue(value, true, "DatasetProvider");
+                _DatasetProvider = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("DatasetProvider");
                 OnDatasetProviderChanged();
             }
@@ -312,7 +310,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnServerMaxCountChanging(value);
                 ReportPropertyChanging("ServerMaxCount");
-                _ServerMaxCount = StructuralObject.SetValidValue(value, "ServerMaxCount");
+                _ServerMaxCount = StructuralObject.SetValidValue(value);
                 ReportPropertyChanged("ServerMaxCount");
                 OnServerMaxCountChanged();
             }
@@ -336,7 +334,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnDatasetConnectionChanging(value);
                 ReportPropertyChanging("DatasetConnection");
-                _DatasetConnection = StructuralObject.SetValidValue(value, true, "DatasetConnection");
+                _DatasetConnection = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("DatasetConnection");
                 OnDatasetConnectionChanged();
             }
@@ -360,7 +358,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnDBSchemaChanging(value);
                 ReportPropertyChanging("DBSchema");
-                _DBSchema = StructuralObject.SetValidValue(value, true, "DBSchema");
+                _DBSchema = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("DBSchema");
                 OnDBSchemaChanged();
             }
@@ -384,7 +382,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnTransformationConnectionChanging(value);
                 ReportPropertyChanging("TransformationConnection");
-                _TransformationConnection = StructuralObject.SetValidValue(value, true, "TransformationConnection");
+                _TransformationConnection = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("TransformationConnection");
                 OnTransformationConnectionChanged();
             }
@@ -408,7 +406,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnDefaultCrsChanging(value);
                 ReportPropertyChanging("DefaultCrs");
-                _DefaultCrs = StructuralObject.SetValidValue(value, true, "DefaultCrs");
+                _DefaultCrs = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("DefaultCrs");
                 OnDefaultCrsChanged();
             }
@@ -432,7 +430,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnUpperCornerCoordsChanging(value);
                 ReportPropertyChanging("UpperCornerCoords");
-                _UpperCornerCoords = StructuralObject.SetValidValue(value, true, "UpperCornerCoords");
+                _UpperCornerCoords = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("UpperCornerCoords");
                 OnUpperCornerCoordsChanged();
             }
@@ -456,7 +454,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnLowerCornerCoordsChanging(value);
                 ReportPropertyChanging("LowerCornerCoords");
-                _LowerCornerCoords = StructuralObject.SetValidValue(value, true, "LowerCornerCoords");
+                _LowerCornerCoords = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("LowerCornerCoords");
                 OnLowerCornerCoordsChanged();
             }
@@ -480,7 +478,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnTargetNamespaceChanging(value);
                 ReportPropertyChanging("TargetNamespace");
-                _TargetNamespace = StructuralObject.SetValidValue(value, true, "TargetNamespace");
+                _TargetNamespace = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("TargetNamespace");
                 OnTargetNamespaceChanged();
             }
@@ -504,7 +502,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnTargetNamespacePrefixChanging(value);
                 ReportPropertyChanging("TargetNamespacePrefix");
-                _TargetNamespacePrefix = StructuralObject.SetValidValue(value, true, "TargetNamespacePrefix");
+                _TargetNamespacePrefix = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("TargetNamespacePrefix");
                 OnTargetNamespacePrefixChanged();
             }
@@ -514,7 +512,7 @@ namespace Kartverket.Geosynkronisering
         partial void OnTargetNamespacePrefixChanged();
 
         #endregion
-
+    
     }
     
     /// <summary>
@@ -539,8 +537,7 @@ namespace Kartverket.Geosynkronisering
         }
 
         #endregion
-
-        #region Simple Properties
+        #region Primitive Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -557,7 +554,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnFTPUrlChanging(value);
                 ReportPropertyChanging("FTPUrl");
-                _FTPUrl = StructuralObject.SetValidValue(value, true, "FTPUrl");
+                _FTPUrl = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("FTPUrl");
                 OnFTPUrlChanged();
             }
@@ -581,7 +578,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnFTPUserChanging(value);
                 ReportPropertyChanging("FTPUser");
-                _FTPUser = StructuralObject.SetValidValue(value, true, "FTPUser");
+                _FTPUser = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("FTPUser");
                 OnFTPUserChanged();
             }
@@ -605,7 +602,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnFTPPwdChanging(value);
                 ReportPropertyChanging("FTPPwd");
-                _FTPPwd = StructuralObject.SetValidValue(value, true, "FTPPwd");
+                _FTPPwd = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("FTPPwd");
                 OnFTPPwdChanged();
             }
@@ -631,7 +628,7 @@ namespace Kartverket.Geosynkronisering
                 {
                     OnIDChanging(value);
                     ReportPropertyChanging("ID");
-                    _ID = StructuralObject.SetValidValue(value, "ID");
+                    _ID = StructuralObject.SetValidValue(value);
                     ReportPropertyChanged("ID");
                     OnIDChanged();
                 }
@@ -642,7 +639,7 @@ namespace Kartverket.Geosynkronisering
         partial void OnIDChanged();
 
         #endregion
-
+    
     }
     
     /// <summary>
@@ -667,8 +664,7 @@ namespace Kartverket.Geosynkronisering
         }
 
         #endregion
-
-        #region Simple Properties
+        #region Primitive Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -685,7 +681,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnTitleChanging(value);
                 ReportPropertyChanging("Title");
-                _Title = StructuralObject.SetValidValue(value, true, "Title");
+                _Title = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("Title");
                 OnTitleChanged();
             }
@@ -709,7 +705,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnAbstractChanging(value);
                 ReportPropertyChanging("Abstract");
-                _Abstract = StructuralObject.SetValidValue(value, true, "Abstract");
+                _Abstract = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("Abstract");
                 OnAbstractChanged();
             }
@@ -733,7 +729,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnKeywordsChanging(value);
                 ReportPropertyChanging("Keywords");
-                _Keywords = StructuralObject.SetValidValue(value, true, "Keywords");
+                _Keywords = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("Keywords");
                 OnKeywordsChanged();
             }
@@ -757,7 +753,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnFeesChanging(value);
                 ReportPropertyChanging("Fees");
-                _Fees = StructuralObject.SetValidValue(value, true, "Fees");
+                _Fees = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("Fees");
                 OnFeesChanged();
             }
@@ -781,7 +777,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnAccessConstraintsChanging(value);
                 ReportPropertyChanging("AccessConstraints");
-                _AccessConstraints = StructuralObject.SetValidValue(value, true, "AccessConstraints");
+                _AccessConstraints = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("AccessConstraints");
                 OnAccessConstraintsChanged();
             }
@@ -805,7 +801,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnProviderNameChanging(value);
                 ReportPropertyChanging("ProviderName");
-                _ProviderName = StructuralObject.SetValidValue(value, true, "ProviderName");
+                _ProviderName = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("ProviderName");
                 OnProviderNameChanged();
             }
@@ -829,7 +825,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnProviderSiteChanging(value);
                 ReportPropertyChanging("ProviderSite");
-                _ProviderSite = StructuralObject.SetValidValue(value, true, "ProviderSite");
+                _ProviderSite = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("ProviderSite");
                 OnProviderSiteChanged();
             }
@@ -853,7 +849,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnIndividualNameChanging(value);
                 ReportPropertyChanging("IndividualName");
-                _IndividualName = StructuralObject.SetValidValue(value, true, "IndividualName");
+                _IndividualName = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("IndividualName");
                 OnIndividualNameChanged();
             }
@@ -877,7 +873,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnPhoneChanging(value);
                 ReportPropertyChanging("Phone");
-                _Phone = StructuralObject.SetValidValue(value, true, "Phone");
+                _Phone = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("Phone");
                 OnPhoneChanged();
             }
@@ -901,7 +897,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnFacsimileChanging(value);
                 ReportPropertyChanging("Facsimile");
-                _Facsimile = StructuralObject.SetValidValue(value, true, "Facsimile");
+                _Facsimile = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("Facsimile");
                 OnFacsimileChanged();
             }
@@ -925,7 +921,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnDeliverypointChanging(value);
                 ReportPropertyChanging("Deliverypoint");
-                _Deliverypoint = StructuralObject.SetValidValue(value, true, "Deliverypoint");
+                _Deliverypoint = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("Deliverypoint");
                 OnDeliverypointChanged();
             }
@@ -949,7 +945,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnCityChanging(value);
                 ReportPropertyChanging("City");
-                _City = StructuralObject.SetValidValue(value, true, "City");
+                _City = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("City");
                 OnCityChanged();
             }
@@ -973,7 +969,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnPostalCodeChanging(value);
                 ReportPropertyChanging("PostalCode");
-                _PostalCode = StructuralObject.SetValidValue(value, true, "PostalCode");
+                _PostalCode = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("PostalCode");
                 OnPostalCodeChanged();
             }
@@ -997,7 +993,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnCountryChanging(value);
                 ReportPropertyChanging("Country");
-                _Country = StructuralObject.SetValidValue(value, true, "Country");
+                _Country = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("Country");
                 OnCountryChanged();
             }
@@ -1021,7 +1017,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnEMailChanging(value);
                 ReportPropertyChanging("EMail");
-                _EMail = StructuralObject.SetValidValue(value, true, "EMail");
+                _EMail = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("EMail");
                 OnEMailChanged();
             }
@@ -1045,7 +1041,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnOnlineResourcesUrlChanging(value);
                 ReportPropertyChanging("OnlineResourcesUrl");
-                _OnlineResourcesUrl = StructuralObject.SetValidValue(value, true, "OnlineResourcesUrl");
+                _OnlineResourcesUrl = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("OnlineResourcesUrl");
                 OnOnlineResourcesUrlChanged();
             }
@@ -1069,7 +1065,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnHoursOfServiceChanging(value);
                 ReportPropertyChanging("HoursOfService");
-                _HoursOfService = StructuralObject.SetValidValue(value, true, "HoursOfService");
+                _HoursOfService = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("HoursOfService");
                 OnHoursOfServiceChanged();
             }
@@ -1093,7 +1089,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnContactInstructionsChanging(value);
                 ReportPropertyChanging("ContactInstructions");
-                _ContactInstructions = StructuralObject.SetValidValue(value, true, "ContactInstructions");
+                _ContactInstructions = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("ContactInstructions");
                 OnContactInstructionsChanged();
             }
@@ -1117,7 +1113,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnRoleChanging(value);
                 ReportPropertyChanging("Role");
-                _Role = StructuralObject.SetValidValue(value, true, "Role");
+                _Role = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("Role");
                 OnRoleChanged();
             }
@@ -1141,7 +1137,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnServiceURLChanging(value);
                 ReportPropertyChanging("ServiceURL");
-                _ServiceURL = StructuralObject.SetValidValue(value, true, "ServiceURL");
+                _ServiceURL = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("ServiceURL");
                 OnServiceURLChanged();
             }
@@ -1167,7 +1163,7 @@ namespace Kartverket.Geosynkronisering
                 {
                     OnServiceIDChanging(value);
                     ReportPropertyChanging("ServiceID");
-                    _ServiceID = StructuralObject.SetValidValue(value, false, "ServiceID");
+                    _ServiceID = StructuralObject.SetValidValue(value, false);
                     ReportPropertyChanged("ServiceID");
                     OnServiceIDChanged();
                 }
@@ -1178,7 +1174,7 @@ namespace Kartverket.Geosynkronisering
         partial void OnServiceIDChanged();
 
         #endregion
-
+    
     }
     
     /// <summary>
@@ -1203,8 +1199,7 @@ namespace Kartverket.Geosynkronisering
         }
 
         #endregion
-
-        #region Simple Properties
+        #region Primitive Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -1221,7 +1216,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnNameChanging(value);
                 ReportPropertyChanging("Name");
-                _Name = StructuralObject.SetValidValue(value, true, "Name");
+                _Name = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("Name");
                 OnNameChanged();
             }
@@ -1245,7 +1240,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnOrderUriChanging(value);
                 ReportPropertyChanging("OrderUri");
-                _OrderUri = StructuralObject.SetValidValue(value, true, "OrderUri");
+                _OrderUri = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("OrderUri");
                 OnOrderUriChanged();
             }
@@ -1269,7 +1264,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnStartIndexChanging(value);
                 ReportPropertyChanging("StartIndex");
-                _StartIndex = StructuralObject.SetValidValue(value, "StartIndex");
+                _StartIndex = StructuralObject.SetValidValue(value);
                 ReportPropertyChanged("StartIndex");
                 OnStartIndexChanged();
             }
@@ -1293,7 +1288,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnDownloadUriChanging(value);
                 ReportPropertyChanging("DownloadUri");
-                _DownloadUri = StructuralObject.SetValidValue(value, true, "DownloadUri");
+                _DownloadUri = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("DownloadUri");
                 OnDownloadUriChanged();
             }
@@ -1317,7 +1312,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnEndIndexChanging(value);
                 ReportPropertyChanging("EndIndex");
-                _EndIndex = StructuralObject.SetValidValue(value, "EndIndex");
+                _EndIndex = StructuralObject.SetValidValue(value);
                 ReportPropertyChanged("EndIndex");
                 OnEndIndexChanged();
             }
@@ -1341,7 +1336,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnStatusChanging(value);
                 ReportPropertyChanging("Status");
-                _Status = StructuralObject.SetValidValue(value, true, "Status");
+                _Status = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("Status");
                 OnStatusChanged();
             }
@@ -1365,7 +1360,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnStoredChanging(value);
                 ReportPropertyChanging("Stored");
-                _Stored = StructuralObject.SetValidValue(value, "Stored");
+                _Stored = StructuralObject.SetValidValue(value);
                 ReportPropertyChanged("Stored");
                 OnStoredChanged();
             }
@@ -1391,7 +1386,7 @@ namespace Kartverket.Geosynkronisering
                 {
                     OnChangelogIdChanging(value);
                     ReportPropertyChanging("ChangelogId");
-                    _ChangelogId = StructuralObject.SetValidValue(value, "ChangelogId");
+                    _ChangelogId = StructuralObject.SetValidValue(value);
                     ReportPropertyChanged("ChangelogId");
                     OnChangelogIdChanged();
                 }
@@ -1416,7 +1411,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnDatasetIdChanging(value);
                 ReportPropertyChanging("DatasetId");
-                _DatasetId = StructuralObject.SetValidValue(value, "DatasetId");
+                _DatasetId = StructuralObject.SetValidValue(value);
                 ReportPropertyChanged("DatasetId");
                 OnDatasetIdChanged();
             }
@@ -1440,7 +1435,7 @@ namespace Kartverket.Geosynkronisering
             {
                 OnDateCreatedChanging(value);
                 ReportPropertyChanging("DateCreated");
-                _DateCreated = StructuralObject.SetValidValue(value, "DateCreated");
+                _DateCreated = StructuralObject.SetValidValue(value);
                 ReportPropertyChanged("DateCreated");
                 OnDateCreatedChanged();
             }
@@ -1450,9 +1445,9 @@ namespace Kartverket.Geosynkronisering
         partial void OnDateCreatedChanged();
 
         #endregion
-
+    
     }
 
     #endregion
-
+    
 }

@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
   <!-- EF Runtime content -->
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="geosyncModel.Store" Alias="Self" Provider="System.Data.SqlServerCe.4.0" ProviderManifestToken="4.0" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="geosyncModel.Store" Alias="Self" Provider="System.Data.SqlServerCe.4.0" ProviderManifestToken="4.0" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="geosyncModelStoreContainer">
-          <EntitySet Name="Dataset" EntityType="geosyncModel.Store.Dataset" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-          <EntitySet Name="ServerConfig" EntityType="geosyncModel.Store.ServerConfig" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-          <EntitySet Name="Service" EntityType="geosyncModel.Store.Service" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-          <EntitySet Name="StoredChangelog" EntityType="geosyncModel.Store.StoredChangelog" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="Dataset" EntityType="geosyncModel.Store.Dataset" store:Type="Tables" />
+          <EntitySet Name="ServerConfig" EntityType="geosyncModel.Store.ServerConfig" store:Type="Tables" />
+          <EntitySet Name="Service" EntityType="geosyncModel.Store.Service" store:Type="Tables" />
+          <EntitySet Name="StoredChangelog" EntityType="geosyncModel.Store.StoredChangelog" store:Type="Tables" />
         </EntityContainer>
         <EntityType Name="Dataset">
           <Key>
@@ -82,8 +82,8 @@
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="geosyncModel" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
-        <EntityContainer Name="geosyncEntities" annotation:LazyLoadingEnabled="true" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+      <Schema Namespace="geosyncModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="geosyncEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Datasets" EntityType="geosyncModel.Dataset" />
           <EntitySet Name="ServerConfigs" EntityType="geosyncModel.ServerConfig" />
           <EntitySet Name="Services" EntityType="geosyncModel.Service" />
@@ -93,7 +93,7 @@
           <Key>
             <PropertyRef Name="DatasetId" />
           </Key>
-          <Property Type="Int32" Name="DatasetId" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="DatasetId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="String" Name="Name" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="SchemaFileUri" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="DatasetProvider" MaxLength="256" FixedLength="false" Unicode="true" />
@@ -153,7 +153,7 @@
           <Property Type="Int32" Name="EndIndex" />
           <Property Type="String" Name="Status" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Type="Boolean" Name="Stored" />
-          <Property Type="Int32" Name="ChangelogId" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="ChangelogId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="DatasetId" />
           <Property Type="DateTime" Name="DateCreated" Precision="3" />
         </EntityType>
@@ -161,7 +161,7 @@
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
-    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
   <EntityContainerMapping StorageEntityContainer="geosyncModelStoreContainer" CdmEntityContainer="geosyncEntities">
           <EntitySetMapping Name="Datasets">
             <EntityTypeMapping TypeName="geosyncModel.Dataset">
@@ -239,27 +239,27 @@
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
-  <edmx:Designer>
-    <edmx:Connection>
-      <edmx:DesignerInfoPropertySet>
-        <edmx:DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
-      </edmx:DesignerInfoPropertySet>
-    </edmx:Connection>
-    <edmx:Options>
-      <edmx:DesignerInfoPropertySet>
-        <edmx:DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <edmx:DesignerProperty Name="EnablePluralization" Value="True" />
-        <edmx:DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
-      </edmx:DesignerInfoPropertySet>
-    </edmx:Options>
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
     <!-- Diagram content (shape and connector positions) -->
-    <edmx:Diagrams>
-      <edmx:Diagram Name="GeosyncModel" ZoomLevel="100">
-        <edmx:EntityTypeShape EntityType="geosyncModel.Dataset" Width="1.5" PointX="2.25" PointY="0.5" />
-        <edmx:EntityTypeShape EntityType="geosyncModel.ServerConfig" Width="1.5" PointX="3.875" PointY="0.5" />
-        <edmx:EntityTypeShape EntityType="geosyncModel.Service" Width="1.5" PointX="5.5" PointY="0.5" />
-        <edmx:EntityTypeShape EntityType="geosyncModel.StoredChangelog" Width="1.5" PointX="0.625" PointY="0.5" />
-      </edmx:Diagram>
-    </edmx:Diagrams>
-  </edmx:Designer>
+    <Diagrams>
+      <Diagram Name="GeosyncModel" ZoomLevel="100">
+        <EntityTypeShape EntityType="geosyncModel.Dataset" Width="1.5" PointX="2.25" PointY="0.5" />
+        <EntityTypeShape EntityType="geosyncModel.ServerConfig" Width="1.5" PointX="3.875" PointY="0.5" />
+        <EntityTypeShape EntityType="geosyncModel.Service" Width="1.5" PointX="5.5" PointY="0.5" />
+        <EntityTypeShape EntityType="geosyncModel.StoredChangelog" Width="1.5" PointX="0.625" PointY="0.5" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
 </edmx:Edmx>
