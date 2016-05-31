@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Data.Objects;
-using System.Data.Objects.DataClasses;
-using System.Data.EntityClient;
 using System.Globalization;
 using System.Xml;
 using System.Xml.Serialization;
