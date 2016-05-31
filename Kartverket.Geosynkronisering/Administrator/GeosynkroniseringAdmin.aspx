@@ -116,76 +116,61 @@
                                                 <EditRowStyle CssClass="GridView" />
                                                 <FieldHeaderStyle CssClass="FieldHeader" />
                                                 <Fields>
-                                                    <asp:BoundField DataField="Title" HeaderText="Tittel" SortExpression="Title" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
+                                                    <asp:BoundField DataField="Title" HeaderText="Title" SortExpression="Title" >
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="Abstract" HeaderText="Overordnet beskrivelse" 
+                                                    <asp:BoundField DataField="Abstract" HeaderText="Abstract" 
                                                         SortExpression="Abstract" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="Keywords" HeaderText="Nøkkelord" 
+                                                    <asp:BoundField DataField="Keywords" HeaderText="Keywords" 
                                                         SortExpression="Keywords" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="Fees" HeaderText="Utgifter" SortExpression="Fees" />
-                                                    <asp:BoundField DataField="AccessConstraints" HeaderText="Tilgangskontroll" 
+                                                    <asp:BoundField DataField="Fees" HeaderText="Fees" SortExpression="Fees" />
+                                                    <asp:BoundField DataField="AccessConstraints" HeaderText="AccessConstraints" 
                                                         SortExpression="AccessConstraints" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="ProviderName" HeaderText="Tilbydenavn" 
+                                                    <asp:BoundField DataField="ProviderName" HeaderText="ProviderName" 
                                                         SortExpression="ProviderName" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="ProviderSite" HeaderText="Tilbyder side" 
+                                                    <asp:BoundField DataField="ProviderSite" HeaderText="ProviderSite" 
                                                         SortExpression="ProviderSite" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="IndividualName" HeaderText="Kontaktperson" 
+                                                    <asp:BoundField DataField="IndividualName" HeaderText="IndividualName" 
                                                         SortExpression="IndividualName" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="Phone" HeaderText="Telefon" SortExpression="Phone" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
+                                                    <asp:BoundField DataField="Phone" HeaderText="Phone" SortExpression="Phone" >
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="Facsimile" HeaderText="Fax" 
+                                                    <asp:BoundField DataField="Facsimile" HeaderText="Facsimile" 
                                                         SortExpression="Facsimile" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="Deliverypoint" HeaderText="Adresse" 
+                                                    <asp:BoundField DataField="Deliverypoint" HeaderText="Deliverypoint" 
                                                         SortExpression="Deliverypoint" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="City" HeaderText="By" SortExpression="City" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
+                                                    <asp:BoundField DataField="City" HeaderText="City" SortExpression="City" >
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="PostalCode" HeaderText="Postnr." 
+                                                    <asp:BoundField DataField="PostalCode" HeaderText="PostalCode" 
                                                         SortExpression="PostalCode" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="Country" HeaderText="Land" 
+                                                    <asp:BoundField DataField="Country" HeaderText="Country" 
                                                         SortExpression="Country" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="EMail" HeaderText="E-post" SortExpression="EMail" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
+                                                    <asp:BoundField DataField="EMail" HeaderText="EMail" SortExpression="EMail" >
                                                     </asp:BoundField>
                                                     <asp:BoundField DataField="OnlineResourcesUrl" 
-                                                        HeaderText="Nettside for ressurser." SortExpression="OnlineResourcesUrl" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
+                                                        HeaderText="OnlineResourcesUrl" SortExpression="OnlineResourcesUrl" >
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="HoursOfService" HeaderText="Åpningtid" 
+                                                    <asp:BoundField DataField="HoursOfService" HeaderText="HoursOfService" 
                                                         SortExpression="HoursOfService" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="ContactInstructions" HeaderText="Kontaktinstrukser" 
+                                                    <asp:BoundField DataField="ContactInstructions" HeaderText="ContactInstructions" 
                                                         SortExpression="ContactInstructions" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="Role" HeaderText="Rolle" SortExpression="Role" >
-                                                    <HeaderStyle CssClass="FieldHeader" />
+                                                    <asp:BoundField DataField="Role" HeaderText="Role" SortExpression="Role" >
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="ServiceURL" HeaderText="Service URL" 
+                                                    <asp:BoundField DataField="ServiceURL" HeaderText="ServiceURL" 
                                                         SortExpression="ServiceURL" />
+                                                    <asp:BoundField DataField="ServiceID" HeaderText="ServiceID" ReadOnly="True" SortExpression="ServiceID" />
+                                                    <asp:BoundField DataField="Namespace" HeaderText="Namespace" SortExpression="Namespace" />
+                                                    <asp:BoundField DataField="SchemaLocation" HeaderText="SchemaLocation" SortExpression="SchemaLocation" />
                                                     <asp:CommandField ButtonType="Image" CancelImageUrl="~/Images/Edit_UndoHS.png" 
                                                         CancelText="Avbryt" DeleteImageUrl="~/Images/delete_12x12.png" 
                                                         DeleteText="Slett" EditImageUrl="~/Images/EditTableHS.png" EditText="Rediger" 
