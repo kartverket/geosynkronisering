@@ -191,7 +191,7 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
-        object DescribeFeatureType(string datasetId, [System.ServiceModel.MessageParameterAttribute(Name="describefeaturetype")] Kartverket.GeosyncWCF.DescribeFeatureTypeType describefeaturetype1);
+        System.Xml.XmlDocument DescribeFeatureType(string datasetId, [System.ServiceModel.MessageParameterAttribute(Name="describefeaturetype")] Kartverket.GeosyncWCF.DescribeFeatureTypeType describefeaturetype1);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt/#GetCapabilities" +
             "", ReplyAction="*")]
@@ -10379,8 +10379,8 @@ namespace Kartverket.GeosyncWCF
         {
             base.Channel.CancelChangelog(changelogid);
         }
-        
-        public object DescribeFeatureType(string datasetId, Kartverket.GeosyncWCF.DescribeFeatureTypeType describefeaturetype1)
+
+        public System.Xml.XmlDocument DescribeFeatureType(string datasetId, Kartverket.GeosyncWCF.DescribeFeatureTypeType describefeaturetype1)
         {
             return base.Channel.DescribeFeatureType(datasetId, describefeaturetype1);
         }
