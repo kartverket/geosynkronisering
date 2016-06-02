@@ -44,7 +44,7 @@ namespace Kartverket.Geosynkronisering
                 using (geosyncEntities db = new geosyncEntities())
                 {
                     ChangelogManager mng = new ChangelogManager(db);
-                    return mng.DescribeFeatureType(numDatasetId).ToString(); //TODO Får ikke til å returnere XElement eller XmlDocument her. Virker som serialiseringen får problemer...                     
+                    return mng.DescribeFeatureType(numDatasetId, describefeaturetype1).OuterXml;
                 }
             }
             catch (System.Exception ex)
