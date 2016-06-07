@@ -8,15 +8,15 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.ComponentModel;
+using System.Data.EntityClient;
 using System.Data.Objects;
 using System.Data.Objects.DataClasses;
-using System.Data.EntityClient;
-using System.ComponentModel;
-using System.Xml.Serialization;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 [assembly: EdmSchemaAttribute()]
-
 namespace Kartverket.Geosynkronisering
 {
     #region Contexts
@@ -130,6 +130,7 @@ namespace Kartverket.Geosynkronisering
         private ObjectSet<StoredChangelog> _StoredChangelogs;
 
         #endregion
+
         #region AddTo Methods
     
         /// <summary>
@@ -165,11 +166,11 @@ namespace Kartverket.Geosynkronisering
         }
 
         #endregion
+
     }
-    
 
     #endregion
-    
+
     #region Entities
     
     /// <summary>
@@ -194,6 +195,7 @@ namespace Kartverket.Geosynkronisering
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -512,6 +514,7 @@ namespace Kartverket.Geosynkronisering
         partial void OnTargetNamespacePrefixChanged();
 
         #endregion
+
     
     }
     
@@ -537,6 +540,7 @@ namespace Kartverket.Geosynkronisering
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -639,6 +643,7 @@ namespace Kartverket.Geosynkronisering
         partial void OnIDChanged();
 
         #endregion
+
     
     }
     
@@ -664,6 +669,7 @@ namespace Kartverket.Geosynkronisering
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -1172,8 +1178,57 @@ namespace Kartverket.Geosynkronisering
         private global::System.String _ServiceID;
         partial void OnServiceIDChanging(global::System.String value);
         partial void OnServiceIDChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String Namespace
+        {
+            get
+            {
+                return _Namespace;
+            }
+            set
+            {
+                OnNamespaceChanging(value);
+                ReportPropertyChanging("Namespace");
+                _Namespace = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("Namespace");
+                OnNamespaceChanged();
+            }
+        }
+        private global::System.String _Namespace;
+        partial void OnNamespaceChanging(global::System.String value);
+        partial void OnNamespaceChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String SchemaLocation
+        {
+            get
+            {
+                return _SchemaLocation;
+            }
+            set
+            {
+                OnSchemaLocationChanging(value);
+                ReportPropertyChanging("SchemaLocation");
+                _SchemaLocation = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("SchemaLocation");
+                OnSchemaLocationChanged();
+            }
+        }
+        private global::System.String _SchemaLocation;
+        partial void OnSchemaLocationChanging(global::System.String value);
+        partial void OnSchemaLocationChanged();
 
         #endregion
+
     
     }
     
@@ -1199,6 +1254,7 @@ namespace Kartverket.Geosynkronisering
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -1445,9 +1501,11 @@ namespace Kartverket.Geosynkronisering
         partial void OnDateCreatedChanged();
 
         #endregion
+
     
     }
 
     #endregion
+
     
 }

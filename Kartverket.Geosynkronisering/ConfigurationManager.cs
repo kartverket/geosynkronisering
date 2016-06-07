@@ -231,6 +231,23 @@ namespace Kartverket.Geosynkronisering.Database
                 return string.Format("{0}{1}?", url, slash);
             }
         }
+
+        public static string Namespace()
+        {
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.Namespace;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
+        }
+        public static string SchemaLocation()
+        {
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from sc in db.Services select sc.SchemaLocation;
+                if (res.First() != null) return res.First().ToString(); else return "";
+            }
+        }
     }
 
     public class DatasetsData

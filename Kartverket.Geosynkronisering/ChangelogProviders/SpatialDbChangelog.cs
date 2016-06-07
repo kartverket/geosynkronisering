@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using Ionic.Zip;
 using Kartverket.GeosyncWCF;
+using Kartverket.Geosynkronisering.Database;
 using NLog;
 
 namespace Kartverket.Geosynkronisering.ChangelogProviders
@@ -749,17 +750,20 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         private XElement BuildChangelogRoot(int datasetId)
         {
-            XNamespace nsChlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg";
+            XNamespace nsChlogf = ServiceData.Namespace();
             XNamespace nsApp = p_nsApp;
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
             XNamespace nsXsi = "http://www.w3.org/2001/XMLSchema-instance";
             XNamespace nsGml = "http://www.opengis.net/gml/3.2";
 
-            string schemaLocation = "http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg http://geosynkronisering.no/files/skjema/1.1/changelogfile.xsd ";
-            schemaLocation += p_nsApp + " " + p_SchemaFileUri;
+            // 20150407-Leg: Correct xsd location
+            // TODO: Should not be hardcoded
+            string schemaLocation = nsChlogf.NamespaceName + " " + ServiceData.SchemaLocation();
+            schemaLocation += " " + p_nsApp + " " + p_SchemaFileUri;
 
+            //"2001-12-17T09:30:47Z"
             XElement changelogRoot =
-                new XElement(nsChlogf + "TransactionCollection", new XAttribute("timeStamp", "2001-12-17T09:30:47Z"), new XAttribute("numberMatched", ""), new XAttribute("numberReturned", ""), new XAttribute("startIndex", ""), new XAttribute("endIndex", ""),
+                new XElement(nsChlogf + "TransactionCollection", new XAttribute("timeStamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffz")), new XAttribute("numberMatched", ""), new XAttribute("numberReturned", ""), new XAttribute("startIndex", ""), new XAttribute("endIndex", ""),
                     new XAttribute(XNamespace.Xmlns + "xsi", nsXsi),
                     new XAttribute(nsXsi + "schemaLocation", schemaLocation),
                     new XAttribute(XNamespace.Xmlns + "chlogf", nsChlogf),

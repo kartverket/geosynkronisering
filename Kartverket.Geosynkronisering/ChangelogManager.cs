@@ -4,6 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Globalization;
+using System.Xml;
+using Kartverket.GeosyncWCF;
+
 // using System.Xml;
 // using System.Xml.Serialization;
 // using System.Xml.Linq;
@@ -31,17 +34,56 @@ namespace Kartverket.Geosynkronisering
             return xmlDoc;
         }
 
-        public System.Xml.XmlDocument DescribeFeatureType(int datasetId)
+        public XmlDocument DescribeFeatureType(int datasetId, DescribeFeatureTypeType describefeaturetype1)
         {
             var dataset = from d in db.Datasets where d.DatasetId == datasetId select d;
 
-            //get xsd file from dataset table
-            System.Xml.XmlDocument xmlDoc = new System.Xml.XmlDocument();
-            string filePath = Utils.BaseSiteUrl + dataset.First().SchemaFileUri;
-            xmlDoc.Load(filePath);
-            //XElement retElement = XElement.Load(new XmlNodeReader(xmlDoc));
-            //return retElement;
+            string serviceUrl = dataset.First().TransformationConnection;
+            if (serviceUrl.Contains("?"))
+                serviceUrl = serviceUrl.Split('?')[0];
+
+            Dictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                {"service", describefeaturetype1.service},
+                {"version", describefeaturetype1.version},
+                {"request", "DescribeFeatureType"},
+                //{"outputFormat",describefeaturetype1.outputFormat},
+            };
+            string typeNames = "";
+
+            foreach (var VARIABLE in describefeaturetype1.TypeName)
+                if (string.IsNullOrEmpty(VARIABLE.Namespace))
+                    typeNames += VARIABLE.Name + ",";
+                else
+                    typeNames += VARIABLE.Namespace + ":" + VARIABLE.Name + ",";
+
+            parameters["typeNames"] = typeNames.TrimEnd(',');
+
+            string queryUrl = serviceUrl + "?" + DictToString(parameters, "=", "&");
+
+            XmlDocument xmlDoc = new XmlDocument();
+
+            try
+            {
+                xmlDoc.Load(queryUrl);
+            }
+            catch
+            {
+                parameters.Remove("typeNames");
+                queryUrl = serviceUrl + "?" + DictToString(parameters, "=", "&");
+                xmlDoc.Load(queryUrl);
+            }
+
             return xmlDoc;
+        }
+
+        private static string DictToString(Dictionary<string, string> source, string keyValueSeparator,
+            string sequenceSeparator)
+        {
+            if (source == null)
+                throw new ArgumentException("Parameter source can not be null.");
+            var pairs = source.Select(x => x.Key + keyValueSeparator + x.Value).ToArray();
+            return string.Join(sequenceSeparator, pairs);
         }
 
         public Kartverket.GeosyncWCF.ListStoredChangelogsResponse ListStoredChangelogs(int datasetId)

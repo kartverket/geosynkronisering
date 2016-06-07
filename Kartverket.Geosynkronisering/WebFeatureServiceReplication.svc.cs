@@ -35,7 +35,7 @@ namespace Kartverket.Geosynkronisering
         /// <param name="datasetId"></param>
         /// <param name="describefeaturetype1"></param>
         /// <returns></returns>
-        public object DescribeFeatureType(string datasetId, Kartverket.GeosyncWCF.DescribeFeatureTypeType describefeaturetype1)
+        public XmlDocument DescribeFeatureType(string datasetId, Kartverket.GeosyncWCF.DescribeFeatureTypeType describefeaturetype1)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace Kartverket.Geosynkronisering
                 using (geosyncEntities db = new geosyncEntities())
                 {
                     ChangelogManager mng = new ChangelogManager(db);
-                    return mng.DescribeFeatureType(numDatasetId).ToString(); //TODO Får ikke til å returnere XElement eller XmlDocument her. Virker som serialiseringen får problemer...                     
+                    return mng.DescribeFeatureType(numDatasetId, describefeaturetype1);
                 }
             }
             catch (System.Exception ex)
