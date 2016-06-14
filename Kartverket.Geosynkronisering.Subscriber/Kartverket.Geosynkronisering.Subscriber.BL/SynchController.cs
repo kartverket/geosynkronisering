@@ -371,7 +371,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     fileList = ChangeLogMapper(fileList, datasetId);
                 }
 
-                LoopChangeLog(fileList, dataset, datasetId, progressCounter);
+                LoopChangeLog(fileList, dataset, datasetId, progressCounter, downloadController.ChangelogFilename);
 
                 if (!downloadController.IsFolder)
                 {
@@ -406,7 +406,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
-        private bool LoopChangeLog(List<string> fileList, SubscriberDataset dataset, int datasetId, int progressCounter)
+        private bool LoopChangeLog(List<string> fileList, SubscriberDataset dataset, int datasetId, int progressCounter, string changelogFilename)
         {
             int i = 0;
 
@@ -420,7 +420,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 dataset.AbortedEndIndex = FetchAbortedEndIndex(changeLog);
                 dataset.AbortedTransaction = i;
-                dataset.AbortedChangelogPath = fileName;
+                dataset.AbortedChangelogPath = changelogFilename;
 
                 SubscriberDatasetManager.UpdateDataset(dataset);
                 status = PerformWfsTransaction(changeLog, datasetId, i + 1);
@@ -607,7 +607,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     fileList.Add(xmlFile);
                 }
 
-                status = LoopChangeLog(fileList, dataset, datasetId, 0);
+                status = LoopChangeLog(fileList, dataset, datasetId, 0, zipFile);
                 return status;
             }
 
