@@ -416,6 +416,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 _abortedEndIndex = FetchAbortedEndIndex(changeLog);
 
                 dataset.AbortedEndIndex = _abortedEndIndex;
+                dataset.AbortedTransaction = i;
                 SubscriberDatasetManager.UpdateDataset(dataset);
 
                 if (!PerformWfsTransaction(changeLog, datasetId, i + 1))
@@ -435,9 +436,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 var endIndex = (long)changeLog.Attribute("endIndex"); //now correct
                 dataset.LastIndex = endIndex;
+                dataset.AbortedEndIndex = null;
+                dataset.AbortedTransaction = null;
                 SubscriberDatasetManager.UpdateDataset(dataset);
             }
-            //return i;
         }
 
         /// <summary>
