@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Windows.Forms;
 using System.Xml.Linq;
 using Kartverket.GeosyncWCF;
 using Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping;
@@ -267,7 +266,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 if (dataset.AbortedEndIndex != null)
                 {
                     var transactionStart = dataset.AbortedTransaction ?? 0;
-                    TestOfflineSyncronizationComplete(dataset.AbortedChangelogPath, datasetId, (long)transactionStart);
+                    DoSyncronizationOffline(dataset.AbortedChangelogPath, datasetId, transactionStart);
                     return;
                 }
                 // Create new stopwatch
@@ -576,8 +575,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// </summary>
         /// <param name="zipFile">The zip file.</param>
         /// <param name="datasetId">The dataset identifier.</param>
+        /// <param name="transactionStart"></param>
         /// <returns>True if OK.</returns>
-        public bool TestOfflineSyncronizationComplete(string zipFile, int datasetId, long transactionStart)
+        public bool DoSyncronizationOffline(string zipFile, int datasetId, long transactionStart)
         {
             try
             {
