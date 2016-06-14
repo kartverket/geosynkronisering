@@ -482,20 +482,22 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     if (changeLogStatus == ChangelogStatusType.cancelled)
                     {
                         Logger.Info("Cancelled by Server! Call provider.");
-                        OnNewSynchMilestoneReached("Cancelled ChangeLog from Provider. Contact the proivider.");
+                        OnNewSynchMilestoneReached("Cancelled ChangeLog from Provider. Contact the provider.");
+                        throw new IOException("Recieved ChangelogStatus == cancelled from provider");
                     }
                     else if (changeLogStatus == ChangelogStatusType.failed)
                     {
                         Logger.Info("ChangelogStatusType.failed waiting for ChangeLog from Provider");
                         OnNewSynchMilestoneReached(
-                            "Failed waiting for ChangeLog from Provider. Contact the proivider.");
+                            "Failed waiting for ChangeLog from Provider. Contact the provider.");
+                        throw new IOException("Recieved ChangelogStatus == failed from provider");
                     }
                     else
                     {
                         Logger.Info("Timeout");
                         OnNewSynchMilestoneReached("Timeout waiting for ChangeLog from Provider.");
+                        throw new IOException("Timed out waiting for ChangelogStatus from provider");
                     }
-                    return false;
                 }
                 OnNewSynchMilestoneReached("ChangeLog from Provider ready for download.");
             }
