@@ -263,87 +263,25 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             try
             {
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
+                //Check if previous transactions failed
                 if (dataset.AbortedEndIndex != null)
                 {
                     var transactionStart = dataset.AbortedTransaction ?? 0;
                     DoSyncronizationOffline(dataset.AbortedChangelogPath, datasetId, transactionStart);
                     return;
                 }
-                // Create new stopwatch
+
                 var stopwatch = Stopwatch.StartNew();
 
-                OnNewSynchMilestoneReached("GetLastIndexFromProvider");
+                // Do lots of stuff
+                long startIndex = PrepareForOrder(datasetId) + 1;
 
-                long lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
-
-                var logMessage = "GetLastIndexFromProvider lastIndex: " + lastChangeIndexProvider;
-                Logger.Info(logMessage);
-                OnUpdateLogList(logMessage);
-                OnNewSynchMilestoneReached("GetLastIndexFromProvider OK");
-
-                OnNewSynchMilestoneReached("GetLastIndexFromSubscriber");
-                long lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
-
-                logMessage = "GetLastChangeIndexSubscriber lastIndex: " + lastChangeIndexSubscriber;
-                Logger.Info(logMessage);
-                OnUpdateLogList(logMessage);
-                OnNewSynchMilestoneReached("GetLastIndexFromSubscriber OK");
-
-                if (lastChangeIndexSubscriber >= lastChangeIndexProvider)
-                {
-                    logMessage = "Changelog has already been downloaded and handled:";
-                    //this.OnUpdateLogList(logMessage); // Raise event to UI
-                    //this.OnNewSynchMilestoneReached(logMessage);
-                    logMessage += " Provider lastIndex:" + lastChangeIndexProvider + " Subscriber lastChangeIndex: " +
-                                  lastChangeIndexSubscriber;
-                    Logger.Info(logMessage);
-                    OnUpdateLogList(logMessage); // Raise event to UI
-                    OnNewSynchMilestoneReached(logMessage);
-                    return;
-                }
-
-                OnNewSynchMilestoneReached("Order Changelog. Wait...");
-
-                int maxCount = SubscriberDatasetManager.GetMaxCount(datasetId);
-
-                long numberOfFeatures = lastChangeIndexProvider - lastChangeIndexSubscriber;
-                long numberOfOrders = (numberOfFeatures/maxCount);
-
-                if (lastChangeIndexProvider > int.MaxValue)
-                {
-                    // TODO: Fix for Norkart QMS Provider, TotalNumberOfOrders is not available here
-                    // Assume Norkart QMS Provider, not a sequential number
-                    Logger.Info(
-                        "DoSyncronization: Probably QMS Provider,  Provider lastIndex is not sequential, just a transaction number!");
-                    numberOfOrders = 10; // Just a guess
-                }
-
-
-                if (numberOfFeatures%maxCount > 0)
-                    ++numberOfOrders;
-
-                Logger.Info("DoSyncronization: numberOfFeatures:{0} numberOfOrders:{1} maxCount:{2}", numberOfFeatures,
-                    numberOfOrders, maxCount);
-                OnUpdateLogList("MaxCount: " + maxCount);
-
-                #region Håvard
-
-                #region Lars
-
-                OnOrderProcessingStart(numberOfOrders*100);
                 int progressCounter = 0;
-
-                #endregion
-
-
-                #region Lars
 
                 OnOrderProcessingChange((progressCounter + 1)*100/2);
 
-                #endregion
+                if (startIndex < 0) return;
 
-                // Do lots of stuff
-                long startIndex = lastChangeIndexSubscriber + 1;
                 string changeLogId = OrderChangelog(datasetId, startIndex);
 
                 if (!CheckStatusForChangelogOnProvider(datasetId, changeLogId)) return;
@@ -375,16 +313,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     fileList = ChangeLogMapper(fileList, datasetId);
                 }
 
-                LoopChangeLog(fileList, dataset, datasetId, progressCounter, downloadController.ChangelogFilename,0);
+                LoopChangeLog(fileList, dataset, datasetId, progressCounter, downloadController.ChangelogFilename, 0);
 
                 if (!downloadController.IsFolder)
                 {
                     AcknowledgeChangelogDownloaded(datasetId, changeLogId);
                 }
 
-                #endregion
-
-                // Stop timing
                 stopwatch.Stop();
                 TimeSpan ts = stopwatch.Elapsed;
                 string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
@@ -410,7 +345,68 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
-        private bool LoopChangeLog(List<string> fileList, SubscriberDataset dataset, int datasetId, int progressCounter, string changelogFilename, long transactionStart)
+        private long PrepareForOrder(int datasetId)
+        {
+            OnNewSynchMilestoneReached("GetLastIndexFromProvider");
+
+            long lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
+
+            var logMessage = "GetLastIndexFromProvider lastIndex: " + lastChangeIndexProvider;
+            Logger.Info(logMessage);
+            OnUpdateLogList(logMessage);
+            OnNewSynchMilestoneReached("GetLastIndexFromProvider OK");
+
+            OnNewSynchMilestoneReached("GetLastIndexFromSubscriber");
+            long lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
+
+            logMessage = "GetLastChangeIndexSubscriber lastIndex: " + lastChangeIndexSubscriber;
+            Logger.Info(logMessage);
+            OnUpdateLogList(logMessage);
+            OnNewSynchMilestoneReached("GetLastIndexFromSubscriber OK");
+
+            if (lastChangeIndexSubscriber >= lastChangeIndexProvider)
+            {
+                logMessage = "Changelog has already been downloaded and handled:";
+                //this.OnUpdateLogList(logMessage); // Raise event to UI
+                //this.OnNewSynchMilestoneReached(logMessage);
+                logMessage += " Provider lastIndex:" + lastChangeIndexProvider + " Subscriber lastChangeIndex: " +
+                              lastChangeIndexSubscriber;
+                Logger.Info(logMessage);
+                OnUpdateLogList(logMessage); // Raise event to UI
+                OnNewSynchMilestoneReached(logMessage);
+                return -1;
+            }
+
+            OnNewSynchMilestoneReached("Order Changelog. Wait...");
+
+            int maxCount = SubscriberDatasetManager.GetMaxCount(datasetId);
+
+            long numberOfFeatures = lastChangeIndexProvider - lastChangeIndexSubscriber;
+            long numberOfOrders = (numberOfFeatures/maxCount);
+
+            if (lastChangeIndexProvider > int.MaxValue)
+            {
+                // TODO: Fix for Norkart QMS Provider, TotalNumberOfOrders is not available here
+                // Assume Norkart QMS Provider, not a sequential number
+                Logger.Info(
+                    "DoSyncronization: Probably QMS Provider,  Provider lastIndex is not sequential, just a transaction number!");
+                numberOfOrders = 10; // Just a guess
+            }
+
+            if (numberOfFeatures%maxCount > 0)
+                ++numberOfOrders;
+
+            Logger.Info("DoSyncronization: numberOfFeatures:{0} numberOfOrders:{1} maxCount:{2}", numberOfFeatures,
+                numberOfOrders, maxCount);
+            OnUpdateLogList("MaxCount: " + maxCount);
+
+            OnOrderProcessingStart(numberOfOrders*100);
+
+            return lastChangeIndexProvider;
+        }
+
+        private bool LoopChangeLog(List<string> fileList, SubscriberDataset dataset, int datasetId, int progressCounter,
+            string changelogFilename, long transactionStart)
         {
             int i = 0;
 
@@ -444,7 +440,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             if (changeLog != null)
             {
-                dataset.LastIndex = (long)changeLog.Attribute("endIndex");
+                dataset.LastIndex = (long) changeLog.Attribute("endIndex");
                 dataset.AbortedEndIndex = null;
                 dataset.AbortedTransaction = null;
                 dataset.AbortedChangelogPath = null;
