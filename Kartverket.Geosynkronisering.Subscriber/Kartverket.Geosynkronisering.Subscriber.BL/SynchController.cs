@@ -434,10 +434,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             if (changeLog != null)
             {
-                var endIndex = (long) changeLog.Attribute("endIndex"); //now correct
-                dataset.LastIndex = endIndex;
+                dataset.LastIndex = (long)changeLog.Attribute("endIndex");
                 dataset.AbortedEndIndex = null;
                 dataset.AbortedTransaction = null;
+                dataset.AbortedChangelogPath = null;
                 SubscriberDatasetManager.UpdateDataset(dataset);
             }
 
