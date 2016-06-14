@@ -41,8 +41,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         private const string EndIndexPath = "endIndex";
 
-        private long _abortedEndIndex;
-
         public IBindingList GetCapabilitiesProviderDataset(string url)
         {
             var cdb = new CapabilitiesDataBuilder(url);
@@ -420,10 +418,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 changeLog = XElement.Load(fileName);
 
-                _abortedEndIndex = FetchAbortedEndIndex(changeLog);
-
-                dataset.AbortedEndIndex = _abortedEndIndex;
+                dataset.AbortedEndIndex = FetchAbortedEndIndex(changeLog);
                 dataset.AbortedTransaction = i;
+                dataset.AbortedChangelogPath = fileName;
+
                 SubscriberDatasetManager.UpdateDataset(dataset);
                 status = PerformWfsTransaction(changeLog, datasetId, i + 1);
                 if (!status)
@@ -552,7 +550,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception e)
             {
-                MessageBox.Show("Aborted endIndex:\r\n" + _abortedEndIndex);
                 throw new Exception(e.Message);
             }
 
