@@ -331,7 +331,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 #endregion
 
-                
+
                 #region Lars
 
                 OnOrderProcessingChange((progressCounter + 1)*100/2);
@@ -373,7 +373,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     fileList = ChangeLogMapper(fileList, datasetId);
                 }
 
-                LoopChangeLog(fileList, dataset, datasetId, changeLogId, progressCounter, downloadController.IsFolder);
+                LoopChangeLog(fileList, dataset, datasetId, progressCounter);
+
+                if (!downloadController.IsFolder)
+                {
+                    AcknowledgeChangelogDownloaded(datasetId, changeLogId);
+                }
 
                 #endregion
 
@@ -403,9 +408,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
-        private void LoopChangeLog(List<string> fileList, SubscriberDataset dataset, int datasetId, string changeLogId, int progressCounter, bool isFolder)
+        private bool LoopChangeLog(List<string> fileList, SubscriberDataset dataset, int datasetId, int progressCounter)
         {
             int i = 0;
+
+            bool status = false;
 
             XElement changeLog = null;
 
@@ -418,28 +425,25 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 dataset.AbortedEndIndex = _abortedEndIndex;
                 dataset.AbortedTransaction = i;
                 SubscriberDatasetManager.UpdateDataset(dataset);
-
-                if (!PerformWfsTransaction(changeLog, datasetId, i + 1))
+                status = PerformWfsTransaction(changeLog, datasetId, i + 1);
+                if (!status)
                     throw new Exception("WfsTransaction failed");
 
-                if (!isFolder)
-                {
-                    AcknowledgeChangelogDownloaded(datasetId, changeLogId);
-                }
-
-                OnOrderProcessingChange((progressCounter + 1) * 100);
+                OnOrderProcessingChange((progressCounter + 1)*100);
                 ++progressCounter;
                 i++;
             }
 
             if (changeLog != null)
             {
-                var endIndex = (long)changeLog.Attribute("endIndex"); //now correct
+                var endIndex = (long) changeLog.Attribute("endIndex"); //now correct
                 dataset.LastIndex = endIndex;
                 dataset.AbortedEndIndex = null;
                 dataset.AbortedTransaction = null;
                 SubscriberDatasetManager.UpdateDataset(dataset);
             }
+
+            return status;
         }
 
         /// <summary>
@@ -606,17 +610,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     fileList.Add(xmlFile);
                 }
 
-                XElement changeLog = null;
-                int passNr = 1;
-                foreach (string fileName in fileList)
-                {
-                    changeLog = XElement.Load(fileName);
-                    status = PerformWfsTransaction(changeLog, datasetId, passNr);
-                    passNr += 1;
-                }
-
-                if (changeLog != null) dataset.LastIndex = (long) changeLog.Attribute("endIndex");
-                SubscriberDatasetManager.UpdateDataset(dataset);
+                status = LoopChangeLog(fileList, dataset, datasetId, 0);
                 return status;
             }
 
@@ -625,6 +619,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 Logger.ErrorException("TestOfflineSyncronizationComplete:", ex);
                 throw;
             }
+
         }
     }
 
