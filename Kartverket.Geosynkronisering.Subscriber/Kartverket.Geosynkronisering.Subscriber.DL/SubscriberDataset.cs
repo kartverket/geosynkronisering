@@ -13,5 +13,6 @@
         public string MappingFile { get; set; }
         public long? AbortedEndIndex { get; set; }
         public long? AbortedTransaction { get; set; }
+        public string AbortedChangelogPath { get; set; }
     }
 }

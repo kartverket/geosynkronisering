@@ -392,6 +392,30 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         private Nullable<global::System.Int64> _AbortedTransaction;
         partial void OnAbortedTransactionChanging(Nullable<global::System.Int64> value);
         partial void OnAbortedTransactionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String AbortedChangelogPath
+        {
+            get
+            {
+                return _AbortedChangelogPath;
+            }
+            set
+            {
+                OnAbortedChangelogPathChanging(value);
+                ReportPropertyChanging("AbortedChangelogPath");
+                _AbortedChangelogPath = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("AbortedChangelogPath");
+                OnAbortedChangelogPathChanged();
+            }
+        }
+        private global::System.String _AbortedChangelogPath;
+        partial void OnAbortedChangelogPathChanging(global::System.String value);
+        partial void OnAbortedChangelogPathChanged();
 
         #endregion
 
