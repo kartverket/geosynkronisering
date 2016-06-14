@@ -368,6 +368,30 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         private Nullable<global::System.Int64> _AbortedEndIndex;
         partial void OnAbortedEndIndexChanging(Nullable<global::System.Int64> value);
         partial void OnAbortedEndIndexChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Int64> AbortedTransaction
+        {
+            get
+            {
+                return _AbortedTransaction;
+            }
+            set
+            {
+                OnAbortedTransactionChanging(value);
+                ReportPropertyChanging("AbortedTransaction");
+                _AbortedTransaction = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("AbortedTransaction");
+                OnAbortedTransactionChanged();
+            }
+        }
+        private Nullable<global::System.Int64> _AbortedTransaction;
+        partial void OnAbortedTransactionChanging(Nullable<global::System.Int64> value);
+        partial void OnAbortedTransactionChanged();
 
         #endregion
 

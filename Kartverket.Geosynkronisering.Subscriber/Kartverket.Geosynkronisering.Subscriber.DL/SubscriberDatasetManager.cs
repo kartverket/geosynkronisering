@@ -82,6 +82,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 dataset.TargetNamespace = geoClientDataset.TargetNamespace;
                 dataset.MappingFile = geoClientDataset.MappingFile;
                 dataset.AbortedEndIndex = geoClientDataset.AbortedEndIndex;
+                dataset.AbortedTransaction = geoClientDataset.AbortedTransaction;
 
                 localDb.SaveChanges();
                 return true;
@@ -101,7 +102,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                                        ProviderDatasetId = dataset.ProviderDatasetId,
                                        TargetNamespace = dataset.TargetNamespace,
                                        MappingFile = dataset.MappingFile,
-                                       AbortedEndIndex = dataset.AbortedEndIndex
+                                       AbortedEndIndex = dataset.AbortedEndIndex,
+                                       AbortedTransaction = dataset.AbortedTransaction
                                    };
             return geoClientDataset;
         }

@@ -22,6 +22,7 @@
     <Property Name="TargetNamespace" Type="nvarchar" Nullable="true" MaxLength="256" />
     <Property Name="MappingFile" Type="nvarchar" Nullable="true" MaxLength="260" />
     <Property Name="AbortedEndIndex" Type="bigint" Nullable="true" />
+    <Property Name="AbortedTransaction" Type="bigint" Nullable="true" />
   </EntityType>
 </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -44,6 +45,7 @@
           <Property Type="String" Name="TargetNamespace" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="MappingFile" MaxLength="260" FixedLength="false" Unicode="true" />
           <Property Name="AbortedEndIndex" Type="Int64" Nullable="true" />
+          <Property Name="AbortedTransaction" Type="Int64" Nullable="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -64,6 +66,7 @@
           <ScalarProperty Name="TargetNamespace" ColumnName="TargetNamespace" />
           <ScalarProperty Name="MappingFile" ColumnName="MappingFile" />
           <ScalarProperty Name="AbortedEndIndex" ColumnName="AbortedEndIndex" />
+          <ScalarProperty Name="AbortedTransaction" ColumnName="AbortedTransaction" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
