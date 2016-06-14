@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using Kartverket.GeosyncWCF;
 using Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping;
@@ -38,6 +39,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         public TransactionSummary TransactionsSummary;
 
+        private const string EndIndexPath = "endIndex";
+
+        private long _abortedEndIndex = 0;
 
         public IBindingList GetCapabilitiesProviderDataset(string url)
         {
@@ -328,75 +332,73 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 #endregion
 
                 int i = 0;
-                while (lastChangeIndexSubscriber < lastChangeIndexProvider)
+                #region Lars
+
+                OnOrderProcessingChange((progressCounter + 1)*100/2);
+
+                #endregion
+
+                // Do lots of stuff
+                long startIndex = lastChangeIndexSubscriber + 1;
+                string changeLogId = OrderChangelog(datasetId, startIndex);
+
+                if (!CheckStatusForChangelogOnProvider(datasetId, changeLogId)) return;
+
+                DownloadController downloadController;
+                var responseOk = GetChangelog(datasetId, changeLogId, out downloadController);
+
+                if (!responseOk)
                 {
-                    #region Lars
+                    return;
+                }
 
-                    OnOrderProcessingChange((progressCounter + 1)*100/2);
+                List<string> fileList = new List<string>();
 
-                    #endregion
+                if (downloadController.IsFolder)
+                {
+                    string[] fileArray = Directory.GetFiles(downloadController.ChangelogFilename);
+                    Array.Sort(fileArray);
+                    fileList = fileArray.ToList();
+                }
+                else
+                {
+                    fileList.Add(downloadController.ChangelogFilename);
+                }
 
-                    // Do lots of stuff
-                    long startIndex = lastChangeIndexSubscriber + 1;
-                    string changeLogId = OrderChangelog(datasetId, startIndex);
+                SubscriberDataset dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                    if (!CheckStatusForChangelogOnProvider(datasetId, changeLogId)) return;
+                //Rewrite files according to mappingfile if given
+                if (!String.IsNullOrEmpty(dataset.MappingFile))
+                {
+                    fileList = ChangeLogMapper(fileList, datasetId);
+                }
 
-                    DownloadController downloadController;
-                    var responseOk = GetChangelog(datasetId, changeLogId, out downloadController);
-
-                    if (!responseOk)
+                XElement changeLog = null;
+                if (fileList.Count > 1 && lastChangeIndexSubscriber > 0)
+                {
+                    changeLog = MergeChangelogs(fileList);
+                    PerformWfsTransaction(changeLog, datasetId, dataset, 1);
+                }
+                else
+                    foreach (string fileName in fileList)
                     {
-                        return;
-                    }
+                        changeLog = XElement.Load(fileName);
+                        if (!PerformWfsTransaction(changeLog, datasetId, dataset, i + 1))
+                            throw new Exception("WfsTransaction failed");
 
-                    List<string> fileList = new List<string>();
-
-                    if (downloadController.IsFolder)
-                    {
-                        string[] fileArray = Directory.GetFiles(downloadController.ChangelogFilename);
-                        Array.Sort(fileArray);
-                        fileList = fileArray.ToList();
-                    }
-                    else
-                    {
-                        fileList.Add(downloadController.ChangelogFilename);
-                    }
-
-                    SubscriberDataset dataset = SubscriberDatasetManager.GetDataset(datasetId);
-
-                    //Rewrite files according to mappingfile if given
-                    if (!String.IsNullOrEmpty(dataset.MappingFile))
-                    {
-                        fileList = ChangeLogMapper(fileList, datasetId);
-                    }
-
-                    XElement changeLog;
-                    if (fileList.Count > 1 && lastChangeIndexSubscriber > 0)
-                    {
-                        changeLog = MergeChangelogs(fileList);
-                        PerformWfsTransaction(changeLog, datasetId, dataset, 1);
-                    }
-                    else
-                        foreach (string fileName in fileList)
+                        if (!downloadController.IsFolder)
                         {
-                            changeLog = XElement.Load(fileName);
-                            if (!PerformWfsTransaction(changeLog, datasetId, dataset, i + 1))
-                                throw new Exception("WfsTransaction failed");
-
-                            if (!downloadController.IsFolder)
-                            {
-                                AcknowledgeChangelogDownloaded(datasetId, changeLogId);
-                            }
-
-                            OnOrderProcessingChange((progressCounter + 1)*100);
-                            ++progressCounter;
-                            i++;
+                            AcknowledgeChangelogDownloaded(datasetId, changeLogId);
                         }
 
-                    lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
-                    lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
-                }
+                        OnOrderProcessingChange((progressCounter + 1)*100);
+                        ++progressCounter;
+                        i++;
+                    }
+
+                long endIndex = (long) changeLog.Attribute("endIndex"); //now correct
+                dataset.LastIndex = endIndex;
+                SubscriberDatasetManager.UpdateDataset(dataset);
 
                 #endregion
 
@@ -546,8 +548,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 bool status = false;
 
-                long endIndex = (long) changeLog.Attribute("endIndex"); //now correct
-
                 // Build wfs-t transaction from changelog, and do the transaction   
                 var wfsController = new WfsController();
 
@@ -561,16 +561,21 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     Logger.Info("DoWfsTransactions OK, pass {0}", passNr);
                     OnUpdateLogList(String.Format("DoWfsTransactions OK, pass {0}", passNr));
                     status = true;
-                    dataset.LastIndex = endIndex;
-                    SubscriberDatasetManager.UpdateDataset(dataset);
                 }
                 return status;
             }
             catch (Exception e)
             {
+                _abortedEndIndex = fetchAbortedEndIndex(changeLog);
+                MessageBox.Show("Aborted endIndex:\r\n" + _abortedEndIndex );
                 throw new Exception(e.Message);
             }
 
+        }
+
+        private long fetchAbortedEndIndex(XElement changeLog)
+        {
+            return Convert.ToInt64(changeLog.Attribute(EndIndexPath).Value);
         }
 
         /// <summary>
@@ -622,7 +627,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     fileList.Add(xmlFile);
                 }
 
-                XElement changeLog;
+                XElement changeLog = null;
                 int passNr = 1;
                 if (fileList.Count > 1 && lastChangeIndexSubscriber > 0)
                 {
@@ -637,7 +642,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         passNr += 1;
                     }
 
-
+                dataset.LastIndex = (long) changeLog.Attribute("endIndex");
+                SubscriberDatasetManager.UpdateDataset(dataset);
                 return status;
             }
 
