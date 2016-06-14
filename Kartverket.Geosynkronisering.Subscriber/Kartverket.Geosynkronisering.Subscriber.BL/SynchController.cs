@@ -263,6 +263,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         {
             try
             {
+                var dataset = SubscriberDatasetManager.GetDataset(datasetId);
+                if (dataset.AbortedEndIndex != null)
+                {
+                    var transactionStart = dataset.AbortedTransaction ?? 0;
+                    TestOfflineSyncronizationComplete(dataset.AbortedChangelogPath, datasetId, (long)transactionStart);
+                    return;
+                }
                 // Create new stopwatch
                 var stopwatch = Stopwatch.StartNew();
 
@@ -363,15 +370,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     fileList.Add(downloadController.ChangelogFilename);
                 }
 
-                SubscriberDataset dataset = SubscriberDatasetManager.GetDataset(datasetId);
-
                 //Rewrite files according to mappingfile if given
                 if (!String.IsNullOrEmpty(dataset.MappingFile))
                 {
                     fileList = ChangeLogMapper(fileList, datasetId);
                 }
 
-                LoopChangeLog(fileList, dataset, datasetId, progressCounter, downloadController.ChangelogFilename);
+                LoopChangeLog(fileList, dataset, datasetId, progressCounter, downloadController.ChangelogFilename,0);
 
                 if (!downloadController.IsFolder)
                 {
@@ -406,7 +411,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
-        private bool LoopChangeLog(List<string> fileList, SubscriberDataset dataset, int datasetId, int progressCounter, string changelogFilename)
+        private bool LoopChangeLog(List<string> fileList, SubscriberDataset dataset, int datasetId, int progressCounter, string changelogFilename, long transactionStart)
         {
             int i = 0;
 
@@ -416,6 +421,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             foreach (var fileName in fileList)
             {
+                if (transactionStart > i)
+                {
+                    i++;
+                    continue;
+                }
+
                 changeLog = XElement.Load(fileName);
 
                 dataset.AbortedEndIndex = FetchAbortedEndIndex(changeLog);
@@ -566,12 +577,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// <param name="zipFile">The zip file.</param>
         /// <param name="datasetId">The dataset identifier.</param>
         /// <returns>True if OK.</returns>
-        public bool TestOfflineSyncronizationComplete(string zipFile, int datasetId)
+        public bool TestOfflineSyncronizationComplete(string zipFile, int datasetId, long transactionStart)
         {
             try
             {
-                bool status = false;
-
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
                 string outPath = Path.GetDirectoryName(zipFile);
@@ -607,8 +616,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     fileList.Add(xmlFile);
                 }
 
-                status = LoopChangeLog(fileList, dataset, datasetId, 0, zipFile);
-                return status;
+                return LoopChangeLog(fileList, dataset, datasetId, 0, zipFile, transactionStart);
             }
 
             catch (Exception ex)
