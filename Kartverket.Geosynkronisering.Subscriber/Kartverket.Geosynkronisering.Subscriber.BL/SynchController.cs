@@ -41,7 +41,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         private const string EndIndexPath = "endIndex";
 
-        private long _abortedEndIndex = 0;
+        private long _abortedEndIndex;
 
         public IBindingList GetCapabilitiesProviderDataset(string url)
         {
@@ -374,31 +374,35 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 }
 
                 XElement changeLog = null;
-                if (fileList.Count > 1 && lastChangeIndexSubscriber > 0)
+
+                foreach (var fileName in fileList)
                 {
-                    changeLog = MergeChangelogs(fileList);
-                    PerformWfsTransaction(changeLog, datasetId, dataset, 1);
-                }
-                else
-                    foreach (string fileName in fileList)
+                    changeLog = XElement.Load(fileName);
+
+                    _abortedEndIndex = FetchAbortedEndIndex(changeLog);
+
+                    dataset.AbortedEndIndex = _abortedEndIndex;
+                    SubscriberDatasetManager.UpdateDataset(dataset);
+
+                    if (!PerformWfsTransaction(changeLog, datasetId, dataset, i + 1))
+                        throw new Exception("WfsTransaction failed");
+
+                    if (!downloadController.IsFolder)
                     {
-                        changeLog = XElement.Load(fileName);
-                        if (!PerformWfsTransaction(changeLog, datasetId, dataset, i + 1))
-                            throw new Exception("WfsTransaction failed");
-
-                        if (!downloadController.IsFolder)
-                        {
-                            AcknowledgeChangelogDownloaded(datasetId, changeLogId);
-                        }
-
-                        OnOrderProcessingChange((progressCounter + 1)*100);
-                        ++progressCounter;
-                        i++;
+                        AcknowledgeChangelogDownloaded(datasetId, changeLogId);
                     }
 
-                long endIndex = (long) changeLog.Attribute("endIndex"); //now correct
-                dataset.LastIndex = endIndex;
-                SubscriberDatasetManager.UpdateDataset(dataset);
+                    OnOrderProcessingChange((progressCounter + 1)*100);
+                    ++progressCounter;
+                    i++;
+                }
+
+                if (changeLog != null)
+                {
+                    var endIndex = (long) changeLog.Attribute("endIndex"); //now correct
+                    dataset.LastIndex = endIndex;
+                    SubscriberDatasetManager.UpdateDataset(dataset);
+                }
 
                 #endregion
 
@@ -510,38 +514,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return newFileList;
         }
 
-        private static XElement MergeChangelogs(IEnumerable<string> fileList)
-        {
-            string transactionsElementPath =
-                "{http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg}transactions";
-            bool firstFile = true;
-            XDocument mergedChangelog = new XDocument();
-            XElement originalChangelog;
-
-            foreach (string fileName in fileList)
-            {
-                if (firstFile)
-                {
-                    mergedChangelog.AddFirst(XElement.Load(fileName));
-                    firstFile = false;
-                }
-                else
-                {
-                    originalChangelog = XElement.Load(fileName);
-                    var originalTransactions = originalChangelog.Element(transactionsElementPath);
-                    if (originalTransactions != null)
-                        foreach (XElement wfsOperation in originalTransactions.Elements())
-                            if (mergedChangelog.Root != null)
-                            {
-                                var mergedTransactions = mergedChangelog.Root.Element(transactionsElementPath);
-                                if (mergedTransactions != null)
-                                    mergedTransactions.LastNode.AddAfterSelf(wfsOperation);
-                            }
-                }
-            }
-            return mergedChangelog.Root;
-        }
-
         private bool PerformWfsTransaction(XElement changeLog, int datasetId, SubscriberDataset dataset, int passNr)
         {
             try
@@ -566,14 +538,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception e)
             {
-                _abortedEndIndex = fetchAbortedEndIndex(changeLog);
-                MessageBox.Show("Aborted endIndex:\r\n" + _abortedEndIndex );
+                MessageBox.Show("Aborted endIndex:\r\n" + _abortedEndIndex);
                 throw new Exception(e.Message);
             }
 
         }
 
-        private long fetchAbortedEndIndex(XElement changeLog)
+        private long FetchAbortedEndIndex(XElement changeLog)
         {
             return Convert.ToInt64(changeLog.Attribute(EndIndexPath).Value);
         }
@@ -591,8 +562,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 bool status = false;
 
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
-
-                int lastChangeIndexSubscriber = (int) dataset.LastIndex;
 
                 string outPath = Path.GetDirectoryName(zipFile);
 
@@ -629,18 +598,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 XElement changeLog = null;
                 int passNr = 1;
-                if (fileList.Count > 1 && lastChangeIndexSubscriber > 0)
+                foreach (string fileName in fileList)
                 {
-                    changeLog = MergeChangelogs(fileList);
+                    changeLog = XElement.Load(fileName);
                     status = PerformWfsTransaction(changeLog, datasetId, dataset, passNr);
+                    passNr += 1;
                 }
-                else
-                    foreach (string fileName in fileList)
-                    {
-                        changeLog = XElement.Load(fileName);
-                        status = PerformWfsTransaction(changeLog, datasetId, dataset, passNr);
-                        passNr += 1;
-                    }
 
                 dataset.LastIndex = (long) changeLog.Attribute("endIndex");
                 SubscriberDatasetManager.UpdateDataset(dataset);

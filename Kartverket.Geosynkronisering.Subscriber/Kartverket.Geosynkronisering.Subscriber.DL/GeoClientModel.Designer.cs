@@ -344,6 +344,30 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         private global::System.String _MappingFile;
         partial void OnMappingFileChanging(global::System.String value);
         partial void OnMappingFileChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Int64> AbortedEndIndex
+        {
+            get
+            {
+                return _AbortedEndIndex;
+            }
+            set
+            {
+                OnAbortedEndIndexChanging(value);
+                ReportPropertyChanging("AbortedEndIndex");
+                _AbortedEndIndex = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("AbortedEndIndex");
+                OnAbortedEndIndexChanged();
+            }
+        }
+        private Nullable<global::System.Int64> _AbortedEndIndex;
+        partial void OnAbortedEndIndexChanging(Nullable<global::System.Int64> value);
+        partial void OnAbortedEndIndexChanged();
 
         #endregion
 

@@ -5,24 +5,25 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="geosyncDBModel.Store" Alias="Self" Provider="System.Data.SqlServerCe.4.0" ProviderManifestToken="4.0" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
-        <EntityContainer Name="geosyncDBModelStoreContainer">
-          <EntitySet Name="Dataset" EntityType="geosyncDBModel.Store.Dataset" store:Type="Tables" />
-        </EntityContainer>
-        <EntityType Name="Dataset">
-          <Key>
-            <PropertyRef Name="DatasetId" />
-          </Key>
-          <Property Name="DatasetId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="nvarchar" MaxLength="100" />
-          <Property Name="LastIndex" Type="bigint" />
-          <Property Name="SyncronizationUrl" Type="nvarchar" MaxLength="250" />
-          <Property Name="ClientWfsUrl" Type="nvarchar" MaxLength="250" />
-          <Property Name="MaxCount" Type="int" />
-          <Property Name="ProviderDatasetId" Type="nvarchar" MaxLength="100" />
-          <Property Name="TargetNamespace" Type="nvarchar" MaxLength="256" />
-          <Property Name="MappingFile" Type="nvarchar" MaxLength="260" />
-        </EntityType>
-      </Schema></edmx:StorageModels>
+  <EntityContainer Name="geosyncDBModelStoreContainer">
+    <EntitySet Name="Dataset" EntityType="geosyncDBModel.Store.Dataset" store:Type="Tables" Schema="dbo" />
+  </EntityContainer>
+  <EntityType Name="Dataset">
+    <Key>
+      <PropertyRef Name="DatasetId" />
+    </Key>
+    <Property Name="DatasetId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="LastIndex" Type="bigint" Nullable="true" />
+    <Property Name="SyncronizationUrl" Type="nvarchar" Nullable="true" MaxLength="250" />
+    <Property Name="ClientWfsUrl" Type="nvarchar" Nullable="true" MaxLength="250" />
+    <Property Name="MaxCount" Type="int" Nullable="true" />
+    <Property Name="ProviderDatasetId" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="TargetNamespace" Type="nvarchar" Nullable="true" MaxLength="256" />
+    <Property Name="MappingFile" Type="nvarchar" Nullable="true" MaxLength="260" />
+    <Property Name="AbortedEndIndex" Type="bigint" Nullable="true" />
+  </EntityType>
+</Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="geosyncDBModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
@@ -42,31 +43,32 @@
           <Property Type="String" Name="ProviderDatasetId" FixedLength="false" MaxLength="100" Unicode="true" />
           <Property Type="String" Name="TargetNamespace" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="MappingFile" MaxLength="260" FixedLength="false" Unicode="true" />
+          <Property Name="AbortedEndIndex" Type="Int64" Nullable="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
-      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="geosyncDBModelStoreContainer" CdmEntityContainer="geosyncDBEntities" >
-          <EntitySetMapping Name="Dataset">
-            <EntityTypeMapping TypeName="geosyncDBModel.Dataset">
-              <MappingFragment StoreEntitySet="Dataset">
-                <ScalarProperty Name="MappingFile" ColumnName="MappingFile" />
-                <ScalarProperty Name="TargetNamespace" ColumnName="TargetNamespace" />
-                <ScalarProperty Name="ProviderDatasetId" ColumnName="ProviderDatasetId" />
-                <ScalarProperty Name="MaxCount" ColumnName="MaxCount" />
-                <ScalarProperty Name="ClientWfsUrl" ColumnName="ClientWfsUrl" />
-                <ScalarProperty Name="SyncronizationUrl" ColumnName="SyncronizationUrl" />
-                <ScalarProperty Name="LastIndex" ColumnName="LastIndex" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="DatasetId" ColumnName="DatasetId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-        </EntityContainerMapping>
-      </Mapping>
-    </edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="geosyncDBModelStoreContainer" CdmEntityContainer="geosyncDBEntities">
+    <EntitySetMapping Name="Dataset">
+      <EntityTypeMapping TypeName="IsTypeOf(geosyncDBModel.Dataset)">
+        <MappingFragment StoreEntitySet="Dataset">
+          <ScalarProperty Name="DatasetId" ColumnName="DatasetId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="LastIndex" ColumnName="LastIndex" />
+          <ScalarProperty Name="SyncronizationUrl" ColumnName="SyncronizationUrl" />
+          <ScalarProperty Name="ClientWfsUrl" ColumnName="ClientWfsUrl" />
+          <ScalarProperty Name="MaxCount" ColumnName="MaxCount" />
+          <ScalarProperty Name="ProviderDatasetId" ColumnName="ProviderDatasetId" />
+          <ScalarProperty Name="TargetNamespace" ColumnName="TargetNamespace" />
+          <ScalarProperty Name="MappingFile" ColumnName="MappingFile" />
+          <ScalarProperty Name="AbortedEndIndex" ColumnName="AbortedEndIndex" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
   <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
@@ -80,6 +82,7 @@
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
         <DesignerProperty Name="EnablePluralization" Value="False" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="UseLegacyProvider" Value="True" />
       </DesignerInfoPropertySet>
     </Options>
     <!-- Diagram content (shape and connector positions) -->
