@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Xml.Linq;
 using Kartverket.GeosyncWCF;
 using Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping;
@@ -294,21 +295,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     return;
                 }
 
-                List<string> fileList = new List<string>();
+                var fileList = GetChangelogFiles(downloadController.IsFolder,
+                    downloadController.ChangelogFilename);
 
-                if (downloadController.IsFolder)
-                {
-                    string[] fileArray = Directory.GetFiles(downloadController.ChangelogFilename);
-                    Array.Sort(fileArray);
-                    fileList = fileArray.ToList();
-                }
-                else
-                {
-                    fileList.Add(downloadController.ChangelogFilename);
-                }
-
+                
                 //Rewrite files according to mappingfile if given
-                if (!String.IsNullOrEmpty(dataset.MappingFile))
+                if (!string.IsNullOrEmpty(dataset.MappingFile))
                 {
                     fileList = ChangeLogMapper(fileList, datasetId);
                 }
@@ -321,8 +313,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 }
 
                 stopwatch.Stop();
-                TimeSpan ts = stopwatch.Elapsed;
-                string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
+                var ts = stopwatch.Elapsed;
+                var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
 
                 OnUpdateLogList("Syncronization Completed. Elapsed time: " + elapsedTime);
                 Logger.Info("Syncronization Completed. Elapsed time: {0}", elapsedTime);
@@ -343,6 +335,33 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 OnUpdateLogList(ex.Message);
                 throw new Exception(ex.Message);
             }
+        }
+
+        private static List<string> GetChangelogFiles(bool isFolder, string changelogPath)
+        {
+            List<string> fileList = new List<string>();
+            if (isFolder)
+            {
+                var fileArray = Directory.GetFiles(changelogPath);
+
+                var comparison = new Comparison<string>(delegate(string a, string b)
+                {
+                    return ExtractNumber(a).CompareTo(ExtractNumber(b));
+                });
+
+                Array.Sort(fileArray, comparison);
+                return fileArray.ToList();
+            }
+
+            fileList.Add(changelogPath);
+            return fileList;
+        }
+
+        private static int ExtractNumber(string a)
+        {
+            var aFileArray = a.Split('\\');
+            var aFile = aFileArray[aFileArray.Length - 1];
+            return int.Parse(aFile.Substring(0, aFile.IndexOf('_')));
         }
 
         private bool PrepareForOrder(int datasetId)
@@ -408,9 +427,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         private bool LoopChangeLog(List<string> fileList, SubscriberDataset dataset, int datasetId, int progressCounter,
             string changelogFilename, long transactionStart)
         {
-            int i = 0;
+            var i = 0;
 
-            bool status = false;
+            var status = false;
 
             XElement changeLog = null;
 
@@ -599,18 +618,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     xmlFile = Path.ChangeExtension(zipFile, ".xml");
                 }
 
-                List<string> fileList = new List<string>();
-
-                if (isFolder)
-                {
-                    string[] fileArray = Directory.GetFiles(xmlFile);
-                    Array.Sort(fileArray);
-                    fileList = fileArray.ToList();
-                }
-                else
-                {
-                    fileList.Add(xmlFile);
-                }
+                var fileList = GetChangelogFiles(isFolder, xmlFile);
 
                 return LoopChangeLog(fileList, dataset, datasetId, 0, zipFile, transactionStart);
             }
