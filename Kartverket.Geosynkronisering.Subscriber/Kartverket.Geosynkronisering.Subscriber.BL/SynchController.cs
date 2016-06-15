@@ -274,17 +274,17 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var stopwatch = Stopwatch.StartNew();
 
                 // Do lots of stuff
-                long startIndex = PrepareForOrder(datasetId) + 1;
+                long startIndex =dataset.LastIndex +1;
+
+                if (!PrepareForOrder(datasetId)) return;
 
                 int progressCounter = 0;
 
                 OnOrderProcessingChange((progressCounter + 1)*100/2);
 
-                if (startIndex < 0) return;
-
                 string changeLogId = OrderChangelog(datasetId, startIndex);
 
-                if (!CheckStatusForChangelogOnProvider(datasetId, changeLogId)) return;
+                CheckStatusForChangelogOnProvider(datasetId, changeLogId);
 
                 DownloadController downloadController;
                 var responseOk = GetChangelog(datasetId, changeLogId, out downloadController);
@@ -345,7 +345,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
-        private long PrepareForOrder(int datasetId)
+        private bool PrepareForOrder(int datasetId)
         {
             OnNewSynchMilestoneReached("GetLastIndexFromProvider");
 
@@ -374,7 +374,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 Logger.Info(logMessage);
                 OnUpdateLogList(logMessage); // Raise event to UI
                 OnNewSynchMilestoneReached(logMessage);
-                return -1;
+                return false;
             }
 
             OnNewSynchMilestoneReached("Order Changelog. Wait...");
@@ -402,7 +402,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             OnOrderProcessingStart(numberOfOrders*100);
 
-            return lastChangeIndexProvider;
+            return true;
         }
 
         private bool LoopChangeLog(List<string> fileList, SubscriberDataset dataset, int datasetId, int progressCounter,
@@ -456,7 +456,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// <param name="datasetId"></param>
         /// <param name="changeLogId"></param>
         /// <returns></returns>
-        private bool CheckStatusForChangelogOnProvider(int datasetId, string changeLogId)
+        private void CheckStatusForChangelogOnProvider(int datasetId, string changeLogId)
         {
             try
             {
@@ -477,38 +477,36 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     elapsedSpan = new TimeSpan(elapsedTicks);
                     changeLogStatus = GetChangelogStatusResponse(datasetId, changeLogId);
                 }
-                if (changeLogStatus != ChangelogStatusType.finished)
+                if (changeLogStatus == ChangelogStatusType.finished)
+                    OnNewSynchMilestoneReached("ChangeLog from Provider ready for download.");
+                else
                 {
-                    if (changeLogStatus == ChangelogStatusType.cancelled)
+                    switch (changeLogStatus)
                     {
-                        Logger.Info("Cancelled by Server! Call provider.");
-                        OnNewSynchMilestoneReached("Cancelled ChangeLog from Provider. Contact the provider.");
-                        throw new IOException("Recieved ChangelogStatus == cancelled from provider");
-                    }
-                    else if (changeLogStatus == ChangelogStatusType.failed)
-                    {
-                        Logger.Info("ChangelogStatusType.failed waiting for ChangeLog from Provider");
-                        OnNewSynchMilestoneReached(
-                            "Failed waiting for ChangeLog from Provider. Contact the provider.");
-                        throw new IOException("Recieved ChangelogStatus == failed from provider");
-                    }
-                    else
-                    {
-                        Logger.Info("Timeout");
-                        OnNewSynchMilestoneReached("Timeout waiting for ChangeLog from Provider.");
-                        throw new IOException("Timed out waiting for ChangelogStatus from provider");
+                        case (ChangelogStatusType.cancelled):
+                            Logger.Info("Cancelled by Server! Call provider.");
+                            OnNewSynchMilestoneReached("Cancelled ChangeLog from Provider. Contact the provider.");
+                            throw new IOException("Recieved ChangelogStatus == cancelled from provider");
+                        case (ChangelogStatusType.failed):
+                            Logger.Info("ChangelogStatusType.failed waiting for ChangeLog from Provider");
+                            OnNewSynchMilestoneReached(
+                                "Failed waiting for ChangeLog from Provider. Contact the provider.");
+                            throw new IOException("Recieved ChangelogStatus == failed from provider");
+                        default:
+                            Logger.Info("Timeout");
+                            OnNewSynchMilestoneReached("Timeout waiting for ChangeLog from Provider.");
+                            throw new IOException("Timed out waiting for ChangelogStatus from provider");
+
                     }
                 }
-                OnNewSynchMilestoneReached("ChangeLog from Provider ready for download.");
             }
             catch (Exception ex)
             {
                 Logger.ErrorException(
                     string.Format("Failed to get ChangeLog Status for changelog {0} from provider {1}", changeLogId,
                         "TEST"), ex);
-                return false;
+                throw new IOException(ex.Message);
             }
-            return true;
         }
 
         private static List<string> ChangeLogMapper(IEnumerable<string> fileList, int datasetId)
