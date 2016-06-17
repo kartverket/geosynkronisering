@@ -14,5 +14,6 @@
         public long? AbortedEndIndex { get; set; }
         public long? AbortedTransaction { get; set; }
         public string AbortedChangelogPath { get; set; }
+        public string ChangelogDirectory { get; set; }
     }
 }

@@ -24,6 +24,7 @@
     <Property Name="AbortedEndIndex" Type="bigint" Nullable="true" />
     <Property Name="AbortedTransaction" Type="bigint" Nullable="true" />
     <Property Name="AbortedChangelogPath" Type="nvarchar" Nullable="true" />
+    <Property Name="ChangelogDirectory" Type="nvarchar" Nullable="true" />
   </EntityType>
 </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -48,6 +49,7 @@
           <Property Name="AbortedEndIndex" Type="Int64" Nullable="true" />
           <Property Name="AbortedTransaction" Type="Int64" Nullable="true" />
           <Property Name="AbortedChangelogPath" Type="String" Nullable="true" />
+          <Property Name="ChangelogDirectory" Type="String" Nullable="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -70,6 +72,7 @@
           <ScalarProperty Name="AbortedEndIndex" ColumnName="AbortedEndIndex" />
           <ScalarProperty Name="AbortedTransaction" ColumnName="AbortedTransaction" />
           <ScalarProperty Name="AbortedChangelogPath" ColumnName="AbortedChangelogPath" />
+          <ScalarProperty Name="ChangelogDirectory" ColumnName="ChangelogDirectory" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

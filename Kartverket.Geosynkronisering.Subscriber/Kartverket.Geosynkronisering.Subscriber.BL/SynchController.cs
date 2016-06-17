@@ -146,16 +146,16 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     downloaduri = downloaduri.Replace(Path.GetExtension(downloaduri), "");
                 }
 
-
-                var tempDir = Environment.GetEnvironmentVariable("TEMP");
+                var changelogDir = string.IsNullOrEmpty(dataset.ChangelogDirectory) ? Environment.GetEnvironmentVariable("TEMP") : dataset.ChangelogDirectory;
 #if (NOT_FTP)
-                string fileName = tempDir + @"\" + changelogid + "_Changelog.xml";
+                string fileName = changelogDir + @"\" + changelogid + "_Changelog.xml";
 #else
+                Utils.Misc.CreateFolderIfMissing(changelogDir);
                 const string ftpPath = "abonnent";
-                Utils.Misc.CreateFolderIfMissing(tempDir + @"\" + ftpPath);
+                Utils.Misc.CreateFolderIfMissing(changelogDir + @"\" + ftpPath);
                 // Create the abonnent folder if missing               
 
-                var fileName = tempDir + @"\" + ftpPath + @"\" + Path.GetFileName(downloaduri) + ".zip";
+                var fileName = changelogDir + @"\" + ftpPath + @"\" + Path.GetFileName(downloaduri) + ".zip";
 #endif
 
                 downloadController = new DownloadController {ChangelogFilename = fileName};

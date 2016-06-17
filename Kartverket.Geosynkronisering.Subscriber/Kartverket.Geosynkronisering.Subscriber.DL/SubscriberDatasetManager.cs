@@ -84,6 +84,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 dataset.AbortedEndIndex = geoClientDataset.AbortedEndIndex;
                 dataset.AbortedTransaction = geoClientDataset.AbortedTransaction;
                 dataset.AbortedChangelogPath = geoClientDataset.AbortedChangelogPath;
+                dataset.ChangelogDirectory = geoClientDataset.ChangelogDirectory;
 
                 localDb.SaveChanges();
                 return true;
@@ -105,7 +106,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                                        MappingFile = dataset.MappingFile,
                                        AbortedEndIndex = dataset.AbortedEndIndex,
                                        AbortedTransaction = dataset.AbortedTransaction,
-                                       AbortedChangelogPath = dataset.AbortedChangelogPath
+                                       AbortedChangelogPath = dataset.AbortedChangelogPath,
+                                       ChangelogDirectory = dataset.ChangelogDirectory
                                    };
             return geoClientDataset;
         }
