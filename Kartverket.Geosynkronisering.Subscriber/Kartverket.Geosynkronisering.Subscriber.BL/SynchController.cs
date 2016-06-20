@@ -469,15 +469,21 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             if (changeLog != null)
             {
-                dataset.LastIndex = (long) changeLog.Attribute("endIndex");
-                dataset.AbortedEndIndex = null;
-                dataset.AbortedTransaction = null;
-                dataset.AbortedChangelogPath = null;
-                dataset.AbortedChangelogId = null;
-                SubscriberDatasetManager.UpdateDataset(dataset);
+                ResetDataset(dataset, (long)changeLog.Attribute("endIndex"));
             }
 
             return status;
+        }
+
+        private static void ResetDataset(SubscriberDataset dataset, long endIndex)
+        {
+            if(endIndex >0)
+                dataset.LastIndex = endIndex;
+            dataset.AbortedEndIndex = null;
+            dataset.AbortedTransaction = null;
+            dataset.AbortedChangelogPath = null;
+            dataset.AbortedChangelogId = null;
+            SubscriberDatasetManager.UpdateDataset(dataset);
         }
 
         /// <summary>
@@ -515,9 +521,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     {
                         case (ChangelogStatusType.cancelled):
                             Logger.Info("Cancelled by Server! Call provider.");
+                            ResetDataset(SubscriberDatasetManager.GetDataset(datasetId), -1);
                             throw new IOException("Recieved ChangelogStatus == cancelled from provider");
                         case (ChangelogStatusType.failed):
                             Logger.Info("ChangelogStatusType.failed waiting for ChangeLog from Provider");
+                            ResetDataset(SubscriberDatasetManager.GetDataset(datasetId), -1);
                             throw new IOException("Recieved ChangelogStatus == failed from provider");
                         default:
                             Logger.Info("Timeout");
