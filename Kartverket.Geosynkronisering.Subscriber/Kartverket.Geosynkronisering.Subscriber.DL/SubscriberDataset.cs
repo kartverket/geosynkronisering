@@ -15,5 +15,6 @@
         public long? AbortedTransaction { get; set; }
         public string AbortedChangelogPath { get; set; }
         public string ChangelogDirectory { get; set; }
+        public string AbortedChangelogId { get; set; }
     }
 }

@@ -440,6 +440,30 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         private global::System.String _ChangelogDirectory;
         partial void OnChangelogDirectoryChanging(global::System.String value);
         partial void OnChangelogDirectoryChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String AbortedChangelogId
+        {
+            get
+            {
+                return _AbortedChangelogId;
+            }
+            set
+            {
+                OnAbortedChangelogIdChanging(value);
+                ReportPropertyChanging("AbortedChangelogId");
+                _AbortedChangelogId = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("AbortedChangelogId");
+                OnAbortedChangelogIdChanged();
+            }
+        }
+        private global::System.String _AbortedChangelogId;
+        partial void OnAbortedChangelogIdChanging(global::System.String value);
+        partial void OnAbortedChangelogIdChanged();
 
         #endregion
 

@@ -76,7 +76,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 var resp = client.OrderChangelog(order);
 
-                return resp.changelogId;
+                dataset.AbortedChangelogId = resp.changelogId;
+                SubscriberDatasetManager.UpdateDataset(dataset);
+                return dataset.AbortedChangelogId;
             }
             catch (Exception ex)
             {
@@ -146,7 +148,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     downloaduri = downloaduri.Replace(Path.GetExtension(downloaduri), "");
                 }
 
-                var changelogDir = string.IsNullOrEmpty(dataset.ChangelogDirectory) ? Environment.GetEnvironmentVariable("TEMP") : dataset.ChangelogDirectory;
+                var changelogDir = string.IsNullOrEmpty(dataset.ChangelogDirectory)
+                    ? Environment.GetEnvironmentVariable("TEMP")
+                    : dataset.ChangelogDirectory;
 #if (NOT_FTP)
                 string fileName = changelogDir + @"\" + changelogid + "_Changelog.xml";
 #else
@@ -160,6 +164,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 downloadController = new DownloadController {ChangelogFilename = fileName};
                 downloadController.DownloadChangelog(downloaduri);
+                dataset.AbortedChangelogId = null;
+                SubscriberDatasetManager.UpdateDataset(dataset);
             }
             catch (WebException webEx)
             {
@@ -269,18 +275,26 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     return;
                 }
 
+                const int progressCounter = 0;
+                string changeLogId;
                 var stopwatch = Stopwatch.StartNew();
 
-                // Do lots of stuff
-                var startIndex = dataset.LastIndex + 1;
+                if (dataset.AbortedChangelogId == null)
+                {
+                    // Do lots of stuff
+                    var startIndex = dataset.LastIndex + 1;
 
-                if (!PrepareForOrder(datasetId)) return;
+                    if (!PrepareForOrder(datasetId)) return;
 
-                const int progressCounter = 0;
+                    OnOrderProcessingChange((progressCounter + 1)*100/2);
 
-                OnOrderProcessingChange((progressCounter + 1)*100/2);
-
-                var changeLogId = OrderChangelog(datasetId, startIndex);
+                    changeLogId = OrderChangelog(datasetId, startIndex);
+                }
+                else
+                {
+                    changeLogId = dataset.AbortedChangelogId;
+                    OnNewSynchMilestoneReached("Found changelogId " + dataset.AbortedChangelogId + ". Querying for status.");
+                }
 
                 GetStatusForChangelogOnProvider(datasetId, changeLogId);
 
@@ -512,7 +526,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         default:
                             Logger.Info("Timeout");
                             OnNewSynchMilestoneReached("Timeout waiting for ChangeLog from Provider.");
-                            throw new IOException("Timed out waiting for ChangelogStatus from provider");
+                            throw new IOException("Timed out waiting for ChangelogStatus == finished from provider");
 
                     }
                 }
