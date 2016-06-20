@@ -164,8 +164,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 downloadController = new DownloadController {ChangelogFilename = fileName};
                 downloadController.DownloadChangelog(downloaduri);
-                dataset.AbortedChangelogId = null;
-                SubscriberDatasetManager.UpdateDataset(dataset);
             }
             catch (WebException webEx)
             {
@@ -279,7 +277,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 string changeLogId;
                 var stopwatch = Stopwatch.StartNew();
 
-                if (dataset.AbortedChangelogId == null)
+                if (string.IsNullOrEmpty(dataset.AbortedChangelogId))
                 {
                     // Do lots of stuff
                     var startIndex = dataset.LastIndex + 1;
@@ -325,7 +323,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 stopwatch.Stop();
                 var ts = stopwatch.Elapsed;
-                var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
+                var elapsedTime = string.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
 
                 OnUpdateLogList("Syncronization Completed. Elapsed time: " + elapsedTime);
                 Logger.Info("Syncronization Completed. Elapsed time: {0}", elapsedTime);
@@ -475,6 +473,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 dataset.AbortedEndIndex = null;
                 dataset.AbortedTransaction = null;
                 dataset.AbortedChangelogPath = null;
+                dataset.AbortedChangelogId = null;
                 SubscriberDatasetManager.UpdateDataset(dataset);
             }
 
@@ -516,18 +515,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     {
                         case (ChangelogStatusType.cancelled):
                             Logger.Info("Cancelled by Server! Call provider.");
-                            OnNewSynchMilestoneReached("Cancelled ChangeLog from Provider. Contact the provider.");
                             throw new IOException("Recieved ChangelogStatus == cancelled from provider");
                         case (ChangelogStatusType.failed):
                             Logger.Info("ChangelogStatusType.failed waiting for ChangeLog from Provider");
-                            OnNewSynchMilestoneReached(
-                                "Failed waiting for ChangeLog from Provider. Contact the provider.");
                             throw new IOException("Recieved ChangelogStatus == failed from provider");
                         default:
                             Logger.Info("Timeout");
-                            OnNewSynchMilestoneReached("Timeout waiting for ChangeLog from Provider.");
                             throw new IOException("Timed out waiting for ChangelogStatus == finished from provider");
-
                     }
                 }
             }
@@ -577,7 +571,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 if (!wfsController.DoWfsTransactions(changeLog, datasetId)) return false;
                 Logger.Info("DoWfsTransactions OK, pass {0}", passNr);
-                OnUpdateLogList(String.Format("DoWfsTransactions OK, pass {0}", passNr));
+                OnUpdateLogList(string.Format("DoWfsTransactions OK, pass {0}", passNr));
                 return true;
             }
             catch (Exception e)
