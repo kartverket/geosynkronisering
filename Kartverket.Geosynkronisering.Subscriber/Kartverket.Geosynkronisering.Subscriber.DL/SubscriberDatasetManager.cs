@@ -81,6 +81,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 dataset.ClientWfsUrl = geoClientDataset.ClientWfsUrl;
                 dataset.TargetNamespace = geoClientDataset.TargetNamespace;
                 dataset.MappingFile = geoClientDataset.MappingFile;
+                dataset.AbortedEndIndex = geoClientDataset.AbortedEndIndex;
+                dataset.AbortedTransaction = geoClientDataset.AbortedTransaction;
+                dataset.AbortedChangelogPath = geoClientDataset.AbortedChangelogPath;
+                dataset.ChangelogDirectory = geoClientDataset.ChangelogDirectory;
+                dataset.AbortedChangelogId = geoClientDataset.AbortedChangelogId;
 
                 localDb.SaveChanges();
                 return true;
@@ -99,7 +104,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                                        MaxCount = dataset.MaxCount.HasValue ? dataset.MaxCount.Value : -1,
                                        ProviderDatasetId = dataset.ProviderDatasetId,
                                        TargetNamespace = dataset.TargetNamespace,
-                                       MappingFile = dataset.MappingFile
+                                       MappingFile = dataset.MappingFile,
+                                       AbortedEndIndex = dataset.AbortedEndIndex,
+                                       AbortedTransaction = dataset.AbortedTransaction,
+                                       AbortedChangelogPath = dataset.AbortedChangelogPath,
+                                       ChangelogDirectory = dataset.ChangelogDirectory,
+                                       AbortedChangelogId = dataset.AbortedChangelogId 
                                    };
             return geoClientDataset;
         }

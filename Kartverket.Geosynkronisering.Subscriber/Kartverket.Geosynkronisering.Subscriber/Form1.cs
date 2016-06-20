@@ -492,7 +492,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 }
 
                 tabControl1.SelectTab(0);
-                var status = _synchController.TestOfflineSyncronizationComplete(zipFile, _currentDatasetId);
+                var status = _synchController.DoSyncronizationOffline(zipFile, _currentDatasetId, 0);
 
                 if (status)
                 {

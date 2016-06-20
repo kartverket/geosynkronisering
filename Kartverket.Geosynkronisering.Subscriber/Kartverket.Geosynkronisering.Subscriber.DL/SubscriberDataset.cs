@@ -11,5 +11,10 @@
         public string ProviderDatasetId { get; set; }
         public string TargetNamespace { get; set; }
         public string MappingFile { get; set; }
+        public long? AbortedEndIndex { get; set; }
+        public long? AbortedTransaction { get; set; }
+        public string AbortedChangelogPath { get; set; }
+        public string ChangelogDirectory { get; set; }
+        public string AbortedChangelogId { get; set; }
     }
 }
