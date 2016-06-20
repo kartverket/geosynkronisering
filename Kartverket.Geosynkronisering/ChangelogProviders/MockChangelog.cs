@@ -55,7 +55,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         private OrderChangelog CurrentOrderChangeLog = null;
         private string BaseVirtualPath;
-        public OrderChangelog CreateChangelog(int startIndex, int count, string todo_filter, int datasetId)
+        public OrderChangelog CreateChangelog(int startIndex, int count, string todoFilter, int datasetId)
         {
             logger.Info("CreateChangelog START");
             BaseVirtualPath = Utils.BaseVirtualAppPath;
@@ -69,7 +69,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         {
             return null;
         }
-        public OrderChangelog OrderChangelog(int startIndex, int count, string todo_filter, int datasetId)
+        public OrderChangelog OrderChangelog(int startIndex, int count, string todoFilter, int datasetId)
         {
             
 

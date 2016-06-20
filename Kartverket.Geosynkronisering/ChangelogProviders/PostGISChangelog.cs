@@ -29,18 +29,18 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 //Connect to postgres database
                 Npgsql.NpgsqlConnection conn = null;
                 //logger.Info("PostGISChangelog.GetLastIndex" + " NpgsqlConnection:{0}", p_db.Datasets.);
-                conn = new NpgsqlConnection(p_dbConnectInfo);
+                conn = new NpgsqlConnection(PDbConnectInfo);
                 conn.Open();
 
                 //Get max changelogid
                 endChangeId = GetMaxChangeLogId(conn, datasetId);
 
                 conn.Close();
-                logger.Info("GetLastIndexResponse endChangeId :{0}{1}", "\t", endChangeId);
+                Logger.Info("GetLastIndexResponse endChangeId :{0}{1}", "\t", endChangeId);
             }
             catch (System.Exception exp)
             {
-                logger.ErrorException("GetLastIndex Exception:", exp);
+                Logger.ErrorException("GetLastIndex Exception:", exp);
                 throw new System.Exception("GetLastIndex function failed", exp);
             }
 
@@ -51,7 +51,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         //Build changelog responsefile
         public override void MakeChangeLog(int startChangeId, int count, string dbConnectInfo, string wfsUrl, string changeLogFileName, int datasetId)
         {
-            logger.Info("MakeChangeLog START");
+            Logger.Info("MakeChangeLog START");
             try
             {
                 //Connect to postgres database
@@ -77,15 +77,15 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             }
             catch (System.Exception exp)
             {
-                logger.ErrorException("MakeChangeLog function failed:", exp);
+                Logger.ErrorException("MakeChangeLog function failed:", exp);
                 throw new System.Exception("MakeChangeLog function failed", exp);
             }
-            logger.Info("MakeChangeLog END");
+            Logger.Info("MakeChangeLog END");
         }
 
         private void FillOptimizedChangeLog(ref Npgsql.NpgsqlCommand command, ref List<OptimizedChangeLogElement> optimizedChangeLog, int startChangeId)
         {
-            logger.Info("FillOptimizedChangeLog START");
+            Logger.Info("FillOptimizedChangeLog START");
             try
             {
                 OrderedDictionary tempOptimizedChangeLog = new OrderedDictionary();
@@ -110,7 +110,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                             if (tempOptimizedChangeLog.Contains(gmlId))
                             {
                                 optimizedChangeLogElement = (OptimizedChangeLogElement)tempOptimizedChangeLog[gmlId];
-                                string tempTransType = optimizedChangeLogElement._transType;
+                                string tempTransType = optimizedChangeLogElement.TransType;
                                 tempOptimizedChangeLog.Remove(gmlId);
                                 if (tempTransType.Equals("U"))
                                 {
@@ -141,21 +141,21 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             }
             catch (System.Exception exp)
             {
-                logger.ErrorException("FillOptimizedChangeLog function failed:", exp);
+                Logger.ErrorException("FillOptimizedChangeLog function failed:", exp);
                 throw new System.Exception("FillOptimizedChangeLog function failed", exp);
             }
-            logger.Info("FillOptimizedChangeLog END");
+            Logger.Info("FillOptimizedChangeLog END");
         }
 
         private void PrepareChangeLogQuery(Npgsql.NpgsqlConnection conn, ref Npgsql.NpgsqlCommand command, int startChangeId, Int64 endChangeId, int datasetId)
         {
-            logger.Info("PrepareChangeLogQuery START");
+            Logger.Info("PrepareChangeLogQuery START");
             try
             {
                 //20121021-Leg: Correction "endringsid >= :startChangeId"
                 //20121031-Leg: rad is now lokalId
 
-                string sqlSelectGmlIds = "SELECT tabell || '.' || lokalid, type, endringsid FROM " + p_dbSchema + ".endringslogg WHERE endringsid >= :startChangeId AND endringsid <= :endChangeId ORDER BY endringsid";
+                string sqlSelectGmlIds = "SELECT tabell || '.' || lokalid, type, endringsid FROM " + PDbSchema + ".endringslogg WHERE endringsid >= :startChangeId AND endringsid <= :endChangeId ORDER BY endringsid";
                 //string sqlSelectGmlIds = "SELECT tabell || '.' || rad, type FROM tilbyder.endringslogg WHERE endringsid >= :startChangeId AND endringsid <= :endChangeId ORDER BY endringsid";
                 // string sqlSelectGmlIds = "SELECT tabell || '.' || rad, type FROM tilbyder.endringslogg WHERE endringsid > :startChangeId AND endringsid <= :endChangeId ";
                 command = new NpgsqlCommand(sqlSelectGmlIds, conn);
@@ -170,32 +170,32 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             }
             catch (System.Exception exp)
             {
-                logger.ErrorException("PrepareChangeLogQuery function failed:", exp);
+                Logger.ErrorException("PrepareChangeLogQuery function failed:", exp);
                 throw new System.Exception("PrepareChangeLogQuery function failed", exp);
             }
-            logger.Info("PrepareChangeLogQuery END");
+            Logger.Info("PrepareChangeLogQuery END");
         }
 
         private Int64 GetMaxChangeLogId(Npgsql.NpgsqlConnection conn, int datasetid)
         {
-            logger.Info("GetMaxChangeLogId START");
+            Logger.Info("GetMaxChangeLogId START");
             try
             {
                 Int64 endChangeId = 0;
        
-                string sqlSelectMaxChangeLogId = "SELECT COALESCE(MAX(endringsid),0) FROM " + p_dbSchema + ".endringslogg";
+                string sqlSelectMaxChangeLogId = "SELECT COALESCE(MAX(endringsid),0) FROM " + PDbSchema + ".endringslogg";
 
                 NpgsqlCommand command = new NpgsqlCommand(sqlSelectMaxChangeLogId, conn);
                 NpgsqlDataReader dr = command.ExecuteReader();
                 dr.Read(); //Only one row
                 endChangeId = dr.GetInt64(0);
                 dr.Close();
-                logger.Info("GetMaxChangeLogId END");
+                Logger.Info("GetMaxChangeLogId END");
                 return endChangeId;
             }
             catch (System.Exception exp)
             {
-                logger.ErrorException("GetMaxChangeLogId function failed:", exp);
+                Logger.ErrorException("GetMaxChangeLogId function failed:", exp);
                 throw new System.Exception("GetMaxChangeLogId function failed", exp);
             }
         }       

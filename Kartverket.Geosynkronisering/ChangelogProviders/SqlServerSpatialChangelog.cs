@@ -22,19 +22,19 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 //Connect to SQL Server  database
 
                 SqlConnection conn = null;
-                using (conn = new SqlConnection(p_dbConnectInfo))
+                using (conn = new SqlConnection(PDbConnectInfo))
                 {
                     conn.Open();
                     //Get max changelogid
                     endChangeId = GetMaxChangeLogId(conn, datasetId);
                     conn.Close();
-                    logger.Info("SqlServerSpatialChangelog.GetLastIndexResponse endChangeId :{0}{1}", "\t", endChangeId);
+                    Logger.Info("SqlServerSpatialChangelog.GetLastIndexResponse endChangeId :{0}{1}", "\t", endChangeId);
                 }
             }
 
             catch (System.Exception exp)
             {
-                logger.ErrorException("GetLastIndex Exception:", exp);
+                Logger.ErrorException("GetLastIndex Exception:", exp);
                 throw new System.Exception("GetLastIndex function failed", exp);
             }
 
@@ -42,7 +42,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         }
         public override void MakeChangeLog(int startChangeId, int count, string dbConnectInfo, string wfsUrl, string changeLogFileName, int datasetId)
         {
-            logger.Info("SqlServerSpatialChangelog..MakeChangeLog START");
+            Logger.Info("SqlServerSpatialChangelog..MakeChangeLog START");
             try
             {
                 //Connect to postgres database
@@ -69,17 +69,17 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             }
             catch (System.Exception exp)
             {
-                logger.ErrorException("SqlServerSpatialChangelog.MakeChangeLog function failed:", exp);
+                Logger.ErrorException("SqlServerSpatialChangelog.MakeChangeLog function failed:", exp);
                 throw new System.Exception("MakeChangeLog function failed", exp);
             }
-            logger.Info("SqlServerSpatialChangelog.MakeChangeLog END");
+            Logger.Info("SqlServerSpatialChangelog.MakeChangeLog END");
 
         }
 
         private void FillOptimizedChangeLog(ref SqlCommand command,
             ref List<OptimizedChangeLogElement> optimizedChangeLog, int startChangeId)
         {
-            logger.Info("SqlServerSpatialChangelog.FillOptimizedChangeLog START");
+            Logger.Info("SqlServerSpatialChangelog.FillOptimizedChangeLog START");
             try
             {
 
@@ -104,7 +104,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                             if (tempOptimizedChangeLog.Contains(gmlId))
                             {
                                 optimizedChangeLogElement = (OptimizedChangeLogElement)tempOptimizedChangeLog[gmlId];
-                                string tempTransType = optimizedChangeLogElement._transType;
+                                string tempTransType = optimizedChangeLogElement.TransType;
                                 tempOptimizedChangeLog.Remove(gmlId);
                                 if (tempTransType.Equals("U"))
                                 {
@@ -138,23 +138,23 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             catch (Exception exp)
             {
 
-                logger.ErrorException("SqlServerSpatialChangelog.FillOptimizedChangeLog function failed:", exp);
+                Logger.ErrorException("SqlServerSpatialChangelog.FillOptimizedChangeLog function failed:", exp);
                 throw new System.Exception("FillOptimizedChangeLog function failed", exp);
             }
-            logger.Info("SqlServerSpatialChangelog.FillOptimizedChangeLog END");
+            Logger.Info("SqlServerSpatialChangelog.FillOptimizedChangeLog END");
 
         }
 
 
         private void PrepareChangeLogQuery(SqlConnection conn, ref SqlCommand command, int startChangeId, Int64 endChangeId, int datasetId)
         {
-            logger.Info("SqlServerSpatialChangelog.PrepareChangeLogQuery START");
+            Logger.Info("SqlServerSpatialChangelog.PrepareChangeLogQuery START");
             try
             {
                 // 20160302-Leg: SQL server has different syntax from PostGIS
-                string sqlSelectGmlIds = "SELECT tabell + '.' +  CONVERT(nvarchar(50),lokalid), type, endringsid FROM " + p_dbSchema + ".endringslogg WHERE endringsid >= @startChangeId AND endringsid <= @endChangeId ORDER BY endringsid";
+                string sqlSelectGmlIds = "SELECT tabell + '.' +  CONVERT(nvarchar(50),lokalid), type, endringsid FROM " + PDbSchema + ".endringslogg WHERE endringsid >= @startChangeId AND endringsid <= @endChangeId ORDER BY endringsid";
                 // string sqlSelectGmlIds = "SELECT tabell || '.' || lokalid, type, endringsid FROM " + p_dbSchema + ".endringslogg WHERE endringsid >= :startChangeId AND endringsid <= :endChangeId ORDER BY endringsid";
-                logger.Info("SqlServerSpatialChangelog.PrepareChangeLogQuery sqlSelectGmlIds: {0}",sqlSelectGmlIds);
+                Logger.Info("SqlServerSpatialChangelog.PrepareChangeLogQuery sqlSelectGmlIds: {0}",sqlSelectGmlIds);
 
                 command = new SqlCommand(sqlSelectGmlIds, conn);
                 command.Parameters.Add(new SqlParameter("startChangeId", SqlDbType.Int));
@@ -167,21 +167,21 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             }
             catch (System.Exception exp)
             {
-                logger.ErrorException("SqlServerSpatialChangelog.PrepareChangeLogQuery function failed:", exp);
+                Logger.ErrorException("SqlServerSpatialChangelog.PrepareChangeLogQuery function failed:", exp);
                 throw new System.Exception("PrepareChangeLogQuery function failed", exp);
             }
-            logger.Info("SqlServerSpatialChangelog.PrepareChangeLogQuery END");
+            Logger.Info("SqlServerSpatialChangelog.PrepareChangeLogQuery END");
         }
 
 
         private Int64 GetMaxChangeLogId(SqlConnection conn, int datasetid)
         {
-            logger.Info("SqlServerSpatialChangelog.GetMaxChangeLogId START");
+            Logger.Info("SqlServerSpatialChangelog.GetMaxChangeLogId START");
             try
             {
                 Int64 endChangeId = 0;
 
-                string sqlSelectMaxChangeLogId = "SELECT COALESCE(MAX(endringsid),0) FROM " + p_dbSchema + ".endringslogg";
+                string sqlSelectMaxChangeLogId = "SELECT COALESCE(MAX(endringsid),0) FROM " + PDbSchema + ".endringslogg";
 
                 SqlCommand cmd = new SqlCommand(sqlSelectMaxChangeLogId, conn);
                 SqlDataReader dr = cmd.ExecuteReader();
@@ -189,12 +189,12 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 endChangeId = dr.GetInt64(0);
                 dr.Close();
 
-                logger.Info("SqlServerSpatialChangelog.GetMaxChangeLogId END");
+                Logger.Info("SqlServerSpatialChangelog.GetMaxChangeLogId END");
                 return endChangeId;
             }
             catch (System.Exception exp)
             {
-                logger.ErrorException("GetMaxChangeLogId function failed:", exp);
+                Logger.ErrorException("GetMaxChangeLogId function failed:", exp);
                 throw new System.Exception("GetMaxChangeLogId function failed", exp);
             }
         }
