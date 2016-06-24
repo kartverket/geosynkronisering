@@ -342,10 +342,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         private static List<string> GetChangelogFiles(bool isFolder, string changelogPath)
         {
             var fileList = new List<string>();
-            var fileArray = Directory.GetFiles(changelogPath);
+            
             if (isFolder)
             {
-                
+                var fileArray = Directory.GetFiles(changelogPath);
                 if (fileArray[0].Contains('_'))
                 {
                     var comparison = new Comparison<string>(delegate(string a, string b)

@@ -39,8 +39,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             PDbSchema = DatasetsData.DBSchema(datasetId);
             _pSchemaFileUri = DatasetsData.SchemaFileUri(datasetId);
             destFileName = Guid.NewGuid().ToString();
-            destPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-            destFileName = Guid.NewGuid().ToString();
+            destPath = Path.Combine(Path.GetTempPath(), destFileName) + "\\";
             zipFile = destFileName + ".zip";
             streamFileLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Changelogfiles\\" + zipFile;
             tmpzipFile = Path.Combine(Path.GetTempPath(), zipFile);
@@ -199,12 +198,12 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             using (geosyncEntities db = new geosyncEntities())
             {
                 ChangelogManager chlmng = new ChangelogManager(db);
-                string destFileName = Guid.NewGuid().ToString();
-
+                
                 chlmng.SetStatus(_currentOrderChangeLog.changelogId, ChangelogStatusType.working);
                 //System.IO.File.Copy(Utils.BaseVirtualAppPath + sourceFileName, Utils.BaseVirtualAppPath + destFileName);
                 try
                 {
+                    if (!Directory.Exists(destPath)) Directory.CreateDirectory(destPath);
                     MakeChangeLog(startIndex, count, PDbConnectInfo, _pWfsUrl, destPath + destFileName + ".xml",
                         datasetId);
                 }
@@ -221,8 +220,8 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 string inFile = "";
                 try
                 {
-                    inFile = destPath + destFileName + ".xml";
-                    chgLogHandler.CreateZipFile(inFile, zipFile);
+                    inFile = destPath;
+                    chgLogHandler.CreateZipFileFromFolder(inFile, zipFile, destFileName);
                     File.Copy(tmpzipFile, streamFileLocation);
                 }
                 catch (Exception ex)
