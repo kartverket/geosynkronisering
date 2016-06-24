@@ -24,7 +24,11 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         protected string PDbSchema;
         private string _pSchemaFileUri;
         private OrderChangelog _currentOrderChangeLog = null;
-        private string _baseVirtualPath;
+        private string destFileName;
+        private string destPath;
+        private string zipFile;
+        private string streamFileLocation;
+        private string tmpzipFile;
 
         public void Intitalize(int datasetId)
         {
@@ -34,6 +38,12 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             _pNsPrefixTargetNamespace = DatasetsData.TargetNamespacePrefix(datasetId);
             PDbSchema = DatasetsData.DBSchema(datasetId);
             _pSchemaFileUri = DatasetsData.SchemaFileUri(datasetId);
+            destFileName = Guid.NewGuid().ToString();
+            destPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            destFileName = Guid.NewGuid().ToString();
+            zipFile = destFileName + ".zip";
+            streamFileLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Changelogfiles\\" + zipFile;
+            tmpzipFile = Path.Combine(Path.GetTempPath(), zipFile);
         }
 
         public abstract string GetLastIndex(int datasetId);
@@ -43,6 +53,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             string ftpUrl = ServerConfigData.FTPUrl();
             string ftpUser = ServerConfigData.FTPUser();
             string ftpPwd = ServerConfigData.FTPPwd();
+
             using (geosyncEntities db = new geosyncEntities())
             {
                 var initialChangelog = (from d in db.StoredChangelogs
@@ -71,14 +82,6 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
             //TODO make filter 
             //TODO check if similar stored changelog is already done
-            // Generate unique filename
-            string destFileName = Guid.NewGuid().ToString();
-
-            //System.IO.File.Copy(Utils.BaseVirtualAppPath + sourceFileName, Utils.BaseVirtualAppPath + destFileName);
-
-            string destPath = Path.Combine(Utils.BaseVirtualAppPath, destFileName);
-
-
             using (geosyncEntities db = new geosyncEntities())
             {
                 // Store changelog info in database
@@ -96,7 +99,6 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 Directory.CreateDirectory(destPath);
                 // Loop and create xml files
                 int i = 1;
-                int test = Convert.ToInt32(Math.Ceiling((double) endIndex/count));
                 while (i++ <= Convert.ToInt32(Math.Ceiling((double) endIndex/count)))
                 {
                     string partFileName = DateTime.Now.Ticks + ".xml";
@@ -114,21 +116,13 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 // New code to handle FTP download
                 ChangeLogHandler chgLogHandler = new ChangeLogHandler(ldbo, Logger);
                 string inFile = "";
-                string zipFile = "";
                 try
                 {
                     inFile = destPath;
-                    zipFile = destFileName + ".zip";
                     chgLogHandler.CreateZipFileFromFolder(inFile, zipFile, destFileName);
-                    Common.FileTransferHandler ftpTool = new Common.FileTransferHandler();
-                    string tmpzipFile = Path.Combine(Path.GetTempPath(), zipFile);
-                    Logger.Info(string.Format("Upload of file {0} started", tmpzipFile));
-                    ldbo.Status = "queued";
-                    db.SaveChanges();
-                    // chgLogHandler.UploadFileToFtp(zipFile, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpServer, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpUser, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpPassword);
-                    if (!ftpTool.UploadFileToFtp(tmpzipFile, ftpUrl, ftpUser, ftpPwd))
-                        throw new Exception("Could not upload file to FTPServer!");
-                    ldbo.Status = "finished";
+                    ldbo.Status = "queued"; 
+                    File.Copy(tmpzipFile, streamFileLocation);
+                    ldbo.Status = "finished"; 
                     db.SaveChanges();
                 }
                 catch (Exception ex)
@@ -139,7 +133,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 try
                 {
-                    string downLoadUri = string.Format(@"ftp://{0}:{1}@{2}/{3}", ftpUser, ftpPwd, ftpUrl, destFileName);
+                    string downLoadUri = string.Format(@"https://{0}:{1}@{2}/{3}", ftpUser, ftpPwd, ftpUrl, zipFile);
 
                     ldbo.DownloadUri = downLoadUri;
                 }
@@ -175,7 +169,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         {
             using (geosyncEntities db = new geosyncEntities())
             {
-                if (startIndex == -1)
+                if (startIndex == 1)
                 {
 
                     var initialChangelog = (from d in db.StoredChangelogs
@@ -193,7 +187,6 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 }
                 Logger.Info("CreateChangelog START");
-                _baseVirtualPath = Utils.BaseVirtualAppPath;
                 ChangelogManager chlmng = new ChangelogManager(db);
                 _currentOrderChangeLog = chlmng.CreateChangeLog(startIndex, count, datasetId);
                 chlmng.SetStatus(_currentOrderChangeLog.changelogId, ChangelogStatusType.queued);
@@ -215,36 +208,25 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 //System.IO.File.Copy(Utils.BaseVirtualAppPath + sourceFileName, Utils.BaseVirtualAppPath + destFileName);
                 try
                 {
-                    MakeChangeLog(startIndex, count, PDbConnectInfo, _pWfsUrl, _baseVirtualPath + destFileName + ".xml",
+                    MakeChangeLog(startIndex, count, PDbConnectInfo, _pWfsUrl, destPath + destFileName + ".xml",
                         datasetId);
                 }
                 catch (Exception ex)
                 {
                     chlmng.SetStatus(_currentOrderChangeLog.changelogId, ChangelogStatusType.cancelled);
                     Logger.ErrorException(
-                        string.Format("Failed to make Change Log {0}", _baseVirtualPath + destFileName + ".xml"), ex);
+                        string.Format("Failed to make Change Log {0}", destPath + destFileName + ".xml"), ex);
                     throw ex;
                 }
 
                 // New code to handle FTP download
                 ChangeLogHandler chgLogHandler = new ChangeLogHandler(Logger);
                 string inFile = "";
-                string zipFile = "";
                 try
                 {
-                    inFile = _baseVirtualPath + destFileName + ".xml";
-                    zipFile = destFileName + ".zip";
+                    inFile = destPath + destFileName + ".xml";
                     chgLogHandler.CreateZipFile(inFile, zipFile);
-                    Common.FileTransferHandler ftpTool = new Common.FileTransferHandler();
-                    string tmpzipFile = Path.Combine(Path.GetTempPath(), zipFile);
-                    Logger.Info(string.Format("Upload of file {0} started", tmpzipFile));
-
-                    // p_db.SaveChanges();
-                    // chgLogHandler.UploadFileToFtp(zipFile, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpServer, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpUser, Kartverket.Geosynkronisering.Properties.Settings.Default.ftpPassword);
-                    if (!ftpTool.UploadFileToFtp(tmpzipFile, ftpUrl, ftpUser, ftpPwd))
-                        throw new Exception("Could not upload file to FTPServer!");
-
-                    //p_db.SaveChanges();
+                    File.Copy(tmpzipFile, streamFileLocation);
                 }
                 catch (Exception ex)
                 {
@@ -255,7 +237,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 try
                 {
-                    string downLoadUri = string.Format(@"ftp://{0}:{1}@{2}/{3}", ftpUser, ftpPwd, ftpUrl, destFileName);
+                    string downLoadUri = string.Format(@"https://{0}:{1}@{2}/{3}", ftpUser, ftpPwd, ftpUrl, zipFile);
                     chlmng.SetStatus(_currentOrderChangeLog.changelogId, ChangelogStatusType.finished);
                     chlmng.SetDownloadURI(_currentOrderChangeLog.changelogId, downLoadUri);
                 }
