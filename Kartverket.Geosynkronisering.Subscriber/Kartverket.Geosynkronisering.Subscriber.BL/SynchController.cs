@@ -140,13 +140,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 // 20151215-Leg: Norkart downloaduri may contain .zip
                 Logger.Info("GetChangelog downloaduri: " + downloaduri);
-                var fileExtension = Path.GetExtension(downloaduri);
-                if (fileExtension != String.Empty)
-                {
-                    Logger.Info("GetChangelog downloaduri  contains fileextension:" + fileExtension);
-                    // Hack to remove eventual .zip from filename
-                    downloaduri = downloaduri.Replace(Path.GetExtension(downloaduri), "");
-                }
 
                 var changelogDir = string.IsNullOrEmpty(dataset.ChangelogDirectory)
                     ? Environment.GetEnvironmentVariable("TEMP")
@@ -159,7 +152,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 Utils.Misc.CreateFolderIfMissing(changelogDir + @"\" + ftpPath);
                 // Create the abonnent folder if missing               
 
-                var fileName = changelogDir + @"\" + ftpPath + @"\" + Path.GetFileName(downloaduri) + ".zip";
+                var fileName = changelogDir + @"\" + ftpPath + @"\" + Path.GetFileName(downloaduri);
 #endif
 
                 downloadController = new DownloadController {ChangelogFilename = fileName};

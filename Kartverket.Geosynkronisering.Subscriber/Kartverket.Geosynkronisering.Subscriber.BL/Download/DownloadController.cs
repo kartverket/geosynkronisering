@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Net;
+using System.ServiceModel;
 using Ionic.Zip;
 using NLog;
 
@@ -30,16 +33,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// <param name="downloadUri"></param>
         public bool DownloadChangelog(string downloadUri)
         {
-            string d = downloadUri;
-            d = d.Substring(d.IndexOf('/') + 2);
-            string[] par1 = d.Split('@');
-            string ftpUser = par1[0].Split(':')[0];
-            string ftpPasswd = par1[0].Split(':')[1];
-            string ftpServer = par1[1].Split('/')[0];
-            string ftpFileName = par1[1].Split('/')[1] + ".zip";
-            var ftpHandler = new FileTransferHandler();
-            ftpHandler.ProcessDone += ftpHandler_ProcessDone;
-            if (ftpHandler.DownloadFileFromFtp(ChangelogFilename, ftpFileName, ftpServer, ftpUser, ftpPasswd))
+            var webClient = new WebClient {Credentials =  GetCredentials(downloadUri)};
+            webClient.DownloadFile(downloadUri, ChangelogFilename);
+            if (File.Exists(ChangelogFilename))
             {
                 if (Path.GetExtension(ChangelogFilename) != ".zip")
                 {
@@ -70,21 +66,29 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return false;
         }
 
-        void ftpHandler_ProcessDone(object sender, FileTransferHandler.ProgressEventArgs e)
+        private static NetworkCredential GetCredentials(string downloadUri)
         {
-            if (!e.error)
-            {
-                _downloadDone = e.status == FileTransferHandler.ftpStatus.done;
-            }
+            Dictionary<string, string> logonDictionary= new Dictionary<string, string>();
+            
+            string d = downloadUri;
+            d = d.Substring(d.IndexOf('/') + 2);
+            string[] par1 = d.Split('@');
+
+            logonDictionary["username"] = par1[0].Split(':')[0];
+            logonDictionary["password"] = par1[0].Split(':')[1];
+            logonDictionary["domain"] = par1[1].Split('/')[0];
+            logonDictionary["filename"] = par1[1].Split('/')[1] + ".zip";
+
+            return new NetworkCredential(logonDictionary["username"], logonDictionary["password"]);
         }
 
         public bool UnpackZipFile(string zipfile, string utpath)
         {
             try
             {
-                using (ZipFile zip = ZipFile.Read(zipfile))
+                using (var zip = ZipFile.Read(zipfile))
                 {
-                    foreach (ZipEntry fil in zip)
+                    foreach (var fil in zip)
                     {
                         fil.Extract(utpath, ExtractExistingFileAction.OverwriteSilently);
                     }
