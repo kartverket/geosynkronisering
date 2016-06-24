@@ -60,7 +60,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     where d.DatasetId == datasetId && d.StartIndex == 1 && d.Stored == true && d.Status == "finished"
                     orderby d.DateCreated descending
                     select d).FirstOrDefault();
-                if (initialChangelog != null)
+                if (initialChangelog != null && initialChangelog.DownloadUri != null)
                 {
                     Uri uri = new Uri(initialChangelog.DownloadUri);
                     ChangelogManager.DeleteFileOnServer(uri);
@@ -70,7 +70,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             }
             int startIndex = 1; // StartIndex always 1 on initial changelog
             int endIndex = Convert.ToInt32(GetLastIndex(datasetId));
-            int count = 2000; // TODO: Get from dataset table
+            int count = 20000; // TODO: Get from dataset table
             Logger.Info("GenerateInitialChangelog START");
             StoredChangelog ldbo = new StoredChangelog();
             ldbo.Stored = true;
@@ -86,7 +86,6 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             {
                 // Store changelog info in database
                 db.StoredChangelogs.AddObject(ldbo);
-                db.SaveChanges();
 
                 OrderChangelog resp = new OrderChangelog();
                 resp.changelogId = ldbo.ChangelogId.ToString();
@@ -111,7 +110,6 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 // Save endIndex to database
                 ldbo.EndIndex = endIndex;
-                db.SaveChanges();
 
                 // New code to handle FTP download
                 ChangeLogHandler chgLogHandler = new ChangeLogHandler(ldbo, Logger);
@@ -123,7 +121,6 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     ldbo.Status = "queued"; 
                     File.Copy(tmpzipFile, streamFileLocation);
                     ldbo.Status = "finished"; 
-                    db.SaveChanges();
                 }
                 catch (Exception ex)
                 {
