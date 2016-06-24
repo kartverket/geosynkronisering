@@ -198,10 +198,10 @@ namespace Kartverket.Geosynkronisering
 
         public static bool DeleteFileOnServer(Uri serverUri)
         {
-            if (serverUri.Scheme != Uri.UriSchemeFtp)            
+            if (serverUri.Scheme != Uri.UriSchemeHttps)            
                 return false;
 
-            string zipFilename = serverUri + ".zip";
+            string zipFilename = serverUri.AbsoluteUri;
            
             try
             {
