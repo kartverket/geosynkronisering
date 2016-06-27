@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<chlogf:TransactionCollection timeStamp="2001-12-17T09:30:47Z" numberMatched="***" numberReturned="***" startIndex="***" endIndex="***" xsi:schemaLocation="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/0.3 http://www.geosynkronisering.no/files/skjema/v0.4/changelogfile.xsd http://schemas.geonorge.no/prodspek/FellesKystkontur/1.0 http://www.geosynkronisering.no/files/skjema/Flytebrygge.xsd" xmlns:chlogf="http://skjema.geonorge.no/sosi/produktspesifikasjon/geosynkronisering/fil/0.3" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:gml="http://www.opengis.net/gml/3.2" >
-  <chlogf:transactions service="WFS" version="2.0.0" >
-  </chlogf:transactions>
-</chlogf:TransactionCollection>
