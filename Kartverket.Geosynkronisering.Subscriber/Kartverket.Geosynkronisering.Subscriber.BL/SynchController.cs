@@ -40,7 +40,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         public IBindingList GetCapabilitiesProviderDataset(string url, string UserName, string Password)
         {
-            var cdb = new CapabilitiesDataBuilder(url, UserName,Password);
+            var cdb = new CapabilitiesDataBuilder(url, UserName, Password);
             return cdb.ProviderDatasets;
         }
 
@@ -52,7 +52,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         {
             var dataset = SubscriberDatasetManager.GetDataset(datasetId);
             dataset.LastIndex = 0;
-            SubscriberDatasetManager.UpdateDataset(dataset);
+            ResetDataset(dataset, 0);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
                 var client = buildClient(dataset);
-                   
+
                 var order = new ChangelogOrderType();
                 order.datasetId = dataset.ProviderDatasetId;
                 order.count = dataset.MaxCount.ToString();
@@ -89,7 +89,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         private WebFeatureServiceReplicationPortClient buildClient(SubscriberDataset dataset)
         {
-            var client=new WebFeatureServiceReplicationPortClient();
+            var client = new WebFeatureServiceReplicationPortClient();
             client.ClientCredentials.UserName.UserName = dataset.UserName; //"https_user";
             client.ClientCredentials.UserName.Password = dataset.Password; //"Nois.2016";
             client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
@@ -289,7 +289,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 else
                 {
                     changeLogId = dataset.AbortedChangelogId;
-                    OnNewSynchMilestoneReached("Found changelogId " + dataset.AbortedChangelogId + ". Querying for status.");
+                    OnNewSynchMilestoneReached("Found changelogId " + dataset.AbortedChangelogId +
+                                               ". Querying for status.");
                 }
 
                 GetStatusForChangelogOnProvider(datasetId, changeLogId);
@@ -347,7 +348,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         private static List<string> GetChangelogFiles(bool isFolder, string changelogPath)
         {
             var fileList = new List<string>();
-            
+
             if (isFolder)
             {
                 var fileArray = Directory.GetFiles(changelogPath);
@@ -359,7 +360,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     });
 
                     Array.Sort(fileArray, comparison);
-                   
+
                 }
                 return fileArray.ToList();
             }
@@ -471,7 +472,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             if (changeLog != null)
             {
-                ResetDataset(dataset, (long)changeLog.Attribute("endIndex"));
+                ResetDataset(dataset, (long) changeLog.Attribute("endIndex"));
             }
 
             return status;
@@ -479,7 +480,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         private static void ResetDataset(SubscriberDataset dataset, long endIndex)
         {
-            if(endIndex >0)
+            if (endIndex > 0)
                 dataset.LastIndex = endIndex;
             dataset.AbortedEndIndex = null;
             dataset.AbortedTransaction = null;
