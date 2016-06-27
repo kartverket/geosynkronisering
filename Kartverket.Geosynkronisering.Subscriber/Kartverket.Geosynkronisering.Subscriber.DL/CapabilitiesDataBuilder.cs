@@ -9,11 +9,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
     public class CapabilitiesDataBuilder
     {
-        public CapabilitiesDataBuilder(string ProviderURL)
+        public CapabilitiesDataBuilder(string ProviderURL, string UserName, string Password)
         {
             geosyncDBEntities db = new geosyncDBEntities();
 
             WebFeatureServiceReplicationPortClient client = new WebFeatureServiceReplicationPortClient();
+            client.ClientCredentials.UserName.UserName = UserName;
+            client.ClientCredentials.UserName.Password = Password;
+
             client.Endpoint.Address = new System.ServiceModel.EndpointAddress(ProviderURL);
 
             GetCapabilitiesType1 req = new GetCapabilitiesType1();

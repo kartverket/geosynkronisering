@@ -86,6 +86,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 dataset.AbortedChangelogPath = geoClientDataset.AbortedChangelogPath;
                 dataset.ChangelogDirectory = geoClientDataset.ChangelogDirectory;
                 dataset.AbortedChangelogId = geoClientDataset.AbortedChangelogId;
+                dataset.UserName = geoClientDataset.UserName;
+                dataset.Password = geoClientDataset.Password;
 
                 localDb.SaveChanges();
                 return true;
@@ -109,7 +111,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                                        AbortedTransaction = dataset.AbortedTransaction,
                                        AbortedChangelogPath = dataset.AbortedChangelogPath,
                                        ChangelogDirectory = dataset.ChangelogDirectory,
-                                       AbortedChangelogId = dataset.AbortedChangelogId 
+                                       AbortedChangelogId = dataset.AbortedChangelogId,
+                                       UserName = dataset.UserName,
+                                       Password = dataset.Password
                                    };
             return geoClientDataset;
         }
@@ -221,7 +225,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             }
         }
 
-        public static bool AddDatasets(IBindingList datasetBindingList, IList<int> selectedDatasets)
+        public static bool AddDatasets(IBindingList datasetBindingList, IList<int> selectedDatasets, string providerUrl, string UserName, string Password)
         {
             using (var localDb = new geosyncDBEntities())
             {
@@ -233,6 +237,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                         ds.DatasetId = GetNextDatasetID();
                         ds.LastIndex = 0;
                         ds.ClientWfsUrl = "";
+                        ds.UserName = UserName;
+                        ds.Password = Password;
+                        ds.SyncronizationUrl = providerUrl;
                         localDb.AddObject(ds.EntityKey.EntitySetName, ds);
                         localDb.SaveChanges();
                         localDb.AcceptAllChanges();

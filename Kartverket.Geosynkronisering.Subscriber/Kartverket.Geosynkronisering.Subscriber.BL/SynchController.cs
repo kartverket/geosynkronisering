@@ -38,9 +38,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         public TransactionSummary TransactionsSummary;
 
-        public IBindingList GetCapabilitiesProviderDataset(string url)
+        public IBindingList GetCapabilitiesProviderDataset(string url, string UserName, string Password)
         {
-            var cdb = new CapabilitiesDataBuilder(url);
+            var cdb = new CapabilitiesDataBuilder(url, UserName,Password);
             return cdb.ProviderDatasets;
         }
 
@@ -67,8 +67,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                var client = new WebFeatureServiceReplicationPortClient();
-                client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
+                var client = buildClient(dataset);
+                   
                 var order = new ChangelogOrderType();
                 order.datasetId = dataset.ProviderDatasetId;
                 order.count = dataset.MaxCount.ToString();
@@ -87,6 +87,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
+        private WebFeatureServiceReplicationPortClient buildClient(SubscriberDataset dataset)
+        {
+            var client=new WebFeatureServiceReplicationPortClient();
+            client.ClientCredentials.UserName.UserName = dataset.UserName; //"https_user";
+            client.ClientCredentials.UserName.Password = dataset.Password; //"Nois.2016";
+            client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
+            return client;
+        }
+
 
         /// <summary>
         /// Get ChangelogStatus Response
@@ -100,8 +109,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                var client = new WebFeatureServiceReplicationPortClient();
-                client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
+                var client = buildClient(dataset);
 
                 var id = new ChangelogIdentificationType {changelogId = changelogId};
 
@@ -129,8 +137,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                var client = new WebFeatureServiceReplicationPortClient();
-                client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
+                var client = buildClient(dataset);
 
                 var id = new ChangelogIdentificationType {changelogId = changelogId};
 
@@ -182,8 +189,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                var client = new WebFeatureServiceReplicationPortClient();
-                client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
+                var client = buildClient(dataset);
 
                 var id = new ChangelogIdentificationType {changelogId = changelogId};
                 client.AcknowlegeChangelogDownloaded(id);
@@ -218,8 +224,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                var client = new WebFeatureServiceReplicationPortClient();
-                client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
+                var client = buildClient(dataset);
 
                 var lastIndexString = client.GetLastIndex(dataset.ProviderDatasetId);
                 var lastIndex = Convert.ToInt64(lastIndexString);

@@ -26,6 +26,8 @@
     <Property Name="AbortedChangelogPath" Type="nvarchar" Nullable="true" />
     <Property Name="ChangelogDirectory" Type="nvarchar" Nullable="true" />
     <Property Name="AbortedChangelogId" Type="nvarchar" Nullable="true" />
+    <Property Name="UserName" Type="nvarchar" Nullable="true" />
+    <Property Name="Password" Type="nvarchar" Nullable="true" />
   </EntityType>
 </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -52,6 +54,8 @@
           <Property Name="AbortedChangelogPath" Type="String" Nullable="true" />
           <Property Name="ChangelogDirectory" Type="String" Nullable="true" />
           <Property Name="AbortedChangelogId" Type="String" Nullable="true" />
+          <Property Name="UserName" Type="String" Nullable="true" />
+          <Property Name="Password" Type="String" Nullable="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -76,6 +80,8 @@
           <ScalarProperty Name="AbortedChangelogPath" ColumnName="AbortedChangelogPath" />
           <ScalarProperty Name="ChangelogDirectory" ColumnName="ChangelogDirectory" />
           <ScalarProperty Name="AbortedChangelogId" ColumnName="AbortedChangelogId" />
+          <ScalarProperty Name="UserName" ColumnName="UserName" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

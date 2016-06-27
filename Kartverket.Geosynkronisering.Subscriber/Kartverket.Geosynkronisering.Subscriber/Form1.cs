@@ -42,7 +42,27 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
+                List<string> invisibleColumns = new List<string>()
+                {
+                    "DatasetId",
+                    "AbortedEndIndex",
+                    "AbortedTransaction",
+                    "AbortedChangelogPath",
+                    "AbortedChangelogId",
+                    "UserName",
+                    "Password"
+                };
+#if DEBUG
                 dgDataset.DataSource = SubscriberDatasetManager.GetAllDataset();
+#else
+                dgDataset.DataSource = SubscriberDatasetManager.GetAllDataset();
+                foreach (var invisibleColumn in invisibleColumns)
+                {
+                    dgDataset.Columns[invisibleColumn].Visible = false;
+                };
+#endif
+
+
             }
             catch (Exception ex)
             {
@@ -183,13 +203,14 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 //string dataDict = System.IO.Path.GetFullPath(System.IO.Path.Combine(referencePath, relativePath));
                 //AppDomain.CurrentDomain.SetData("DataDirectory", dataDict);
 
-                // TODO: For development comment out these 2 lines
-                //TabPage page2 = tabControl1.TabPages[1];
-                //tabControl1.TabPages.Remove(page2);
-
+#if DEBUG
+                TabPage page2 = tabControl1.TabPages[1];
+                tabControl1.TabPages.Remove(page2);
+#endif
                 ////page2.Visible = false;
                 ////page2.Hide();
                 ////page2.Enabled = false;
+
 
                 UpdateToolStripStatusLabel("Initializing...");
 
@@ -349,7 +370,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         private void btnGetCapabilities_Click(object sender, EventArgs e)
         {
             var Url = txbProviderURL.Text;
-            GetCapabilitiesXml(Url);
+            GetCapabilitiesXml(Url,textBoxUserName.Text, textBoxPassword.Text);
             btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
         }
 
@@ -358,7 +379,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             try
             {
                 Cursor = Cursors.WaitCursor;
-                GetCapabilitiesXml(txbProviderURL.Text);
+                GetCapabilitiesXml(txbProviderURL.Text,textBoxUserName.Text, textBoxPassword.Text);
             }
             catch (Exception ex)
             {
@@ -380,7 +401,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             }
             var blDataset = (IBindingList) dgvProviderDataset.DataSource;
 
-            if (!SubscriberDatasetManager.AddDatasets(blDataset, selectedDataset))
+            if (!SubscriberDatasetManager.AddDatasets(blDataset, selectedDataset, txbProviderURL.Text, textBoxUserName.Text, textBoxPassword.Text))
             {
                 MessageBox.Show(this, "Error saving selected datasets to internal Database.", "Get Provider Datasets",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -727,9 +748,9 @@ namespace Kartverket.Geosynkronisering.Subscriber
         ///     Returnerer det som tilbyder støtter av dataset, filter operatorer og objekttyper.
         /// </summary>
         /// <returns></returns>
-        private void GetCapabilitiesXml(string url)
+        private void GetCapabilitiesXml(string url, string UserName, string Password)
         {
-            dgvProviderDataset.DataSource = _synchController.GetCapabilitiesProviderDataset(url);
+            dgvProviderDataset.DataSource = _synchController.GetCapabilitiesProviderDataset(url, UserName, Password);
             IDictionary<string, IList<object>> visibleColumns = new Dictionary<string, IList<object>>();
             IList<object> columnFormat = new List<object>();
             columnFormat.Add("Datasett");
