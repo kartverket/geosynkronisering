@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Globalization;
+using System.IO;
 using System.Xml;
 using Kartverket.GeosyncWCF;
 
@@ -167,9 +167,7 @@ namespace Kartverket.Geosynkronisering
         {                   
             DateTime deleteDate = DateTime.Now.AddDays(-10); // TODO: Add to dataset settings
 
-            // Find and delete obsolete files from database and server
-            var obsoleteFiles = (from c in db.StoredChangelogs where c.Status == "queued" && c.DateCreated < deleteDate select c);
-            // TODO: Should be replaced by: var obsoleteFiles = (from c in db.StoredChangelogs where (c.Status == "started" || (c.Status == "Finished" && c.Stored == false)) && c.DateCreated < deleteDate select c);
+            var obsoleteFiles = (from c in db.StoredChangelogs where (c.Status == "started" || (c.Status == "Finished" && c.Stored == false)) && c.DateCreated < deleteDate select c);
 
             foreach (var of in obsoleteFiles)
             {
@@ -206,23 +204,20 @@ namespace Kartverket.Geosynkronisering
             if (serverUri.Scheme != Uri.UriSchemeHttps)            
                 return false;
 
-            string zipFilename = serverUri.AbsoluteUri;
+            int length = serverUri.AbsoluteUri.Split('/').Count();
+            string zipFile = serverUri.AbsoluteUri.Split('/')[length - 1];
+            string filLocation=AppDomain.CurrentDomain.BaseDirectory + "\\Changelogfiles\\" + zipFile;
            
             try
             {
-                // Get the object used to communicate with the server.
-                var request = (FtpWebRequest) WebRequest.Create(zipFilename);
-                request.Method = WebRequestMethods.Ftp.DeleteFile;
-
-                var response = (FtpWebResponse) request.GetResponse();
-                Console.WriteLine("Delete status: {0}", response.StatusDescription);
-                response.Close();
+                File.Delete(filLocation);
                 return true;
             }
             catch (Exception ex)
             {
                 return false;
             }
+           
         }
 
         public void CancelChangelog(string changelogid)
