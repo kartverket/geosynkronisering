@@ -47,7 +47,6 @@ namespace Kartverket.Geosynkronisering
             lbtnChangeLog.CssClass = "LinkButton";
             lbtnConfig.CssClass = "LinkButton";
             lbtnDataset.CssClass = "LinkButton";
-            lbtnLinkService.CssClass = "LinkButton";
             (sender as LinkButton).CssClass = "LinkButtonSelected";
         }
 
