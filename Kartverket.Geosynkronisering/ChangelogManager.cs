@@ -2,15 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Globalization;
 using System.Xml;
 using Kartverket.GeosyncWCF;
-
-// using System.Xml;
-// using System.Xml.Serialization;
-// using System.Xml.Linq;
-
 
 namespace Kartverket.Geosynkronisering
 {
@@ -129,13 +123,18 @@ namespace Kartverket.Geosynkronisering
                 switch (changelog.Status)
                 {
 
-                    case "queued": resp = Kartverket.GeosyncWCF.ChangelogStatusType.queued; break;
-                    case "working": resp = Kartverket.GeosyncWCF.ChangelogStatusType.working; break;
-                    case "cancelled": resp = Kartverket.GeosyncWCF.ChangelogStatusType.cancelled; break;
-                    case "finished": resp = Kartverket.GeosyncWCF.ChangelogStatusType.finished; break;
+                    case "queued":
+                        return ChangelogStatusType.queued;
+                    case "working":
+                        return ChangelogStatusType.working;
+                    case "cancelled":
+                        return ChangelogStatusType.cancelled;
+                    case "finished":
+                        return ChangelogStatusType.finished;
                 }
             }
-            return resp;
+
+            return ChangelogStatusType.cancelled;
         }
 
         public Kartverket.GeosyncWCF.ChangelogType GetChangelog(string changelogid)
@@ -149,6 +148,12 @@ namespace Kartverket.Geosynkronisering
                 var changelog = result.First();
                 if (changelog != null)
                 {
+                    if (changelog.DownloadUri == null)
+                    {
+                        db.StoredChangelogs.DeleteObject(changelog);
+                        db.SaveChanges();
+                        throw new ArgumentNullException("DownloadURI is null.");
+                    }
                     resp.id = new Kartverket.GeosyncWCF.ChangelogIdentificationType();
                     resp.id.changelogId = changelog.ChangelogId.ToString();
                     resp.downloadUri = changelog.DownloadUri;
