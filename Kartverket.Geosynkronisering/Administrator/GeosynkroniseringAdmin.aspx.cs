@@ -82,7 +82,7 @@ namespace Kartverket.Geosynkronisering
 
         protected void dvServerConfig_ItemUpdated(object sender, DetailsViewUpdatedEventArgs e)
         {
-            string URL = ServerConfigData.downloadUriBase();
+            string URL = ServerConfigData.DownloadUriBase();
             IList<Int32> ID = DatasetsData.GetListOfDatasetIDs();
         }
 

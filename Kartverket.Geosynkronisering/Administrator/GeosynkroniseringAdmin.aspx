@@ -71,7 +71,7 @@
                                         <div style="height: 80%">
                                             <asp:DetailsView ID="dvServerConfig" runat="server" AutoGenerateRows="False" 
                                                 CssClass="GridView" DataKeyNames="ID" DataSourceID="edsServerConfig" 
-                                                Height="50px" Width="125px" onitemupdated="dvServerConfig_ItemUpdated">
+                                                Height="50px" Width="100%" onitemupdated="dvServerConfig_ItemUpdated">
                                                 <EditRowStyle CssClass="GridView" />
                                                 <EmptyDataRowStyle CssClass="GridView" />
                                                 <FieldHeaderStyle CssClass="FieldHeader" />
@@ -80,18 +80,17 @@
                                                         SortExpression="FTPUrl" >
                                                     <HeaderStyle CssClass="FieldHeader" />
                                                     </asp:BoundField>
-                                                    <asp:CommandField ButtonType="Image" CancelImageUrl="~/Images/Edit_UndoHS.png" 
-                                                        CancelText="Avbryt" DeleteImageUrl="~/Images/delete_12x12.png" 
-                                                        DeleteText="Slett" EditImageUrl="~/Images/EditTableHS.png" EditText="Rediger" 
-                                                        InsertText="Sett inn" NewText="Ny" SelectText="Velg" ShowEditButton="True" 
-                                                        UpdateImageUrl="~/Images/saveHS.png" UpdateText="Lagre" />
+                                                    <asp:CommandField ButtonType="Image" CancelImageUrl="~/Images/Edit_UndoHS.png"
+                                                                      CancelText="Avbryt" DeleteImageUrl="~/Images/delete_12x12.png"
+                                                                      DeleteText="Slett" EditImageUrl="~/Images/EditTableHS.png" EditText="Rediger"
+                                                                      InsertText="Sett inn" NewText="Ny" SelectText="Velg" ShowEditButton="True"
+                                                                      UpdateImageUrl="~/Images/saveHS.png" UpdateText="Lagre" />
                                                 </Fields>
                                             </asp:DetailsView>
                                         </div>
                                         <div style="height: 10%">
-                                            &nbsp;                                
-                                            <asp:Label ID="Label5" runat="server" CssClass="TableHeaderText" Text="Service konfigurasjon:"></asp:Label>
-                                            <asp:DetailsView ID="dvService" runat="server" AutoGenerateRows="False" CssClass="GridView" DataKeyNames="ServiceID" DataSourceID="edsService" Height="50px" Width="125px">
+                                            <asp:Label ID="Label5" runat="server" CssClass="TableHeaderText" Text="Service:"></asp:Label>
+                                            <asp:DetailsView ID="dvService" runat="server" AutoGenerateRows="False" CssClass="GridView" DataKeyNames="ServiceID" DataSourceID="edsService" Height="50px" Width="100%">
                                                 <EditRowStyle CssClass="GridView" />
                                                 <FieldHeaderStyle CssClass="FieldHeader" />
                                                 <Fields>
@@ -131,7 +130,7 @@
                                         </div>                                               
                                         <div style="height: 50%">                                          
                                             <asp:DetailsView ID="vDataset" runat="server" AllowPaging="True" 
-                                                CssClass="GridView" DataSourceID="edsDataset" Height="50px" Width="125px" 
+                                                CssClass="GridView" DataSourceID="edsDataset" Height="50px" Width="100%" 
                                                 AutoGenerateRows="False" DataKeyNames="DatasetId" 
                                                 onitemcreated="vDataset_ItemCreated" onprerender="vDataset_PreRender">
                                                 <EditRowStyle CssClass="GridView" />
