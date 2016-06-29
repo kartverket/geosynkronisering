@@ -355,10 +355,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             LoopChangeLog(fileList, dataset, datasetId, progressCounter, downloadController.ChangelogFilename, 0);
 
-            if (!downloadController.IsFolder)
-            {
-                AcknowledgeChangelogDownloaded(datasetId, changeLogId);
-            }
+            AcknowledgeChangelogDownloaded(datasetId, changeLogId);
 
             return lastIndexProvider;
         }
