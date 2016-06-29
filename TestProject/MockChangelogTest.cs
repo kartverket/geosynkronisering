@@ -81,7 +81,7 @@ namespace TestProject
             AppDomain.CurrentDomain.SetData("DataDirectory", dataDict);
     
             geosyncEntities db = new geosyncEntities();
-            ChangelogManager target2 = new ChangelogManager(db);
+            ChangelogManager target2 = new ChangelogManager();
 
             MockChangelog target = new MockChangelog(); // TODO: Initialize to an appropriate value
             target.SetDb(db);
@@ -93,15 +93,12 @@ namespace TestProject
             int lastindex = 0;
             //TODO define filters
 
-            var xmlcap = target2.GetCapabilities();
-
             //TODO Test url/operations, filters, conformance...
 
-            var xmldesc = target2.DescribeFeatureType(1);
             //TODO Test if schema is the same as expected
 
             //Get a list of predefined changelogs
-            var xmllist = target2.ListStoredChangelogs(1);
+            var xmllist = target2.ListStoredChangelogs(1, db);
             //TODO is changelog filter in list?
 
             //If no one matches in list -> order new changelog
@@ -109,14 +106,14 @@ namespace TestProject
             //Assert.AreEqual(41, changelogid);
 
             //Check if job is finished?
-            var status = target2.GetChangelogStatus(changelogid);
+            var status = target2.GetChangelogStatus(changelogid, db);
             //Assert.AreEqual("finished", status.ToString());
             //if (status.ToString() == "finished")
             {
-                var xmllog = target2.GetChangelog(changelogid);
+                var xmllog = target2.GetChangelog(changelogid, db);
                 Assert.IsNotNull(xmllog);
                 //TODO Get file and check if exist...
-                target2.AcknowledgeChangelogDownloaded(changelogid);
+                target2.AcknowledgeChangelogDownloaded(changelogid, db);
                 //TODO check if file is deleted
             }
 
@@ -126,14 +123,14 @@ namespace TestProject
             //Assert.AreEqual(2, lastindex);
             var respor = target.OrderChangelog(lastindex, count, "filter", 1);
             //Assert.AreEqual(42, changelogid);
-            status = target2.GetChangelogStatus(changelogid);
+            status = target2.GetChangelogStatus(changelogid, db);
             //Assert.AreEqual("finished", status);
             //if (status.ToString() == "finished")
             {
-                var xmllog = target2.GetChangelog(changelogid);
+                var xmllog = target2.GetChangelog(changelogid, db);
                 Assert.IsNotNull(xmllog);
                 //TODO Get file and check if exist...
-                target2.AcknowledgeChangelogDownloaded(changelogid);
+                target2.AcknowledgeChangelogDownloaded(changelogid, db);
                 //TODO check if file is deleted
             }
 
@@ -147,10 +144,10 @@ namespace TestProject
         public void AcknowledgeChangelogDownloadedTest()
         {
             geosyncEntities db = new geosyncEntities();
-            ChangelogManager target = new ChangelogManager(db);
+            ChangelogManager target = new ChangelogManager();
                         
             string changelogid = "0"; // TODO: Initialize to an appropriate value
-            target.AcknowledgeChangelogDownloaded(changelogid);
+            target.AcknowledgeChangelogDownloaded(changelogid, db);
             //Assert.Inconclusive("A method that does not return a value cannot be verified.");
 
         }
@@ -162,7 +159,7 @@ namespace TestProject
         public void CancelChangelogTest()
         {
             geosyncEntities db = new geosyncEntities();
-            ChangelogManager target = new ChangelogManager(db);
+            ChangelogManager target = new ChangelogManager();
             string changelogid = "42"; // TODO: Initialize to an appropriate value
             target.CancelChangelog(changelogid);
             //Assert.Inconclusive("A method that does not return a value cannot be verified.");
@@ -178,11 +175,9 @@ namespace TestProject
         public void DescribeFeatureTypeTest()
         {
             geosyncEntities db = new geosyncEntities();
-            ChangelogManager target = new ChangelogManager(db);
+            ChangelogManager target = new ChangelogManager();
            
             
-            var actual = target.DescribeFeatureType(1);
-            Assert.IsNotNull(actual);
             //XmlNamespaceManager nsMgr = new XmlNamespaceManager(actual.NameTable);
             //nsMgr.AddNamespace("rrr", "http://www.w3.org/2001/XMLSchema");
             //XmlNode featureTypeListNode = actual.SelectSingleNode("//rrr:complexType", nsMgr);
@@ -199,11 +194,10 @@ namespace TestProject
         public void GetCapabilitiesTest()
         {
             geosyncEntities db = new geosyncEntities();
-            ChangelogManager target = new ChangelogManager(db);
+            ChangelogManager target = new ChangelogManager();
 
             XmlDocument expected = null; // TODO: Initialize to an appropriate value
-            XmlDocument actual;
-            actual = target.GetCapabilities();
+            XmlDocument actual = null;
             //Assert.AreEqual(expected, actual);
             Assert.IsNotNull(actual);
 
@@ -223,11 +217,11 @@ namespace TestProject
         public void GetChangelogTest()
         {
             geosyncEntities db = new geosyncEntities();
-            ChangelogManager target = new ChangelogManager(db);
+            ChangelogManager target = new ChangelogManager();
             string changelogid = "42"; // TODO: Initialize to an appropriate value
             //XmlDocument expected = null; // TODO: Initialize to an appropriate value
-          
-            var actual = target.GetChangelog(changelogid);
+
+            var actual = target.GetChangelog(changelogid, db);
             Assert.IsNotNull(actual);
             //XmlNode changelogidNode = actual.SelectSingleNode("//changelogId");
             //Assert.IsNotNull(actual.);
@@ -243,11 +237,11 @@ namespace TestProject
         public void GetChangelogStatusTest()
         {
             geosyncEntities db = new geosyncEntities();
-            ChangelogManager target = new ChangelogManager(db);
+            ChangelogManager target = new ChangelogManager();
             string changelogid = "42"; // TODO: Initialize to an appropriate value
             string expected = "finished"; // TODO: Initialize to an appropriate value
-            
-            var actual = target.GetChangelogStatus(changelogid);
+
+            var actual = target.GetChangelogStatus(changelogid, db);
             Assert.IsNotNull(actual);
         }
 
@@ -281,9 +275,9 @@ namespace TestProject
         public void ListStoredChangelogsTest()
         {
             geosyncEntities db = new geosyncEntities();
-            ChangelogManager target = new ChangelogManager(db);
-           
-            var actual = target.ListStoredChangelogs(1);
+            ChangelogManager target = new ChangelogManager();
+
+            var actual = target.ListStoredChangelogs(1, db);
             Assert.IsNotNull(actual);
             //XmlNode storedchangelogNode = actual.SelectSingleNode("//storedchangelog");
             //Assert.IsNotNull(storedchangelogNode);

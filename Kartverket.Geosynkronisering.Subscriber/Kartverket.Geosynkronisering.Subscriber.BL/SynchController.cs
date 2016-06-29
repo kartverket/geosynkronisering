@@ -90,8 +90,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         private WebFeatureServiceReplicationPortClient buildClient(SubscriberDataset dataset)
         {
             var client = new WebFeatureServiceReplicationPortClient();
-            client.ClientCredentials.UserName.UserName = dataset.UserName; 
-            client.ClientCredentials.UserName.Password = dataset.Password; 
+            client.ClientCredentials.UserName.UserName = dataset.UserName;
+            client.ClientCredentials.UserName.Password = dataset.Password;
             client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
             return client;
         }
@@ -154,9 +154,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 #if (NOT_FTP)
                 string fileName = changelogDir + @"\" + changelogid + "_Changelog.xml";
 #else
-                Utils.Misc.CreateFolderIfMissing(changelogDir);
+                CreateFolderIfMissing(changelogDir);
                 const string ftpPath = "abonnent";
-                Utils.Misc.CreateFolderIfMissing(changelogDir + @"\" + ftpPath);
+                CreateFolderIfMissing(changelogDir + @"\" + ftpPath);
                 // Create the abonnent folder if missing               
 
                 var fileName = changelogDir + @"\" + ftpPath + @"\" + Path.GetFileName(downloaduri);
@@ -322,7 +322,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 if (lastIndexProvider == 0) return -1;
 
-                OnOrderProcessingChange((progressCounter + 1) * 100 / 2);
+                OnOrderProcessingChange((progressCounter + 1)*100/2);
 
                 changeLogId = OrderChangelog(datasetId, startIndex);
             }
@@ -656,6 +656,22 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 throw;
             }
 
+        }
+
+
+        public static bool CreateFolderIfMissing(string path)
+        {
+            try
+            {
+                bool folderExists = Directory.Exists((path));
+                if (!folderExists)
+                    Directory.CreateDirectory(path);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 

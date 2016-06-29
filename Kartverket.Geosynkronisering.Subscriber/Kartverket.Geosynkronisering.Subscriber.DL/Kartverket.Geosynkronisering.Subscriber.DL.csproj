@@ -87,9 +87,6 @@
     <Compile Include="SubscriberDatasetManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.Config">
-      <SubType>Designer</SubType>
-    </None>
     <EntityDeploy Include="GeoClientModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>GeoClientModel.Designer.cs</LastGenOutput>
