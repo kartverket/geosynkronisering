@@ -100,12 +100,6 @@ namespace Kartverket.Geosynkronisering
             }
         }
 
-        protected void btnSignOut_Click(object sender, EventArgs e)
-        {
-            FormsAuthentication.SignOut();
-            FormsAuthentication.RedirectToLoginPage();
-        }
-
         protected void btnCreateInitialData_Click(object sender, EventArgs e)
         {
             IChangelogProvider changelogprovider;

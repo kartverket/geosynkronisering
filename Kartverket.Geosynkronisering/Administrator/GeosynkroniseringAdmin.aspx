@@ -35,8 +35,7 @@
                         Text="Geosynkronisering Administrator"></asp:Label>
                 </td>
                 <td width="20%">                        
-                    <asp:Button ID="btnSignOut" runat="server" OnClick="btnSignOut_Click" Text="Logg ut" CssClass="Button" />
-                </td>
+                    &nbsp;</td>
                 <td width="10%">                        
                 </td>
             </tr>
