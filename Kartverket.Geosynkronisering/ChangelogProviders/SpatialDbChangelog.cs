@@ -129,7 +129,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 try
                 {
-                    string downLoadUri = string.Format(@"https://{0}/{1}", ftpUrl, zipFile);
+                    string downLoadUri = string.Format(@"{0}/{1}", ftpUrl, zipFile);
 
                     ldbo.DownloadUri = downLoadUri;
                 }
@@ -233,9 +233,9 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 try
                 {
-                    string downLoadUri = string.Format(@"https://{0}/{1}", ftpUrl, zipFile);
+                    string downLoadUri = string.Format(@"{0}/{1}", ftpUrl, zipFile);
                     chlmng.SetStatus(_currentOrderChangeLog.changelogId, ChangelogStatusType.finished);
-                    chlmng.SetDownloadURI(_currentOrderChangeLog.changelogId, downLoadUri);
+                        chlmng.SetDownloadURI(_currentOrderChangeLog.changelogId, downLoadUri);
                 }
                 catch (Exception ex)
                 {
