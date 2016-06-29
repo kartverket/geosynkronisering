@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.Security;
@@ -21,15 +22,15 @@ namespace Kartverket.Geosynkronisering
 
                 case "Prev":
                     if (e.CommandArgument == "DL")
-                        if (vDataset.PageIndex > 0) vDataset.PageIndex = vDataset.PageIndex - 1;
-                        else if (gwStoredChangeLogs.PageIndex > 0)
+                    if (vDataset.PageIndex > 0) vDataset.PageIndex = vDataset.PageIndex - 1;
+                    else if (gwStoredChangeLogs.PageIndex > 0)
                             gwStoredChangeLogs.PageIndex = gwStoredChangeLogs.PageIndex - 1;
                     break;
 
                 case "Next":
                     if (e.CommandArgument == "DL")
-                        if (vDataset.PageIndex < vDataset.PageCount - 1) vDataset.PageIndex = vDataset.PageIndex + 1;
-                        else if (gwStoredChangeLogs.PageIndex < gwStoredChangeLogs.PageCount - 1)
+                    if (vDataset.PageIndex < vDataset.PageCount - 1) vDataset.PageIndex = vDataset.PageIndex + 1;
+                    else if (gwStoredChangeLogs.PageIndex < gwStoredChangeLogs.PageCount - 1)
                             gwStoredChangeLogs.PageIndex = gwStoredChangeLogs.PageIndex + 1;
                     break;
 
@@ -44,6 +45,7 @@ namespace Kartverket.Geosynkronisering
         {
             mvwViews.ActiveViewIndex = Convert.ToInt32((sender as LinkButton).CommandName);
             lbtnChangeLog.CssClass = "LinkButton";
+            lbtnConfig.CssClass = "LinkButton";
             lbtnDataset.CssClass = "LinkButton";
             lbtnLinkService.CssClass = "LinkButton";
             (sender as LinkButton).CssClass = "LinkButtonSelected";
@@ -77,6 +79,12 @@ namespace Kartverket.Geosynkronisering
                     }
                 }
             }
+        }
+
+        protected void dvServerConfig_ItemUpdated(object sender, DetailsViewUpdatedEventArgs e)
+        {
+            string URL = ServerConfigData.downloadUriBase();
+            IList<Int32> ID = DatasetsData.GetListOfDatasetIDs();
         }
 
         protected void vDataset_PreRender(object sender, EventArgs e)

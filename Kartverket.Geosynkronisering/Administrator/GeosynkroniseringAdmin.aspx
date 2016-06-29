@@ -47,12 +47,14 @@
                     <table style="width: 100%;">
                         <tr valign="baseline">
                             <td align="left" colspan="0" valign="baseline">
+                                <asp:LinkButton ID="lbtnConfig" runat="server" CssClass="LinkButtonSelected" 
+                                    CommandName="0" onclick="lbtn_Click">Konfigurasjon</asp:LinkButton>
                                 <asp:LinkButton ID="lbtnLinkService" runat="server" CssClass="LinkButton" 
-                                    CommandName="0" onclick="lbtn_Click">Tjenestekonfigurasjon</asp:LinkButton>
+                                    CommandName="1" onclick="lbtn_Click">Tjenestekonfigurasjon</asp:LinkButton>
                                 <asp:LinkButton ID="lbtnDataset" runat="server" CssClass="LinkButton" 
-                                    CommandName="1" onclick="lbtn_Click">Datasett</asp:LinkButton>
+                                    CommandName="2" onclick="lbtn_Click">Datasett</asp:LinkButton>
                                 <asp:LinkButton ID="lbtnChangeLog" runat="server" CssClass="LinkButton" 
-                                    CommandName="2" onclick="lbtn_Click">Endringslogg</asp:LinkButton>
+                                    CommandName="3" onclick="lbtn_Click">Endringslogg</asp:LinkButton>
                             </td>                          
                         </tr>                            
                      </table>
@@ -64,6 +66,36 @@
                             </td>
                             <td>
                                <asp:MultiView ID="mvwViews" runat="server" ActiveViewIndex="0">
+                                   <asp:View ID="vwConfig" runat="server">
+                                   <div style="height: 10%">
+                                            <asp:Label ID="Label4" runat="server" Text="Konfigurasjon:" 
+                                                CssClass="TableHeaderText"></asp:Label>
+                                        </div>       
+                                        <div style="height: 80%">
+                                            <asp:DetailsView ID="dvServerConfig" runat="server" AutoGenerateRows="False" 
+                                                CssClass="GridView" DataKeyNames="ID" DataSourceID="edsServerConfig" 
+                                                Height="50px" Width="125px" onitemupdated="dvServerConfig_ItemUpdated">
+                                                <EditRowStyle CssClass="GridView" />
+                                                <EmptyDataRowStyle CssClass="GridView" />
+                                                <FieldHeaderStyle CssClass="FieldHeader" />
+                                                <Fields>
+                                                    <asp:BoundField DataField="FTPUrl" HeaderText="Download URL" 
+                                                        SortExpression="FTPUrl" >
+                                                    <HeaderStyle CssClass="FieldHeader" />
+                                                    </asp:BoundField>
+                                                    <asp:CommandField ButtonType="Image" CancelImageUrl="~/Images/Edit_UndoHS.png" 
+                                                        CancelText="Avbryt" DeleteImageUrl="~/Images/delete_12x12.png" 
+                                                        DeleteText="Slett" EditImageUrl="~/Images/EditTableHS.png" EditText="Rediger" 
+                                                        InsertText="Sett inn" NewText="Ny" SelectText="Velg" ShowEditButton="True" 
+                                                        UpdateImageUrl="~/Images/saveHS.png" UpdateText="Lagre" />
+                                                </Fields>
+                                            </asp:DetailsView>
+                                        </div>
+                                        <div style="height: 10%">
+                                            &nbsp;                                
+                                        </div>
+                                       
+                                   </asp:View>
                                    <asp:View ID="vwService" runat="server">
                                    <div style="height: 10%">
                                             <asp:Label ID="Label5" runat="server" Text="Service konfigurasjon:" 
@@ -72,7 +104,7 @@
                                         <div style="height: 80%">
                                             <asp:DetailsView ID="dvService" runat="server" AutoGenerateRows="False" 
                                                 CssClass="GridView" DataKeyNames="ServiceID" DataSourceID="edsService" 
-                                                Height="50px" Width="1350px">
+                                                Height="50px" Width="125px">
                                                 <EditRowStyle CssClass="GridView" />
                                                 <FieldHeaderStyle CssClass="FieldHeader" />
                                                 <Fields>
@@ -152,7 +184,7 @@
                                         </div>                                               
                                         <div style="height: 50%">                                          
                                             <asp:DetailsView ID="vDataset" runat="server" AllowPaging="True" 
-                                                CssClass="GridView" DataSourceID="edsDataset" Height="50px" Width="1350px" 
+                                                CssClass="GridView" DataSourceID="edsDataset" Height="50px" Width="125px" 
                                                 AutoGenerateRows="False" DataKeyNames="DatasetId" 
                                                 onitemcreated="vDataset_ItemCreated" onprerender="vDataset_PreRender">
                                                 <EditRowStyle CssClass="GridView" />

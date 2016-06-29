@@ -49,9 +49,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         public OrderChangelog GenerateInitialChangelog(int datasetId)
         {
-            string ftpUrl = ServerConfigData.FTPUrl();
-            string ftpUser = ServerConfigData.FTPUser();
-            string ftpPwd = ServerConfigData.FTPPwd();
+            string downloadUriBase = ServerConfigData.downloadUriBase();
 
             using (geosyncEntities db = new geosyncEntities())
             {
@@ -129,7 +127,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 try
                 {
-                    string downLoadUri = string.Format(@"{0}/{1}", ftpUrl, zipFile);
+                    string downLoadUri = string.Format(@"{0}/{1}", downloadUriBase, zipFile);
 
                     ldbo.DownloadUri = downLoadUri;
                 }
@@ -192,9 +190,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         public OrderChangelog _OrderChangelog(int startIndex, int count, string todoFilter, int datasetId)
         {
-            string ftpUrl = ServerConfigData.FTPUrl();
-            string ftpUser = ServerConfigData.FTPUser();
-            string ftpPwd = ServerConfigData.FTPPwd();
+            string downloadUriBase = ServerConfigData.downloadUriBase();
             using (geosyncEntities db = new geosyncEntities())
             {
                 ChangelogManager chlmng = new ChangelogManager(db);
@@ -233,7 +229,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 try
                 {
-                    string downLoadUri = string.Format(@"{0}/{1}", ftpUrl, zipFile);
+                    string downLoadUri = string.Format(@"{0}/{1}", downloadUriBase, zipFile);
                     chlmng.SetStatus(_currentOrderChangeLog.changelogId, ChangelogStatusType.finished);
                         chlmng.SetDownloadURI(_currentOrderChangeLog.changelogId, downLoadUri);
                 }

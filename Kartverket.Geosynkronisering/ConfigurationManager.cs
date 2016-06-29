@@ -16,7 +16,7 @@ namespace Kartverket.Geosynkronisering.Database
     public class ServerConfigData 
     {      
 
-        public static string FTPUrl()
+        public static string downloadUriBase()
         {
             using (geosyncEntities db = new geosyncEntities())
             {
@@ -24,23 +24,6 @@ namespace Kartverket.Geosynkronisering.Database
                 if (res.First() != null) return res.First().ToString(); else return "";
             }        
         }
-        public static string FTPUser()
-        {
-            using (geosyncEntities db = new geosyncEntities())
-            {
-                var res = from sc in db.ServerConfigs select sc.FTPUser;
-                if (res.First() != null) return res.First().ToString(); else return "";
-            }
-        }
-        public static string FTPPwd()
-        {
-            using (geosyncEntities db = new geosyncEntities())
-            {
-                var res = from sc in db.ServerConfigs select sc.FTPPwd;
-                if (res.First() != null) return res.First().ToString(); else return "";
-            }
-        }
-
 
     }
 
