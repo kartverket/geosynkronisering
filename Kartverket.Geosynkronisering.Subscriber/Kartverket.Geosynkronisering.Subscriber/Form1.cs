@@ -204,6 +204,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 //AppDomain.CurrentDomain.SetData("DataDirectory", dataDict);
 
 #if DEBUG
+#else
                 TabPage page2 = tabControl1.TabPages[1];
                 tabControl1.TabPages.Remove(page2);
 #endif
