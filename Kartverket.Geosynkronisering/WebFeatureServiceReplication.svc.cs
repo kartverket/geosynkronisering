@@ -77,7 +77,7 @@ namespace Kartverket.Geosynkronisering
             try
             {
                 string dataset = request.datasetId;
-                if (dataset == "") dataset = Settings.Default.defaultDataset;
+                if (dataset == "") throw new ArgumentException("Missing dataset in request");
                 int id = 0;
                 int.TryParse(dataset, out id);
 
@@ -225,7 +225,7 @@ namespace Kartverket.Geosynkronisering
             ProcessState state = new ProcessState(resp.changelogId);
             state.Request = caller;
 
-            IAsyncResult result = caller.BeginInvoke(changelogprovider, startindex, count, "", id,
+            caller.BeginInvoke(changelogprovider, startindex, count, "", id,
                 CallbackProcessStatus, state);
 
             ChangelogIdentificationType res = new ChangelogIdentificationType();
