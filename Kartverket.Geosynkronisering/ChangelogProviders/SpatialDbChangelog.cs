@@ -129,7 +129,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 try
                 {
-                    string downLoadUri = string.Format(@"https://{0}:{1}@{2}/{3}", ftpUser, ftpPwd, ftpUrl, zipFile);
+                    string downLoadUri = string.Format(@"https://{0}/{1}", ftpUrl, zipFile);
 
                     ldbo.DownloadUri = downLoadUri;
                 }
@@ -167,7 +167,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             {
                 if (startIndex == 1)
                 {
-
+                    
                     var initialChangelog = (from d in db.StoredChangelogs
                         where
                             d.DatasetId == datasetId && d.StartIndex == 1 && d.Stored == true && d.Status == "finished"
@@ -233,7 +233,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 try
                 {
-                    string downLoadUri = string.Format(@"https://{0}:{1}@{2}/{3}", ftpUser, ftpPwd, ftpUrl, zipFile);
+                    string downLoadUri = string.Format(@"https://{0}/{1}", ftpUrl, zipFile);
                     chlmng.SetStatus(_currentOrderChangeLog.changelogId, ChangelogStatusType.finished);
                     chlmng.SetDownloadURI(_currentOrderChangeLog.changelogId, downLoadUri);
                 }
@@ -243,19 +243,6 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     throw ex;
                 }
 
-
-                try
-                {
-                    db.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    Logger.ErrorException(
-                        string.Format(
-                            "Failed on SaveChanges, Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog startIndex:{0} count:{1} changelogId:{2}",
-                            startIndex, count, _currentOrderChangeLog.changelogId), ex);
-                    throw ex;
-                }
                 Logger.Info(
                     "Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog" +
                     " startIndex:{0}" + " count:{1}" + " changelogId:{2}", startIndex, count,
