@@ -67,7 +67,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             }
             int startIndex = 1; // StartIndex always 1 on initial changelog
             int endIndex = Convert.ToInt32(GetLastIndex(datasetId));
-            int count = 20000; // TODO: Get from dataset table
+            int count = 1000; // TODO: Get from dataset table
             Logger.Info("GenerateInitialChangelog START");
             StoredChangelog ldbo = new StoredChangelog();
             ldbo.Stored = true;
