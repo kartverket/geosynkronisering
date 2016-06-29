@@ -114,16 +114,7 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="DatasetSchemas\FellesKyst.xsd">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="DatasetSchemas\Planomriss.xsd">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="WebFeatureServiceReplication.svc" />
-    <None Include="DatasetSchemas\Flytebrygge.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Properties\PublishProfiles\Local.pubxml">
       <SubType>Designer</SubType>
     </None>
