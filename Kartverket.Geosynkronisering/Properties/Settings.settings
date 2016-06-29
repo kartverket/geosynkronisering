@@ -1,24 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Kartverket.Geosynkronisering.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
   <Profiles />
-  <Settings>
-    <Setting Name="wfsURL" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://localhost:8080/geoserver/app/ows</Value>
-    </Setting>
-    <Setting Name="defaultDataset" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Kystkontur</Value>
-    </Setting>
-    <Setting Name="ftpServer" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">webcluster01.webhuset.no</Value>
-    </Setting>
-    <Setting Name="ftpUser" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">arkitek3d_ftp</Value>
-    </Setting>
-    <Setting Name="ftpPassword" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">geotest12</Value>
-    </Setting>
-    <Setting Name="dbConnectInfo" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Server=localhost;UID=postgres;PWD=system2012;Database=ny_felleskyst_tilbyder;Port=5432;</Value>
-    </Setting>
-  </Settings>
+  <Settings />
 </SettingsFile>

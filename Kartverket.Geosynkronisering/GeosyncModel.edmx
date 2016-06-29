@@ -253,7 +253,7 @@
     </Connection>
     <Options>
       <DesignerInfoPropertySet>
-        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="ValidateOnBuild" Value="False" />
         <DesignerProperty Name="EnablePluralization" Value="True" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="UseLegacyProvider" Value="True" />
@@ -262,7 +262,7 @@
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
       <Diagram Name="GeosyncModel" ZoomLevel="100">
-        <EntityTypeShape EntityType="geosyncModel.Dataset" Width="1.5" PointX="2.25" PointY="0.5" />
+        <EntityTypeShape EntityType="geosyncModel.Dataset" Width="1.5" PointX="2.25" PointY="0.5" IsExpanded="true" />
         <EntityTypeShape EntityType="geosyncModel.ServerConfig" Width="1.5" PointX="3.875" PointY="0.5" />
         <EntityTypeShape EntityType="geosyncModel.Service" Width="1.5" PointX="5.5" PointY="0.5" />
         <EntityTypeShape EntityType="geosyncModel.StoredChangelog" Width="1.5" PointX="0.625" PointY="0.5" />
