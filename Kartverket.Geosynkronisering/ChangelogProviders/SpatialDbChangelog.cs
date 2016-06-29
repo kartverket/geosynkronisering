@@ -36,7 +36,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             _pWfsUrl = DatasetsData.TransformationConnection(datasetId);
             _pNsApp = DatasetsData.TargetNamespace(datasetId);
             _pNsPrefixTargetNamespace = DatasetsData.TargetNamespacePrefix(datasetId);
-            PDbSchema = DatasetsData.DBSchema(datasetId);
+            PDbSchema = DatasetsData.DbSchema(datasetId);
             _pSchemaFileUri = DatasetsData.SchemaFileUri(datasetId);
             destFileName = Guid.NewGuid().ToString();
             destPath = Path.Combine(Path.GetTempPath(), destFileName) + "\\";
@@ -49,7 +49,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         public OrderChangelog GenerateInitialChangelog(int datasetId)
         {
-            string downloadUriBase = ServerConfigData.downloadUriBase();
+            string downloadUriBase = ServerConfigData.DownloadUriBase();
 
             using (geosyncEntities db = new geosyncEntities())
             {
@@ -190,7 +190,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         public OrderChangelog _OrderChangelog(int startIndex, int count, string todoFilter, int datasetId)
         {
-            string downloadUriBase = ServerConfigData.downloadUriBase();
+            string downloadUriBase = ServerConfigData.DownloadUriBase();
             using (geosyncEntities db = new geosyncEntities())
             {
                 ChangelogManager chlmng = new ChangelogManager(db);
