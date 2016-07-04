@@ -49,7 +49,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         public OrderChangelog GenerateInitialChangelog(int datasetId)
         {
-            string downloadUriBase = ServerConfigData.DownloadUriBase();
+            string downloadUriBase = ServerConfigData.DownloadUriBase().TrimEnd('/');
 
             using (geosyncEntities db = new geosyncEntities())
             {
@@ -190,7 +190,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         public OrderChangelog _OrderChangelog(int startIndex, int count, string todoFilter, int datasetId)
         {
-            string downloadUriBase = ServerConfigData.DownloadUriBase();
+            string downloadUriBase = ServerConfigData.DownloadUriBase().TrimEnd('/');
             using (geosyncEntities db = new geosyncEntities())
             {
                 ChangelogManager chlmng = new ChangelogManager(db);
