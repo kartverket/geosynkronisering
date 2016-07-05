@@ -117,6 +117,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     chgLogHandler.CreateZipFileFromFolder(inFile, zipFile, destFileName);
                     ldbo.Status = "queued"; 
                     File.Copy(tmpzipFile, streamFileLocation);
+                    File.Delete(tmpzipFile);
                     ldbo.Status = "finished"; 
                 }
                 catch (Exception ex)
@@ -163,7 +164,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         {
             using (geosyncEntities db = new geosyncEntities())
             {
-                if (startIndex == 1)
+                if (startIndex < 2)
                 {
                     
                     var initialChangelog = (from d in db.StoredChangelogs
@@ -219,6 +220,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     inFile = destPath;
                     chgLogHandler.CreateZipFileFromFolder(inFile, zipFile, destFileName);
                     File.Copy(tmpzipFile, streamFileLocation);
+                    File.Delete(tmpzipFile);
                 }
                 catch (Exception ex)
                 {
