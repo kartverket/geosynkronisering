@@ -502,17 +502,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             dataset.AbortedChangelogId = null;
             if (!string.IsNullOrEmpty(dataset.AbortedChangelogPath))
             {
-                if (dataset.AbortedChangelogPath.Contains(".zip"))
-                {
-                    File.Delete(dataset.AbortedChangelogPath);
-                    Directory.Delete(dataset.AbortedChangelogPath.Split('.')[0], true);
-                }
-                else
-                {
+                if (File.Exists(dataset.AbortedChangelogPath + ".zip"))
                     File.Delete(dataset.AbortedChangelogPath + ".zip");
-                    Directory.Delete(dataset.AbortedChangelogPath, true);
-                }
-
+                else
+                    File.Delete(dataset.AbortedChangelogPath);
+                Directory.Delete(dataset.AbortedChangelogPath, true);
                 dataset.AbortedChangelogPath = null;
             }
             SubscriberDatasetManager.UpdateDataset(dataset);
