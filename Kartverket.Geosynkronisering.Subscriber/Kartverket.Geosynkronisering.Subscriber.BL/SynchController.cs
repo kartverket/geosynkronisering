@@ -500,9 +500,19 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             dataset.AbortedEndIndex = null;
             dataset.AbortedTransaction = null;
             dataset.AbortedChangelogId = null;
-            if (string.IsNullOrEmpty(dataset.AbortedChangelogPath))
+            if (!string.IsNullOrEmpty(dataset.AbortedChangelogPath))
             {
-                File.Delete(dataset.AbortedChangelogPath);
+                if (dataset.AbortedChangelogPath.Contains(".zip"))
+                {
+                    File.Delete(dataset.AbortedChangelogPath);
+                    Directory.Delete(dataset.AbortedChangelogPath.Split('.')[0], true);
+                }
+                else
+                {
+                    File.Delete(dataset.AbortedChangelogPath + ".zip");
+                    Directory.Delete(dataset.AbortedChangelogPath, true);
+                }
+
                 dataset.AbortedChangelogPath = null;
             }
             SubscriberDatasetManager.UpdateDataset(dataset);
