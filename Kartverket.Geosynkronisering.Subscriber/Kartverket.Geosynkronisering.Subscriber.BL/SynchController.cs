@@ -499,8 +499,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 dataset.LastIndex = endIndex;
             dataset.AbortedEndIndex = null;
             dataset.AbortedTransaction = null;
-            dataset.AbortedChangelogPath = null;
             dataset.AbortedChangelogId = null;
+            if (string.IsNullOrEmpty(dataset.AbortedChangelogPath))
+            {
+                File.Delete(dataset.AbortedChangelogPath);
+                dataset.AbortedChangelogPath = null;
+            }
             SubscriberDatasetManager.UpdateDataset(dataset);
         }
 
