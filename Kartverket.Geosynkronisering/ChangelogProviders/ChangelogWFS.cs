@@ -49,7 +49,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 StreamWriter writer = new StreamWriter(httpWebRequest.GetRequestStream());
                 wfsGetFeatureDocument.Save(writer);
                 //wfsGetFeatureDocument.Save("C:\\temp\\gvtest_query.xml");
-                logger.Info("GetFeature: " + wfsGetFeatureDocument.ToString());
+                logger.Debug("GetFeature: " + wfsGetFeatureDocument.ToString());
                 writer.Close();
 
                 HttpWebResponse response = httpWebRequest.GetResponse() as HttpWebResponse;
