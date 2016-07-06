@@ -557,7 +557,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             //"2001-12-17T09:30:47Z"
             XElement changelogRoot =
                 new XElement(nsChlogf + "TransactionCollection",
-                    new XAttribute("timeStamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffzz")),
+                    new XAttribute("timeStamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffzzz")),
                     new XAttribute("numberMatched", ""), new XAttribute("numberReturned", ""),
                     new XAttribute("startIndex", ""), new XAttribute("endIndex", ""),
                     new XAttribute(XNamespace.Xmlns + "xsi", nsXsi),
