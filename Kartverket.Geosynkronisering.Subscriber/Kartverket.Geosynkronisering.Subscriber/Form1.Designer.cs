@@ -46,6 +46,7 @@
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.btnTestSyncronizationAll = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.labelLimitNumberOfFeatures = new System.Windows.Forms.Label();
@@ -69,13 +70,12 @@
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
             this.textBoxUserName = new System.Windows.Forms.TextBox();
             this.textBoxPassword = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.btnAddSelected = new System.Windows.Forms.Button();
             this.dgvProviderDataset = new System.Windows.Forms.DataGridView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.label5 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -97,14 +97,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvProviderDataset)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonSave
             // 
             this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSave.Location = new System.Drawing.Point(3, 40);
+            this.buttonSave.Location = new System.Drawing.Point(3, 388);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(100, 28);
@@ -117,7 +116,7 @@
             // btnDeleteSelected
             // 
             this.btnDeleteSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteSelected.Location = new System.Drawing.Point(3, 4);
+            this.btnDeleteSelected.Location = new System.Drawing.Point(3, 352);
             this.btnDeleteSelected.Margin = new System.Windows.Forms.Padding(4);
             this.btnDeleteSelected.Name = "btnDeleteSelected";
             this.btnDeleteSelected.Size = new System.Drawing.Size(100, 28);
@@ -253,12 +252,13 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1493, 474);
+            this.tabControl1.Size = new System.Drawing.Size(1493, 822);
             this.tabControl1.TabIndex = 2;
             // 
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPage1.Controls.Add(this.btnTestSyncronizationAll);
             this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Controls.Add(this.progressBar);
             this.tabPage1.Controls.Add(this.cboDatasetName);
@@ -272,14 +272,24 @@
             this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Size = new System.Drawing.Size(1485, 445);
+            this.tabPage1.Size = new System.Drawing.Size(1485, 793);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Normal";
+            // 
+            // btnTestSyncronizationAll
+            // 
+            this.btnTestSyncronizationAll.Location = new System.Drawing.Point(430, 20);
+            this.btnTestSyncronizationAll.Name = "btnTestSyncronizationAll";
+            this.btnTestSyncronizationAll.Size = new System.Drawing.Size(143, 28);
+            this.btnTestSyncronizationAll.TabIndex = 29;
+            this.btnTestSyncronizationAll.Text = "Synchronize all";
+            this.btnTestSyncronizationAll.UseVisualStyleBackColor = true;
+            this.btnTestSyncronizationAll.Click += new System.EventHandler(this.btnTestSyncronizationAll_Click);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 302);
+            this.label2.Location = new System.Drawing.Point(6, 738);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(150, 17);
@@ -288,7 +298,7 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(11, 321);
+            this.progressBar.Location = new System.Drawing.Point(9, 757);
             this.progressBar.Margin = new System.Windows.Forms.Padding(4);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(1469, 28);
@@ -313,7 +323,7 @@
             this.listBoxLog.Location = new System.Drawing.Point(9, 59);
             this.listBoxLog.Margin = new System.Windows.Forms.Padding(4);
             this.listBoxLog.Name = "listBoxLog";
-            this.listBoxLog.Size = new System.Drawing.Size(1471, 228);
+            this.listBoxLog.Size = new System.Drawing.Size(1471, 676);
             this.listBoxLog.TabIndex = 22;
             // 
             // tabPage2
@@ -324,7 +334,7 @@
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Size = new System.Drawing.Size(1485, 445);
+            this.tabPage2.Size = new System.Drawing.Size(1485, 793);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Detailed test";
             // 
@@ -340,7 +350,7 @@
             this.tableLayoutPanel5.RowCount = 2;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 56.1828F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 43.8172F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(1477, 437);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(1477, 785);
             this.tableLayoutPanel5.TabIndex = 3;
             // 
             // tableLayoutPanel2
@@ -423,7 +433,7 @@
             this.tabPage3.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage3.Size = new System.Drawing.Size(1485, 445);
+            this.tabPage3.Size = new System.Drawing.Size(1485, 793);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Dataset";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -442,7 +452,7 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.buttonSave);
             this.splitContainer2.Panel2.Controls.Add(this.btnDeleteSelected);
-            this.splitContainer2.Size = new System.Drawing.Size(1477, 437);
+            this.splitContainer2.Size = new System.Drawing.Size(1477, 785);
             this.splitContainer2.SplitterDistance = 1366;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -453,7 +463,7 @@
             this.dgDataset.Location = new System.Drawing.Point(0, 0);
             this.dgDataset.Margin = new System.Windows.Forms.Padding(4);
             this.dgDataset.Name = "dgDataset";
-            this.dgDataset.Size = new System.Drawing.Size(1366, 437);
+            this.dgDataset.Size = new System.Drawing.Size(1366, 785);
             this.dgDataset.TabIndex = 1;
             // 
             // tabPage4
@@ -463,7 +473,7 @@
             this.tabPage4.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage4.Size = new System.Drawing.Size(1485, 445);
+            this.tabPage4.Size = new System.Drawing.Size(1485, 793);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Get ProviderDataset";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -483,7 +493,7 @@
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 26.34561F));
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 48.72521F));
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 24.64589F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(1477, 437);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(1477, 785);
             this.tableLayoutPanel6.TabIndex = 0;
             // 
             // tableLayoutPanel7
@@ -504,7 +514,7 @@
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 42F));
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
-            this.tableLayoutPanel7.Size = new System.Drawing.Size(1469, 107);
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(1469, 199);
             this.tableLayoutPanel7.TabIndex = 2;
             // 
             // txbProviderURL
@@ -545,7 +555,7 @@
             this.tableLayoutPanel9.ColumnCount = 3;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.46457F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.53543F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 520F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 522F));
             this.tableLayoutPanel9.Controls.Add(this.textBoxUserName, 0, 0);
             this.tableLayoutPanel9.Controls.Add(this.textBoxPassword, 1, 0);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -566,11 +576,23 @@
             // 
             // textBoxPassword
             // 
-            this.textBoxPassword.Location = new System.Drawing.Point(152, 3);
+            this.textBoxPassword.Location = new System.Drawing.Point(151, 3);
             this.textBoxPassword.Name = "textBoxPassword";
             this.textBoxPassword.PasswordChar = '*';
             this.textBoxPassword.Size = new System.Drawing.Size(100, 22);
             this.textBoxPassword.TabIndex = 2;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label5.Location = new System.Drawing.Point(4, 25);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(298, 42);
+            this.label5.TabIndex = 4;
+            this.label5.Text = "Authentication (User/Pass):";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tableLayoutPanel8
             // 
@@ -579,12 +601,12 @@
             this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel8.Controls.Add(this.btnAddSelected, 0, 0);
             this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel8.Location = new System.Drawing.Point(4, 332);
+            this.tableLayoutPanel8.Location = new System.Drawing.Point(4, 594);
             this.tableLayoutPanel8.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
             this.tableLayoutPanel8.RowCount = 1;
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel8.Size = new System.Drawing.Size(1469, 101);
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(1469, 187);
             this.tableLayoutPanel8.TabIndex = 19;
             // 
             // btnAddSelected
@@ -603,10 +625,10 @@
             // 
             this.dgvProviderDataset.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvProviderDataset.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvProviderDataset.Location = new System.Drawing.Point(4, 119);
+            this.dgvProviderDataset.Location = new System.Drawing.Point(4, 211);
             this.dgvProviderDataset.Margin = new System.Windows.Forms.Padding(4);
             this.dgvProviderDataset.Name = "dgvProviderDataset";
-            this.dgvProviderDataset.Size = new System.Drawing.Size(1469, 205);
+            this.dgvProviderDataset.Size = new System.Drawing.Size(1469, 375);
             this.dgvProviderDataset.TabIndex = 0;
             this.dgvProviderDataset.SelectionChanged += new System.EventHandler(this.dgvProviderDataset_SelectionChanged);
             // 
@@ -621,8 +643,8 @@
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 54.29363F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 45.70637F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 93.47581F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.524185F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1501, 889);
             this.tableLayoutPanel1.TabIndex = 0;
@@ -630,36 +652,11 @@
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 485);
+            this.splitContainer1.Location = new System.Drawing.Point(3, 833);
             this.splitContainer1.Name = "splitContainer1";
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.webBrowser1);
-            this.splitContainer1.Size = new System.Drawing.Size(1495, 401);
+            this.splitContainer1.Size = new System.Drawing.Size(1495, 53);
             this.splitContainer1.SplitterDistance = 1198;
             this.splitContainer1.TabIndex = 3;
-            // 
-            // webBrowser1
-            // 
-            this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser1.Location = new System.Drawing.Point(0, 0);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(1198, 401);
-            this.webBrowser1.TabIndex = 0;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label5.Location = new System.Drawing.Point(4, 25);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(298, 42);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "Authentication (User/Pass):";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // Form1
             // 
@@ -699,7 +696,6 @@
             this.tableLayoutPanel8.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvProviderDataset)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.splitContainer1.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -749,12 +745,12 @@
         private System.Windows.Forms.Button btnDeleteSelected;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.DataGridView dgDataset;
         private System.Windows.Forms.TextBox textBoxUserName;
         private System.Windows.Forms.TextBox textBoxPassword;
-        private System.Windows.Forms.Label label5;        
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button btnTestSyncronizationAll;        
     }
 }
 

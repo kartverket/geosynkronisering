@@ -221,9 +221,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 // nlog start
                 logger.Info("===== Kartverket.Geosynkronisering.Subscriber Start =====");
                 listBoxLog.Items.Clear();
-
-                ShowGeoSyncLogo();
-
                 UpdateToolStripStatusLabel("Ready");
             }
             catch (Exception ex)
@@ -231,13 +228,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 logger.ErrorException("Form1_Load failed:", ex);
                 MessageBox.Show(ex.Message + ex.StackTrace);
             }
-        }
-
-        private void ShowGeoSyncLogo()
-        {
-            var path = Environment.CurrentDirectory;
-            var fileName = path.Substring(0, path.LastIndexOf("bin")) + "Images" + "\\Geosynk.ico";
-            webBrowser1.Navigate(fileName);
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -434,12 +424,12 @@ namespace Kartverket.Geosynkronisering.Subscriber
 
             if (!SubscriberDatasetManager.RemoveDatasets(subscriberDatasets, selectedDataset))
             {
-                MessageBox.Show(this, "Error removing  selected datasets to internal Database.", "Remove Datasets",
+                MessageBox.Show(this, "Error removing selected datasets from internal Database.", "Remove Datasets",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
-                MessageBox.Show(this, "Saved after removing selected datasets to the internal Database.",
+                MessageBox.Show(this, "Saved after removing selected datasets from internal Database.",
                     "Remove Datasets", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 dgDataset.DataSource = null;
 
@@ -563,8 +553,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
         /// <param name="e"></param>
         private void btnSyncronizationComplete_Click(object sender, EventArgs e)
         {
-            ShowGeoSyncLogo();
-
             SetSynchButtonInactive();
 
             Hourglass(true);
@@ -576,6 +564,22 @@ namespace Kartverket.Geosynkronisering.Subscriber
             logger.Info(logMessage);
 
             SynchronizeAsThread(_currentDatasetId);
+        }
+
+        public void SynchronizeAsThread()
+        {
+            foreach (var datasetId in SubscriberDatasetManager.GetListOfDatasetIDs())
+            {
+                var _backgroundWorker = new BackgroundWorker
+                {
+                    WorkerReportsProgress = true,
+                    WorkerSupportsCancellation = true
+                };
+
+                _backgroundWorker.DoWork += bw_DoSynchronization;
+                _backgroundWorker.RunWorkerAsync(datasetId);
+                _backgroundWorker.RunWorkerCompleted += bw_SynchronizeComplete;
+            }
         }
 
         public void SynchronizeAsThread(int datasetId)
@@ -637,11 +641,13 @@ namespace Kartverket.Geosynkronisering.Subscriber
         public void SetSynchButtonActive()
         {
             btnTestSyncronizationComplete.Enabled = true;
+            btnTestSyncronizationAll.Enabled = true;
         }
 
         public void SetSynchButtonInactive()
         {
             btnTestSyncronizationComplete.Enabled = false;
+            btnTestSyncronizationAll.Enabled = false;
         }
 
         private void UpdateToolStripStatusLabel(string message)
@@ -800,6 +806,21 @@ namespace Kartverket.Geosynkronisering.Subscriber
             {
                 Cursor.Current = Cursors.Default;
             }
+        }
+
+        private void btnTestSyncronizationAll_Click(object sender, EventArgs e)
+        {
+            SetSynchButtonInactive();
+
+            Hourglass(true);
+
+            listBoxLog.Items.Clear();
+
+            var logMessage = "Syncronization Start";
+            listBoxLog.Items.Add(logMessage);
+            logger.Info(logMessage);
+
+            SynchronizeAsThread();
         }
     }
 }
