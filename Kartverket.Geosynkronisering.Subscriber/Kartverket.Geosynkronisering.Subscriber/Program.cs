@@ -25,27 +25,47 @@ namespace Kartverket.Geosynkronisering.Subscriber
         private static void Main(string[] args)
         {
             if (args.Length < 1)
+                RunAsWinForms();
+            else
+                RunAsConsole(args);
+        }
+
+        private static void RunAsConsole(string[] args)
+        {
+            AttachConsole();
+            Console.WriteLine();
+            var datasetIds = SubscriberDatasetManager.GetListOfDatasetIDs();
+            if (args.Length == 1 && args[0].ToLower() == "auto")
             {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new Form1());
+                Console.WriteLine("INFO: Fetching list of datasetIds");
+                foreach (var datasetId in datasetIds)
+                {
+                    Synchronize(datasetId);
+                }
+            }
+            else if (args.Length == 1 && args[0].ToLower() == "help")
+            {
+                Console.WriteLine("Args: auto | datasetId ...");
             }
             else
             {
-                AttachConsole();
-                Console.WriteLine("INFO: Fetching list of datasetIds");
-                try
+                foreach (var datasetId in args)
                 {
-                    foreach (var datasetId in SubscriberDatasetManager.GetListOfDatasetIDs())
+                    if (datasetIds.Contains(int.Parse(datasetId)))
+                        Synchronize(int.Parse(datasetId));
+                    else
                     {
-                        Synchronize(datasetId);
+                        Console.WriteLine("ERROR: DatasetId " + datasetId + " does not exist");
                     }
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine("ERROR: " + e.Message);
-                }
             }
+        }
+
+        private static void RunAsWinForms()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Form1());
         }
 
         private static void AttachConsole()
