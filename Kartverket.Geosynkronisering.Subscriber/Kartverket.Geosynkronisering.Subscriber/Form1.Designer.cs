@@ -103,7 +103,7 @@
             // buttonSave
             // 
             this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSave.Location = new System.Drawing.Point(3, 388);
+            this.buttonSave.Location = new System.Drawing.Point(3, 717);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(100, 28);
@@ -116,7 +116,7 @@
             // btnDeleteSelected
             // 
             this.btnDeleteSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteSelected.Location = new System.Drawing.Point(3, 352);
+            this.btnDeleteSelected.Location = new System.Drawing.Point(3, 753);
             this.btnDeleteSelected.Margin = new System.Windows.Forms.Padding(4);
             this.btnDeleteSelected.Name = "btnDeleteSelected";
             this.btnDeleteSelected.Size = new System.Drawing.Size(100, 28);
@@ -174,7 +174,7 @@
             // 
             // btnResetSubscrLastindex
             // 
-            this.btnResetSubscrLastindex.Location = new System.Drawing.Point(901, 20);
+            this.btnResetSubscrLastindex.Location = new System.Drawing.Point(417, 20);
             this.btnResetSubscrLastindex.Margin = new System.Windows.Forms.Padding(4);
             this.btnResetSubscrLastindex.Name = "btnResetSubscrLastindex";
             this.btnResetSubscrLastindex.Size = new System.Drawing.Size(213, 28);
@@ -186,7 +186,7 @@
             // 
             // txbSubscrLastindex
             // 
-            this.txbSubscrLastindex.Location = new System.Drawing.Point(1122, 23);
+            this.txbSubscrLastindex.Location = new System.Drawing.Point(638, 23);
             this.txbSubscrLastindex.Margin = new System.Windows.Forms.Padding(4);
             this.txbSubscrLastindex.Name = "txbSubscrLastindex";
             this.txbSubscrLastindex.ReadOnly = true;
@@ -196,7 +196,7 @@
             // 
             // txtLimitNumberOfFeatures
             // 
-            this.txtLimitNumberOfFeatures.Location = new System.Drawing.Point(1409, 23);
+            this.txtLimitNumberOfFeatures.Location = new System.Drawing.Point(925, 23);
             this.txtLimitNumberOfFeatures.Margin = new System.Windows.Forms.Padding(4);
             this.txtLimitNumberOfFeatures.Name = "txtLimitNumberOfFeatures";
             this.txtLimitNumberOfFeatures.Size = new System.Drawing.Size(68, 22);
@@ -209,7 +209,7 @@
             // 
             this.cboDatasetName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboDatasetName.FormattingEnabled = true;
-            this.cboDatasetName.Location = new System.Drawing.Point(193, 22);
+            this.cboDatasetName.Location = new System.Drawing.Point(192, 23);
             this.cboDatasetName.Margin = new System.Windows.Forms.Padding(4);
             this.cboDatasetName.Name = "cboDatasetName";
             this.cboDatasetName.Size = new System.Drawing.Size(216, 24);
@@ -278,7 +278,8 @@
             // 
             // btnTestSyncronizationAll
             // 
-            this.btnTestSyncronizationAll.Location = new System.Drawing.Point(430, 20);
+            this.btnTestSyncronizationAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnTestSyncronizationAll.Location = new System.Drawing.Point(1335, 20);
             this.btnTestSyncronizationAll.Name = "btnTestSyncronizationAll";
             this.btnTestSyncronizationAll.Size = new System.Drawing.Size(143, 28);
             this.btnTestSyncronizationAll.TabIndex = 29;
@@ -288,6 +289,8 @@
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(6, 738);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -298,6 +301,8 @@
             // 
             // progressBar
             // 
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar.Location = new System.Drawing.Point(9, 757);
             this.progressBar.Margin = new System.Windows.Forms.Padding(4);
             this.progressBar.Name = "progressBar";
@@ -307,7 +312,7 @@
             // labelLimitNumberOfFeatures
             // 
             this.labelLimitNumberOfFeatures.AutoSize = true;
-            this.labelLimitNumberOfFeatures.Location = new System.Drawing.Point(1270, 27);
+            this.labelLimitNumberOfFeatures.Location = new System.Drawing.Point(787, 26);
             this.labelLimitNumberOfFeatures.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelLimitNumberOfFeatures.Name = "labelLimitNumberOfFeatures";
             this.labelLimitNumberOfFeatures.Size = new System.Drawing.Size(130, 17);
@@ -317,6 +322,9 @@
             // 
             // listBoxLog
             // 
+            this.listBoxLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listBoxLog.FormattingEnabled = true;
             this.listBoxLog.HorizontalScrollbar = true;
             this.listBoxLog.ItemHeight = 16;
@@ -555,7 +563,7 @@
             this.tableLayoutPanel9.ColumnCount = 3;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.46457F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.53543F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 523F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 524F));
             this.tableLayoutPanel9.Controls.Add(this.textBoxUserName, 0, 0);
             this.tableLayoutPanel9.Controls.Add(this.textBoxPassword, 1, 0);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;

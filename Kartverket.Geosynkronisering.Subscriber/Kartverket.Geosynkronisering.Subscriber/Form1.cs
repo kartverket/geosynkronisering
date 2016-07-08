@@ -49,8 +49,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
                     "AbortedTransaction",
                     "AbortedChangelogPath",
                     "AbortedChangelogId",
-                    "UserName",
-                    "Password"
+                    //"UserName",
+                    //"Password"
                 };
 #if DEBUG
                 dgDataset.DataSource = SubscriberDatasetManager.GetAllDataset();
