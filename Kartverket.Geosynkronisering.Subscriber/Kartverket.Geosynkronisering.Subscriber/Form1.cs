@@ -44,7 +44,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             {
                 List<string> invisibleColumns = new List<string>()
                 {
-                    "DatasetId",
+                    //"DatasetId",
                     "AbortedEndIndex",
                     "AbortedTransaction",
                     "AbortedChangelogPath",
