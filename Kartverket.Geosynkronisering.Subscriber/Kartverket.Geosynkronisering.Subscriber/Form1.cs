@@ -822,5 +822,13 @@ namespace Kartverket.Geosynkronisering.Subscriber
 
             SynchronizeAsThread();
         }
+
+        private void dgDataset_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex == 15 && e.Value != null)
+            {
+                e.Value = new String('*', 6);
+            }
+        }
     }
 }

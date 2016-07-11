@@ -87,7 +87,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 dataset.ChangelogDirectory = geoClientDataset.ChangelogDirectory;
                 dataset.AbortedChangelogId = geoClientDataset.AbortedChangelogId;
                 dataset.UserName = geoClientDataset.UserName;
-                dataset.Password = geoClientDataset.Password;
+                if (geoClientDataset.Password != "******")
+                    dataset.Password = geoClientDataset.Password;
 
                 localDb.SaveChanges();
                 return true;

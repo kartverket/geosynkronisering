@@ -473,6 +473,7 @@
             this.dgDataset.Name = "dgDataset";
             this.dgDataset.Size = new System.Drawing.Size(1366, 785);
             this.dgDataset.TabIndex = 1;
+            this.dgDataset.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgDataset_CellFormatting);
             // 
             // tabPage4
             // 
@@ -563,7 +564,7 @@
             this.tableLayoutPanel9.ColumnCount = 3;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.46457F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.53543F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 524F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 525F));
             this.tableLayoutPanel9.Controls.Add(this.textBoxUserName, 0, 0);
             this.tableLayoutPanel9.Controls.Add(this.textBoxPassword, 1, 0);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -584,7 +585,7 @@
             // 
             // textBoxPassword
             // 
-            this.textBoxPassword.Location = new System.Drawing.Point(151, 3);
+            this.textBoxPassword.Location = new System.Drawing.Point(150, 3);
             this.textBoxPassword.Name = "textBoxPassword";
             this.textBoxPassword.PasswordChar = '*';
             this.textBoxPassword.Size = new System.Drawing.Size(100, 22);
