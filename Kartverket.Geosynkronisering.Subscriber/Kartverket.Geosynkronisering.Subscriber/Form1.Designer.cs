@@ -534,7 +534,7 @@
             this.txbProviderURL.Name = "txbProviderURL";
             this.txbProviderURL.Size = new System.Drawing.Size(1155, 22);
             this.txbProviderURL.TabIndex = 0;
-            this.txbProviderURL.Text = "http://localhost:43397/WebFeatureServiceReplication.svc";
+            this.txbProviderURL.Text = "https://geosynk.nois.no/tilbyder/";
             // 
             // label4
             // 
@@ -545,7 +545,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(298, 25);
             this.label4.TabIndex = 1;
-            this.label4.Text = "Type in the Data Provider\'s  URL:";
+            this.label4.Text = "Data Provider URL:";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // btnGetProviderDatasets
@@ -564,7 +564,7 @@
             this.tableLayoutPanel9.ColumnCount = 3;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.46457F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.53543F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 525F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 526F));
             this.tableLayoutPanel9.Controls.Add(this.textBoxUserName, 0, 0);
             this.tableLayoutPanel9.Controls.Add(this.textBoxPassword, 1, 0);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
