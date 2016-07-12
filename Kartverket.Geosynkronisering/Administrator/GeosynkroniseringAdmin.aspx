@@ -28,7 +28,7 @@
             <tr style= "height: 10%">
               <td width="10%">                        
                   <asp:Image ID="Image1" runat="server" Height="61px" 
-                      ImageUrl="~/Images/Geosynk.png" Width="64px" />
+                      ImageUrl="~/Images/GeosynkAlphaBig2.png" Width="64px" />
                 </td>
                 <td width="60%">                        
                     <asp:Label ID="Label2" runat="server" CssClass="HeaderText" 
