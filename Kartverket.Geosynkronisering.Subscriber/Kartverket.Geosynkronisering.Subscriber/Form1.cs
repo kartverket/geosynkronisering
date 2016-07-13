@@ -27,6 +27,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             InitSynchController();
             InitializeDatasetGrid();
             InitializeCurrentDataset();
+            txbProviderURL.Text = Properties.Subscriber.Default.DefaultServerURL;
         }
 
         private void InitSynchController()
@@ -69,7 +70,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 var errMsg = "Form1_Load failed when opening database:" + SubscriberDatasetManager.GetDatasource();
 
                 logger.ErrorException(errMsg, ex);
-                errMsg += "\r\n" + "Remeber to copy the databse to the the folder:" +
+                errMsg += "\r\n" + "Remember to copy the database to the the folder:" +
                           AppDomain.CurrentDomain.GetData("APPBASE");
                 MessageBox.Show(ex.Message + "\r\n" + errMsg);
             }
@@ -367,6 +368,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
 
         private void btnGetProviderDatasets_Click(object sender, EventArgs e)
         {
+            Properties.Subscriber.Default.DefaultServerURL = txbProviderURL.Text;
+            Properties.Subscriber.Default.Save();
             try
             {
                 Cursor = Cursors.WaitCursor;
