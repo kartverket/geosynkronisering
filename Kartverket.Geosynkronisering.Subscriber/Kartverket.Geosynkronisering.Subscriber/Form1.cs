@@ -257,9 +257,17 @@ namespace Kartverket.Geosynkronisering.Subscriber
             comboFill = true;
             var datasetNameList = SubscriberDatasetManager.GetDatasetNamesAsDictionary();
             cboDatasetName.DataSource = new BindingSource(datasetNameList, null);
-            cboDatasetName.DisplayMember = "Value";
-            cboDatasetName.ValueMember = "Key";
-            cboDatasetName.SelectedValue = _currentDatasetId;
+            try
+            {
+                cboDatasetName.DisplayMember = "Value";
+                cboDatasetName.ValueMember = "Key";
+                cboDatasetName.SelectedValue = _currentDatasetId;
+            }
+            catch (Exception e)
+            {
+                logger.Warn(e.Message);
+            }
+
             //if (datasetNameList.Count > 0)
             //{
             //    foreach (string name in datasetNameList)
