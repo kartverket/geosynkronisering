@@ -256,6 +256,30 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             return true;
         }
 
+        public static bool AddEmptyDataset()
+        {
+            using (var localDb = new geosyncDBEntities())
+            {
+                    var ds = new Dataset();
+                    try
+                    {
+                        ds.DatasetId = GetNextDatasetID();
+                        ds.LastIndex = 0;
+                        ds.ClientWfsUrl = "";
+                        localDb.AddObject("Dataset", ds);
+                        localDb.SaveChanges();
+                        localDb.AcceptAllChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogException(LogLevel.Error, "Error saving selected datasets!", ex);
+                        return false;
+                    }
+                }
+            
+            return true;
+        }
+
         /// <summary>
         /// Removes the selected datasets from database.
         /// </summary>

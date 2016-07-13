@@ -841,5 +841,12 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 e.Value = new String('*', 6);
             }
         }
+
+        private void buttonNew_Click(object sender, EventArgs e)
+        {
+            SubscriberDatasetManager.AddEmptyDataset();
+            InitializeDatasetGrid();
+            FillComboBoxDatasetName();
+        }
     }
 }

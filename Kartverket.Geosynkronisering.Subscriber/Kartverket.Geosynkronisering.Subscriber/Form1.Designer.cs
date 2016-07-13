@@ -76,6 +76,7 @@
             this.dgvProviderDataset = new System.Windows.Forms.DataGridView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.buttonNew = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -103,7 +104,7 @@
             // buttonSave
             // 
             this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSave.Location = new System.Drawing.Point(3, 717);
+            this.buttonSave.Location = new System.Drawing.Point(3, 681);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(100, 28);
@@ -116,7 +117,7 @@
             // btnDeleteSelected
             // 
             this.btnDeleteSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteSelected.Location = new System.Drawing.Point(3, 753);
+            this.btnDeleteSelected.Location = new System.Drawing.Point(3, 717);
             this.btnDeleteSelected.Margin = new System.Windows.Forms.Padding(4);
             this.btnDeleteSelected.Name = "btnDeleteSelected";
             this.btnDeleteSelected.Size = new System.Drawing.Size(100, 28);
@@ -458,6 +459,7 @@
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.buttonNew);
             this.splitContainer2.Panel2.Controls.Add(this.buttonSave);
             this.splitContainer2.Panel2.Controls.Add(this.btnDeleteSelected);
             this.splitContainer2.Size = new System.Drawing.Size(1477, 785);
@@ -667,6 +669,16 @@
             this.splitContainer1.SplitterDistance = 1198;
             this.splitContainer1.TabIndex = 3;
             // 
+            // buttonNew
+            // 
+            this.buttonNew.Location = new System.Drawing.Point(3, 752);
+            this.buttonNew.Name = "buttonNew";
+            this.buttonNew.Size = new System.Drawing.Size(100, 28);
+            this.buttonNew.TabIndex = 3;
+            this.buttonNew.Text = "New";
+            this.buttonNew.UseVisualStyleBackColor = true;
+            this.buttonNew.Click += new System.EventHandler(this.buttonNew_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -759,7 +771,8 @@
         private System.Windows.Forms.TextBox textBoxUserName;
         private System.Windows.Forms.TextBox textBoxPassword;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button btnTestSyncronizationAll;        
+        private System.Windows.Forms.Button btnTestSyncronizationAll;
+        private System.Windows.Forms.Button buttonNew;        
     }
 }
 
