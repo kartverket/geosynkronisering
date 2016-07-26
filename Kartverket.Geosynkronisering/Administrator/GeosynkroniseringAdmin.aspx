@@ -161,6 +161,7 @@
                                                         SortExpression="TargetNamespace" />
                                                          <asp:BoundField DataField="TargetNamespacePrefix" HeaderText="TargetNamespacePrefix" 
                                                         SortExpression="TargetNamespacePrefix" />
+                                                    <asp:BoundField DataField="Version" HeaderText="Version" SortExpression="Version" />
                                                     <asp:CommandField ShowDeleteButton="True" ShowEditButton="True" 
                                                         ShowInsertButton="True" ButtonType="Image" 
                                                         CancelImageUrl="~/Images/Edit_UndoHS.png" CancelText="Avbryt" 

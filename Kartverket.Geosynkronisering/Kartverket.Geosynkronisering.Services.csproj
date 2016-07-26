@@ -93,6 +93,7 @@
     <Content Include="App_Data\geosync.sdf" />
     <Content Include="Administrator\GeosynkroniseringAdmin.aspx" />
     <Content Include="Administrator\GeoSynkWebStyleSheet.css" />
+    <Content Include="GeosyncModel.edmx.sql" />
     <Content Include="Global.asax" />
     <Content Include="Images\AddTableHS.png" />
     <Content Include="Images\DataContainer_MoveFirstHS.png" />
@@ -104,6 +105,7 @@
     <Content Include="Images\EditTableHS.png" />
     <Content Include="Images\Edit_UndoHS.png" />
     <Content Include="Images\Geosynk.png" />
+    <Content Include="Images\GeosynkAlphaBig2.png" />
     <Content Include="Images\saveHS.png" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

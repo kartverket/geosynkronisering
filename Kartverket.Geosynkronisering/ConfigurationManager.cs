@@ -377,6 +377,16 @@ namespace Kartverket.Geosynkronisering.Database
                 return "";
             }
         }
+
+        internal static string Version(int datasetId)
+        {
+            using (geosyncEntities db = new geosyncEntities())
+            {
+                var res = from d in db.Datasets where d.DatasetId == datasetId select d.Version;
+                if (res.First() != null) return res.First();
+                return "1.0";
+            }
+        }
     }
 
     public class CapabilitiesDataBuilder
@@ -537,6 +547,7 @@ namespace Kartverket.Geosynkronisering.Database
                 dataset.applicationSchema = DatasetsData.TargetNamespace(id);
                 dataset.datasetId = id.ToString();
                 dataset.name = DatasetsData.Name(id);
+                dataset.version = DatasetsData.Version(id);
                 List<GeosyncWCF.FeatureTypeType> lstFeatTypes = new List<GeosyncWCF.FeatureTypeType>();
                 GeosyncWCF.FeatureTypeType featType = new GeosyncWCF.FeatureTypeType();
                 featType.Name = new XmlQualifiedName(DatasetsData.Name(id), DatasetsData.TargetNamespace(id));
