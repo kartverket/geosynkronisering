@@ -545,7 +545,7 @@ namespace Kartverket.Geosynkronisering.Database
             foreach (int id in DatasetsData.GetListOfDatasetIDs())
             {
                 dataset = new DatasetType();
-                dataset.applicationSchema = DatasetsData.TargetNamespace(id);
+                dataset.applicationSchema = DatasetsData.SchemaFileUri(id);
                 dataset.datasetId = id.ToString();
                 dataset.name = DatasetsData.Name(id);
                 dataset.version = DatasetsData.Version(id);
