@@ -568,7 +568,6 @@ namespace Kartverket.Geosynkronisering.Database
                 featType.OutputFormats.Format = formats.ToArray();
                 List<GeosyncWCF.WGS84BoundingBoxType> lstWgs84Box = new List<GeosyncWCF.WGS84BoundingBoxType>();
                 GeosyncWCF.WGS84BoundingBoxType wgs84Box = new GeosyncWCF.WGS84BoundingBoxType();
-                wgs84Box.crs = string.Format("urn:ogc:def:crs:EPSG::{0}",DatasetsData.DefaultCrs(id));
                 wgs84Box.LowerCorner = DatasetsData.LowerCornerCoords(id);
                 wgs84Box.UpperCorner = DatasetsData.UpperCornerCoords(id);
                 lstWgs84Box.Add(wgs84Box);
