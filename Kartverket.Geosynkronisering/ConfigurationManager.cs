@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
+using Kartverket.GeosyncWCF;
 
 
 namespace Kartverket.Geosynkronisering.Database
@@ -392,14 +393,14 @@ namespace Kartverket.Geosynkronisering.Database
     public class CapabilitiesDataBuilder
     {
 
-        public GeosyncWCF.REP_CapabilitiesType GetCapabilities()
+        public REP_CapabilitiesType GetCapabilities()
         {
             //Build Cababilities.XML
             //ServiceIndentification
-            GeosyncWCF.REP_CapabilitiesType rootCapabilities = new GeosyncWCF.REP_CapabilitiesType();
+            REP_CapabilitiesType rootCapabilities = new REP_CapabilitiesType();
             rootCapabilities.version = "2.0.0";
 
-            rootCapabilities.ServiceIdentification = new GeosyncWCF.ServiceIdentification();
+            rootCapabilities.ServiceIdentification = new ServiceIdentification();
             //Title                        
             IList<string> values = new List<string>();
             values.Add(ServiceData.Title());         
@@ -411,13 +412,13 @@ namespace Kartverket.Geosynkronisering.Database
             rootCapabilities.ServiceIdentification.Abstract = CreateNode(values);
             
             //Keywords
-            GeosyncWCF.KeywordsType keyWords = new GeosyncWCF.KeywordsType();
+            KeywordsType keyWords = new KeywordsType();
             //TODO: Sjekk om dette fungerer!!!
             values = ServiceData.Keywords();
             keyWords.Keyword = CreateNode(values);
-            keyWords.Type = new GeosyncWCF.CodeType();
+            keyWords.Type = new CodeType();
             keyWords.Type.Value = "String";
-            List<GeosyncWCF.KeywordsType> lstDesc = new List<GeosyncWCF.KeywordsType>();
+            List<KeywordsType> lstDesc = new List<KeywordsType>();
             lstDesc.Add(keyWords);
             rootCapabilities.ServiceIdentification.Keywords = lstDesc.ToArray();
 
@@ -427,7 +428,7 @@ namespace Kartverket.Geosynkronisering.Database
             //<ows:ServiceType>WFS</ows:ServiceType>
             
             //TODO: Legg til felt i databasen            
-            rootCapabilities.ServiceIdentification.ServiceType = new GeosyncWCF.CodeType();
+            rootCapabilities.ServiceIdentification.ServiceType = new CodeType();
             rootCapabilities.ServiceIdentification.ServiceType.Value = "WFS";
             
             //<ows:ServiceTypeVersion>2.0.0</ows:ServiceTypeVersion><ows:ServiceTypeVersion>1.1.0</ows:ServiceTypeVersion><ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
@@ -442,37 +443,37 @@ namespace Kartverket.Geosynkronisering.Database
                         rootCapabilities.ServiceIdentification.AccessConstraints = CreateNode(ServiceData.AccessConstraints());
 
             ////ServiceProvider
-            rootCapabilities.ServiceProvider = new GeosyncWCF.ServiceProvider();
+            rootCapabilities.ServiceProvider = new ServiceProvider();
             rootCapabilities.ServiceProvider.ProviderName = ServiceData.ProviderName();
 
-            rootCapabilities.ServiceProvider.ProviderSite = new GeosyncWCF.OnlineResourceType();
+            rootCapabilities.ServiceProvider.ProviderSite = new OnlineResourceType();
             rootCapabilities.ServiceProvider.ProviderSite.href = ServiceData.ProviderSite();
 
-            rootCapabilities.ServiceProvider.ServiceContact = new GeosyncWCF.ResponsiblePartySubsetType();
+            rootCapabilities.ServiceProvider.ServiceContact = new ResponsiblePartySubsetType();
             rootCapabilities.ServiceProvider.ServiceContact.IndividualName = ServiceData.IndividualName();
             rootCapabilities.ServiceProvider.ServiceContact.PositionName = ""; //TODO: Lgg i basen. Innstilling for dette
 
-            rootCapabilities.ServiceProvider.ServiceContact.ContactInfo = new GeosyncWCF.ContactType();
-            rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.Phone = new GeosyncWCF.TelephoneType();
+            rootCapabilities.ServiceProvider.ServiceContact.ContactInfo = new ContactType();
+            rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.Phone = new TelephoneType();
            
             rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.Phone.Voice = CreateNode(ServiceData.Phone());           
             rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.Phone.Facsimile = CreateNode(ServiceData.Fax());
-            rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.Address = new GeosyncWCF.AddressType();
+            rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.Address = new AddressType();
             rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.Address.DeliveryPoint = CreateNode(ServiceData.Adresse());
             rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.Address.City = ServiceData.City();
             rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.Address.AdministrativeArea = ServiceData.City();
             rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.Address.Country = ServiceData.Country();
             rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.Address.ElectronicMailAddress = CreateNode(ServiceData.EMail());
-            rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.OnlineResource = new GeosyncWCF.OnlineResourceType();
+            rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.OnlineResource = new OnlineResourceType();
             rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.OnlineResource.href = ServiceData.OnlineResourcesUrl();
             rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.HoursOfService = ServiceData.HoursOfService();
             rootCapabilities.ServiceProvider.ServiceContact.ContactInfo.ContactInstructions = ServiceData.ContactInstructions();
-            rootCapabilities.ServiceProvider.ServiceContact.Role = new GeosyncWCF.CodeType();
+            rootCapabilities.ServiceProvider.ServiceContact.Role = new CodeType();
             rootCapabilities.ServiceProvider.ServiceContact.Role.Value = ServiceData.Role();
 
-            rootCapabilities.OperationsMetadata = new GeosyncWCF.OperationsMetadata();
-            List<GeosyncWCF.Operation> listLst = new List<GeosyncWCF.Operation>();
-            GeosyncWCF.Operation operationNode = CreateOperation("GetCababilities", "Acceptversions", "2.0.0"); //TODO, må inn i databasen
+            rootCapabilities.OperationsMetadata = new OperationsMetadata();
+            List<Operation> listLst = new List<Operation>();
+            Operation operationNode = CreateOperation("GetCababilities", "Acceptversions", "2.0.0"); //TODO, må inn i databasen
             listLst.Add(operationNode);
             operationNode = CreateOperation("DescribeFeatureType", "", "");
             listLst.Add(operationNode);
@@ -483,10 +484,10 @@ namespace Kartverket.Geosynkronisering.Database
             operationNode = CreateOperation("GetChangelogStatus", "", "");
             listLst.Add(operationNode);
             rootCapabilities.OperationsMetadata.Operation = listLst.ToArray();
-            List<GeosyncWCF.DomainType> lstDomain = new List<GeosyncWCF.DomainType>();
+            List<DomainType> lstDomain = new List<DomainType>();
             lstDomain.Add(CreateParameter("version", "2.0.0"));
             rootCapabilities.OperationsMetadata.Parameter = lstDomain.ToArray();
-            List<GeosyncWCF.DomainType> lstConstraints = new List<GeosyncWCF.DomainType>();
+            List<DomainType> lstConstraints = new List<DomainType>();
             lstConstraints.Add(CreateConstraints("ImplementsReplicationWFS", "TRUE"));
             lstConstraints.Add(CreateConstraints("ImplementsTransactionalWFS", "FALSE"));
             lstConstraints.Add(CreateConstraints("ImplementsLockingWFS", "FALSE"));
@@ -520,11 +521,11 @@ namespace Kartverket.Geosynkronisering.Database
           
         }
 
-        private static GeosyncWCF.LanguageStringType[] CreateNode(IList<string> values = null)
+        private static LanguageStringType[] CreateNode(IList<string> values = null)
         {
-            GeosyncWCF.LanguageStringType node = new GeosyncWCF.LanguageStringType();
+            LanguageStringType node = new LanguageStringType();
             node.lang = "no";
-            List<GeosyncWCF.LanguageStringType> listLst = new List<GeosyncWCF.LanguageStringType>();
+            List<LanguageStringType> listLst = new List<LanguageStringType>();
             if (values != null)
             {
                 foreach (string value in values)
@@ -537,37 +538,37 @@ namespace Kartverket.Geosynkronisering.Database
            return listLst.ToArray();            
         }
 
-        private static GeosyncWCF.DatasetType[] CreateDatasets()
+        private static DatasetType[] CreateDatasets()
         {
-            List<GeosyncWCF.DatasetType> datasets = new List<GeosyncWCF.DatasetType>();
-            GeosyncWCF.DatasetType dataset = new GeosyncWCF.DatasetType();
+            List<DatasetType> datasets = new List<DatasetType>();
+            DatasetType dataset = new DatasetType();
             foreach (int id in DatasetsData.GetListOfDatasetIDs())
             {
-                dataset = new GeosyncWCF.DatasetType();
+                dataset = new DatasetType();
                 dataset.applicationSchema = DatasetsData.TargetNamespace(id);
                 dataset.datasetId = id.ToString();
                 dataset.name = DatasetsData.Name(id);
                 dataset.version = DatasetsData.Version(id);
-                List<GeosyncWCF.FeatureTypeType> lstFeatTypes = new List<GeosyncWCF.FeatureTypeType>();
-                GeosyncWCF.FeatureTypeType featType = new GeosyncWCF.FeatureTypeType();
+                List<FeatureTypeType> lstFeatTypes = new List<FeatureTypeType>();
+                FeatureTypeType featType = new FeatureTypeType();
                 featType.Name = new XmlQualifiedName(DatasetsData.Name(id), DatasetsData.TargetNamespace(id));
-                List<GeosyncWCF.MetadataURLType> lstMetaDataUrl = new List<GeosyncWCF.MetadataURLType>();
-                GeosyncWCF.MetadataURLType metadataUrl = new GeosyncWCF.MetadataURLType();
+                List<MetadataURLType> lstMetaDataUrl = new List<MetadataURLType>();
+                MetadataURLType metadataUrl = new MetadataURLType();
                 metadataUrl.href = DatasetsData.TargetNamespace(id);
                 lstMetaDataUrl.Add(metadataUrl);
                 featType.MetadataURL = lstMetaDataUrl.ToArray();
-                List<GeosyncWCF.Title> lstTitles = new List<GeosyncWCF.Title>();
-                GeosyncWCF.Title title = new GeosyncWCF.Title();
+                List<Title> lstTitles = new List<Title>();
+                Title title = new Title();
                 title.lang="no";
                 title.Value=DatasetsData.Name(id);
                 lstTitles.Add(title);
                 featType.Title = lstTitles.ToArray();
-                featType.OutputFormats = new GeosyncWCF.OutputFormatListType();
+                featType.OutputFormats = new OutputFormatListType();
                 List<string> formats = new List<string>();
                 formats.Add("text/xml; subtype=gml/3.2.1"); //DB?
                 featType.OutputFormats.Format = formats.ToArray();
-                List<GeosyncWCF.WGS84BoundingBoxType> lstWgs84Box = new List<GeosyncWCF.WGS84BoundingBoxType>();
-                GeosyncWCF.WGS84BoundingBoxType wgs84Box = new GeosyncWCF.WGS84BoundingBoxType();
+                List<WGS84BoundingBoxType> lstWgs84Box = new List<WGS84BoundingBoxType>();
+                WGS84BoundingBoxType wgs84Box = new WGS84BoundingBoxType();
                 wgs84Box.LowerCorner = DatasetsData.LowerCornerCoords(id);
                 wgs84Box.UpperCorner = DatasetsData.UpperCornerCoords(id);
                 lstWgs84Box.Add(wgs84Box);
@@ -581,9 +582,9 @@ namespace Kartverket.Geosynkronisering.Database
             return datasets.ToArray();
         }
 
-        private static GeosyncWCF.DomainType CreateParameter(string parameterName, params string[] values)
+        private static DomainType CreateParameter(string parameterName, params string[] values)
         {
-            GeosyncWCF.DomainType param = new GeosyncWCF.DomainType();
+            DomainType param = new DomainType();
             List<GeosyncWCF.ValueType> valuelist = new List<GeosyncWCF.ValueType>();
                         
             foreach (string s in values)
@@ -600,43 +601,43 @@ namespace Kartverket.Geosynkronisering.Database
         }
 
 
-        private static GeosyncWCF.DomainType CreateConstraints(string parameterName, string defaultValue)
+        private static DomainType CreateConstraints(string parameterName, string defaultValue)
         {
-            GeosyncWCF.DomainType param = new GeosyncWCF.DomainType();
+            DomainType param = new DomainType();
             List<object> paramValues = new List<object>();
             param.DefaultValue = new GeosyncWCF.ValueType();
             param.DefaultValue.Value = defaultValue;
             param.name = parameterName;            
-            param.NoValues = new GeosyncWCF.NoValues();            
+            param.NoValues = new NoValues();            
             return param;
         }
 
-        private static GeosyncWCF.Operation CreateOperation(string operationName, string parameterName, params string[] parameterValues)
+        private static Operation CreateOperation(string operationName, string parameterName, params string[] parameterValues)
         {
-            GeosyncWCF.Operation node = new GeosyncWCF.Operation();           
+            Operation node = new Operation();           
             
             node.name = operationName;
-            List<GeosyncWCF.DCP> dcpList = new List<GeosyncWCF.DCP>();
-            GeosyncWCF.DCP dcp = new GeosyncWCF.DCP();
-            dcp.Item = new GeosyncWCF.HTTP();
+            List<DCP> dcpList = new List<DCP>();
+            DCP dcp = new DCP();
+            dcp.Item = new HTTP();
             
             //GET
-            GeosyncWCF.ItemsChoiceType ictGet = new GeosyncWCF.ItemsChoiceType();
-            ictGet = GeosyncWCF.ItemsChoiceType.Get;           
-            List<GeosyncWCF.ItemsChoiceType> listIct = new List<GeosyncWCF.ItemsChoiceType>();
+            ItemsChoiceType ictGet = new ItemsChoiceType();
+            ictGet = ItemsChoiceType.Get;           
+            List<ItemsChoiceType> listIct = new List<ItemsChoiceType>();
             listIct.Add(ictGet);            
-            List <GeosyncWCF.RequestMethodType> reqMethods = new List<GeosyncWCF.RequestMethodType>();
-            GeosyncWCF.RequestMethodType reqMethod = new GeosyncWCF.RequestMethodType();
+            List <RequestMethodType> reqMethods = new List<RequestMethodType>();
+            RequestMethodType reqMethod = new RequestMethodType();
             reqMethod.href = ServiceData.ServiceUrlWithQuestionMark();
             reqMethods.Add(reqMethod);
             
 
             //POST
-            GeosyncWCF.ItemsChoiceType ictPost = new GeosyncWCF.ItemsChoiceType();
-            ictPost = new GeosyncWCF.ItemsChoiceType();
-            ictPost = GeosyncWCF.ItemsChoiceType.Post;            
+            ItemsChoiceType ictPost = new ItemsChoiceType();
+            ictPost = new ItemsChoiceType();
+            ictPost = ItemsChoiceType.Post;            
             listIct.Add(ictPost);                       
-            reqMethod = new GeosyncWCF.RequestMethodType();
+            reqMethod = new RequestMethodType();
             reqMethod.href = ServiceData.ServiceUrl(true);
             reqMethods.Add(reqMethod);
             dcp.Item.Items =  reqMethods.ToArray();
@@ -645,7 +646,7 @@ namespace Kartverket.Geosynkronisering.Database
             node.DCP = dcpList.ToArray();            
             if (parameterName != String.Empty)
             {
-                List<GeosyncWCF.DomainType> lstDomains = new List<GeosyncWCF.DomainType>();
+                List<DomainType> lstDomains = new List<DomainType>();
                 lstDomains.Add(CreateParameter(parameterName, parameterValues));
                 node.Parameter = lstDomains.ToArray();
             }
