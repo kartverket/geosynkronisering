@@ -559,9 +559,9 @@ namespace Kartverket.Geosynkronisering.Database
                 List<GeosyncWCF.Title> lstTitles = new List<GeosyncWCF.Title>();
                 GeosyncWCF.Title title = new GeosyncWCF.Title();
                 title.lang="no";
-                title.Value=DatasetsData.Name(id);                
+                title.Value=DatasetsData.Name(id);
                 lstTitles.Add(title);
-                featType.Title = lstTitles.ToArray();                
+                featType.Title = lstTitles.ToArray();
                 featType.OutputFormats = new GeosyncWCF.OutputFormatListType();
                 List<string> formats = new List<string>();
                 formats.Add("text/xml; subtype=gml/3.2.1"); //DB?
@@ -571,7 +571,8 @@ namespace Kartverket.Geosynkronisering.Database
                 wgs84Box.LowerCorner = DatasetsData.LowerCornerCoords(id);
                 wgs84Box.UpperCorner = DatasetsData.UpperCornerCoords(id);
                 lstWgs84Box.Add(wgs84Box);
-                featType.WGS84BoundingBox = lstWgs84Box.ToArray();                
+                if ((wgs84Box.LowerCorner != "") || (wgs84Box.UpperCorner != ""))
+                    featType.WGS84BoundingBox = lstWgs84Box.ToArray();
                 lstFeatTypes.Add(featType);
                 dataset.featureTypes = lstFeatTypes.ToArray();
                 datasets.Add(dataset);
