@@ -473,7 +473,7 @@ namespace Kartverket.Geosynkronisering.Database
 
             rootCapabilities.OperationsMetadata = new OperationsMetadata();
             List<Operation> listLst = new List<Operation>();
-            Operation operationNode = CreateOperation("GetCababilities", "Acceptversions", "2.0.0"); //TODO, må inn i databasen
+            Operation operationNode = CreateOperation("GetCapabilities", "Acceptversions", "2.0.0"); //TODO, må inn i databasen
             listLst.Add(operationNode);
             operationNode = CreateOperation("DescribeFeatureType", "", "");
             listLst.Add(operationNode);
