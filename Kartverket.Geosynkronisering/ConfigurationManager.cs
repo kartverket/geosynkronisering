@@ -563,6 +563,9 @@ namespace Kartverket.Geosynkronisering.Database
                 title.Value=DatasetsData.Name(id);
                 lstTitles.Add(title);
                 featType.Title = lstTitles.ToArray();
+                featType.Items = new[] { "urn:ogc:def:crs:EPSG::" + DatasetsData.DefaultCrs(id) };
+                featType.ItemsElementName = new ItemsChoiceType1[1];
+                featType.ItemsElementName.SetValue(ItemsChoiceType1.DefaultCRS, 0);
                 featType.OutputFormats = new OutputFormatListType();
                 List<string> formats = new List<string>();
                 formats.Add("text/xml; subtype=gml/3.2.1"); //DB?
