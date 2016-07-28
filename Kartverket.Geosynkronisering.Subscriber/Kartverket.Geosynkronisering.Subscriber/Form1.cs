@@ -769,42 +769,19 @@ namespace Kartverket.Geosynkronisering.Subscriber
         private void GetCapabilitiesXml(string url, string UserName, string Password)
         {
             dgvProviderDataset.DataSource = _synchController.GetCapabilitiesProviderDataset(url, UserName, Password);
-            IDictionary<string, IList<object>> visibleColumns = new Dictionary<string, IList<object>>();
-            IList<object> columnFormat = new List<object>();
-            columnFormat.Add("Datasett");
-            columnFormat.Add("1");
-            columnFormat.Add(DataGridViewAutoSizeColumnMode.AllCells);
-            visibleColumns.Add("name", columnFormat);
-            columnFormat = new List<object>();
-            columnFormat.Add("Applikasjonsskjema");
-            columnFormat.Add("2");
-            columnFormat.Add(DataGridViewAutoSizeColumnMode.ColumnHeader);
-            visibleColumns.Add("appschema", columnFormat);
-            columnFormat = new List<object>();
-            columnFormat.Add("Navnerom");
-            columnFormat.Add("3");
-            columnFormat.Add(DataGridViewAutoSizeColumnMode.Fill);
-            visibleColumns.Add("targetnamespace", columnFormat);
-            columnFormat = new List<object>();
-            columnFormat.Add("Datasett ID");
-            columnFormat.Add("4");
-            columnFormat.Add(DataGridViewAutoSizeColumnMode.ColumnHeader);
-            visibleColumns.Add("providerdatasetid", columnFormat);
+            List<string> visibleColumns = new List<string>()
+            {
+                "Name",
+                "ProviderDatasetId",
+                "Applicationschema"
+            };
 
             foreach (DataGridViewColumn col in dgvProviderDataset.Columns)
-            {
-                col.Visible = false;
-                if (visibleColumns.ContainsKey(col.Name.ToLower()))
-                {
-                    col.Visible = true;
-                    columnFormat = visibleColumns[col.Name.ToLower()];
-                    col.HeaderText = columnFormat[0].ToString();
-                    col.DisplayIndex = Convert.ToInt32(columnFormat[1]);
-                    col.AutoSizeMode = (DataGridViewAutoSizeColumnMode) columnFormat[2];
-                }
-            }
+                if (!visibleColumns.Contains(col.Name))
+                    col.Visible = false;
+
             dgvProviderDataset.AutoSize = true;
-            dgvProviderDataset.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvProviderDataset.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
         }
 
         protected void Hourglass(bool Show)
@@ -846,7 +823,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             SubscriberDatasetManager.AddEmptyDataset();
             InitializeDatasetGrid();
-            FillComboBoxDatasetName();
+                FillComboBoxDatasetName();
         }
     }
 }
