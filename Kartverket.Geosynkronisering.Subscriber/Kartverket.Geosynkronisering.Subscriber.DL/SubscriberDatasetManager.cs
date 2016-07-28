@@ -79,7 +79,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 dataset.ProviderDatasetId = geoClientDataset.ProviderDatasetId;
                 dataset.SyncronizationUrl = geoClientDataset.SynchronizationUrl;
                 dataset.ClientWfsUrl = geoClientDataset.ClientWfsUrl;
-                dataset.TargetNamespace = geoClientDataset.TargetNamespace;
+                dataset.Applicationschema = geoClientDataset.Applicationschema;
                 dataset.MappingFile = geoClientDataset.MappingFile;
                 dataset.AbortedEndIndex = geoClientDataset.AbortedEndIndex;
                 dataset.AbortedTransaction = geoClientDataset.AbortedTransaction;
@@ -106,7 +106,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                                        ClientWfsUrl = dataset.ClientWfsUrl,
                                        MaxCount = dataset.MaxCount.HasValue ? dataset.MaxCount.Value : -1,
                                        ProviderDatasetId = dataset.ProviderDatasetId,
-                                       TargetNamespace = dataset.TargetNamespace,
+                                       Applicationschema = dataset.Applicationschema,
                                        MappingFile = dataset.MappingFile,
                                        AbortedEndIndex = dataset.AbortedEndIndex,
                                        AbortedTransaction = dataset.AbortedTransaction,
@@ -221,7 +221,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         {
             using (var localDb = new geosyncDBEntities())
             {
-                var res = from d in localDb.Dataset where d.DatasetId == DatasetID select d.TargetNamespace;
+                var res = from d in localDb.Dataset where d.DatasetId == DatasetID select d.Applicationschema;
                 if (res.First() != null) return res.First().ToString(); else return "";
             }
         }

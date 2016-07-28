@@ -45,7 +45,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 ds.Name = dst.name;
                 DomainType dt = GetConstraint("CountDefault", rootCapabilities.OperationsMetadata.Constraint);
                 if (dt != null) ds.MaxCount = Convert.ToInt32(dt.DefaultValue.Value);
-                ds.TargetNamespace = dst.applicationSchema;
+                ds.Applicationschema = dst.applicationSchema;
                 Operation op = GetOperation("OrderChangelog", rootCapabilities.OperationsMetadata.Operation);
                 if (op != null)
                 {

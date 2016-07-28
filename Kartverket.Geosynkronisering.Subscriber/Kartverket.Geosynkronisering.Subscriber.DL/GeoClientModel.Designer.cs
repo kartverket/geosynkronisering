@@ -302,24 +302,24 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
-        public global::System.String TargetNamespace
+        public global::System.String Applicationschema
         {
             get
             {
-                return _TargetNamespace;
+                return _Applicationschema;
             }
             set
             {
-                OnTargetNamespaceChanging(value);
-                ReportPropertyChanging("TargetNamespace");
-                _TargetNamespace = StructuralObject.SetValidValue(value, true);
-                ReportPropertyChanged("TargetNamespace");
-                OnTargetNamespaceChanged();
+                OnApplicationschemaChanging(value);
+                ReportPropertyChanging("Applicationschema");
+                _Applicationschema = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("Applicationschema");
+                OnApplicationschemaChanged();
             }
         }
-        private global::System.String _TargetNamespace;
-        partial void OnTargetNamespaceChanging(global::System.String value);
-        partial void OnTargetNamespaceChanged();
+        private global::System.String _Applicationschema;
+        partial void OnApplicationschemaChanging(global::System.String value);
+        partial void OnApplicationschemaChanged();
     
         /// <summary>
         /// No Metadata Documentation available.

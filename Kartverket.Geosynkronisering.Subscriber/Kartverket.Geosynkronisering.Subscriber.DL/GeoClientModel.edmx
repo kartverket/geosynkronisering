@@ -47,7 +47,7 @@
           <Property Type="String" Name="ClientWfsUrl" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="MaxCount" />
           <Property Type="String" Name="ProviderDatasetId" FixedLength="false" MaxLength="100" Unicode="true" />
-          <Property Type="String" Name="TargetNamespace" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Applicationschema" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="MappingFile" MaxLength="260" FixedLength="false" Unicode="true" />
           <Property Name="AbortedEndIndex" Type="Int64" Nullable="true" />
           <Property Name="AbortedTransaction" Type="Int64" Nullable="true" />
@@ -73,7 +73,7 @@
           <ScalarProperty Name="ClientWfsUrl" ColumnName="ClientWfsUrl" />
           <ScalarProperty Name="MaxCount" ColumnName="MaxCount" />
           <ScalarProperty Name="ProviderDatasetId" ColumnName="ProviderDatasetId" />
-          <ScalarProperty Name="TargetNamespace" ColumnName="TargetNamespace" />
+          <ScalarProperty Name="Applicationschema" ColumnName="TargetNamespace" />
           <ScalarProperty Name="MappingFile" ColumnName="MappingFile" />
           <ScalarProperty Name="AbortedEndIndex" ColumnName="AbortedEndIndex" />
           <ScalarProperty Name="AbortedTransaction" ColumnName="AbortedTransaction" />
