@@ -45,7 +45,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             {
                 List<string> invisibleColumns = new List<string>()
                 {
-                    //"DatasetId",
+                    "DatasetId",
                     "AbortedEndIndex",
                     "AbortedTransaction",
                     "AbortedChangelogPath",
@@ -63,6 +63,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 };
 #endif
 
+                dgDataset.AutoSize = true;
+                dgDataset.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
 
             }
             catch (Exception ex)
