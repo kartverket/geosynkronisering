@@ -37,12 +37,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
 
                 // Get Mappingfile and TargetNamespace from database
                 var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
-
-                // TODO: read namespace from applicationschema. This assumption is not guaranteed to yield correct results.
-                string applicationschema = dataset.Applicationschema;
-                string applicationschemaFileName = applicationschema.Split('/')[applicationschema.Split('/').Length - 1];
-                string namespaceUri = applicationschema.Replace(applicationschemaFileName, "");
-
+                XDocument xdoc = XDocument.Load(dataset.Applicationschema);
+                string namespaceUri = xdoc.Root.Attribute("targetNamespace").Value;
+                
                 //mappingFileName = path.Substring(0, path.LastIndexOf("bin")) + dataset.MappingFile; //"SchemaMapping" + @"\" + dataset.MappingFile;
                 var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 
