@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kartverket.Geosynkronisering.Services", "Kartverket.Geosynkronisering\Kartverket.Geosynkronisering.Services.csproj", "{57502AAF-881B-4939-B311-720FC3B447AC}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C86567FF-0EAF-42A5-9835-6BB831CD2BCD}"
 	ProjectSection(SolutionItems) = preProject
 		Kartverket.Geosynkronisering.vsmdi = Kartverket.Geosynkronisering.vsmdi
@@ -19,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{45D132
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kartverket.Geosynkronisering.Services", "Kartverket.Geosynkronisering\Kartverket.Geosynkronisering.Services.csproj", "{57502AAF-881B-4939-B311-720FC3B447AC}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 2
@@ -26,6 +26,7 @@ Global
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs12
 		SccLocalPath0 = .
 		SccProjectUniqueName1 = Kartverket.Geosynkronisering\\Kartverket.Geosynkronisering.Services.csproj
+		SccProjectTopLevelParentUniqueName1 = Kartverket.Geosynkronisering.sln
 		SccProjectName1 = Kartverket.Geosynkronisering
 		SccLocalPath1 = Kartverket.Geosynkronisering
 	EndGlobalSection
@@ -51,6 +52,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{57502AAF-881B-4939-B311-720FC3B447AC} = {C86567FF-0EAF-42A5-9835-6BB831CD2BCD}
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
