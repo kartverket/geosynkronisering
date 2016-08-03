@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Request>
-<service>REP</service>
-<request>OrderChangelog</request>
-<version>2.0.0</version>
-<startindex>42</startindex>
-<count>100</count>
-<filter>filter_to_be_done</filter>
-</Request>
