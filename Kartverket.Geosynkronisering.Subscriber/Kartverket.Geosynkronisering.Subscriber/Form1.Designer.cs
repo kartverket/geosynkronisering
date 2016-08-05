@@ -511,7 +511,8 @@
             // 
             // txbProviderURL
             // 
-            this.txbProviderURL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txbProviderURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbProviderURL.Location = new System.Drawing.Point(199, 738);
             this.txbProviderURL.Margin = new System.Windows.Forms.Padding(4);
             this.txbProviderURL.Name = "txbProviderURL";
