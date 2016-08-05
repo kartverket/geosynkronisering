@@ -827,5 +827,13 @@ namespace Kartverket.Geosynkronisering.Subscriber
             InitializeDatasetGrid();
                 FillComboBoxDatasetName();
         }
+
+        private void textBoxPassword_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                btnGetProviderDatasets_Click(sender, e);
+            }
+        }
     }
 }
