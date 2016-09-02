@@ -56,9 +56,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{57502AAF-881B-4939-B311-720FC3B447AC} = {C86567FF-0EAF-42A5-9835-6BB831CD2BCD}
 	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Kartverket.Geosynkronisering.vsmdi
 	EndGlobalSection
