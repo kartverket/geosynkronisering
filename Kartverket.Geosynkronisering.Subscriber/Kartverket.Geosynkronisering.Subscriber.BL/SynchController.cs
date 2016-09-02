@@ -413,8 +413,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             if (lastChangeIndexSubscriber >= lastChangeIndexProvider)
             {
                 logMessage = "Changelog has already been downloaded and handled:";
-                //this.OnUpdateLogList(logMessage); // Raise event to UI
-                //this.OnNewSynchMilestoneReached(logMessage);
                 logMessage += " Provider lastIndex:" + lastChangeIndexProvider + " Subscriber lastChangeIndex: " +
                               lastChangeIndexSubscriber;
                 Logger.Info(logMessage);
@@ -424,29 +422,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
 
             OnNewSynchMilestoneReached("Order Changelog. Wait...");
-
-            var maxCount = SubscriberDatasetManager.GetMaxCount(datasetId);
-
-            var numberOfFeatures = lastChangeIndexProvider - lastChangeIndexSubscriber;
-            var numberOfOrders = (numberOfFeatures/maxCount);
-
-            if (lastChangeIndexProvider > int.MaxValue)
-            {
-                // TODO: Fix for Norkart QMS Provider, TotalNumberOfOrders is not available here
-                // Assume Norkart QMS Provider, not a sequential number
-                Logger.Info(
-                    "DoSyncronization: Probably QMS Provider,  Provider lastIndex is not sequential, just a transaction number!");
-                numberOfOrders = 10; // Just a guess
-            }
-
-            if (numberOfFeatures%maxCount > 0)
-                ++numberOfOrders;
-
-            Logger.Info("DoSyncronization: numberOfFeatures:{0} numberOfOrders:{1} maxCount:{2}", numberOfFeatures,
-                numberOfOrders, maxCount);
-            OnUpdateLogList("MaxCount: " + maxCount);
-
-            OnOrderProcessingStart(numberOfOrders*100);
 
             return lastChangeIndexProvider;
         }
