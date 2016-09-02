@@ -9,11 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kartverket.Geosynkroniserin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kartverket.Geosynkronisering.Subscriber", "Kartverket.Geosynkronisering.Subscriber\Kartverket.Geosynkronisering.Subscriber.csproj", "{4661005E-1CAB-4953-81E0-5A5A78BBDBB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kartverket.Geosynkronisering.Subscriber.Test", "Kartverket.Geosynkronisering.Subscriber.Test\Kartverket.Geosynkronisering.Subscriber.Test.csproj", "{C3CA34BD-8DF2-41FC-AE46-1837D8121D04}"
-EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 5
+		SccNumberOfProjects = 4
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs12
 		SccLocalPath0 = .
@@ -26,9 +24,6 @@ Global
 		SccProjectUniqueName3 = Kartverket.Geosynkronisering.Subscriber\\Kartverket.Geosynkronisering.Subscriber.csproj
 		SccProjectName3 = Kartverket.Geosynkronisering.Subscriber
 		SccLocalPath3 = Kartverket.Geosynkronisering.Subscriber
-		SccProjectUniqueName4 = Kartverket.Geosynkronisering.Subscriber.Test\\Kartverket.Geosynkronisering.Subscriber.Test.csproj
-		SccProjectName4 = Kartverket.Geosynkronisering.Subscriber.Test
-		SccLocalPath4 = Kartverket.Geosynkronisering.Subscriber.Test
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,10 +42,6 @@ Global
 		{4661005E-1CAB-4953-81E0-5A5A78BBDBB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4661005E-1CAB-4953-81E0-5A5A78BBDBB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4661005E-1CAB-4953-81E0-5A5A78BBDBB5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C3CA34BD-8DF2-41FC-AE46-1837D8121D04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C3CA34BD-8DF2-41FC-AE46-1837D8121D04}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C3CA34BD-8DF2-41FC-AE46-1837D8121D04}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C3CA34BD-8DF2-41FC-AE46-1837D8121D04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

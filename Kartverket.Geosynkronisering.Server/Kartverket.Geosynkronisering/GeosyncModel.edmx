@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="geosyncModel.Store" Alias="Self" Provider="System.Data.SqlServerCe.4.0" ProviderManifestToken="4.0" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+  <EntityContainer Name="geosyncModelStoreContainer">
+    <EntitySet Name="Datasets" EntityType="geosyncModel.Store.Datasets" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ServerConfigs" EntityType="geosyncModel.Store.ServerConfigs" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Services" EntityType="geosyncModel.Store.Services" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="StoredChangelogs" EntityType="geosyncModel.Store.StoredChangelogs" store:Type="Tables" Schema="dbo" />
+  </EntityContainer>
+  <EntityType Name="Datasets">
+    <Key>
+      <PropertyRef Name="DatasetId" />
+    </Key>
+    <Property Name="DatasetId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="SchemaFileUri" Type="nvarchar" Nullable="true" MaxLength="256" />
+    <Property Name="DatasetProvider" Type="nvarchar" Nullable="true" MaxLength="256" />
+    <Property Name="ServerMaxCount" Type="int" Nullable="true" />
+    <Property Name="DatasetConnection" Type="nvarchar" Nullable="true" MaxLength="256" />
+    <Property Name="DBSchema" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="TransformationConnection" Type="nvarchar" Nullable="true" MaxLength="256" />
+    <Property Name="DefaultCrs" Type="nvarchar" Nullable="true" MaxLength="30" />
+    <Property Name="UpperCornerCoords" Type="nvarchar" Nullable="true" MaxLength="30" />
+    <Property Name="LowerCornerCoords" Type="nvarchar" Nullable="true" MaxLength="30" />
+    <Property Name="TargetNamespace" Type="nvarchar" Nullable="true" MaxLength="256" />
+    <Property Name="TargetNamespacePrefix" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="Version" Type="nvarchar" Nullable="true" />
+  </EntityType>
+  <EntityType Name="ServerConfigs">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="FTPUrl" Type="nvarchar" Nullable="true" MaxLength="1024" />
+    <Property Name="FTPUser" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="FTPPwd" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="ID" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Services">
+    <Key>
+      <PropertyRef Name="ServiceID" />
+    </Key>
+    <Property Name="Title" Type="nvarchar" Nullable="true" MaxLength="50" />
+    <Property Name="Abstract" Type="nvarchar" Nullable="true" MaxLength="200" />
+    <Property Name="Keywords" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="Fees" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="AccessConstraints" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="ProviderName" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="ProviderSite" Type="nvarchar" Nullable="true" MaxLength="255" />
+    <Property Name="IndividualName" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="Phone" Type="nvarchar" Nullable="true" MaxLength="15" />
+    <Property Name="Facsimile" Type="nvarchar" Nullable="true" MaxLength="15" />
+    <Property Name="Deliverypoint" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="City" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="PostalCode" Type="nvarchar" Nullable="true" MaxLength="4" />
+    <Property Name="Country" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="EMail" Type="nvarchar" Nullable="true" MaxLength="255" />
+    <Property Name="OnlineResourcesUrl" Type="nvarchar" Nullable="true" MaxLength="1024" />
+    <Property Name="HoursOfService" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="ContactInstructions" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="Role" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="ServiceURL" Type="nvarchar" Nullable="true" MaxLength="1024" />
+    <Property Name="ServiceID" Type="nvarchar" Nullable="false" MaxLength="100" />
+    <Property Name="Namespace" Type="nvarchar" Nullable="true" />
+    <Property Name="SchemaLocation" Type="nvarchar" Nullable="true" />
+  </EntityType>
+  <EntityType Name="StoredChangelogs">
+    <Key>
+      <PropertyRef Name="ChangelogId" />
+    </Key>
+    <Property Name="Name" Type="nvarchar" Nullable="true" MaxLength="255" />
+    <Property Name="OrderUri" Type="nvarchar" Nullable="true" MaxLength="255" />
+    <Property Name="StartIndex" Type="int" Nullable="true" />
+    <Property Name="DownloadUri" Type="nvarchar" Nullable="true" MaxLength="255" />
+    <Property Name="EndIndex" Type="int" Nullable="true" />
+    <Property Name="Status" Type="nvarchar" Nullable="true" MaxLength="100" />
+    <Property Name="Stored" Type="bit" Nullable="true" />
+    <Property Name="ChangelogId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DatasetId" Type="int" Nullable="true" />
+    <Property Name="DateCreated" Type="datetime" Nullable="true" />
+  </EntityType>
+</Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="geosyncModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="geosyncEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Datasets" EntityType="geosyncModel.Dataset" />
+          <EntitySet Name="ServerConfigs" EntityType="geosyncModel.ServerConfig" />
+          <EntitySet Name="Services" EntityType="geosyncModel.Service" />
+          <EntitySet Name="StoredChangelogs" EntityType="geosyncModel.StoredChangelog" />
+        </EntityContainer>
+        <EntityType Name="Dataset">
+          <Key>
+            <PropertyRef Name="DatasetId" />
+          </Key>
+          <Property Type="Int32" Name="DatasetId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Name" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="SchemaFileUri" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="DatasetProvider" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="ServerMaxCount" />
+          <Property Type="String" Name="DatasetConnection" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="DBSchema" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="TransformationConnection" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="DefaultCrs" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="UpperCornerCoords" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="LowerCornerCoords" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="TargetNamespace" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="TargetNamespacePrefix" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Version" Type="String" Nullable="true" />
+        </EntityType>
+        <EntityType Name="ServerConfig">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Type="String" Name="FTPUrl" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FTPUser" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FTPPwd" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="ID" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Service">
+          <Key>
+            <PropertyRef Name="ServiceID" />
+          </Key>
+          <Property Type="String" Name="Title" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Abstract" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Keywords" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Fees" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="AccessConstraints" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ProviderName" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ProviderSite" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="IndividualName" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Phone" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Facsimile" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Deliverypoint" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="City" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="PostalCode" MaxLength="4" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Country" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="EMail" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="OnlineResourcesUrl" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="HoursOfService" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ContactInstructions" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Role" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ServiceURL" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ServiceID" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Namespace" Type="String" Nullable="true" />
+          <Property Name="SchemaLocation" Type="String" Nullable="true" />
+        </EntityType>
+        <EntityType Name="StoredChangelog">
+          <Key>
+            <PropertyRef Name="ChangelogId" />
+          </Key>
+          <Property Type="String" Name="Name" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="OrderUri" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="StartIndex" />
+          <Property Type="String" Name="DownloadUri" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="EndIndex" />
+          <Property Type="String" Name="Status" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Boolean" Name="Stored" />
+          <Property Type="Int32" Name="ChangelogId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="DatasetId" />
+          <Property Type="DateTime" Name="DateCreated" Precision="3" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="geosyncModelStoreContainer" CdmEntityContainer="geosyncEntities">
+    <EntitySetMapping Name="Datasets">
+      <EntityTypeMapping TypeName="IsTypeOf(geosyncModel.Dataset)">
+        <MappingFragment StoreEntitySet="Datasets">
+          <ScalarProperty Name="DatasetId" ColumnName="DatasetId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="SchemaFileUri" ColumnName="SchemaFileUri" />
+          <ScalarProperty Name="DatasetProvider" ColumnName="DatasetProvider" />
+          <ScalarProperty Name="ServerMaxCount" ColumnName="ServerMaxCount" />
+          <ScalarProperty Name="DatasetConnection" ColumnName="DatasetConnection" />
+          <ScalarProperty Name="DBSchema" ColumnName="DBSchema" />
+          <ScalarProperty Name="TransformationConnection" ColumnName="TransformationConnection" />
+          <ScalarProperty Name="DefaultCrs" ColumnName="DefaultCrs" />
+          <ScalarProperty Name="UpperCornerCoords" ColumnName="UpperCornerCoords" />
+          <ScalarProperty Name="LowerCornerCoords" ColumnName="LowerCornerCoords" />
+          <ScalarProperty Name="TargetNamespace" ColumnName="TargetNamespace" />
+          <ScalarProperty Name="TargetNamespacePrefix" ColumnName="TargetNamespacePrefix" />
+          <ScalarProperty Name="Version" ColumnName="Version" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ServerConfigs">
+      <EntityTypeMapping TypeName="IsTypeOf(geosyncModel.ServerConfig)">
+        <MappingFragment StoreEntitySet="ServerConfigs">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="FTPUrl" ColumnName="FTPUrl" />
+          <ScalarProperty Name="FTPUser" ColumnName="FTPUser" />
+          <ScalarProperty Name="FTPPwd" ColumnName="FTPPwd" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Services">
+      <EntityTypeMapping TypeName="IsTypeOf(geosyncModel.Service)">
+        <MappingFragment StoreEntitySet="Services">
+          <ScalarProperty Name="ServiceID" ColumnName="ServiceID" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="Abstract" ColumnName="Abstract" />
+          <ScalarProperty Name="Keywords" ColumnName="Keywords" />
+          <ScalarProperty Name="Fees" ColumnName="Fees" />
+          <ScalarProperty Name="AccessConstraints" ColumnName="AccessConstraints" />
+          <ScalarProperty Name="ProviderName" ColumnName="ProviderName" />
+          <ScalarProperty Name="ProviderSite" ColumnName="ProviderSite" />
+          <ScalarProperty Name="IndividualName" ColumnName="IndividualName" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="Facsimile" ColumnName="Facsimile" />
+          <ScalarProperty Name="Deliverypoint" ColumnName="Deliverypoint" />
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="Country" ColumnName="Country" />
+          <ScalarProperty Name="EMail" ColumnName="EMail" />
+          <ScalarProperty Name="OnlineResourcesUrl" ColumnName="OnlineResourcesUrl" />
+          <ScalarProperty Name="HoursOfService" ColumnName="HoursOfService" />
+          <ScalarProperty Name="ContactInstructions" ColumnName="ContactInstructions" />
+          <ScalarProperty Name="Role" ColumnName="Role" />
+          <ScalarProperty Name="ServiceURL" ColumnName="ServiceURL" />
+          <ScalarProperty Name="Namespace" ColumnName="Namespace" />
+          <ScalarProperty Name="SchemaLocation" ColumnName="SchemaLocation" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="StoredChangelogs">
+      <EntityTypeMapping TypeName="IsTypeOf(geosyncModel.StoredChangelog)">
+        <MappingFragment StoreEntitySet="StoredChangelogs">
+          <ScalarProperty Name="ChangelogId" ColumnName="ChangelogId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="OrderUri" ColumnName="OrderUri" />
+          <ScalarProperty Name="StartIndex" ColumnName="StartIndex" />
+          <ScalarProperty Name="DownloadUri" ColumnName="DownloadUri" />
+          <ScalarProperty Name="EndIndex" ColumnName="EndIndex" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Stored" ColumnName="Stored" />
+          <ScalarProperty Name="DatasetId" ColumnName="DatasetId" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="False" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="UseLegacyProvider" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="GeosyncModel" ZoomLevel="100">
+        <EntityTypeShape EntityType="geosyncModel.Dataset" Width="1.5" PointX="2.25" PointY="0.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="geosyncModel.ServerConfig" Width="1.5" PointX="3.875" PointY="0.5" />
+        <EntityTypeShape EntityType="geosyncModel.Service" Width="1.5" PointX="5.5" PointY="0.5" />
+        <EntityTypeShape EntityType="geosyncModel.StoredChangelog" Width="1.5" PointX="0.625" PointY="0.5" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

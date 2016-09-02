@@ -79,13 +79,16 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 dataset.ProviderDatasetId = geoClientDataset.ProviderDatasetId;
                 dataset.SyncronizationUrl = geoClientDataset.SynchronizationUrl;
                 dataset.ClientWfsUrl = geoClientDataset.ClientWfsUrl;
-                dataset.TargetNamespace = geoClientDataset.TargetNamespace;
+                dataset.Applicationschema = geoClientDataset.Applicationschema;
                 dataset.MappingFile = geoClientDataset.MappingFile;
                 dataset.AbortedEndIndex = geoClientDataset.AbortedEndIndex;
                 dataset.AbortedTransaction = geoClientDataset.AbortedTransaction;
                 dataset.AbortedChangelogPath = geoClientDataset.AbortedChangelogPath;
                 dataset.ChangelogDirectory = geoClientDataset.ChangelogDirectory;
                 dataset.AbortedChangelogId = geoClientDataset.AbortedChangelogId;
+                dataset.UserName = geoClientDataset.UserName;
+                if (geoClientDataset.Password != "******")
+                    dataset.Password = geoClientDataset.Password;
 
                 localDb.SaveChanges();
                 return true;
@@ -103,13 +106,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                                        ClientWfsUrl = dataset.ClientWfsUrl,
                                        MaxCount = dataset.MaxCount.HasValue ? dataset.MaxCount.Value : -1,
                                        ProviderDatasetId = dataset.ProviderDatasetId,
-                                       TargetNamespace = dataset.TargetNamespace,
+                                       Applicationschema = dataset.Applicationschema,
                                        MappingFile = dataset.MappingFile,
                                        AbortedEndIndex = dataset.AbortedEndIndex,
                                        AbortedTransaction = dataset.AbortedTransaction,
                                        AbortedChangelogPath = dataset.AbortedChangelogPath,
                                        ChangelogDirectory = dataset.ChangelogDirectory,
-                                       AbortedChangelogId = dataset.AbortedChangelogId 
+                                       AbortedChangelogId = dataset.AbortedChangelogId,
+                                       UserName = dataset.UserName,
+                                       Password = dataset.Password
                                    };
             return geoClientDataset;
         }
@@ -216,12 +221,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         {
             using (var localDb = new geosyncDBEntities())
             {
-                var res = from d in localDb.Dataset where d.DatasetId == DatasetID select d.TargetNamespace;
+                var res = from d in localDb.Dataset where d.DatasetId == DatasetID select d.Applicationschema;
                 if (res.First() != null) return res.First().ToString(); else return "";
             }
         }
 
-        public static bool AddDatasets(IBindingList datasetBindingList, IList<int> selectedDatasets)
+        public static bool AddDatasets(IBindingList datasetBindingList, IList<int> selectedDatasets, string providerUrl, string UserName, string Password)
         {
             using (var localDb = new geosyncDBEntities())
             {
@@ -233,6 +238,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                         ds.DatasetId = GetNextDatasetID();
                         ds.LastIndex = 0;
                         ds.ClientWfsUrl = "";
+                        ds.UserName = UserName;
+                        ds.Password = Password;
+                        ds.SyncronizationUrl = providerUrl;
                         localDb.AddObject(ds.EntityKey.EntitySetName, ds);
                         localDb.SaveChanges();
                         localDb.AcceptAllChanges();
@@ -245,6 +253,30 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 }
             }
 
+            return true;
+        }
+
+        public static bool AddEmptyDataset()
+        {
+            using (var localDb = new geosyncDBEntities())
+            {
+                    var ds = new Dataset();
+                    try
+                    {
+                        ds.DatasetId = GetNextDatasetID();
+                        ds.LastIndex = 0;
+                        ds.ClientWfsUrl = "";
+                        localDb.AddObject("Dataset", ds);
+                        localDb.SaveChanges();
+                        localDb.AcceptAllChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogException(LogLevel.Error, "Error saving selected datasets!", ex);
+                        return false;
+                    }
+                }
+            
             return true;
         }
 

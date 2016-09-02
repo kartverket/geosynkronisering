@@ -51,12 +51,20 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zip">
       <HintPath>..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
     </Reference>
-    <Reference Include="NLog">
-      <HintPath>..\packages\NLog.2.1.0\lib\net40\NLog.dll</HintPath>
+    <Reference Include="NLog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -82,19 +90,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Download\DownloadController.cs" />
-    <Compile Include="Download\FileTransferHandler.cs" />
     <Compile Include="FeedbackController.cs" />
     <Compile Include="SchemaMapping\GeoserverMapping.cs" />
     <Compile Include="SchemaMapping\ITypeMappings.cs" />
     <Compile Include="SchemaMapping\SchemaTransform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SynchController.cs" />
-    <Compile Include="Utils\Misc.cs" />
-    <Compile Include="Utils\XmlUtils.cs" />
     <Compile Include="WfsController.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.Config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -127,14 +131,6 @@
       <Project>{680da92d-1f96-4feb-87ec-52140faffd69}</Project>
       <Name>Kartverket.Geosynkronisering.Subscriber.DL</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="SchemaMapping\ar5FeatureType-mapping-file.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SchemaMapping\kystFeatureType-mapping-file.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

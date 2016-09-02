@@ -10372,42 +10372,66 @@ namespace Kartverket.GeosyncWCF
         
         public void AcknowlegeChangelogDownloaded(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogId)
         {
+#if DEBUG
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => { return true; };
+#endif
             base.Channel.AcknowlegeChangelogDownloaded(changelogId);
         }
         
         public void CancelChangelog(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid)
         {
+#if DEBUG
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => { return true; };
+#endif
             base.Channel.CancelChangelog(changelogid);
         }
         
         public object DescribeFeatureType(string datasetId, Kartverket.GeosyncWCF.DescribeFeatureTypeType describefeaturetype1)
         {
+#if DEBUG
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => { return true; };
+#endif
             return base.Channel.DescribeFeatureType(datasetId, describefeaturetype1);
         }
         
         public Kartverket.GeosyncWCF.REP_CapabilitiesType GetCapabilities(Kartverket.GeosyncWCF.GetCapabilitiesType1 getcapabilities1)
         {
+#if DEBUG
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => { return true; };
+#endif
             return base.Channel.GetCapabilities(getcapabilities1);
         }
         
         public Kartverket.GeosyncWCF.ChangelogType GetChangelog(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid)
         {
+#if DEBUG
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => { return true; };
+#endif
             return base.Channel.GetChangelog(changelogid);
         }
         
         public Kartverket.GeosyncWCF.ChangelogStatusType GetChangelogStatus(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid)
         {
+#if DEBUG
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => { return true; };
+#endif
             return base.Channel.GetChangelogStatus(changelogid);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         Kartverket.GeosyncWCF.GetLastIndexResponse Kartverket.GeosyncWCF.WebFeatureServiceReplicationPort.GetLastIndex(Kartverket.GeosyncWCF.GetLastIndexRequest request)
         {
+#if DEBUG
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => { return true; };
+#endif
             return base.Channel.GetLastIndex(request);
         }
         
         public string GetLastIndex(string datasetId)
         {
+#if DEBUG
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => { return true; };
+#endif
             Kartverket.GeosyncWCF.GetLastIndexRequest inValue = new Kartverket.GeosyncWCF.GetLastIndexRequest();
             inValue.datasetId = datasetId;
             Kartverket.GeosyncWCF.GetLastIndexResponse retVal = ((Kartverket.GeosyncWCF.WebFeatureServiceReplicationPort)(this)).GetLastIndex(inValue);
@@ -10417,11 +10441,17 @@ namespace Kartverket.GeosyncWCF
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         Kartverket.GeosyncWCF.ListStoredChangelogsResponse Kartverket.GeosyncWCF.WebFeatureServiceReplicationPort.ListStoredChangelogs(Kartverket.GeosyncWCF.ListStoredChangelogsRequest request)
         {
+#if DEBUG
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => { return true; };
+#endif
             return base.Channel.ListStoredChangelogs(request);
         }
         
         public Kartverket.GeosyncWCF.StoredChangelogType[] ListStoredChangelogs(string datasetId)
         {
+#if DEBUG
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => { return true; };
+#endif
             Kartverket.GeosyncWCF.ListStoredChangelogsRequest inValue = new Kartverket.GeosyncWCF.ListStoredChangelogsRequest();
             inValue.datasetId = datasetId;
             Kartverket.GeosyncWCF.ListStoredChangelogsResponse retVal = ((Kartverket.GeosyncWCF.WebFeatureServiceReplicationPort)(this)).ListStoredChangelogs(inValue);
@@ -10430,6 +10460,9 @@ namespace Kartverket.GeosyncWCF
         
         public Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelog(Kartverket.GeosyncWCF.ChangelogOrderType order)
         {
+#if DEBUG
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => { return true; };
+#endif
             return base.Channel.OrderChangelog(order);
         }
     }
