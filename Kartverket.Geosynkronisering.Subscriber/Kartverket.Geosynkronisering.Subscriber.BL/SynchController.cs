@@ -38,10 +38,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         public TransactionSummary TransactionsSummary;
 
-
-        public IBindingList GetCapabilitiesProviderDataset(string url)
+        public IBindingList GetCapabilitiesProviderDataset(string url, string UserName, string Password)
         {
-            var cdb = new CapabilitiesDataBuilder(url);
+            var cdb = new CapabilitiesDataBuilder(url, UserName, Password);
             return cdb.ProviderDatasets;
         }
 
@@ -53,7 +52,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         {
             var dataset = SubscriberDatasetManager.GetDataset(datasetId);
             dataset.LastIndex = 0;
-            SubscriberDatasetManager.UpdateDataset(dataset);
+            ResetDataset(dataset, 0);
         }
 
         /// <summary>
@@ -68,22 +67,33 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                var client = new WebFeatureServiceReplicationPortClient();
-                client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
+                var client = buildClient(dataset);
+
                 var order = new ChangelogOrderType();
                 order.datasetId = dataset.ProviderDatasetId;
                 order.count = dataset.MaxCount.ToString();
                 order.startIndex = startIndex.ToString();
 
-                ChangelogIdentificationType resp = client.OrderChangelog(order);
+                var resp = client.OrderChangelog(order);
 
-                return resp.changelogId;
+                dataset.AbortedChangelogId = resp.changelogId;
+                SubscriberDatasetManager.UpdateDataset(dataset);
+                return dataset.AbortedChangelogId;
             }
             catch (Exception ex)
             {
                 Logger.ErrorException("OrderChangelog failed:", ex);
                 throw;
             }
+        }
+
+        private WebFeatureServiceReplicationPortClient buildClient(SubscriberDataset dataset)
+        {
+            var client = new WebFeatureServiceReplicationPortClient();
+            client.ClientCredentials.UserName.UserName = dataset.UserName;
+            client.ClientCredentials.UserName.Password = dataset.Password;
+            client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
+            return client;
         }
 
 
@@ -99,12 +109,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                var client = new WebFeatureServiceReplicationPortClient();
-                client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
+                var client = buildClient(dataset);
 
                 var id = new ChangelogIdentificationType {changelogId = changelogId};
 
-                ChangelogStatusType resp = client.GetChangelogStatus(id);
+                var resp = client.GetChangelogStatus(id);
 
                 return resp;
             }
@@ -128,39 +137,33 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                var client = new WebFeatureServiceReplicationPortClient();
-                client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
+                var client = buildClient(dataset);
 
                 var id = new ChangelogIdentificationType {changelogId = changelogId};
 
-                ChangelogType resp = client.GetChangelog(id);
+                var resp = client.GetChangelog(id);
 
-                string downloaduri = resp.downloadUri;
+                var downloaduri = resp.downloadUri;
 
                 // 20151215-Leg: Norkart downloaduri may contain .zip
                 Logger.Info("GetChangelog downloaduri: " + downloaduri);
-                string fileExtension = Path.GetExtension(downloaduri);
-                if (fileExtension != String.Empty)
-                {
-                    Logger.Info("GetChangelog downloaduri  contains fileextension:" + fileExtension);
-                    // Hack to remove eventual .zip from filename
-                    downloaduri = downloaduri.Replace(Path.GetExtension(downloaduri), "");
-                }
 
-
-                string tempDir = Environment.GetEnvironmentVariable("TEMP");
+                var changelogDir = string.IsNullOrEmpty(dataset.ChangelogDirectory)
+                    ? Environment.GetEnvironmentVariable("TEMP")
+                    : dataset.ChangelogDirectory;
 #if (NOT_FTP)
-                string fileName = tempDir + @"\" + changelogid + "_Changelog.xml";
+                string fileName = changelogDir + @"\" + changelogid + "_Changelog.xml";
 #else
+                CreateFolderIfMissing(changelogDir);
                 const string ftpPath = "abonnent";
-                Utils.Misc.CreateFolderIfMissing(tempDir + @"\" + ftpPath);
+                CreateFolderIfMissing(changelogDir + @"\" + ftpPath);
                 // Create the abonnent folder if missing               
 
-                string fileName = tempDir + @"\" + ftpPath + @"\" + Path.GetFileName(downloaduri) + ".zip";
+                var fileName = changelogDir + @"\" + ftpPath + @"\" + Path.GetFileName(downloaduri);
 #endif
 
                 downloadController = new DownloadController {ChangelogFilename = fileName};
-                downloadController.DownloadChangelog(downloaduri);
+                downloadController.DownloadChangelog(downloaduri, dataset);
             }
             catch (WebException webEx)
             {
@@ -186,8 +189,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                var client = new WebFeatureServiceReplicationPortClient();
-                client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
+                var client = buildClient(dataset);
 
                 var id = new ChangelogIdentificationType {changelogId = changelogId};
                 client.AcknowlegeChangelogDownloaded(id);
@@ -222,11 +224,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                var client = new WebFeatureServiceReplicationPortClient();
-                client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
+                var client = buildClient(dataset);
 
                 var lastIndexString = client.GetLastIndex(dataset.ProviderDatasetId);
-                long lastIndex = Convert.ToInt64(lastIndexString);
+                var lastIndex = Convert.ToInt64(lastIndexString);
 
                 return lastIndex;
             }
@@ -261,149 +262,17 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         {
             try
             {
-                // Create new stopwatch
+                var dataset = SubscriberDatasetManager.GetDataset(datasetId);
                 var stopwatch = Stopwatch.StartNew();
 
-                OnNewSynchMilestoneReached("GetLastIndexFromProvider");
+                var lastIndexProvider = performSynchronization(dataset, datasetId);
 
-                long lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
+                while (dataset.LastIndex <= lastIndexProvider)
+                    lastIndexProvider = performSynchronization(dataset, datasetId);
 
-                var logMessage = "GetLastIndexFromProvider lastIndex: " + lastChangeIndexProvider;
-                Logger.Info(logMessage);
-                OnUpdateLogList(logMessage);
-                OnNewSynchMilestoneReached("GetLastIndexFromProvider OK");
-
-                OnNewSynchMilestoneReached("GetLastIndexFromSubscriber");
-                long lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
-
-                logMessage = "GetLastChangeIndexSubscriber lastIndex: " + lastChangeIndexSubscriber;
-                Logger.Info(logMessage);
-                OnUpdateLogList(logMessage);
-                OnNewSynchMilestoneReached("GetLastIndexFromSubscriber OK");
-
-                if (lastChangeIndexSubscriber >= lastChangeIndexProvider)
-                {
-                    logMessage = "Changelog has already been downloaded and handled:";
-                    //this.OnUpdateLogList(logMessage); // Raise event to UI
-                    //this.OnNewSynchMilestoneReached(logMessage);
-                    logMessage += " Provider lastIndex:" + lastChangeIndexProvider + " Subscriber lastChangeIndex: " +
-                                  lastChangeIndexSubscriber;
-                    Logger.Info(logMessage);
-                    OnUpdateLogList(logMessage); // Raise event to UI
-                    OnNewSynchMilestoneReached(logMessage);
-                    return;
-                }
-
-                OnNewSynchMilestoneReached("Order Changelog. Wait...");
-
-                int maxCount = SubscriberDatasetManager.GetMaxCount(datasetId);
-
-                long numberOfFeatures = lastChangeIndexProvider - lastChangeIndexSubscriber;
-                long numberOfOrders = (numberOfFeatures/maxCount);
-
-                if (lastChangeIndexProvider > int.MaxValue)
-                {
-                    // TODO: Fix for Norkart QMS Provider, TotalNumberOfOrders is not available here
-                    // Assume Norkart QMS Provider, not a sequential number
-                    Logger.Info(
-                        "DoSyncronization: Probably QMS Provider,  Provider lastIndex is not sequential, just a transaction number!");
-                    numberOfOrders = 10; // Just a guess
-                }
-
-
-                if (numberOfFeatures%maxCount > 0)
-                    ++numberOfOrders;
-
-                Logger.Info("DoSyncronization: numberOfFeatures:{0} numberOfOrders:{1} maxCount:{2}", numberOfFeatures,
-                    numberOfOrders, maxCount);
-                OnUpdateLogList("MaxCount: " + maxCount);
-
-                #region Håvard
-
-                #region Lars
-
-                OnOrderProcessingStart(numberOfOrders*100);
-                int progressCounter = 0;
-
-                #endregion
-
-                int i = 0;
-                while (lastChangeIndexSubscriber < lastChangeIndexProvider)
-                {
-                    #region Lars
-
-                    OnOrderProcessingChange((progressCounter + 1)*100/2);
-
-                    #endregion
-
-                    // Do lots of stuff
-                    long startIndex = lastChangeIndexSubscriber + 1;
-                    string changeLogId = OrderChangelog(datasetId, startIndex);
-
-                    if (!CheckStatusForChangelogOnProvider(datasetId, changeLogId)) return;
-
-                    DownloadController downloadController;
-                    var responseOk = GetChangelog(datasetId, changeLogId, out downloadController);
-
-                    if (!responseOk)
-                    {
-                        return;
-                    }
-
-                    List<string> fileList = new List<string>();
-
-                    if (downloadController.IsFolder)
-                    {
-                        string[] fileArray = Directory.GetFiles(downloadController.ChangelogFilename);
-                        Array.Sort(fileArray);
-                        fileList = fileArray.ToList();
-                    }
-                    else
-                    {
-                        fileList.Add(downloadController.ChangelogFilename);
-                    }
-
-                    SubscriberDataset dataset = SubscriberDatasetManager.GetDataset(datasetId);
-
-                    //Rewrite files according to mappingfile if given
-                    if (!String.IsNullOrEmpty(dataset.MappingFile))
-                    {
-                        fileList = ChangeLogMapper(fileList, datasetId);
-                    }
-
-                    XElement changeLog;
-                    if (fileList.Count > 1 && lastChangeIndexSubscriber > 0)
-                    {
-                        changeLog = MergeChangelogs(fileList);
-                        PerformWfsTransaction(changeLog, datasetId, dataset, 1);
-                    }
-                    else
-                        foreach (string fileName in fileList)
-                        {
-                            changeLog = XElement.Load(fileName);
-                            if (!PerformWfsTransaction(changeLog, datasetId, dataset, i + 1))
-                                throw new Exception("WfsTransaction failed");
-
-                            if (!downloadController.IsFolder)
-                            {
-                                AcknowledgeChangelogDownloaded(datasetId, changeLogId);
-                            }
-
-                            OnOrderProcessingChange((progressCounter + 1)*100);
-                            ++progressCounter;
-                            i++;
-                        }
-
-                    lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
-                    lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
-                }
-
-                #endregion
-
-                // Stop timing
                 stopwatch.Stop();
-                TimeSpan ts = stopwatch.Elapsed;
-                string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
+                var ts = stopwatch.Elapsed;
+                var elapsedTime = string.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
 
                 OnUpdateLogList("Syncronization Completed. Elapsed time: " + elapsedTime);
                 Logger.Info("Syncronization Completed. Elapsed time: {0}", elapsedTime);
@@ -412,6 +281,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 OnOrderProcessingChange(int.MaxValue);
 
                 OnNewSynchMilestoneReached("Synch completed");
+
+
             }
             catch (WebException webEx)
             {
@@ -426,23 +297,213 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
+        private long performSynchronization(SubscriberDataset dataset, int datasetId)
+        {
+
+            //Check if previous transactions failed
+            if (dataset.AbortedEndIndex != null)
+            {
+                var transactionStart = dataset.AbortedTransaction ?? 0;
+                DoSyncronizationOffline(dataset.AbortedChangelogPath, datasetId, transactionStart);
+                return -1;
+            }
+
+            const int progressCounter = 0;
+            string changeLogId;
+
+            long lastIndexProvider = 0;
+
+            if (string.IsNullOrEmpty(dataset.AbortedChangelogId))
+            {
+                // Do lots of stuff
+                var startIndex = dataset.LastIndex + 1;
+
+                lastIndexProvider = PrepareForOrder(datasetId);
+
+                if (lastIndexProvider == 0) return -1;
+
+                OnOrderProcessingChange((progressCounter + 1)*100/2);
+
+                changeLogId = OrderChangelog(datasetId, startIndex);
+            }
+            else
+            {
+                changeLogId = dataset.AbortedChangelogId;
+                OnNewSynchMilestoneReached("Found changelogId " + dataset.AbortedChangelogId +
+                                           ". Querying for status.");
+            }
+
+            GetStatusForChangelogOnProvider(datasetId, changeLogId);
+
+            DownloadController downloadController;
+            var responseOk = GetChangelog(datasetId, changeLogId, out downloadController);
+
+            if (!responseOk)
+            {
+                return -1;
+            }
+
+            var fileList = GetChangelogFiles(downloadController.IsFolder,
+                downloadController.ChangelogFilename);
+
+
+            //Rewrite files according to mappingfile if given
+            if (!string.IsNullOrEmpty(dataset.MappingFile))
+            {
+                fileList = ChangeLogMapper(fileList, datasetId);
+            }
+
+            LoopChangeLog(fileList, dataset, datasetId, progressCounter, downloadController.ChangelogFilename, 0);
+
+            AcknowledgeChangelogDownloaded(datasetId, changeLogId);
+
+            return lastIndexProvider;
+        }
+
+        private static List<string> GetChangelogFiles(bool isFolder, string changelogPath)
+        {
+            var fileList = new List<string>();
+
+            if (isFolder)
+            {
+                var fileArray = Directory.GetFiles(changelogPath);
+                if (fileArray[0].Contains('_'))
+                {
+                    var comparison = new Comparison<string>(delegate(string a, string b)
+                    {
+                        return ExtractNumber(a).CompareTo(ExtractNumber(b));
+                    });
+
+                    Array.Sort(fileArray, comparison);
+
+                }
+                return fileArray.ToList();
+            }
+
+            fileList.Add(changelogPath);
+            return fileList;
+        }
+
+        private static int ExtractNumber(string a)
+        {
+            var aFileArray = a.Split('\\');
+            var aFile = aFileArray[aFileArray.Length - 1];
+            return int.Parse(aFile.Substring(0, aFile.IndexOf('_')));
+        }
+
+        private long PrepareForOrder(int datasetId)
+        {
+            OnNewSynchMilestoneReached("GetLastIndexFromProvider");
+
+            var lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
+
+            var logMessage = "GetLastIndexFromProvider lastIndex: " + lastChangeIndexProvider;
+            Logger.Info(logMessage);
+            OnUpdateLogList(logMessage);
+            OnNewSynchMilestoneReached("GetLastIndexFromProvider OK");
+
+            OnNewSynchMilestoneReached("GetLastIndexFromSubscriber");
+            var lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
+
+            logMessage = "GetLastChangeIndexSubscriber lastIndex: " + lastChangeIndexSubscriber;
+            Logger.Info(logMessage);
+            OnUpdateLogList(logMessage);
+            OnNewSynchMilestoneReached("GetLastIndexFromSubscriber OK");
+
+            if (lastChangeIndexSubscriber >= lastChangeIndexProvider)
+            {
+                logMessage = "Changelog has already been downloaded and handled:";
+                logMessage += " Provider lastIndex:" + lastChangeIndexProvider + " Subscriber lastChangeIndex: " +
+                              lastChangeIndexSubscriber;
+                Logger.Info(logMessage);
+                OnUpdateLogList(logMessage); // Raise event to UI
+                OnNewSynchMilestoneReached(logMessage);
+                return 0;
+            }
+
+            OnNewSynchMilestoneReached("Order Changelog. Wait...");
+
+            return lastChangeIndexProvider;
+        }
+
+        private bool LoopChangeLog(IEnumerable<string> fileList, SubscriberDataset dataset, int datasetId,
+            int progressCounter,
+            string changelogFilename, long transactionStart)
+        {
+            var i = 0;
+
+            var status = false;
+
+            XElement changeLog = null;
+
+            foreach (var fileName in fileList)
+            {
+                if (transactionStart > i)
+                {
+                    i++;
+                    continue;
+                }
+
+                changeLog = XElement.Load(fileName);
+
+                dataset.AbortedEndIndex = GetAbortedEndIndex(changeLog);
+                dataset.AbortedTransaction = i;
+                dataset.AbortedChangelogPath = changelogFilename;
+
+                SubscriberDatasetManager.UpdateDataset(dataset);
+                status = DoWfsTransaction(changeLog, datasetId, i + 1);
+                if (!status)
+                    throw new Exception("WfsTransaction failed");
+
+                OnOrderProcessingChange((progressCounter + 1)*100);
+                ++progressCounter;
+                i++;
+            }
+
+            if (changeLog != null)
+            {
+                ResetDataset(dataset, (long) changeLog.Attribute("endIndex"));
+            }
+
+            return status;
+        }
+
+        private static void ResetDataset(SubscriberDataset dataset, long endIndex)
+        {
+            if (endIndex > 0)
+                dataset.LastIndex = endIndex;
+            dataset.AbortedEndIndex = null;
+            dataset.AbortedTransaction = null;
+            dataset.AbortedChangelogId = null;
+            if (!string.IsNullOrEmpty(dataset.AbortedChangelogPath))
+            {
+                if (File.Exists(dataset.AbortedChangelogPath + ".zip"))
+                    File.Delete(dataset.AbortedChangelogPath + ".zip");
+                else
+                    File.Delete(dataset.AbortedChangelogPath);
+                Directory.Delete(dataset.AbortedChangelogPath, true);
+                dataset.AbortedChangelogPath = null;
+            }
+            SubscriberDatasetManager.UpdateDataset(dataset);
+        }
+
         /// <summary>
         /// Waiting until a specific changelog is available
         /// </summary>
         /// <param name="datasetId"></param>
         /// <param name="changeLogId"></param>
         /// <returns></returns>
-        private bool CheckStatusForChangelogOnProvider(int datasetId, string changeLogId)
+        private void GetStatusForChangelogOnProvider(int datasetId, string changeLogId)
         {
             try
             {
                 var changeLogStatus = GetChangelogStatusResponse(datasetId, changeLogId);
 
-                DateTime starttid = DateTime.Now;
-                long elapsedTicks = DateTime.Now.Ticks - starttid.Ticks;
+                var starttid = DateTime.Now;
+                var elapsedTicks = DateTime.Now.Ticks - starttid.Ticks;
 
                 var elapsedSpan = new TimeSpan(elapsedTicks);
-                int timeout = 15;
+                var timeout = 15;
                 //timeout = 50; // TODO: Fix for Norkart Provider,
 
                 while ((changeLogStatus == ChangelogStatusType.queued || changeLogStatus == ChangelogStatusType.working) &&
@@ -453,44 +514,41 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     elapsedSpan = new TimeSpan(elapsedTicks);
                     changeLogStatus = GetChangelogStatusResponse(datasetId, changeLogId);
                 }
-                if (changeLogStatus != ChangelogStatusType.finished)
+                if (changeLogStatus == ChangelogStatusType.finished)
+                    OnNewSynchMilestoneReached("ChangeLog from Provider ready for download.");
+                else
                 {
-                    if (changeLogStatus == ChangelogStatusType.cancelled)
+                    switch (changeLogStatus)
                     {
-                        Logger.Info("Cancelled by Server! Call provider.");
-                        OnNewSynchMilestoneReached("Cancelled ChangeLog from Provider. Contact the proivider.");
+                        case (ChangelogStatusType.cancelled):
+                            Logger.Info("Cancelled by Server! Call provider.");
+                            ResetDataset(SubscriberDatasetManager.GetDataset(datasetId), -1);
+                            throw new IOException("Recieved ChangelogStatus == cancelled from provider");
+                        case (ChangelogStatusType.failed):
+                            Logger.Info("ChangelogStatusType.failed waiting for ChangeLog from Provider");
+                            ResetDataset(SubscriberDatasetManager.GetDataset(datasetId), -1);
+                            throw new IOException("Recieved ChangelogStatus == failed from provider");
+                        default:
+                            Logger.Info("Timeout");
+                            throw new IOException("Timed out waiting for ChangelogStatus == finished from provider");
                     }
-                    else if (changeLogStatus == ChangelogStatusType.failed)
-                    {
-                        Logger.Info("ChangelogStatusType.failed waiting for ChangeLog from Provider");
-                        OnNewSynchMilestoneReached(
-                            "Failed waiting for ChangeLog from Provider. Contact the proivider.");
-                    }
-                    else
-                    {
-                        Logger.Info("Timeout");
-                        OnNewSynchMilestoneReached("Timeout waiting for ChangeLog from Provider.");
-                    }
-                    return false;
                 }
-                OnNewSynchMilestoneReached("ChangeLog from Provider ready for download.");
             }
             catch (Exception ex)
             {
                 Logger.ErrorException(
                     string.Format("Failed to get ChangeLog Status for changelog {0} from provider {1}", changeLogId,
                         "TEST"), ex);
-                return false;
+                throw new IOException(ex.Message);
             }
-            return true;
         }
 
         private static List<string> ChangeLogMapper(IEnumerable<string> fileList, int datasetId)
         {
-            List<string> newFileList = new List<string>();
-            foreach (string file in fileList)
+            var newFileList = new List<string>();
+            foreach (var file in fileList)
             {
-                string fileName = file;
+                var fileName = file;
 
                 //
                 // Schema transformation
@@ -508,46 +566,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return newFileList;
         }
 
-        private static XElement MergeChangelogs(IEnumerable<string> fileList)
-        {
-            string transactionsElementPath =
-                "{http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg}transactions";
-            bool firstFile = true;
-            XDocument mergedChangelog = new XDocument();
-            XElement originalChangelog;
-
-            foreach (string fileName in fileList)
-            {
-                if (firstFile)
-                {
-                    mergedChangelog.AddFirst(XElement.Load(fileName));
-                    firstFile = false;
-                }
-                else
-                {
-                    originalChangelog = XElement.Load(fileName);
-                    var originalTransactions = originalChangelog.Element(transactionsElementPath);
-                    if (originalTransactions != null)
-                        foreach (XElement wfsOperation in originalTransactions.Elements())
-                            if (mergedChangelog.Root != null)
-                            {
-                                var mergedTransactions = mergedChangelog.Root.Element(transactionsElementPath);
-                                if (mergedTransactions != null)
-                                    mergedTransactions.LastNode.AddAfterSelf(wfsOperation);
-                            }
-                }
-            }
-            return mergedChangelog.Root;
-        }
-
-        private bool PerformWfsTransaction(XElement changeLog, int datasetId, SubscriberDataset dataset, int passNr)
+        private bool DoWfsTransaction(XElement changeLog, int datasetId, int passNr)
         {
             try
             {
-                bool status = false;
-
-                long endIndex = (long) changeLog.Attribute("endIndex"); //now correct
-
                 // Build wfs-t transaction from changelog, and do the transaction   
                 var wfsController = new WfsController();
 
@@ -556,15 +578,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 OnNewSynchMilestoneReached("DoWfsTransactions starting...");
 
-                if (wfsController.DoWfsTransactions(changeLog, datasetId))
-                {
-                    Logger.Info("DoWfsTransactions OK, pass {0}", passNr);
-                    OnUpdateLogList(String.Format("DoWfsTransactions OK, pass {0}", passNr));
-                    status = true;
-                    dataset.LastIndex = endIndex;
-                    SubscriberDatasetManager.UpdateDataset(dataset);
-                }
-                return status;
+                if (!wfsController.DoWfsTransactions(changeLog, datasetId)) return false;
+                Logger.Info("DoWfsTransactions OK, pass {0}", passNr);
+                OnUpdateLogList(string.Format("DoWfsTransactions OK, pass {0}", passNr));
+                return true;
             }
             catch (Exception e)
             {
@@ -573,32 +590,34 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         }
 
+        private static long GetAbortedEndIndex(XElement changeLog)
+        {
+            return Convert.ToInt64(changeLog.Attribute("endIndex").Value);
+        }
+
         /// <summary>
         /// Tests the offline syncronization complete.
         /// </summary>
         /// <param name="zipFile">The zip file.</param>
         /// <param name="datasetId">The dataset identifier.</param>
+        /// <param name="transactionStart"></param>
         /// <returns>True if OK.</returns>
-        public bool TestOfflineSyncronizationComplete(string zipFile, int datasetId)
+        public bool DoSyncronizationOffline(string zipFile, int datasetId, long transactionStart)
         {
             try
             {
-                bool status = false;
-
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                int lastChangeIndexSubscriber = (int) dataset.LastIndex;
-
-                string outPath = Path.GetDirectoryName(zipFile);
+                var outPath = Path.GetDirectoryName(zipFile);
 
                 var downloadController = new DownloadController();
                 downloadController.UnpackZipFile(zipFile, outPath);
 
 
                 // Check if zip contains folder or file - Could be more than one file
-                string baseFilename = zipFile.Replace(".zip", "");
+                var baseFilename = zipFile.Replace(".zip", "");
                 string xmlFile;
-                bool isFolder = false;
+                var isFolder = false;
                 if (Directory.Exists(baseFilename))
                 {
                     xmlFile = baseFilename;
@@ -609,42 +628,32 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     xmlFile = Path.ChangeExtension(zipFile, ".xml");
                 }
 
-                List<string> fileList = new List<string>();
+                var fileList = GetChangelogFiles(isFolder, xmlFile);
 
-                if (isFolder)
-                {
-                    string[] fileArray = Directory.GetFiles(xmlFile);
-                    Array.Sort(fileArray);
-                    fileList = fileArray.ToList();
-                }
-                else
-                {
-                    fileList.Add(xmlFile);
-                }
-
-                XElement changeLog;
-                int passNr = 1;
-                if (fileList.Count > 1 && lastChangeIndexSubscriber > 0)
-                {
-                    changeLog = MergeChangelogs(fileList);
-                    status = PerformWfsTransaction(changeLog, datasetId, dataset, passNr);
-                }
-                else
-                    foreach (string fileName in fileList)
-                    {
-                        changeLog = XElement.Load(fileName);
-                        status = PerformWfsTransaction(changeLog, datasetId, dataset, passNr);
-                        passNr += 1;
-                    }
-
-
-                return status;
+                return LoopChangeLog(fileList, dataset, datasetId, 0, zipFile, transactionStart);
             }
 
             catch (Exception ex)
             {
                 Logger.ErrorException("TestOfflineSyncronizationComplete:", ex);
                 throw;
+            }
+
+        }
+
+
+        public static bool CreateFolderIfMissing(string path)
+        {
+            try
+            {
+                bool folderExists = Directory.Exists((path));
+                if (!folderExists)
+                    Directory.CreateDirectory(path);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
         }
     }

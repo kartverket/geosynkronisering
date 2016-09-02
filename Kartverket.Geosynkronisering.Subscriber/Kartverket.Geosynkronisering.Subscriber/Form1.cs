@@ -27,6 +27,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             InitSynchController();
             InitializeDatasetGrid();
             InitializeCurrentDataset();
+            txbProviderURL.Text = Properties.Subscriber.Default.DefaultServerURL;
         }
 
         private void InitSynchController()
@@ -42,14 +43,36 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
+                List<string> invisibleColumns = new List<string>()
+                {
+                    "DatasetId",
+                    "AbortedEndIndex",
+                    "AbortedTransaction",
+                    "AbortedChangelogPath",
+                    "AbortedChangelogId",
+                    //"UserName",
+                    //"Password"
+                };
+#if DEBUG
                 dgDataset.DataSource = SubscriberDatasetManager.GetAllDataset();
+#else
+                dgDataset.DataSource = SubscriberDatasetManager.GetAllDataset();
+                foreach (var invisibleColumn in invisibleColumns)
+                {
+                    dgDataset.Columns[invisibleColumn].Visible = false;
+                };
+#endif
+
+                dgDataset.AutoSize = true;
+                dgDataset.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+
             }
             catch (Exception ex)
             {
                 var errMsg = "Form1_Load failed when opening database:" + SubscriberDatasetManager.GetDatasource();
 
                 logger.ErrorException(errMsg, ex);
-                errMsg += "\r\n" + "Remeber to copy the databse to the the folder:" +
+                errMsg += "\r\n" + "Remember to copy the database to the the folder:" +
                           AppDomain.CurrentDomain.GetData("APPBASE");
                 MessageBox.Show(ex.Message + "\r\n" + errMsg);
             }
@@ -183,13 +206,15 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 //string dataDict = System.IO.Path.GetFullPath(System.IO.Path.Combine(referencePath, relativePath));
                 //AppDomain.CurrentDomain.SetData("DataDirectory", dataDict);
 
-                // TODO: For development comment out these 2 lines
-                //TabPage page2 = tabControl1.TabPages[1];
-                //tabControl1.TabPages.Remove(page2);
-
+#if DEBUG
+#else
+                TabPage page2 = tabControl1.TabPages[1];
+                tabControl1.TabPages.Remove(page2);
+#endif
                 ////page2.Visible = false;
                 ////page2.Hide();
                 ////page2.Enabled = false;
+
 
                 UpdateToolStripStatusLabel("Initializing...");
 
@@ -199,9 +224,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 // nlog start
                 logger.Info("===== Kartverket.Geosynkronisering.Subscriber Start =====");
                 listBoxLog.Items.Clear();
-
-                ShowGeoSyncLogo();
-
                 UpdateToolStripStatusLabel("Ready");
             }
             catch (Exception ex)
@@ -209,13 +231,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 logger.ErrorException("Form1_Load failed:", ex);
                 MessageBox.Show(ex.Message + ex.StackTrace);
             }
-        }
-
-        private void ShowGeoSyncLogo()
-        {
-            var path = Environment.CurrentDirectory;
-            var fileName = path.Substring(0, path.LastIndexOf("bin")) + "Images" + "\\Geosynk.ico";
-            webBrowser1.Navigate(fileName);
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -244,9 +259,17 @@ namespace Kartverket.Geosynkronisering.Subscriber
             comboFill = true;
             var datasetNameList = SubscriberDatasetManager.GetDatasetNamesAsDictionary();
             cboDatasetName.DataSource = new BindingSource(datasetNameList, null);
-            cboDatasetName.DisplayMember = "Value";
-            cboDatasetName.ValueMember = "Key";
-            cboDatasetName.SelectedValue = _currentDatasetId;
+            try
+            {
+                cboDatasetName.DisplayMember = "Value";
+                cboDatasetName.ValueMember = "Key";
+                cboDatasetName.SelectedValue = _currentDatasetId;
+            }
+            catch (Exception e)
+            {
+                logger.Warn(e.Message);
+            }
+
             //if (datasetNameList.Count > 0)
             //{
             //    foreach (string name in datasetNameList)
@@ -349,16 +372,18 @@ namespace Kartverket.Geosynkronisering.Subscriber
         private void btnGetCapabilities_Click(object sender, EventArgs e)
         {
             var Url = txbProviderURL.Text;
-            GetCapabilitiesXml(Url);
+            GetCapabilitiesXml(Url,textBoxUserName.Text, textBoxPassword.Text);
             btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
         }
 
         private void btnGetProviderDatasets_Click(object sender, EventArgs e)
         {
+            Properties.Subscriber.Default.DefaultServerURL = txbProviderURL.Text;
+            Properties.Subscriber.Default.Save();
             try
             {
                 Cursor = Cursors.WaitCursor;
-                GetCapabilitiesXml(txbProviderURL.Text);
+                GetCapabilitiesXml(txbProviderURL.Text,textBoxUserName.Text, textBoxPassword.Text);
             }
             catch (Exception ex)
             {
@@ -380,7 +405,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             }
             var blDataset = (IBindingList) dgvProviderDataset.DataSource;
 
-            if (!SubscriberDatasetManager.AddDatasets(blDataset, selectedDataset))
+            if (!SubscriberDatasetManager.AddDatasets(blDataset, selectedDataset, txbProviderURL.Text, textBoxUserName.Text, textBoxPassword.Text))
             {
                 MessageBox.Show(this, "Error saving selected datasets to internal Database.", "Get Provider Datasets",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -412,12 +437,12 @@ namespace Kartverket.Geosynkronisering.Subscriber
 
             if (!SubscriberDatasetManager.RemoveDatasets(subscriberDatasets, selectedDataset))
             {
-                MessageBox.Show(this, "Error removing  selected datasets to internal Database.", "Remove Datasets",
+                MessageBox.Show(this, "Error removing selected datasets from internal Database.", "Remove Datasets",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
-                MessageBox.Show(this, "Saved after removing selected datasets to the internal Database.",
+                MessageBox.Show(this, "Saved after removing selected datasets from internal Database.",
                     "Remove Datasets", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 dgDataset.DataSource = null;
 
@@ -492,7 +517,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 }
 
                 tabControl1.SelectTab(0);
-                var status = _synchController.TestOfflineSyncronizationComplete(zipFile, _currentDatasetId);
+                var status = _synchController.DoSyncronizationOffline(zipFile, _currentDatasetId, 0);
 
                 if (status)
                 {
@@ -541,8 +566,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
         /// <param name="e"></param>
         private void btnSyncronizationComplete_Click(object sender, EventArgs e)
         {
-            ShowGeoSyncLogo();
-
             SetSynchButtonInactive();
 
             Hourglass(true);
@@ -554,6 +577,22 @@ namespace Kartverket.Geosynkronisering.Subscriber
             logger.Info(logMessage);
 
             SynchronizeAsThread(_currentDatasetId);
+        }
+
+        public void SynchronizeAsThread()
+        {
+            foreach (var datasetId in SubscriberDatasetManager.GetListOfDatasetIDs())
+            {
+                var _backgroundWorker = new BackgroundWorker
+                {
+                    WorkerReportsProgress = true,
+                    WorkerSupportsCancellation = true
+                };
+
+                _backgroundWorker.DoWork += bw_DoSynchronization;
+                _backgroundWorker.RunWorkerAsync(datasetId);
+                _backgroundWorker.RunWorkerCompleted += bw_SynchronizeComplete;
+            }
         }
 
         public void SynchronizeAsThread(int datasetId)
@@ -615,11 +654,13 @@ namespace Kartverket.Geosynkronisering.Subscriber
         public void SetSynchButtonActive()
         {
             btnTestSyncronizationComplete.Enabled = true;
+            btnTestSyncronizationAll.Enabled = true;
         }
 
         public void SetSynchButtonInactive()
         {
             btnTestSyncronizationComplete.Enabled = false;
+            btnTestSyncronizationAll.Enabled = false;
         }
 
         private void UpdateToolStripStatusLabel(string message)
@@ -727,45 +768,22 @@ namespace Kartverket.Geosynkronisering.Subscriber
         ///     Returnerer det som tilbyder støtter av dataset, filter operatorer og objekttyper.
         /// </summary>
         /// <returns></returns>
-        private void GetCapabilitiesXml(string url)
+        private void GetCapabilitiesXml(string url, string UserName, string Password)
         {
-            dgvProviderDataset.DataSource = _synchController.GetCapabilitiesProviderDataset(url);
-            IDictionary<string, IList<object>> visibleColumns = new Dictionary<string, IList<object>>();
-            IList<object> columnFormat = new List<object>();
-            columnFormat.Add("Datasett");
-            columnFormat.Add("1");
-            columnFormat.Add(DataGridViewAutoSizeColumnMode.AllCells);
-            visibleColumns.Add("name", columnFormat);
-            columnFormat = new List<object>();
-            columnFormat.Add("Applikasjonsskjema");
-            columnFormat.Add("2");
-            columnFormat.Add(DataGridViewAutoSizeColumnMode.ColumnHeader);
-            visibleColumns.Add("appschema", columnFormat);
-            columnFormat = new List<object>();
-            columnFormat.Add("Navnerom");
-            columnFormat.Add("3");
-            columnFormat.Add(DataGridViewAutoSizeColumnMode.Fill);
-            visibleColumns.Add("targetnamespace", columnFormat);
-            columnFormat = new List<object>();
-            columnFormat.Add("Datasett ID");
-            columnFormat.Add("4");
-            columnFormat.Add(DataGridViewAutoSizeColumnMode.ColumnHeader);
-            visibleColumns.Add("providerdatasetid", columnFormat);
+            dgvProviderDataset.DataSource = _synchController.GetCapabilitiesProviderDataset(url, UserName, Password);
+            List<string> visibleColumns = new List<string>()
+            {
+                "Name",
+                "ProviderDatasetId",
+                "Applicationschema"
+            };
 
             foreach (DataGridViewColumn col in dgvProviderDataset.Columns)
-            {
-                col.Visible = false;
-                if (visibleColumns.ContainsKey(col.Name.ToLower()))
-                {
-                    col.Visible = true;
-                    columnFormat = visibleColumns[col.Name.ToLower()];
-                    col.HeaderText = columnFormat[0].ToString();
-                    col.DisplayIndex = Convert.ToInt32(columnFormat[1]);
-                    col.AutoSizeMode = (DataGridViewAutoSizeColumnMode) columnFormat[2];
-                }
-            }
+                if (!visibleColumns.Contains(col.Name))
+                    col.Visible = false;
+
             dgvProviderDataset.AutoSize = true;
-            dgvProviderDataset.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvProviderDataset.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
         }
 
         protected void Hourglass(bool Show)
@@ -777,6 +795,44 @@ namespace Kartverket.Geosynkronisering.Subscriber
             else
             {
                 Cursor.Current = Cursors.Default;
+            }
+        }
+
+        private void btnTestSyncronizationAll_Click(object sender, EventArgs e)
+        {
+            SetSynchButtonInactive();
+
+            Hourglass(true);
+
+            listBoxLog.Items.Clear();
+
+            var logMessage = "Syncronization Start";
+            listBoxLog.Items.Add(logMessage);
+            logger.Info(logMessage);
+
+            SynchronizeAsThread();
+        }
+
+        private void dgDataset_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex == 15 && e.Value != null)
+            {
+                e.Value = new String('*', 6);
+            }
+        }
+
+        private void buttonNew_Click(object sender, EventArgs e)
+        {
+            SubscriberDatasetManager.AddEmptyDataset();
+            InitializeDatasetGrid();
+                FillComboBoxDatasetName();
+        }
+
+        private void textBoxPassword_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                btnGetProviderDatasets_Click(sender, e);
             }
         }
     }

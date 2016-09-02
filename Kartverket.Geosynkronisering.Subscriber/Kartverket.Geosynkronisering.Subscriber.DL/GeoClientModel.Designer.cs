@@ -302,24 +302,24 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
-        public global::System.String TargetNamespace
+        public global::System.String Applicationschema
         {
             get
             {
-                return _TargetNamespace;
+                return _Applicationschema;
             }
             set
             {
-                OnTargetNamespaceChanging(value);
-                ReportPropertyChanging("TargetNamespace");
-                _TargetNamespace = StructuralObject.SetValidValue(value, true);
-                ReportPropertyChanged("TargetNamespace");
-                OnTargetNamespaceChanged();
+                OnApplicationschemaChanging(value);
+                ReportPropertyChanging("Applicationschema");
+                _Applicationschema = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("Applicationschema");
+                OnApplicationschemaChanged();
             }
         }
-        private global::System.String _TargetNamespace;
-        partial void OnTargetNamespaceChanging(global::System.String value);
-        partial void OnTargetNamespaceChanged();
+        private global::System.String _Applicationschema;
+        partial void OnApplicationschemaChanging(global::System.String value);
+        partial void OnApplicationschemaChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -344,6 +344,174 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         private global::System.String _MappingFile;
         partial void OnMappingFileChanging(global::System.String value);
         partial void OnMappingFileChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Int64> AbortedEndIndex
+        {
+            get
+            {
+                return _AbortedEndIndex;
+            }
+            set
+            {
+                OnAbortedEndIndexChanging(value);
+                ReportPropertyChanging("AbortedEndIndex");
+                _AbortedEndIndex = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("AbortedEndIndex");
+                OnAbortedEndIndexChanged();
+            }
+        }
+        private Nullable<global::System.Int64> _AbortedEndIndex;
+        partial void OnAbortedEndIndexChanging(Nullable<global::System.Int64> value);
+        partial void OnAbortedEndIndexChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Int64> AbortedTransaction
+        {
+            get
+            {
+                return _AbortedTransaction;
+            }
+            set
+            {
+                OnAbortedTransactionChanging(value);
+                ReportPropertyChanging("AbortedTransaction");
+                _AbortedTransaction = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("AbortedTransaction");
+                OnAbortedTransactionChanged();
+            }
+        }
+        private Nullable<global::System.Int64> _AbortedTransaction;
+        partial void OnAbortedTransactionChanging(Nullable<global::System.Int64> value);
+        partial void OnAbortedTransactionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String AbortedChangelogPath
+        {
+            get
+            {
+                return _AbortedChangelogPath;
+            }
+            set
+            {
+                OnAbortedChangelogPathChanging(value);
+                ReportPropertyChanging("AbortedChangelogPath");
+                _AbortedChangelogPath = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("AbortedChangelogPath");
+                OnAbortedChangelogPathChanged();
+            }
+        }
+        private global::System.String _AbortedChangelogPath;
+        partial void OnAbortedChangelogPathChanging(global::System.String value);
+        partial void OnAbortedChangelogPathChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String ChangelogDirectory
+        {
+            get
+            {
+                return _ChangelogDirectory;
+            }
+            set
+            {
+                OnChangelogDirectoryChanging(value);
+                ReportPropertyChanging("ChangelogDirectory");
+                _ChangelogDirectory = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("ChangelogDirectory");
+                OnChangelogDirectoryChanged();
+            }
+        }
+        private global::System.String _ChangelogDirectory;
+        partial void OnChangelogDirectoryChanging(global::System.String value);
+        partial void OnChangelogDirectoryChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String AbortedChangelogId
+        {
+            get
+            {
+                return _AbortedChangelogId;
+            }
+            set
+            {
+                OnAbortedChangelogIdChanging(value);
+                ReportPropertyChanging("AbortedChangelogId");
+                _AbortedChangelogId = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("AbortedChangelogId");
+                OnAbortedChangelogIdChanged();
+            }
+        }
+        private global::System.String _AbortedChangelogId;
+        partial void OnAbortedChangelogIdChanging(global::System.String value);
+        partial void OnAbortedChangelogIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String UserName
+        {
+            get
+            {
+                return _UserName;
+            }
+            set
+            {
+                OnUserNameChanging(value);
+                ReportPropertyChanging("UserName");
+                _UserName = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("UserName");
+                OnUserNameChanged();
+            }
+        }
+        private global::System.String _UserName;
+        partial void OnUserNameChanging(global::System.String value);
+        partial void OnUserNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String Password
+        {
+            get
+            {
+                return _Password;
+            }
+            set
+            {
+                OnPasswordChanging(value);
+                ReportPropertyChanging("Password");
+                _Password = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("Password");
+                OnPasswordChanged();
+            }
+        }
+        private global::System.String _Password;
+        partial void OnPasswordChanging(global::System.String value);
+        partial void OnPasswordChanged();
 
         #endregion
 

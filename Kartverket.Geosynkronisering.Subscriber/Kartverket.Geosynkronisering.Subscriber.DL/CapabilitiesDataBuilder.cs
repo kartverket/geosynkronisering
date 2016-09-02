@@ -9,11 +9,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
     public class CapabilitiesDataBuilder
     {
-        public CapabilitiesDataBuilder(string ProviderURL)
+        public CapabilitiesDataBuilder(string ProviderURL, string UserName, string Password)
         {
             geosyncDBEntities db = new geosyncDBEntities();
 
             WebFeatureServiceReplicationPortClient client = new WebFeatureServiceReplicationPortClient();
+            client.ClientCredentials.UserName.UserName = UserName;
+            client.ClientCredentials.UserName.Password = Password;
+
             client.Endpoint.Address = new System.ServiceModel.EndpointAddress(ProviderURL);
 
             GetCapabilitiesType1 req = new GetCapabilitiesType1();
@@ -42,7 +45,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 ds.Name = dst.name;
                 DomainType dt = GetConstraint("CountDefault", rootCapabilities.OperationsMetadata.Constraint);
                 if (dt != null) ds.MaxCount = Convert.ToInt32(dt.DefaultValue.Value);
-                ds.TargetNamespace = dst.applicationSchema;
+                ds.Applicationschema = dst.applicationSchema;
                 Operation op = GetOperation("OrderChangelog", rootCapabilities.OperationsMetadata.Operation);
                 if (op != null)
                 {

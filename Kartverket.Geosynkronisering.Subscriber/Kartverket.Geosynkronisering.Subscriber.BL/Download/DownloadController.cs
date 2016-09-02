@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using Ionic.Zip;
+using Kartverket.Geosynkronisering.Subscriber.DL;
 using NLog;
 
 namespace Kartverket.Geosynkronisering.Subscriber.BL
@@ -28,25 +31,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// Download changelog
         /// </summary>
         /// <param name="downloadUri"></param>
-        public bool DownloadChangelog(string downloadUri)
+        /// <param name="dataset"></param>
+        public bool DownloadChangelog(string downloadUri, SubscriberDataset dataset)
         {
-            string d = downloadUri;
-            d = d.Substring(d.IndexOf('/') + 2);
-            string[] par1 = d.Split('@');
-            string ftpUser = par1[0].Split(':')[0];
-            string ftpPasswd = par1[0].Split(':')[1];
-            string ftpServer = par1[1].Split('/')[0];
-            string ftpFileName = par1[1].Split('/')[1] + ".zip";
-            var ftpHandler = new FileTransferHandler();
-            ftpHandler.ProcessDone += ftpHandler_ProcessDone;
-            if (ftpHandler.DownloadFileFromFtp(ChangelogFilename, ftpFileName, ftpServer, ftpUser, ftpPasswd))
+            var webClient = new WebClient { Credentials = new NetworkCredential(dataset.UserName, dataset.Password) };
+            webClient.DownloadFile(downloadUri, ChangelogFilename);
+            if (File.Exists(ChangelogFilename))
             {
-                if (Path.GetExtension(ChangelogFilename) != ".zip")
-                {
-                    Logger.ErrorException("File " + ChangelogFilename + " is not a zip file", null);
-                    return false;
-                }
-
                 string outPath = Path.GetDirectoryName(ChangelogFilename);
                 UnpackZipFile(ChangelogFilename, outPath);
 
@@ -70,21 +61,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return false;
         }
 
-        void ftpHandler_ProcessDone(object sender, FileTransferHandler.ProgressEventArgs e)
-        {
-            if (!e.error)
-            {
-                _downloadDone = e.status == FileTransferHandler.ftpStatus.done;
-            }
-        }
-
         public bool UnpackZipFile(string zipfile, string utpath)
         {
             try
             {
-                using (ZipFile zip = ZipFile.Read(zipfile))
+                using (var zip = ZipFile.Read(zipfile))
                 {
-                    foreach (ZipEntry fil in zip)
+                    foreach (var fil in zip)
                     {
                         fil.Extract(utpath, ExtractExistingFileAction.OverwriteSilently);
                     }

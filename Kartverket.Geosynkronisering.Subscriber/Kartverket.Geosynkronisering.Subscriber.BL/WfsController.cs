@@ -33,6 +33,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 var xDoc = ConstructWfsTransaction(changeLog);
 
+                SaveWfsTransactionToDisk(xDoc.Root, datasetId);
+
                 if (xDoc == null) return false;
 
                 // Post to WFS-T server (e.g. deegree or GeoServer)
@@ -169,16 +171,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 root.Add(wfsOperation);
             }
 
-            SaveWfsTransactionToDisk(root);
-
             return new XDocument(root);
         }
 
-        private void SaveWfsTransactionToDisk(XElement root)
+        private void SaveWfsTransactionToDisk(XElement root, int datasetId)
         {
             XDocument xDoc = new XDocument(root);
             string tempDir = Environment.GetEnvironmentVariable("TEMP");
-            string fileName = tempDir + @"\" + "_wfsT-test1.xml";
+            string fileName = tempDir + @"\" + "Kartverket.Geosynkronisering.Subscriber.DatasetId." + datasetId + ".LastTransaction.xml";
             xDoc.Save(fileName);
         }
 
