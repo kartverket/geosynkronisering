@@ -330,10 +330,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     {
                         current.Handle = handle;
                         inserts.Add(current);
-                        bool lastElement = false;
-                        if ((i + 1 == optimizedChangeLog.Count) || (counter == count))
-                            //If last element or portion is finished
-                            lastElement = true;
+                        var lastElement = (i + 1 == optimizedChangeLog.Count) || (counter == count);
                         if (!lastElement)
                         {
                             OptimizedChangeLogElement next = optimizedChangeLog.ElementAt(i + 1);
@@ -376,6 +373,35 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 throw new Exception("BuildChangeLogFile function failed", exp);
             }
             Logger.Info("BuildChangeLogFile END");
+        }
+
+        private void AddReferencedFeatureToChangelog(XElement changeLog, XElement parentElement, XDocument getFeatureResponse)
+        {
+            XNamespace xlink = "http://www.w3.org/1999/xlink";
+            XNamespace nsChlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg";
+            XNamespace nsApp = _pNsApp;
+            string nsPrefixApp = "app";
+            XmlNamespaceManager mgr = new XmlNamespaceManager(new NameTable());
+            mgr.AddNamespace(nsPrefixApp, nsApp.NamespaceName);
+            string nsPrefixAppComplete = nsPrefixApp + ":";
+
+            foreach (var childElement in parentElement.Elements())
+            {
+                var hrefAttribute = childElement.Attribute(xlink + "href");
+                if (hrefAttribute != null)
+                {
+                    var id = hrefAttribute.Value.Split('.')[hrefAttribute.Value.Split('.').Length - 1];
+
+                    string xpathExpressionLokalid = "//" + nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete +
+                                            "Identifikasjon[" + nsPrefixAppComplete + "lokalId='" + id +
+                                            "']/../..";
+
+                    XElement referencedElement = getFeatureResponse.XPathSelectElement(xpathExpressionLokalid, mgr);
+                    changeLog.Add(referencedElement);
+                    AddReferencedFeatureToChangelog(changeLog, referencedElement, getFeatureResponse);
+                }
+                AddReferencedFeatureToChangelog(changeLog, childElement, getFeatureResponse);
+            }
         }
 
         private void AddInsertPortionsToChangeLog(List<OptimizedChangeLogElement> insertList, string wfsUrl,
@@ -437,13 +463,9 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             string nsPrefixAppComplete = nsPrefixApp + ":";
 
             XElement insertElement = new XElement(nsWfs + "Insert", new XAttribute("handle", handle));
-                //new XAttribute("inputFormat", "application/gml+xml; version=3.2") TKN:funker ikke på deegree
 
             foreach (KeyValuePair<string, string> dictElement in typeIdDict)
             {
-                //string xpathExpressionLokalid = "//" + nsPrefixAppComplete + dictElement.Value + "[" + nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete + "Identifikasjon/" + nsPrefixAppComplete + "lokalId='"+dictElement.Key+"']";
-
-                // //kyst:identifikasjon/kyst:Identifikasjon[kyst:lokalId='0a11f53a-8a37-5977-b9a2-e65a17d42e05']/../..
                 string xpathExpressionLokalid = "//" + nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete +
                                                 "Identifikasjon[" + nsPrefixAppComplete + "lokalId='" + dictElement.Key +
                                                 "']/../..";
@@ -451,9 +473,10 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 XElement feature = getFeatureResponse.XPathSelectElement(xpathExpressionLokalid, mgr);
 
                 insertElement.Add(feature);
-
+                AddReferencedFeatureToChangelog(insertElement, feature, getFeatureResponse);
             }
-            changeLog.Element(nsChlogf + "transactions").Add(insertElement);
+            
+            changeLog.Element(nsChlogf + "transactions").Add(insertElement);    
         }
 
         private void AddDeleteToChangeLog(string gmlId, long handle, XElement changeLog, int datasetId)
