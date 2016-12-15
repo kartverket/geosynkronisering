@@ -375,33 +375,38 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             Logger.Info("BuildChangeLogFile END");
         }
 
-        private void AddReferencedFeatureToChangelog(XElement changeLog, XElement parentElement, XDocument getFeatureResponse)
+        private void AddReferencedFeatureToChangelog(XElement changeLog, XElement parentElement, XElement getFeatureResponse)
         {
             XNamespace xlink = "http://www.w3.org/1999/xlink";
-            XNamespace nsChlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg";
-            XNamespace nsApp = _pNsApp;
-            string nsPrefixApp = "app";
-            XmlNamespaceManager mgr = new XmlNamespaceManager(new NameTable());
-            mgr.AddNamespace(nsPrefixApp, nsApp.NamespaceName);
-            string nsPrefixAppComplete = nsPrefixApp + ":";
 
             foreach (var childElement in parentElement.Elements())
             {
                 var hrefAttribute = childElement.Attribute(xlink + "href");
                 if (hrefAttribute != null)
                 {
-                    var id = hrefAttribute.Value.Split('.')[hrefAttribute.Value.Split('.').Length - 1];
+                    var lokalid = hrefAttribute.Value.Split('.')[hrefAttribute.Value.Split('.').Length - 1];
 
-                    string xpathExpressionLokalid = "//" + nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete +
-                                            "Identifikasjon[" + nsPrefixAppComplete + "lokalId='" + id +
-                                            "']/../..";
-
-                    XElement referencedElement = getFeatureResponse.XPathSelectElement(xpathExpressionLokalid, mgr);
+                    XElement referencedElement = FetchFeatureByLokalid(lokalid, getFeatureResponse);
                     changeLog.Add(referencedElement);
                     AddReferencedFeatureToChangelog(changeLog, referencedElement, getFeatureResponse);
                 }
                 AddReferencedFeatureToChangelog(changeLog, childElement, getFeatureResponse);
             }
+        }
+
+        private XElement FetchFeatureByLokalid(string lokalid, XElement getFeatureResponse)
+        {
+            XNamespace nsChlogf = "http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg";
+            XNamespace nsApp = _pNsApp;
+            string nsPrefixApp = "app";
+            XmlNamespaceManager mgr = new XmlNamespaceManager(new NameTable());
+            mgr.AddNamespace(nsPrefixApp, nsApp.NamespaceName);
+            string nsPrefixAppComplete = nsPrefixApp + ":";
+            string xpathExpressionLokalid = "//" + nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete +
+                                            "Identifikasjon[" + nsPrefixAppComplete + "lokalId='" + lokalid +
+                                            "']/../..";
+
+            return getFeatureResponse.XPathSelectElement(xpathExpressionLokalid, mgr);
         }
 
         private void AddInsertPortionsToChangeLog(List<OptimizedChangeLogElement> insertList, string wfsUrl,
@@ -466,12 +471,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
             foreach (KeyValuePair<string, string> dictElement in typeIdDict)
             {
-                string xpathExpressionLokalid = "//" + nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete +
-                                                "Identifikasjon[" + nsPrefixAppComplete + "lokalId='" + dictElement.Key +
-                                                "']/../..";
-
-                XElement feature = getFeatureResponse.XPathSelectElement(xpathExpressionLokalid, mgr);
-
+                XElement feature = FetchFeatureByLokalid(dictElement.Key, getFeatureResponse);
                 insertElement.Add(feature);
                 AddReferencedFeatureToChangelog(insertElement, feature, getFeatureResponse);
             }
