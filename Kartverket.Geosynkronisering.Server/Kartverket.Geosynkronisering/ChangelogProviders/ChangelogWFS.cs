@@ -34,7 +34,13 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
             XDocument wfsGetFeatureDocument = new XDocument(
                 new XDeclaration("1.0", "utf-8", "yes"),
-                new XElement(nsWfs + "GetFeature", new XAttribute("version", "2.0.0"), new XAttribute("service", "WFS"), new XAttribute(XNamespace.Xmlns + nsPrefixTargetNamespace, nsApp), new XAttribute(XNamespace.Xmlns + "wfs", nsWfs), new XAttribute(XNamespace.Xmlns + "fes", nsFes)
+                new XElement(nsWfs + "GetFeature",
+                new XAttribute("version", "2.0.0"),
+                new XAttribute("service", "WFS"),
+                new XAttribute(XNamespace.Xmlns + nsPrefixTargetNamespace, nsApp),
+                new XAttribute(XNamespace.Xmlns + "wfs", nsWfs),
+                new XAttribute(XNamespace.Xmlns + "fes", nsFes),
+                new XAttribute("resolveDepth", "*")
                 // new XElement(nsWfs + "GetFeature", new XAttribute("version", "2.0.0"), new XAttribute("service", "WFS"), new XAttribute(XNamespace.Xmlns + "app", nsApp), new XAttribute(XNamespace.Xmlns + "wfs", nsWfs), new XAttribute(XNamespace.Xmlns + "fes", nsFes)
                 )
             );
