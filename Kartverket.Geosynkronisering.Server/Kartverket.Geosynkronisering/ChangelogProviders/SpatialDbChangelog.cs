@@ -528,28 +528,22 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             XNamespace nsApp = _pNsApp;
             // 20130917-Leg: Fix
             string nsPrefixApp = changeLog.GetPrefixOfNamespace(nsApp);
-            XmlNamespaceManager mgr = new XmlNamespaceManager(new NameTable());
-            mgr.AddNamespace(nsPrefixApp, nsApp.NamespaceName);
             string nsPrefixAppComplete = nsPrefixApp + ":";
             string xpathExpressionLokalidFilter = nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete +
                                                   "Identifikasjon/" + nsPrefixAppComplete + "lokalId";
 
             foreach (KeyValuePair<string, string> dictElement in typeIdDict)
             {
-                string xpathExpressionLokalid = "//" + nsPrefixAppComplete + "identifikasjon/" + nsPrefixAppComplete +
-                                                "Identifikasjon[" + nsPrefixAppComplete + "lokalId='" + dictElement.Key +
-                                                "']/../..";
-                XElement feature = getFeatureResponse.XPathSelectElement(xpathExpressionLokalid, mgr);
+                XElement feature = FetchFeatureByLokalid(dictElement.Key, getFeatureResponse);
                 XElement replaceElement = new XElement(nsWfs + "Replace", new XAttribute("handle", handle));
-                XElement lokalidElement = feature.XPathSelectElement(xpathExpressionLokalidFilter, mgr);
-                string lokalId = lokalidElement.Value;
-
                 replaceElement.Add(feature);
-
+                
+                //TODO: Check if this can be neccessary
+                //AddReferencedFeatureToChangelog(replaceElement, feature, getFeatureResponse);
                 replaceElement.Add(new XElement(nsFes + "Filter",
                     new XElement(nsFes + "PropertyIsEqualTo",
                         new XElement(nsFes + "ValueReference", xpathExpressionLokalidFilter),
-                        new XElement(nsFes + "Literal", lokalId)
+                        new XElement(nsFes + "Literal", dictElement.Key)
                         )
                     ));
                 changeLog.Element(nsChlogf + "transactions").Add(replaceElement);
