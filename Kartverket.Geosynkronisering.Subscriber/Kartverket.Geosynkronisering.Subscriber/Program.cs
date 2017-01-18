@@ -10,7 +10,7 @@ using Kartverket.Geosynkronisering.Subscriber.DL;
 
 namespace Kartverket.Geosynkronisering.Subscriber
 {
-    internal static class Program
+    public static class Program
     {
         //We want to be able to write to console if the process has been started from one
         [System.Runtime.InteropServices.DllImport("kernel32.dll")]
@@ -30,6 +30,11 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 RunAsConsole(args);
         }
 
+        public static void Run()
+        {
+            SynchronizeDatasets(SubscriberDatasetManager.GetListOfDatasetIDs());
+        }
+
         private static void RunAsConsole(string[] args)
         {
             AttachConsole();
@@ -37,11 +42,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             var datasetIds = SubscriberDatasetManager.GetListOfDatasetIDs();
             if (args.Length == 1 && args[0].ToLower() == "auto")
             {
-                Console.WriteLine("INFO: Fetching list of datasetIds");
-                foreach (var datasetId in datasetIds)
-                {
-                    Synchronize(datasetId);
-                }
+                SynchronizeDatasets(datasetIds);
             }
             else if (args.Length == 1 && args[0].ToLower() == "help")
             {
@@ -58,6 +59,15 @@ namespace Kartverket.Geosynkronisering.Subscriber
                         Console.WriteLine("ERROR: DatasetId " + datasetId + " does not exist");
                     }
                 }
+            }
+        }
+
+        private static void SynchronizeDatasets(IEnumerable<int> datasetIds)
+        {
+            Console.WriteLine("INFO: Fetching list of datasetIds");
+            foreach (var datasetId in datasetIds)
+            {
+                Synchronize(datasetId);
             }
         }
 
