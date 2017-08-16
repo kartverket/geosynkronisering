@@ -94,8 +94,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 Directory.CreateDirectory(destPath);
                 // Loop and create xml files
-                int i = 1;
-                while (i++ <= Convert.ToInt32(Math.Ceiling((double) endIndex/count)))
+                while (OptimizedChangelLogIndex < OptimizedChangeLog.Count)
                 {
                     string partFileName = DateTime.Now.Ticks + ".xml";
 
@@ -281,13 +280,15 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         protected List<OptimizedChangeLogElement> OptimizedChangeLog = new List<OptimizedChangeLogElement>();
 
-        protected int OptimizedChangelLogIndex;
+        protected int OptimizedChangelLogIndex = -1;
 
         protected long LastChangeId = -1;
 
-        public void BuildChangeLogFile(int count, string wfsUrl, int startChangeId, Int64 endChangeId,
-            string changeLogFileName, int datasetId)
+        protected long endChangeId = -1;
+
+        public void BuildChangeLogFile(int count, string wfsUrl, int startChangeId, string changeLogFileName, int datasetId)
         {
+            if (OptimizedChangelLogIndex == -1) OptimizedChangelLogIndex++;
             Logger.Info("BuildChangeLogFile START");
             //long lastChangeId = -1;
             try
@@ -356,7 +357,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                         }
                     }
                     OptimizedChangelLogIndex++;
-                    if (counter == count)
+                    if (counter == count || OptimizedChangelLogIndex == OptimizedChangeLog.Count)
                     {
                         break;
                     }

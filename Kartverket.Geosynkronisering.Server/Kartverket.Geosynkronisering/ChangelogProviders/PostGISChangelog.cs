@@ -54,27 +54,30 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             Logger.Info("MakeChangeLog START");
             try
             {
-                //Connect to postgres database
-                Npgsql.NpgsqlConnection conn = null;
-                conn = new NpgsqlConnection(dbConnectInfo);
-                conn.Open();
+                if (OptimizedChangeLog.Count == 0)
+                {
+                    //Connect to postgres database
+                    Npgsql.NpgsqlConnection conn = null;
+                    conn = new NpgsqlConnection(dbConnectInfo);
+                    conn.Open();
 
-                //Get max changelogid
-                Int64 endChangeId = GetMaxChangeLogId(conn, datasetId);
+                    //Get max changelogid
+                    Int64 endChangeId = GetMaxChangeLogId(conn, datasetId);
 
-                //Prepare query against the changelog table in postgres
-                Npgsql.NpgsqlCommand command = null;
-                PrepareChangeLogQuery(conn, ref command, startChangeId, endChangeId, datasetId);
+                    //Prepare query against the changelog table in postgres
+                    Npgsql.NpgsqlCommand command = null;
+                    PrepareChangeLogQuery(conn, ref command, startChangeId, endChangeId, datasetId);
 
-                List<OptimizedChangeLogElement> optimizedChangeLog = new List<OptimizedChangeLogElement>();
-                //Execute query against the changelog table and remove unnecessary transactions.
-                if (optimizedChangeLog.Count == 0)
+                    List<OptimizedChangeLogElement> optimizedChangeLog = new List<OptimizedChangeLogElement>();
+                    //Execute query against the changelog table and remove unnecessary transactions.
+                    
                     FillOptimizedChangeLog(ref command, ref optimizedChangeLog, startChangeId);
 
+                    conn.Close();
+                }
                 //Get features from WFS and add transactions to changelogfile
-                BuildChangeLogFile(count, wfsUrl, startChangeId, endChangeId, changeLogFileName, datasetId);
-
-                conn.Close();
+                BuildChangeLogFile(count, wfsUrl, startChangeId, changeLogFileName, datasetId);
+               
             }
             catch (System.Exception exp)
             {

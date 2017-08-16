@@ -45,26 +45,28 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             Logger.Info("SqlServerSpatialChangelog..MakeChangeLog START");
             try
             {
-                //Connect to postgres database
-                SqlConnection conn = null;
-                conn = new SqlConnection(dbConnectInfo);
-                conn.Open();
+                if (OptimizedChangeLog.Count == 0)
+                {
+                    //Connect to postgres database
+                    SqlConnection conn = null;
+                    conn = new SqlConnection(dbConnectInfo);
+                    conn.Open();
 
-                //Get max changelogid
-                Int64 endChangeId = GetMaxChangeLogId(conn, datasetId);
+                    //Get max changelogid
+                    endChangeId = GetMaxChangeLogId(conn, datasetId);
 
-                //Prepare query against the changelog table in postgres
-                SqlCommand command = null;
-                PrepareChangeLogQuery(conn, ref command, startChangeId, endChangeId, datasetId);
+                    //Prepare query against the changelog table in postgres
+                    SqlCommand command = null;
+                    PrepareChangeLogQuery(conn, ref command, startChangeId, endChangeId, datasetId);
 
-                //Execute query against the changelog table and remove unnecessary transactions.
-                if(OptimizedChangeLog.Count == 0)
+                    //Execute query against the changelog table and remove unnecessary transactions.
+
                     FillOptimizedChangeLog(ref command, ref OptimizedChangeLog, startChangeId);
-
+                }
                 //Get features from WFS and add transactions to changelogfile
-                BuildChangeLogFile(count, wfsUrl, startChangeId, endChangeId, changeLogFileName, datasetId);
+                BuildChangeLogFile(count, wfsUrl, startChangeId, changeLogFileName, datasetId);
 
-                conn.Close();
+                
             }
             catch (System.Exception exp)
             {
