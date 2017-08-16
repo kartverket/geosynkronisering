@@ -40,7 +40,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
             return endChangeId.ToString();
         }
-        public override long MakeChangeLog(int startChangeId, int count, string dbConnectInfo, string wfsUrl, string changeLogFileName, int datasetId)
+        public override void MakeChangeLog(int startChangeId, int count, string dbConnectInfo, string wfsUrl, string changeLogFileName, int datasetId)
         {
             Logger.Info("SqlServerSpatialChangelog..MakeChangeLog START");
             try
@@ -57,17 +57,14 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 SqlCommand command = null;
                 PrepareChangeLogQuery(conn, ref command, startChangeId, endChangeId, datasetId);
 
-                List<OptimizedChangeLogElement> optimizedChangeLog = new List<OptimizedChangeLogElement>();
-            
                 //Execute query against the changelog table and remove unnecessary transactions.
-                FillOptimizedChangeLog(ref command, ref optimizedChangeLog, startChangeId);
+                if(OptimizedChangeLog.Count == 0)
+                    FillOptimizedChangeLog(ref command, ref OptimizedChangeLog, startChangeId);
 
                 //Get features from WFS and add transactions to changelogfile
-                var lastChangeId = BuildChangeLogFile(count, optimizedChangeLog, wfsUrl, startChangeId, endChangeId, changeLogFileName, datasetId);
+                BuildChangeLogFile(count, wfsUrl, startChangeId, endChangeId, changeLogFileName, datasetId);
 
                 conn.Close();
-
-                return lastChangeId;
             }
             catch (System.Exception exp)
             {

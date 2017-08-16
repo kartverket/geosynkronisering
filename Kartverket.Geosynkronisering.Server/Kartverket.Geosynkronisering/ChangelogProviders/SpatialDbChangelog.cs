@@ -65,14 +65,14 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     db.SaveChanges();
                 }
             }
-            int startIndex = 1; // StartIndex always 1 on initial changelog
+            LastChangeId = 1; // StartIndex always 1 on initial changelog
             int endIndex = Convert.ToInt32(GetLastIndex(datasetId));
             int count = 1000; // TODO: Get from dataset table
             Logger.Info("GenerateInitialChangelog START");
             StoredChangelog ldbo = new StoredChangelog();
             ldbo.Stored = true;
             ldbo.Status = "queued";
-            ldbo.StartIndex = startIndex;
+            ldbo.StartIndex = (int) LastChangeId;
 
             ldbo.DatasetId = datasetId;
             ldbo.DateCreated = DateTime.Now;
@@ -100,10 +100,8 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     string partFileName = DateTime.Now.Ticks + ".xml";
 
                     string fullPathWithFile = Path.Combine(destPath, partFileName);
-                    startIndex = (int) (MakeChangeLog(startIndex, count, PDbConnectInfo, _pWfsUrl, fullPathWithFile, datasetId));
-                    if (startIndex == -1) break;
-                    startIndex += 1;
-                    endIndex = Convert.ToInt32(GetLastIndex(datasetId));
+                    MakeChangeLog((int) LastChangeId, count, PDbConnectInfo, _pWfsUrl, fullPathWithFile, datasetId);
+                    LastChangeId += 1;
                 }
 
                 // Save endIndex to database
@@ -149,12 +147,12 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     Logger.ErrorException(
                         string.Format(
                             "Failed on SaveChanges, Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog startIndex:{0} count:{1} changelogId:{2}",
-                            startIndex, count, ldbo.ChangelogId), ex);
+                            LastChangeId, count, ldbo.ChangelogId), ex);
                     throw ex;
                 }
                 Logger.Info(
                     "Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog" +
-                    " startIndex:{0}" + " count:{1}" + " changelogId:{2}", startIndex, count, ldbo.ChangelogId);
+                    " startIndex:{0}" + " count:{1}" + " changelogId:{2}", LastChangeId, count, ldbo.ChangelogId);
 
                 Logger.Info("GenerateInitialChangelog END");
                 return resp;
@@ -190,7 +188,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             return _currentOrderChangeLog;
         }
 
-        public OrderChangelog _OrderChangelog(int startIndex, int count, string todoFilter, int datasetId)
+        private OrderChangelog _OrderChangelog(int startIndex, int count, string todoFilter, int datasetId)
         {
             string downloadUriBase = ServerConfigData.DownloadUriBase().TrimEnd('/');
             using (geosyncEntities db = new geosyncEntities())
@@ -278,15 +276,20 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             return _OrderChangelog(startIndex, count, todoFilter, datasetId);
         }
 
-        public abstract long MakeChangeLog(int startChangeId, int count, string dbConnectInfo, string wfsUrl,
+        public abstract void MakeChangeLog(int startChangeId, int count, string dbConnectInfo, string wfsUrl,
             string changeLogFileName, int datasetId);
 
-        public long BuildChangeLogFile(int count, List<OptimizedChangeLogElement> optimizedChangeLog, string wfsUrl,
-            int startChangeId, Int64 endChangeId,
+        protected List<OptimizedChangeLogElement> OptimizedChangeLog = new List<OptimizedChangeLogElement>();
+
+        protected int OptimizedChangelLogIndex;
+
+        protected long LastChangeId = -1;
+
+        public void BuildChangeLogFile(int count, string wfsUrl, int startChangeId, Int64 endChangeId,
             string changeLogFileName, int datasetId)
         {
             Logger.Info("BuildChangeLogFile START");
-            long lastChangeId = -1;
+            //long lastChangeId = -1;
             try
             {
                 //Use changelog_empty.xml as basis for responsefile
@@ -298,22 +301,24 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 List<OptimizedChangeLogElement> inserts = new List<OptimizedChangeLogElement>();
                 long portionEndIndex = 0;
-                for (int i = 0; i < optimizedChangeLog.Count; i++)
+                for (int i = OptimizedChangelLogIndex; i < OptimizedChangeLog.Count; i++)
                 {
-                    OptimizedChangeLogElement current = optimizedChangeLog.ElementAt(i);
+                    
+                    OptimizedChangeLogElement current = OptimizedChangeLog.ElementAt(i);
                     string gmlId = current.GmlId;
                     string transType = current.TransType;
-                    lastChangeId = current.ChangeId;
+
+                    LastChangeId = current.ChangeId;
                     long handle = 0;
 
                     //If next element == lastelement
-                    if ((i + 1) == optimizedChangeLog.Count)
+                    if ((i + 1) == OptimizedChangeLog.Count)
                     {
                         handle = endChangeId;
                     }
                     else
                     {
-                        OptimizedChangeLogElement next = optimizedChangeLog.ElementAt(i + 1);
+                        OptimizedChangeLogElement next = OptimizedChangeLog.ElementAt(i + 1);
                         handle = next.ChangeId - 1;
                     }
                     portionEndIndex = handle;
@@ -332,10 +337,10 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     {
                         current.Handle = handle;
                         inserts.Add(current);
-                        var lastElement = (i + 1 == optimizedChangeLog.Count) || (counter == count);
+                        var lastElement = (i + 1 == OptimizedChangeLog.Count) || (counter == count);
                         if (!lastElement)
                         {
-                            OptimizedChangeLogElement next = optimizedChangeLog.ElementAt(i + 1);
+                            OptimizedChangeLogElement next = OptimizedChangeLog.ElementAt(i + 1);
                             string nextChange = next.TransType;
                             if (nextChange != "I") //if next is not insert
                             {
@@ -350,6 +355,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                             inserts.Clear();
                         }
                     }
+                    OptimizedChangelLogIndex++;
                     if (counter == count)
                     {
                         break;
@@ -368,7 +374,6 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 //store changelog to file
                 changeLog.Save(changeLogFileName);
-                return lastChangeId;
             }
             catch (Exception exp)
             {

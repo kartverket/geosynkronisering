@@ -49,7 +49,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
 
         //Build changelog responsefile
-        public override long MakeChangeLog(int startChangeId, int count, string dbConnectInfo, string wfsUrl, string changeLogFileName, int datasetId)
+        public override void MakeChangeLog(int startChangeId, int count, string dbConnectInfo, string wfsUrl, string changeLogFileName, int datasetId)
         {
             Logger.Info("MakeChangeLog START");
             try
@@ -68,14 +68,13 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 List<OptimizedChangeLogElement> optimizedChangeLog = new List<OptimizedChangeLogElement>();
                 //Execute query against the changelog table and remove unnecessary transactions.
-                FillOptimizedChangeLog(ref command, ref optimizedChangeLog, startChangeId);
+                if (optimizedChangeLog.Count == 0)
+                    FillOptimizedChangeLog(ref command, ref optimizedChangeLog, startChangeId);
 
                 //Get features from WFS and add transactions to changelogfile
-                var lastChangeId = BuildChangeLogFile(count, optimizedChangeLog, wfsUrl, startChangeId, endChangeId, changeLogFileName, datasetId);
+                BuildChangeLogFile(count, wfsUrl, startChangeId, endChangeId, changeLogFileName, datasetId);
 
                 conn.Close();
-
-                return lastChangeId;
             }
             catch (System.Exception exp)
             {

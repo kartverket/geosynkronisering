@@ -13,7 +13,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             throw new NotImplementedException();
         }
 
-        public override long MakeChangeLog(int startChangeId, int count, string dbConnectInfo, string wfsUrl, string changeLogFileName, int datasetId)
+        public override void MakeChangeLog(int startChangeId, int count, string dbConnectInfo, string wfsUrl, string changeLogFileName, int datasetId)
         {
             throw new NotImplementedException();
         }
