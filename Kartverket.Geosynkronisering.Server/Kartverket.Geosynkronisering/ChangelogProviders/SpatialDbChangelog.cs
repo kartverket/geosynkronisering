@@ -481,6 +481,8 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             foreach (KeyValuePair<string, string> dictElement in typeIdDict)
             {
                 XElement feature = FetchFeatureByLokalid(dictElement.Key, getFeatureResponse);
+                if(feature == null)
+                    throw new XmlException("Feature with gml:id " +dictElement.Value + "." + dictElement.Key + " could not be found by WFS-server");
                 insertElement.Add(feature);
                 AddReferencedFeatureToChangelog(insertElement, feature, getFeatureResponse);
             }
