@@ -39,7 +39,7 @@ namespace Kartverket.Geosynkronisering
         /// <param name="datasetId"></param>
         /// <param name="describefeaturetype1"></param>
         /// <returns></returns>
-        public XmlDocument DescribeFeatureType(string datasetId, DescribeFeatureTypeType describefeaturetype1)
+        public object DescribeFeatureType(string datasetId, DescribeFeatureTypeType describefeaturetype1)
         {
             try
             {
@@ -166,6 +166,16 @@ namespace Kartverket.Geosynkronisering
             {
                 throw new FaultException(ex.Message);
             }
+        }
+
+        public string GetDatasetVersion(string datasetId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SendReport(ReportType report)
+        {
+            throw new NotImplementedException();
         }
 
         #region Async Code for OrderChangeLog
