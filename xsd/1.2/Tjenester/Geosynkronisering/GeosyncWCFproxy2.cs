@@ -13,41 +13,41 @@ namespace Kartverket.GeosyncWCF
     using System.Runtime.Serialization;
     
     
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ChangelogIdentificationType", Namespace="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt")]
-    public partial class ChangelogIdentificationType : object, System.Runtime.Serialization.IExtensibleDataObject
-    {
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    //[System.Runtime.Serialization.DataContractAttribute(Name="ChangelogIdentificationType", Namespace="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt")]
+    //public partial class ChangelogIdentificationType : object, System.Runtime.Serialization.IExtensibleDataObject
+    //{
         
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+    //    private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
-        private string changelogIdField;
+    //    private string changelogIdField;
         
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData
-        {
-            get
-            {
-                return this.extensionDataField;
-            }
-            set
-            {
-                this.extensionDataField = value;
-            }
-        }
+    //    public System.Runtime.Serialization.ExtensionDataObject ExtensionData
+    //    {
+    //        get
+    //        {
+    //            return this.extensionDataField;
+    //        }
+    //        set
+    //        {
+    //            this.extensionDataField = value;
+    //        }
+    //    }
         
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, EmitDefaultValue=false)]
-        public string changelogId
-        {
-            get
-            {
-                return this.changelogIdField;
-            }
-            set
-            {
-                this.changelogIdField = value;
-            }
-        }
-    }
+    //    [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, EmitDefaultValue=false)]
+    //    public string changelogId
+    //    {
+    //        get
+    //        {
+    //            return this.changelogIdField;
+    //        }
+    //        set
+    //        {
+    //            this.changelogIdField = value;
+    //        }
+    //    }
+    //}
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
@@ -128,7 +128,7 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
-        void AcknowlegeChangelogDownloaded(Kartverket.GeosyncWCF.Kartverket.GeosyncWCF.ChangelogIdentificationType changelogId);
+        void AcknowlegeChangelogDownloaded(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt/#CancelChangelog" +
             "", ReplyAction="*")]
@@ -159,7 +159,7 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
-        void CancelChangelog(Kartverket.GeosyncWCF.Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid);
+        void CancelChangelog(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt/#DescribeFeature" +
             "Type", ReplyAction="*")]
@@ -253,7 +253,7 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
-        Kartverket.GeosyncWCF.ChangelogType GetChangelog(Kartverket.GeosyncWCF.Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid);
+        Kartverket.GeosyncWCF.ChangelogType GetChangelog(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt/#GetChangelogSta" +
             "tus", ReplyAction="*")]
@@ -285,7 +285,7 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
-        Kartverket.GeosyncWCF.ChangelogStatusType GetChangelogStatus(Kartverket.GeosyncWCF.Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid);
+        Kartverket.GeosyncWCF.ChangelogStatusType GetChangelogStatus(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid);
         
         // CODEGEN: Parameter 'return' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt/#GetLastIndex", ReplyAction="*")]
@@ -379,7 +379,7 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
-        Kartverket.GeosyncWCF.Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelog(Kartverket.GeosyncWCF.ChangelogOrderType order);
+        Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelog(Kartverket.GeosyncWCF.ChangelogOrderType order);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt/#GetDatasetVersi" +
             "on", ReplyAction="*")]
@@ -9408,63 +9408,63 @@ namespace Kartverket.GeosyncWCF
         }
     }
     
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2053.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.opengis.net/ows/1.1")]
-    public partial class ExceptionReport
-    {
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2053.0")]
+    //[System.SerializableAttribute()]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.opengis.net/ows/1.1")]
+    //public partial class ExceptionReport
+    //{
         
-        private ExceptionType[] exceptionField;
+    //    private ExceptionType[] exceptionField;
         
-        private string versionField;
+    //    private string versionField;
         
-        private string langField;
+    //    private string langField;
         
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Exception", Order=0)]
-        public ExceptionType[] Exception
-        {
-            get
-            {
-                return this.exceptionField;
-            }
-            set
-            {
-                this.exceptionField = value;
-            }
-        }
+    //    /// <remarks/>
+    //    [System.Xml.Serialization.XmlElementAttribute("Exception", Order=0)]
+    //    public ExceptionType[] Exception
+    //    {
+    //        get
+    //        {
+    //            return this.exceptionField;
+    //        }
+    //        set
+    //        {
+    //            this.exceptionField = value;
+    //        }
+    //    }
         
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string version
-        {
-            get
-            {
-                return this.versionField;
-            }
-            set
-            {
-                this.versionField = value;
-            }
-        }
+    //    /// <remarks/>
+    //    [System.Xml.Serialization.XmlAttributeAttribute()]
+    //    public string version
+    //    {
+    //        get
+    //        {
+    //            return this.versionField;
+    //        }
+    //        set
+    //        {
+    //            this.versionField = value;
+    //        }
+    //    }
         
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/XML/1998/namespace")]
-        public string lang
-        {
-            get
-            {
-                return this.langField;
-            }
-            set
-            {
-                this.langField = value;
-            }
-        }
-    }
+    //    /// <remarks/>
+    //    [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/XML/1998/namespace")]
+    //    public string lang
+    //    {
+    //        get
+    //        {
+    //            return this.langField;
+    //        }
+    //        set
+    //        {
+    //            this.langField = value;
+    //        }
+    //    }
+    //}
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2053.0")]
@@ -10577,12 +10577,12 @@ namespace Kartverket.GeosyncWCF
         {
         }
         
-        public void AcknowlegeChangelogDownloaded(Kartverket.GeosyncWCF.Kartverket.GeosyncWCF.ChangelogIdentificationType changelogId)
+        public void AcknowlegeChangelogDownloaded(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogId)
         {
             base.Channel.AcknowlegeChangelogDownloaded(changelogId);
         }
         
-        public void CancelChangelog(Kartverket.GeosyncWCF.Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid)
+        public void CancelChangelog(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid)
         {
             base.Channel.CancelChangelog(changelogid);
         }
@@ -10597,12 +10597,12 @@ namespace Kartverket.GeosyncWCF
             return base.Channel.GetCapabilities(getcapabilities1);
         }
         
-        public Kartverket.GeosyncWCF.ChangelogType GetChangelog(Kartverket.GeosyncWCF.Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid)
+        public Kartverket.GeosyncWCF.ChangelogType GetChangelog(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid)
         {
             return base.Channel.GetChangelog(changelogid);
         }
         
-        public Kartverket.GeosyncWCF.ChangelogStatusType GetChangelogStatus(Kartverket.GeosyncWCF.Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid)
+        public Kartverket.GeosyncWCF.ChangelogStatusType GetChangelogStatus(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid)
         {
             return base.Channel.GetChangelogStatus(changelogid);
         }
@@ -10635,7 +10635,7 @@ namespace Kartverket.GeosyncWCF
             return retVal.@return;
         }
         
-        public Kartverket.GeosyncWCF.Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelog(Kartverket.GeosyncWCF.ChangelogOrderType order)
+        public Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelog(Kartverket.GeosyncWCF.ChangelogOrderType order)
         {
             return base.Channel.OrderChangelog(order);
         }
