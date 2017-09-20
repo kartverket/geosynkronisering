@@ -72,6 +72,70 @@ namespace Kartverket.Geosynkronisering
             }
         }
 
+        //public GetDatasetVersionResponse GetDatasetVersion(GetDatasetVersionRequest request)
+        //{
+        //    try
+        //    {
+        //        string dataset = request.datasetId;
+        //        if (dataset == "") throw new ArgumentException("Missing dataset in request");
+        //        int id = 0;
+        //        int.TryParse(dataset, out id);
+
+        //        string resp;
+        //        string initType;
+        //        var datasets = from d in db.Datasets where d.DatasetId == id select d;
+        //        initType = datasets.First().DatasetProvider;
+
+        //        //Initiate provider from config/dataset
+        //        Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
+        //        IChangelogProvider changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
+        //        changelogprovider.Intitalize(id);
+        //        resp = changelogprovider.GetDatsetVersion(id);
+
+        //        GetDatasetVersionResponse res = new GetDatasetVersionResponse();
+                
+        //        res.@return = resp;
+        //        return res;
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new FaultException(ex.Message);
+        //    }
+        //}
+
+        public string SendReport(GetLastIndexRequest request)
+        {
+            try
+            {
+                string dataset = request.datasetId;
+                if (dataset == "") throw new ArgumentException("Missing dataset in request");
+                int id = 0;
+                int.TryParse(dataset, out id);
+
+                string resp;
+                string initType;
+                var datasets = from d in db.Datasets where d.DatasetId == id select d;
+                initType = datasets.First().DatasetProvider;
+
+                //Initiate provider from config/dataset
+                Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
+                IChangelogProvider changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
+                changelogprovider.Intitalize(id);
+                resp = changelogprovider.GetLastIndex(id);
+
+                GetLastIndexResponse res = new GetLastIndexResponse();
+                res.@return = resp;
+                return res;
+
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
+        }
+
+
         public GetLastIndexResponse GetLastIndex(GetLastIndexRequest request)
         {
             try
