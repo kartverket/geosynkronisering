@@ -143,6 +143,18 @@
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="SendReport">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="report" type="gsynk-r:SendReportType" minOccurs="0" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SendReportResponse">
+				<xs:complexType>
+					<xs:sequence/>
+				</xs:complexType>
+			</xs:element>
 		</xs:schema>
 	</wsdl:types>
 	<wsdl:message name="ServiceExceptionReportMessage">
@@ -208,6 +220,12 @@
 	<wsdl:message name="GetDatasetVersionResponseMessage">
 		<wsdl:part name="parameters" element="gsynk-r:GetDatasetVersionResponse"/>
 	</wsdl:message>
+	<wsdl:message name="SendReportMessage">
+		<wsdl:part name="parameters" element="gsynk-r:SendReport"/>
+	</wsdl:message>
+	<wsdl:message name="SendReportResponseMessage">
+		<wsdl:part name="parameters" element="gsynk-r:SendReportResponse"/>
+	</wsdl:message>
 	<wsdl:portType name="WebFeatureServiceReplicationPort">
 		<wsdl:operation name="AcknowlegeChangelogDownloaded">
 			<wsdl:input name="AcknowlegeChangelogDownloadedRequest" message="gsynk-r:AcknowlegeChangelogDownloadedMessage"/>
@@ -257,6 +275,11 @@
 		<wsdl:operation name="GetDatasetVersion">
 			<wsdl:input name="GetDatasetVersionRequest" message="gsynk-r:GetDatasetVersionMessage"/>
 			<wsdl:output name="GetDatasetVersionResponse" message="gsynk-r:GetDatasetVersionResponseMessage"/>
+			<wsdl:fault name="ServiceExceptionReport" message="gsynk-r:ServiceExceptionReportMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="SendReport">
+			<wsdl:input name="SendReportRequest" message="gsynk-r:SendReportMessage"/>
+			<wsdl:output name="SendReportResponse" message="gsynk-r:SendReportResponseMessage"/>
 			<wsdl:fault name="ServiceExceptionReport" message="gsynk-r:ServiceExceptionReportMessage"/>
 		</wsdl:operation>
 	</wsdl:portType>
@@ -376,6 +399,18 @@
 				<soap:body use="literal"/>
 			</wsdl:input>
 			<wsdl:output name="GetDatasetVersionResponse">
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="ServiceExceptionReport">
+				<soap:fault use="literal" name="ServiceExceptionReport"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="SendReport">
+			<soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt/#SendReport"/>
+			<wsdl:input name="SendReportRequest">
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="SendReportResponse">
 				<soap:body use="literal"/>
 			</wsdl:output>
 			<wsdl:fault name="ServiceExceptionReport">
