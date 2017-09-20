@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:gsynk-r="http://skjema.geonorge.no/standard/geosynkronisering/1.0/produkt" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:ows="http://www.opengis.net/ows/1.1" targetNamespace="http://skjema.geonorge.no/standard/geosynkronisering/1.0/produkt" elementFormDefault="qualified">
+	<!-- Generert av MetaTrans(0.9.0.2) - 20.08.2013 15:16:48-->
+	<xs:import namespace="http://www.opengis.net/wfs/2.0" schemaLocation="http://schemas.opengis.net/wfs/2.0/wfs.xsd"/>
+	<xs:import namespace="http://www.opengis.net/ows/1.1" schemaLocation="http://schemas.opengis.net/ows/1.1.0/owsAll.xsd"/>
+	<xs:element name="Changelog" type="gsynk-r:ChangelogType"/>
+	<xs:complexType name="ChangelogListe">
+		<xs:sequence>
+			<xs:element name="changelog" type="gsynk-r:ChangelogType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ChangelogType">
+		<xs:annotation>
+			<xs:documentation>beskriver en endringslogg</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="id" type="gsynk-r:ChangelogIdentificationType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="downloadUri" type="xs:anyURI" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="endIndex" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="ChangelogIdentification" type="gsynk-r:ChangelogIdentificationType"/>
+	<xs:complexType name="ChangelogIdentificationListe">
+		<xs:sequence>
+			<xs:element name="changelogidentification" type="gsynk-r:ChangelogIdentificationType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ChangelogIdentificationType">
+		<xs:annotation>
+			<xs:documentation>identifiserer en endringslogg</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="changelogId" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="ChangelogOrder" type="gsynk-r:ChangelogOrderType"/>
+	<xs:complexType name="ChangelogOrderListe">
+		<xs:sequence>
+			<xs:element name="changelogorder" type="gsynk-r:ChangelogOrderType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ChangelogOrderType">
+		<xs:annotation>
+			<xs:documentation>Er et forespørselobjekt som kan definere et filter som skal gjelde for en bestilling mot et bestemt dataset og tilbyder</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="wfs:BaseRequestType">
+				<xs:sequence>
+					<xs:element name="datasetId" type="xs:string" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+				<xs:attributeGroup ref="wfs:StandardPresentationParameters"/>
+				<xs:attributeGroup ref="wfs:StandardResolveParameters"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:simpleType name="ChangelogStatusType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="started"/>
+			<xs:enumeration value="working"/>
+			<xs:enumeration value="finished"/>
+			<xs:enumeration value="cancelled"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="ChangelogStatusListe">
+		<xs:sequence>
+			<xs:element name="changelogstatus" type="gsynk-r:ChangelogStatusType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Dataset" type="gsynk-r:DatasetType"/>
+	<xs:complexType name="DatasetListe">
+		<xs:sequence>
+			<xs:element name="dataset" type="gsynk-r:DatasetType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DatasetType">
+		<xs:annotation>
+			<xs:documentation>beskriver et dataset som tilbys</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="datasetId" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="version" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="applicationSchema" type="xs:anyURI" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="featureTypes" type="wfs:FeatureTypeListType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="metadataReference" type="xs:anyURI" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="REP_Capabilities" type="gsynk-r:REP_CapabilitiesType"/>
+	<xs:complexType name="REP_CapabilitiesListe">
+		<xs:sequence>
+			<xs:element name="rep_capabilities" type="gsynk-r:REP_CapabilitiesType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="REP_CapabilitiesType">
+		<xs:annotation>
+			<xs:documentation>Svarobjekt for GetCapabilities operasjon og definerer hva tilbyder kan tilby av data og tjenester.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ows:CapabilitiesBaseType">
+				<xs:sequence>
+					<xs:element name="WSDL" type="xs:anyType" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="datasets" type="gsynk-r:DatasetListe" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="StoredChangelog" type="gsynk-r:StoredChangelogType"/>
+	<xs:complexType name="StoredChangelogListe">
+		<xs:sequence>
+			<xs:element name="storedchangelog" type="gsynk-r:StoredChangelogType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StoredChangelogType">
+		<xs:annotation>
+			<xs:documentation>beskriver en lagret endringslogg som er ment for gjenbruk. Feks ved førstegangsetablering av synkronisering. Belaster da ikke tilbyder med en ny bestilling av et stort dataset.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="gsynk-r:ChangelogType">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="order" type="gsynk-r:ChangelogOrderType" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="startIndex" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

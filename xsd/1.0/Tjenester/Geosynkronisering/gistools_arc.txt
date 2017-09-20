@@ -1,0 +1,10 @@
+GISTools - ArcGIS
+Mange til mange - ok
+Flere geometrier i samme objekt - ok
+Topologi - bedre rutine for å gruppere sammen topologien (ikke på navn men via relasjoner)
+Attributter som har 0..* feks INFORMASJON
+
+	
+
+
+	

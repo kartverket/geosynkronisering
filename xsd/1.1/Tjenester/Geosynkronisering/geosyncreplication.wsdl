@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="WebFeatureServiceReplication" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt" xmlns:gsynk-r="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt" xmlns:ows="http://www.opengis.net/ows/1.1">
+  <!--Generert av MetaTrans(1.1.0.0) - 05.10.2015 10:23:53-->
+  <wsdl:types>
+    <xs:schema targetNamespace="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt" xmlns:gsynk-r="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:ows="http://www.opengis.net/ows/1.1" >
+      <xs:include schemaLocation="geosync-request-respons.xsd" />
+      <xs:import namespace="http://www.opengis.net/wfs/2.0" schemaLocation="http://schemas.opengis.net/wfs/2.0/wfs.xsd" />
+      <xs:import namespace="http://www.opengis.net/ows/1.1" schemaLocation="http://schemas.opengis.net/ows/1.1.0/owsAll.xsd" />
+      <xs:element name="AcknowlegeChangelogDownloaded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="changelogId" type="gsynk-r:ChangelogIdentificationType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="AcknowlegeChangelogDownloadedResponse">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CancelChangelog">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="changelogid" type="gsynk-r:ChangelogIdentificationType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CancelChangelogResponse">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DescribeFeatureType">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="datasetId" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="describefeaturetype" type="wfs:DescribeFeatureTypeType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DescribeFeatureTypeResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="xs:anyType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetCapabilities">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="getcapabilities" type="wfs:GetCapabilitiesType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetCapabilitiesResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="gsynk-r:REP_CapabilitiesType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetChangelog">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="changelogid" type="gsynk-r:ChangelogIdentificationType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetChangelogResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="gsynk-r:ChangelogType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetChangelogStatus">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="changelogid" type="gsynk-r:ChangelogIdentificationType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetChangelogStatusResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="gsynk-r:ChangelogStatusType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetLastIndex">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="datasetId" type="xs:string" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetLastIndexResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="xs:integer" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ListStoredChangelogs">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="datasetId" type="xs:string" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ListStoredChangelogsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="gsynk-r:StoredChangelogListe" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="OrderChangelog">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="order" type="gsynk-r:ChangelogOrderType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="OrderChangelogResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="return" type="gsynk-r:ChangelogIdentificationType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="ServiceExceptionReportMessage">
+	  <wsdl:part name="Body" element="ows:ExceptionReport"/>
+  </wsdl:message>
+  <wsdl:message name="AcknowlegeChangelogDownloadedMessage">
+    <wsdl:part name="parameters" element="gsynk-r:AcknowlegeChangelogDownloaded" />
+  </wsdl:message>
+  <wsdl:message name="AcknowlegeChangelogDownloadedResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-r:AcknowlegeChangelogDownloadedResponse" />
+  </wsdl:message>
+  <wsdl:message name="CancelChangelogMessage">
+    <wsdl:part name="parameters" element="gsynk-r:CancelChangelog" />
+  </wsdl:message>
+  <wsdl:message name="CancelChangelogResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-r:CancelChangelogResponse" />
+  </wsdl:message>
+  <wsdl:message name="DescribeFeatureTypeMessage">
+    <wsdl:part name="parameters" element="gsynk-r:DescribeFeatureType" />
+  </wsdl:message>
+  <wsdl:message name="DescribeFeatureTypeResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-r:DescribeFeatureTypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCapabilitiesMessage">
+    <wsdl:part name="parameters" element="gsynk-r:GetCapabilities" />
+  </wsdl:message>
+  <wsdl:message name="GetCapabilitiesResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-r:GetCapabilitiesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetChangelogMessage">
+    <wsdl:part name="parameters" element="gsynk-r:GetChangelog" />
+  </wsdl:message>
+  <wsdl:message name="GetChangelogResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-r:GetChangelogResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetChangelogStatusMessage">
+    <wsdl:part name="parameters" element="gsynk-r:GetChangelogStatus" />
+  </wsdl:message>
+  <wsdl:message name="GetChangelogStatusResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-r:GetChangelogStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetLastIndexMessage">
+    <wsdl:part name="parameters" element="gsynk-r:GetLastIndex" />
+  </wsdl:message>
+  <wsdl:message name="GetLastIndexResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-r:GetLastIndexResponse" />
+  </wsdl:message>
+  <wsdl:message name="ListStoredChangelogsMessage">
+    <wsdl:part name="parameters" element="gsynk-r:ListStoredChangelogs" />
+  </wsdl:message>
+  <wsdl:message name="ListStoredChangelogsResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-r:ListStoredChangelogsResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrderChangelogMessage">
+    <wsdl:part name="parameters" element="gsynk-r:OrderChangelog" />
+  </wsdl:message>
+  <wsdl:message name="OrderChangelogResponseMessage">
+    <wsdl:part name="parameters" element="gsynk-r:OrderChangelogResponse" />
+  </wsdl:message>
+  <wsdl:portType name="WebFeatureServiceReplicationPort">
+    <wsdl:operation name="AcknowlegeChangelogDownloaded">
+      <wsdl:input name="AcknowlegeChangelogDownloadedRequest" message="gsynk-r:AcknowlegeChangelogDownloadedMessage" />
+      <wsdl:output name="AcknowlegeChangelogDownloadedResponse" message="gsynk-r:AcknowlegeChangelogDownloadedResponseMessage" />
+      <wsdl:fault name="ServiceExceptionReport" message="gsynk-r:ServiceExceptionReportMessage"></wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="CancelChangelog">
+      <wsdl:input name="CancelChangelogRequest" message="gsynk-r:CancelChangelogMessage" />
+       <wsdl:output name="CancelChangelogResponse" message="gsynk-r:CancelChangelogResponseMessage" />
+	  <wsdl:fault name="ServiceExceptionReport" message="gsynk-r:ServiceExceptionReportMessage"></wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DescribeFeatureType">
+      <wsdl:input name="DescribeFeatureTypeRequest" message="gsynk-r:DescribeFeatureTypeMessage" />
+      <wsdl:output name="DescribeFeatureTypeResponse" message="gsynk-r:DescribeFeatureTypeResponseMessage" />
+ <wsdl:fault name="ServiceExceptionReport" message="gsynk-r:ServiceExceptionReportMessage"></wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetCapabilities">
+      <wsdl:input name="GetCapabilitiesRequest" message="gsynk-r:GetCapabilitiesMessage" />
+      <wsdl:output name="GetCapabilitiesResponse" message="gsynk-r:GetCapabilitiesResponseMessage" />
+ <wsdl:fault name="ServiceExceptionReport" message="gsynk-r:ServiceExceptionReportMessage"></wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetChangelog">
+      <wsdl:input name="GetChangelogRequest" message="gsynk-r:GetChangelogMessage" />
+      <wsdl:output name="GetChangelogResponse" message="gsynk-r:GetChangelogResponseMessage" />
+ <wsdl:fault name="ServiceExceptionReport" message="gsynk-r:ServiceExceptionReportMessage"></wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetChangelogStatus">
+      <wsdl:input name="GetChangelogStatusRequest" message="gsynk-r:GetChangelogStatusMessage" />
+      <wsdl:output name="GetChangelogStatusResponse" message="gsynk-r:GetChangelogStatusResponseMessage" />
+ <wsdl:fault name="ServiceExceptionReport" message="gsynk-r:ServiceExceptionReportMessage"></wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetLastIndex">
+      <wsdl:input name="GetLastIndexRequest" message="gsynk-r:GetLastIndexMessage" />
+      <wsdl:output name="GetLastIndexResponse" message="gsynk-r:GetLastIndexResponseMessage" />
+ <wsdl:fault name="ServiceExceptionReport" message="gsynk-r:ServiceExceptionReportMessage"></wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ListStoredChangelogs">
+      <wsdl:input name="ListStoredChangelogsRequest" message="gsynk-r:ListStoredChangelogsMessage" />
+      <wsdl:output name="ListStoredChangelogsResponse" message="gsynk-r:ListStoredChangelogsResponseMessage" />
+ <wsdl:fault name="ServiceExceptionReport" message="gsynk-r:ServiceExceptionReportMessage"></wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OrderChangelog">
+      <wsdl:input name="OrderChangelogRequest" message="gsynk-r:OrderChangelogMessage" />
+      <wsdl:output name="OrderChangelogResponse" message="gsynk-r:OrderChangelogResponseMessage" />
+ <wsdl:fault name="ServiceExceptionReport" message="gsynk-r:ServiceExceptionReportMessage"></wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WebFeatureServiceReplicationSoap" type="gsynk-r:WebFeatureServiceReplicationPort">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="AcknowlegeChangelogDownloaded">
+      <soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt/#AcknowlegeChangelogDownloaded" />
+      <wsdl:input name="AcknowlegeChangelogDownloadedRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="AcknowlegeChangelogDownloadedResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceExceptionReport">
+        <soap:fault use="literal" name="ServiceExceptionReport" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="CancelChangelog">
+      <soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt/#CancelChangelog" />
+     <wsdl:input name="CancelChangelogRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="CancelChangelogResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceExceptionReport">
+        <soap:fault use="literal" name="ServiceExceptionReport" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DescribeFeatureType">
+      <soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt/#DescribeFeatureType" />
+      <wsdl:input name="DescribeFeatureTypeRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="DescribeFeatureTypeResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceExceptionReport">
+        <soap:fault use="literal" name="ServiceExceptionReport" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetCapabilities">
+      <soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt/#GetCapabilities" />
+      <wsdl:input name="GetCapabilitiesRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="GetCapabilitiesResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceExceptionReport">
+        <soap:fault use="literal" name="ServiceExceptionReport" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetChangelog">
+      <soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt/#GetChangelog" />
+     <wsdl:input name="GetChangelogRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="GetChangelogResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceExceptionReport">
+        <soap:fault use="literal" name="ServiceExceptionReport" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetChangelogStatus">
+      <soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt/#GetChangelogStatus" />
+      <wsdl:input name="GetChangelogStatusRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="GetChangelogStatusResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceExceptionReport">
+        <soap:fault use="literal" name="ServiceExceptionReport" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetLastIndex">
+      <soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt/#GetLastIndex" />
+       <wsdl:input name="GetLastIndexRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="GetLastIndexResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceExceptionReport">
+        <soap:fault use="literal" name="ServiceExceptionReport" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ListStoredChangelogs">
+      <soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt/#ListStoredChangelogs" />
+      <wsdl:input name="ListStoredChangelogsRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="ListStoredChangelogsResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceExceptionReport">
+        <soap:fault use="literal" name="ServiceExceptionReport" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OrderChangelog">
+      <soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt/#OrderChangelog" />
+       <wsdl:input name="OrderChangelogRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="OrderChangelogResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceExceptionReport">
+        <soap:fault use="literal" name="ServiceExceptionReport" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WebFeatureServiceReplication">
+    <wsdl:port name="WebFeatureServiceReplication" binding="gsynk-r:WebFeatureServiceReplicationSoap">
+      <soap:address location="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
