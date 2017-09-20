@@ -629,10 +629,8 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             return true;
         }
 
-        public string GetDatsetVersion(int datasetId)
-        {
-            throw new NotImplementedException();
-        }
+
+      
     }
 
     public class OptimizedChangeLogElement

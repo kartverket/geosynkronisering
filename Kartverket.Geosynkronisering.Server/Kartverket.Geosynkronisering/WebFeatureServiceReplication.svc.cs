@@ -12,10 +12,13 @@ using NLog;
 namespace Kartverket.Geosynkronisering
 {
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
-    [ServiceBehavior(Namespace = "http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt")]
+    [ServiceBehavior(Namespace = "http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt")]
+
+    // NLog for logging (nuget package)
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "WebFeatureServiceReplication" in code, svc and config file together.
     public class WebFeatureServiceReplication : WebFeatureServiceReplicationPort
     {
+        protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private geosyncEntities db;
 
         public WebFeatureServiceReplication()
@@ -72,68 +75,8 @@ namespace Kartverket.Geosynkronisering
             }
         }
 
-        //public GetDatasetVersionResponse GetDatasetVersion(GetDatasetVersionRequest request)
-        //{
-        //    try
-        //    {
-        //        string dataset = request.datasetId;
-        //        if (dataset == "") throw new ArgumentException("Missing dataset in request");
-        //        int id = 0;
-        //        int.TryParse(dataset, out id);
+        
 
-        //        string resp;
-        //        string initType;
-        //        var datasets = from d in db.Datasets where d.DatasetId == id select d;
-        //        initType = datasets.First().DatasetProvider;
-
-        //        //Initiate provider from config/dataset
-        //        Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
-        //        IChangelogProvider changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
-        //        changelogprovider.Intitalize(id);
-        //        resp = changelogprovider.GetDatsetVersion(id);
-
-        //        GetDatasetVersionResponse res = new GetDatasetVersionResponse();
-                
-        //        res.@return = resp;
-        //        return res;
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new FaultException(ex.Message);
-        //    }
-        //}
-
-        public string SendReport(GetLastIndexRequest request)
-        {
-            try
-            {
-                string dataset = request.datasetId;
-                if (dataset == "") throw new ArgumentException("Missing dataset in request");
-                int id = 0;
-                int.TryParse(dataset, out id);
-
-                string resp;
-                string initType;
-                var datasets = from d in db.Datasets where d.DatasetId == id select d;
-                initType = datasets.First().DatasetProvider;
-
-                //Initiate provider from config/dataset
-                Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
-                IChangelogProvider changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
-                changelogprovider.Intitalize(id);
-                resp = changelogprovider.GetLastIndex(id);
-
-                GetLastIndexResponse res = new GetLastIndexResponse();
-                res.@return = resp;
-                return res;
-
-            }
-            catch (Exception ex)
-            {
-                throw new FaultException(ex.Message);
-            }
-        }
 
 
         public GetLastIndexResponse GetLastIndex(GetLastIndexRequest request)
@@ -234,12 +177,55 @@ namespace Kartverket.Geosynkronisering
 
         public string GetDatasetVersion(string datasetId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string dataset = datasetId;
+                if (dataset == "") throw new ArgumentException("Missing dataset in request");
+                int id = 0;
+                int.TryParse(dataset, out id);
+
+                string resp;
+                string initType;
+                var datasets = from d in db.Datasets where d.DatasetId == id select d;
+                initType = datasets.First().DatasetProvider;
+
+                //Initiate provider from config/dataset
+                Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
+                IChangelogProvider changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
+                changelogprovider.Intitalize(id);
+                resp = changelogprovider.GetDatasetVersion(id);
+              
+                return resp;
+
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
         public void SendReport(ReportType report)
         {
-            throw new NotImplementedException();
+            try
+            { 
+            switch (report.type)
+            {
+                case ReportTypeEnumType.error:
+                    Logger.Error(report.description);
+                    break;
+                case ReportTypeEnumType.info:
+                    Logger.Info(report.description);
+                    break;
+                default:
+                    Logger.Info(report.description);
+                    break;
+            }
+
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
         #region Async Code for OrderChangeLog
