@@ -11,9 +11,9 @@
 	</xs:complexType>
 	<xs:complexType name="ChangelogType">
 		<xs:sequence>
-			<xs:element name="id" type="gsynk-r:ChangelogIdentificationType"  minOccurs="1" maxOccurs="1"/>
-			<xs:element name="downloadUri" type="xs:anyURI"  minOccurs="1" maxOccurs="1"/>
-			<xs:element name="endIndex" type="xs:integer"  minOccurs="1" maxOccurs="1"/>
+			<xs:element name="id" type="gsynk-r:ChangelogIdentificationType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="downloadUri" type="xs:anyURI" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="endIndex" type="xs:integer" minOccurs="1" maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:element name="ChangelogIdentification" type="gsynk-r:ChangelogIdentificationType"/>
@@ -24,7 +24,7 @@
 	</xs:complexType>
 	<xs:complexType name="ChangelogIdentificationType">
 		<xs:sequence>
-			<xs:element name="changelogId" type="xs:string"  minOccurs="1" maxOccurs="1"/>
+			<xs:element name="changelogId" type="xs:string" minOccurs="1" maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:element name="ChangelogOrder" type="gsynk-r:ChangelogOrderType"/>
@@ -37,7 +37,7 @@
 		<xs:complexContent>
 			<xs:extension base="wfs:BaseRequestType">
 				<xs:sequence>
-					<xs:element name="datasetId" type="xs:string"  minOccurs="1" maxOccurs="1"/>
+					<xs:element name="datasetId" type="xs:string" minOccurs="1" maxOccurs="1"/>
 				</xs:sequence>
 				<xs:attributeGroup ref="wfs:StandardPresentationParameters"/>
 				<xs:attributeGroup ref="wfs:StandardResolveParameters"/>
@@ -66,12 +66,12 @@
 	</xs:complexType>
 	<xs:complexType name="DatasetType">
 		<xs:sequence>
-			<xs:element name="datasetId" type="xs:string"  minOccurs="1" maxOccurs="1"/>
-			<xs:element name="name" type="xs:string"  minOccurs="1" maxOccurs="1"/>
-			<xs:element name="version" type="xs:string"  minOccurs="1" maxOccurs="1"/>
-			<xs:element name="applicationSchema" type="xs:anyURI"  minOccurs="1" maxOccurs="1"/>
-			<xs:element name="featureTypes" type="wfs:FeatureTypeListType"  minOccurs="0" maxOccurs="1"/>
-			<xs:element name="metadataReference" type="xs:anyURI"  minOccurs="0" maxOccurs="1"/>
+			<xs:element name="datasetId" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="version" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="applicationSchema" type="xs:anyURI" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="featureTypes" type="wfs:FeatureTypeListType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="metadataReference" type="xs:anyURI" minOccurs="0" maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:element name="REP_Capabilities" type="gsynk-r:REP_CapabilitiesType"/>
@@ -84,8 +84,8 @@
 		<xs:complexContent>
 			<xs:extension base="ows:CapabilitiesBaseType">
 				<xs:sequence>
-					<xs:element name="WSDL" type="xs:anyType"  minOccurs="0" maxOccurs="1"/>
-					<xs:element name="datasets" type="gsynk-r:DatasetListe"  minOccurs="0" maxOccurs="1"/>
+					<xs:element name="WSDL" type="xs:anyType" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="datasets" type="gsynk-r:DatasetListe" minOccurs="0" maxOccurs="1"/>
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
@@ -100,9 +100,9 @@
 		<xs:complexContent>
 			<xs:extension base="gsynk-r:ChangelogType">
 				<xs:sequence>
-					<xs:element name="name" type="xs:string"  minOccurs="1" maxOccurs="1"/>
-					<xs:element name="order" type="gsynk-r:ChangelogOrderType"  minOccurs="1" maxOccurs="1"/>
-					<xs:element name="startIndex" type="xs:integer"  minOccurs="1" maxOccurs="1"/>
+					<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="order" type="gsynk-r:ChangelogOrderType" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="startIndex" type="xs:integer" minOccurs="1" maxOccurs="1"/>
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
