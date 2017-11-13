@@ -608,10 +608,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                var outPath = Path.GetDirectoryName(zipFile);
-
                 var downloadController = new DownloadController();
-                downloadController.UnpackZipFile(zipFile, outPath);
+                downloadController.UnpackZipFile(zipFile);
 
 
                 // Check if zip contains folder or file - Could be more than one file
