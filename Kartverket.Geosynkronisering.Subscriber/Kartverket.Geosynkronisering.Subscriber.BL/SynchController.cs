@@ -452,6 +452,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     dataset.AbortedChangelogPath = changelogFilename;
                 else if(File.Exists(changelogFilename + ".zip"))
                     dataset.AbortedChangelogPath = changelogFilename + ".zip";
+                else
+                    throw new FileNotFoundException("Changelogfile not found at either " + changelogFilename + " or " + changelogFilename + ".zip");
 
                 SubscriberDatasetManager.UpdateDataset(dataset);
                 status = DoWfsTransaction(changeLog, datasetId, i + 1);
