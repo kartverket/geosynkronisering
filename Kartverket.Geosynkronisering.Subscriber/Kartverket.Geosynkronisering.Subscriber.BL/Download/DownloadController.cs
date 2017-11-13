@@ -70,7 +70,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     zip.ToList().ForEach(entry =>
                     {
                         entry.FileName = Path.GetFileName(entry.FileName);
-                        entry.Extract(zipfile.Replace(".zip",""));
+                        entry.Extract(zipfile.Replace(".zip",""), ExtractExistingFileAction.OverwriteSilently);
                     });
                 }
             }
