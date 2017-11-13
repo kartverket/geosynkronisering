@@ -448,7 +448,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 dataset.AbortedEndIndex = GetAbortedEndIndex(changeLog);
                 dataset.AbortedTransaction = i;
-                dataset.AbortedChangelogPath = changelogFilename;
+                if(File.Exists(changelogFilename))
+                    dataset.AbortedChangelogPath = changelogFilename;
+                else if(File.Exists(changelogFilename + ".zip"))
+                    dataset.AbortedChangelogPath = changelogFilename + ".zip";
 
                 SubscriberDatasetManager.UpdateDataset(dataset);
                 status = DoWfsTransaction(changeLog, datasetId, i + 1);
