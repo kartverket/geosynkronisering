@@ -482,11 +482,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             dataset.AbortedChangelogId = null;
             if (!string.IsNullOrEmpty(dataset.AbortedChangelogPath))
             {
-                if (File.Exists(dataset.AbortedChangelogPath + ".zip"))
-                    File.Delete(dataset.AbortedChangelogPath + ".zip");
-                else
+                if (File.Exists(dataset.AbortedChangelogPath))
                     File.Delete(dataset.AbortedChangelogPath);
-                Directory.Delete(dataset.AbortedChangelogPath, true);
+
+                var changelogDirectory = dataset.AbortedChangelogPath.Replace(".zip", "");
+
+                if (Directory.Exists(changelogDirectory))
+                    Directory.Delete(changelogDirectory, true);
+
                 dataset.AbortedChangelogPath = null;
             }
             SubscriberDatasetManager.UpdateDataset(dataset);
