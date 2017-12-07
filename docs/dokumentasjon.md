@@ -8,7 +8,7 @@ permalink: /dokumentasjon/
 
 [UML modell (v0.31 - 10.mai.2012)](http://www.geosynkronisering.no/files/umlmodell/0.3)
 
-## Noen gamle prosessmodeller som fortsatt er relevante
+### Noen gamle prosessmodeller som fortsatt er relevante
 
 [Bestill jobb]({{ "/assets/Bestill_job.svg" | absolute_url }})
 
