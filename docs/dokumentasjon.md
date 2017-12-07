@@ -6,9 +6,9 @@ permalink: /dokumentasjon/
 
 [UML modell (v0.31 - 10.mai.2012)](http://www.geosynkronisering.no/files/umlmodell/0.3)
 
-[Prosessmodell(BPMN) (v0.4 - oppdatert 15.mai.2012)](http://www.geosynkronisering.no/files/prosessmodell/0.4)
-
 [Bestill jobb]({{ "/assets/Bestill_job.svg" | absolute_url }})
+
+[Synkroniser med tilbyder]({{ "/assets/Synkroniser_med_tilbyder.svg" | absolute_url }})
 
 [Kildekode Felleskomponent GeoSynkronisering](https://github.com/kartverket/geosynkronisering)
 
