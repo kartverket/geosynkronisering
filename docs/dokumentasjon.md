@@ -10,6 +10,5 @@ permalink: /dokumentasjon/
 
 [Bestill jobb]({{ "/assets/Bestill_job.svg" | absolute_url }})
 
-
 [Kildekode Felleskomponent GeoSynkronisering](https://github.com/kartverket/geosynkronisering)
 
