@@ -8,5 +8,8 @@ permalink: /dokumentasjon/
 
 [Prosessmodell(BPMN) (v0.4 - oppdatert 15.mai.2012)](http://www.geosynkronisering.no/files/prosessmodell/0.4)
 
+[Bestill jobb]({{ "/assets/Bestill_job.svg" | absolute_url }})
+
+
 [Kildekode Felleskomponent GeoSynkronisering](https://github.com/kartverket/geosynkronisering)
 
