@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using Ionic.Zip;
 using Kartverket.Geosynkronisering.Subscriber.DL;
@@ -38,8 +39,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             webClient.DownloadFile(downloadUri, ChangelogFilename);
             if (File.Exists(ChangelogFilename))
             {
-                string outPath = Path.GetDirectoryName(ChangelogFilename);
-                UnpackZipFile(ChangelogFilename, outPath);
+                UnpackZipFile(ChangelogFilename);
 
                 // TODO: HS: Check if zip contains folder or file
                 string baseFilename = ChangelogFilename.Replace(".zip", "");
@@ -61,16 +61,17 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return false;
         }
 
-        public bool UnpackZipFile(string zipfile, string utpath)
+        public bool UnpackZipFile(string zipfile)
         {
             try
             {
                 using (var zip = ZipFile.Read(zipfile))
                 {
-                    foreach (var fil in zip)
+                    zip.ToList().ForEach(entry =>
                     {
-                        fil.Extract(utpath, ExtractExistingFileAction.OverwriteSilently);
-                    }
+                        entry.FileName = Path.GetFileName(entry.FileName);
+                        entry.Extract(zipfile.Replace(".zip",""), ExtractExistingFileAction.OverwriteSilently);
+                    });
                 }
             }
 
