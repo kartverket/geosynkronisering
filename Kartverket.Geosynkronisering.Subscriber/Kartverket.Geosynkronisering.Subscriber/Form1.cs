@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
@@ -53,18 +56,36 @@ namespace Kartverket.Geosynkronisering.Subscriber
                     //"UserName",
                     //"Password"
                 };
-#if DEBUG
-                dgDataset.DataSource = SubscriberDatasetManager.GetAllDataset();
-#else
-                dgDataset.DataSource = SubscriberDatasetManager.GetAllDataset();
+
+                // dgDataset.DataSource = SubscriberDatasetManager.GetAllDataset();
+                var list1 = SubscriberDatasetManager.GetAllDataset();
+
+
+                // To enable sorting in a DataGridView bound to a List
+                // See https://www.codeproject.com/Articles/31418/Implementing-a-Sortable-BindingList-Very-Very-Quic
+                MySortableBindingList<SubscriberDataset> sortableBindingList = new MySortableBindingList<SubscriberDataset>(list1); //new SortableList<SubscriberDataset>();
+
+                dgDataset.DataSource = sortableBindingList;
+                var col = dgDataset.Columns["DatasetId"];
+                dgDataset.Sort(col,ListSortDirection.Ascending);
+                
+                foreach (DataGridViewColumn column in dgDataset.Columns)
+                {
+                    column.SortMode = DataGridViewColumnSortMode.Automatic;
+                }
+
+#if !DEBUG
                 foreach (var invisibleColumn in invisibleColumns)
                 {
                     dgDataset.Columns[invisibleColumn].Visible = false;
                 };
+                
 #endif
 
                 dgDataset.AutoSize = true;
-                dgDataset.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+                //dgDataset.AllowUserToOrderColumns = true; // 20171113-Leg
+                // 20171113-Leg:  AutoSizeColumnsMode must be set to None in order to AllowUserToResizeColumns and AllowUserToResizeRows to work.
+                //dgDataset.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
 
             }
             catch (Exception ex)
@@ -78,6 +99,147 @@ namespace Kartverket.Geosynkronisering.Subscriber
             }
         }
 
+        #region SortableBindingList
+        /// <summary>
+        /// Subclassing BindingList<T> that provides sorting for every property of type T.
+        /// See https://www.codeproject.com/Articles/31418/Implementing-a-Sortable-BindingList-Very-Very-Quic
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        private class MySortableBindingList<T> : BindingList<T>
+        {
+
+            // reference to the list provided at the time of instantiation
+            List<T> originalList;
+            ListSortDirection sortDirection;
+            PropertyDescriptor sortProperty;
+
+            // function that refereshes the contents
+            // of the base classes collection of elements
+            Action<MySortableBindingList<T>, List<T>>
+                populateBaseList = (a, b) => a.ResetItems(b);
+
+            // a cache of functions that perform the sorting
+            // for a given type, property, and sort direction
+            static Dictionary<string, Func<List<T>, IEnumerable<T>>>
+                cachedOrderByExpressions = new Dictionary<string, Func<List<T>,
+                    IEnumerable<T>>>();
+
+            public MySortableBindingList()
+            {
+                originalList = new List<T>();
+            }
+
+            public MySortableBindingList(IEnumerable<T> enumerable)
+            {
+                originalList = enumerable.ToList();
+                populateBaseList(this, originalList);
+            }
+
+            public MySortableBindingList(List<T> list)
+            {
+                originalList = list;
+                populateBaseList(this, originalList);
+            }
+
+            protected override void ApplySortCore(PropertyDescriptor prop,
+                ListSortDirection direction)
+            {
+                //
+                // Look for an appropriate sort method in the cache if not found .
+                // Call CreateOrderByMethod to create one. 
+                // Apply it to the original list.
+                // Notify any bound controls that the sort has been applied.
+                //
+
+                sortProperty = prop;
+
+                var orderByMethodName = sortDirection ==
+                                        ListSortDirection.Ascending ? "OrderBy" : "OrderByDescending";
+                var cacheKey = typeof(T).GUID + prop.Name + orderByMethodName;
+
+                if (!cachedOrderByExpressions.ContainsKey(cacheKey))
+                {
+                    CreateOrderByMethod(prop, orderByMethodName, cacheKey);
+                }
+
+                ResetItems(cachedOrderByExpressions[cacheKey](originalList).ToList());
+                ResetBindings();
+                sortDirection = sortDirection == ListSortDirection.Ascending ?
+                    ListSortDirection.Descending : ListSortDirection.Ascending;
+            }
+
+            private void CreateOrderByMethod(PropertyDescriptor prop,
+                string orderByMethodName, string cacheKey)
+            {
+                //Create a generic method implementation for IEnumerable<T>.
+                //Cache it.
+                var sourceParameter = Expression.Parameter(typeof(List<T>), "source");
+                var lambdaParameter = Expression.Parameter(typeof(T), "lambdaParameter");
+                var accesedMember = typeof(T).GetProperty(prop.Name);
+                var propertySelectorLambda =
+                    Expression.Lambda(Expression.MakeMemberAccess(lambdaParameter,
+                        accesedMember), lambdaParameter);
+                var orderByMethod = typeof(Enumerable).GetMethods()
+                    .Where(a => a.Name == orderByMethodName &&
+                                a.GetParameters().Length == 2)
+                    .Single()
+                    .MakeGenericMethod(typeof(T), prop.PropertyType);
+
+                var orderByExpression = Expression.Lambda<Func<List<T>, IEnumerable<T>>>(
+                    Expression.Call(orderByMethod,
+                        new Expression[] { sourceParameter,
+                            propertySelectorLambda }),
+                    sourceParameter);
+
+                cachedOrderByExpressions.Add(cacheKey, orderByExpression.Compile());
+            }
+
+            protected override void RemoveSortCore()
+            {
+                ResetItems(originalList);
+            }
+
+            private void ResetItems(List<T> items)
+            {
+                base.ClearItems();
+                for (int i = 0; i < items.Count; i++)
+                {
+                    base.InsertItem(i, items[i]);
+                }
+            }
+
+            protected override bool SupportsSortingCore
+            {
+                get
+                {
+                    // indeed we do
+                    return true;
+                }
+            }
+
+            protected override ListSortDirection SortDirectionCore
+            {
+                get
+                {
+                    return sortDirection;
+                }
+            }
+
+            protected override PropertyDescriptor SortPropertyCore
+            {
+                get
+                {
+                    return sortProperty;
+                }
+            }
+
+            protected override void OnListChanged(ListChangedEventArgs e)
+            {
+                originalList = base.Items.ToList();
+            }
+        }
+        #endregion
+                
         /// <summary>
         ///     Initialize _currentDatasetId
         /// </summary>
@@ -99,7 +261,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-                var prg = (FeedbackController.Progress) sender;
+                var prg = (FeedbackController.Progress)sender;
 
                 var newMilestoneDescription = prg.MilestoneDescription;
 
@@ -120,7 +282,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-                var prg = (FeedbackController.Progress) sender;
+                var prg = (FeedbackController.Progress)sender;
 
                 var newLogListItem = prg.NewLogListItem;
 
@@ -145,9 +307,9 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-                var prg = (FeedbackController.Progress) sender;
+                var prg = (FeedbackController.Progress)sender;
 
-                Action action = () => progressBar.Maximum = (int) prg.TotalNumberOfOrders;
+                Action action = () => progressBar.Maximum = (int)prg.TotalNumberOfOrders;
                 Invoke(action);
 
                 action = () => progressBar.Value = 0;
@@ -167,7 +329,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-                var prg = (FeedbackController.Progress) sender;
+                var prg = (FeedbackController.Progress)sender;
 
                 // For some reason, the progressbar value could seldom be larger that the Maximum
                 var value = Math.Min(prg.OrdersProcessedCount, progressBar.Maximum);
@@ -291,8 +453,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
         private void cboDatasetName_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!comboFill)
-                _currentDatasetId = ((KeyValuePair<int, string>) cboDatasetName.SelectedItem).Key;
-                    //cboDatasetName.SelectedIndex + 1;
+                _currentDatasetId = ((KeyValuePair<int, string>)cboDatasetName.SelectedItem).Key;
+            //cboDatasetName.SelectedIndex + 1;
 
             Properties.Subscriber.Default.DefaultDatasetId = _currentDatasetId;
             Properties.Subscriber.Default.Save();
@@ -303,7 +465,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             catch (Exception ex)
             {
                 cboDatasetName.SelectedIndex = 0;
-                _currentDatasetId = ((KeyValuePair<int, string>) cboDatasetName.SelectedItem).Key;
+                _currentDatasetId = ((KeyValuePair<int, string>)cboDatasetName.SelectedItem).Key;
                 Properties.Subscriber.Default.DefaultDatasetId = _currentDatasetId;
                 Properties.Subscriber.Default.Save();
             }
@@ -318,7 +480,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-                var subscriberDatasets = (List<SubscriberDataset>) dgDataset.DataSource;
+                var subscriberDatasets = (MySortableBindingList<SubscriberDataset>)dgDataset.DataSource;
+                //var subscriberDatasets = (List<SubscriberDataset>)dgDataset.DataSource;
                 foreach (var subscriberDataset in subscriberDatasets)
                 {
                     SubscriberDatasetManager.UpdateDataset(subscriberDataset);
@@ -372,7 +535,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         private void btnGetCapabilities_Click(object sender, EventArgs e)
         {
             var Url = txbProviderURL.Text;
-            GetCapabilitiesXml(Url,textBoxUserName.Text, textBoxPassword.Text);
+            GetCapabilitiesXml(Url, textBoxUserName.Text, textBoxPassword.Text);
             btnAddSelected.Enabled = dgvProviderDataset.SelectedRows.Count > 0;
         }
 
@@ -383,7 +546,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             try
             {
                 Cursor = Cursors.WaitCursor;
-                GetCapabilitiesXml(txbProviderURL.Text,textBoxUserName.Text, textBoxPassword.Text);
+                GetCapabilitiesXml(txbProviderURL.Text, textBoxUserName.Text, textBoxPassword.Text);
             }
             catch (Exception ex)
             {
@@ -403,7 +566,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             {
                 selectedDataset.Add(dgr.Index);
             }
-            var blDataset = (IBindingList) dgvProviderDataset.DataSource;
+            var blDataset = (IBindingList)dgvProviderDataset.DataSource;
 
             if (!SubscriberDatasetManager.AddDatasets(blDataset, selectedDataset, txbProviderURL.Text, textBoxUserName.Text, textBoxPassword.Text))
             {
@@ -433,9 +596,11 @@ namespace Kartverket.Geosynkronisering.Subscriber
             {
                 selectedDataset.Add(dgr.Index);
             }
-            var subscriberDatasets = (List<SubscriberDataset>) dgDataset.DataSource;
+            var subscriberDatasets = (MySortableBindingList<SubscriberDataset>)dgDataset.DataSource;
+            //var subscriberDatasets = (List<SubscriberDataset>)dgDataset.DataSource;
 
-            if (!SubscriberDatasetManager.RemoveDatasets(subscriberDatasets, selectedDataset))
+
+            if (!SubscriberDatasetManager.RemoveDatasets(subscriberDatasets.ToList(), selectedDataset))
             {
                 MessageBox.Show(this, "Error removing selected datasets from internal Database.", "Remove Datasets",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -502,7 +667,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 //zipFile = @"C:\Users\b543836\AppData\Local\Temp\abonnent\6fa6e29d-e978-4ba5-a660-b7f355b233ef.zip";
 
                 var dataset = SubscriberDatasetManager.GetDataset(_currentDatasetId);
-                var lastChangeIndexSubscriber = (int) dataset.LastIndex;
+                var lastChangeIndexSubscriber = (int)dataset.LastIndex;
                 if (lastChangeIndexSubscriber > 0)
                 {
                     var buttons = MessageBoxButtons.YesNo;
@@ -616,7 +781,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         public void bw_DoSynchronization(object sender, DoWorkEventArgs e)
         {
             _synchController.InitTransactionsSummary();
-            var datasetId = (int) e.Argument;
+            var datasetId = (int)e.Argument;
             _synchController.DoSynchronization(datasetId);
         }
 
@@ -698,7 +863,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 var openFileDialog1 = new OpenFileDialog();
                 openFileDialog1.InitialDirectory = path.Substring(0, path.LastIndexOf("bin")) +
                                                    @"..\Kartverket.Geosynkronisering.Subscriber.BL\SchemaMapping";
-                    //System.Environment.CurrentDirectory;
+                //System.Environment.CurrentDirectory;
                 openFileDialog1.Filter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
                 openFileDialog1.FilterIndex = 1;
                 openFileDialog1.RestoreDirectory = true;
@@ -825,7 +990,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             SubscriberDatasetManager.AddEmptyDataset();
             InitializeDatasetGrid();
-                FillComboBoxDatasetName();
+            FillComboBoxDatasetName();
         }
 
         private void textBoxPassword_KeyPress(object sender, KeyPressEventArgs e)
@@ -835,5 +1000,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 btnGetProviderDatasets_Click(sender, e);
             }
         }
+
+
     }
 }
