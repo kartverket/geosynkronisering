@@ -366,7 +366,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             if (isFolder)
             {
-                var fileArray = Directory.GetFiles(changelogPath);
+                var fileArray = Directory.GetFiles(changelogPath, "*.xml");
                 if (fileArray[0].Contains('_'))
                 {
                     var comparison = new Comparison<string>(delegate(string a, string b)
