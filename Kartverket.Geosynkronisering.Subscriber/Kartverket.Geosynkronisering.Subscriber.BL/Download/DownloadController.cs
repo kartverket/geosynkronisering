@@ -69,7 +69,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 {
                     zip.ToList().ForEach(entry =>
                     {
-                        entry.FileName = Path.GetFileName(entry.FileName);
+                        var fileName = Path.GetFileName(entry.FileName);
+                        if (fileName != string.Empty) entry.FileName = fileName;
                         entry.Extract(zipfile.Replace(".zip",""), ExtractExistingFileAction.OverwriteSilently);
                     });
                 }
