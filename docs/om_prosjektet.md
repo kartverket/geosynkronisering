@@ -14,3 +14,4 @@ Olaf Østensen (Kartverket) er prosjektleder/-eier og har et overordnet ansvar f
 
 I prosjektet legges det opp til at det opprettes arbeidsgrupper som får ansvar for å utrede ulike teknologiske løsninger, testing av teknologi og dokumentasjonsarbeid. Arbeidsgruppene settes sammen etter behov, og vil ha ulike mandat og tidsrammer.
 
+![alt text](/assets/synk.png "Title")
