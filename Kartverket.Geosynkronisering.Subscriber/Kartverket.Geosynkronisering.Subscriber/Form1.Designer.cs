@@ -59,6 +59,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.btnGetLastIndex = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.buttonUpdateSelectedCells = new System.Windows.Forms.Button();
             this.buttonNew = new System.Windows.Forms.Button();
             this.dgDataset = new System.Windows.Forms.DataGridView();
             this.tabPage4 = new System.Windows.Forms.TabPage();
@@ -71,6 +72,7 @@
             this.textBoxPassword = new System.Windows.Forms.TextBox();
             this.textBoxUserName = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.textBoxCellValue = new System.Windows.Forms.TextBox();
             this.statusStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -193,6 +195,7 @@
             this.cboDatasetName.Location = new System.Drawing.Point(142, 631);
             this.cboDatasetName.Name = "cboDatasetName";
             this.cboDatasetName.Size = new System.Drawing.Size(163, 21);
+            this.cboDatasetName.Sorted = true;
             this.cboDatasetName.TabIndex = 26;
             this.toolTip1.SetToolTip(this.cboDatasetName, "Current dataset");
             this.cboDatasetName.SelectedIndexChanged += new System.EventHandler(this.cboDatasetName_SelectedIndexChanged);
@@ -403,6 +406,8 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.textBoxCellValue);
+            this.tabPage3.Controls.Add(this.buttonUpdateSelectedCells);
             this.tabPage3.Controls.Add(this.buttonNew);
             this.tabPage3.Controls.Add(this.btnDeleteSelected);
             this.tabPage3.Controls.Add(this.buttonSave);
@@ -414,6 +419,18 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Datasets";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // buttonUpdateSelectedCells
+            // 
+            this.buttonUpdateSelectedCells.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonUpdateSelectedCells.Location = new System.Drawing.Point(257, 628);
+            this.buttonUpdateSelectedCells.Name = "buttonUpdateSelectedCells";
+            this.buttonUpdateSelectedCells.Size = new System.Drawing.Size(89, 20);
+            this.buttonUpdateSelectedCells.TabIndex = 4;
+            this.buttonUpdateSelectedCells.Text = "Update Cells";
+            this.toolTip1.SetToolTip(this.buttonUpdateSelectedCells, "Update multiple columns");
+            this.buttonUpdateSelectedCells.UseVisualStyleBackColor = true;
+            this.buttonUpdateSelectedCells.Click += new System.EventHandler(this.buttonUpdateSelectedCells_Click);
             // 
             // buttonNew
             // 
@@ -438,6 +455,7 @@
             this.dgDataset.Size = new System.Drawing.Size(1056, 623);
             this.dgDataset.TabIndex = 1;
             this.dgDataset.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgDataset_CellFormatting);
+            this.dgDataset.SelectionChanged += new System.EventHandler(this.dgDataset_SelectionChanged);
             // 
             // tabPage4
             // 
@@ -559,6 +577,14 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1065, 712);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
+            // textBoxCellValue
+            // 
+            this.textBoxCellValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.textBoxCellValue.Location = new System.Drawing.Point(7, 629);
+            this.textBoxCellValue.Name = "textBoxCellValue";
+            this.textBoxCellValue.Size = new System.Drawing.Size(244, 20);
+            this.textBoxCellValue.TabIndex = 5;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -582,6 +608,7 @@
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
             this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgDataset)).EndInit();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
@@ -634,7 +661,9 @@
         private System.Windows.Forms.Button btnGetProviderDatasets;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox textBoxPassword;
-        private System.Windows.Forms.TextBox textBoxUserName;        
+        private System.Windows.Forms.TextBox textBoxUserName;
+        private System.Windows.Forms.Button buttonUpdateSelectedCells;
+        private System.Windows.Forms.TextBox textBoxCellValue;
     }
 }
 

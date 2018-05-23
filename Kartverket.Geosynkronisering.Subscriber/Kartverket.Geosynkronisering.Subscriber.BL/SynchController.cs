@@ -38,7 +38,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         public TransactionSummary TransactionsSummary;
 
-        public IBindingList GetCapabilitiesProviderDataset(string url, string UserName, string Password)
+        public MySortableBindingList<Dataset> GetCapabilitiesProviderDataset(string url, string UserName, string Password)
         {
             var cdb = new CapabilitiesDataBuilder(url, UserName, Password);
             return cdb.ProviderDatasets;

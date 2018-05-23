@@ -89,6 +89,7 @@
       <DependentUpon>GeoClientModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="GeosyncWCFproxy2.cs" />
+    <Compile Include="MySortableBindingList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubscriberDataset.cs" />
     <Compile Include="SubscriberDatasetManager.cs" />

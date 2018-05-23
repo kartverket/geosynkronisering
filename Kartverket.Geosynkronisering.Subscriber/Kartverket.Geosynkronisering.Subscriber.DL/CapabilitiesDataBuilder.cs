@@ -27,7 +27,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         }
 
 
-        private IBindingList m_DatasetBindingList;
+        private MySortableBindingList<Dataset> m_DatasetBindingList;
 
 
         private void ReadGetCapabilities(geosyncDBEntities db, REP_CapabilitiesType rootCapabilities)
@@ -35,7 +35,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             //Build Cababilities.XML
             //ServiceIndentification
             Dataset ds;
-            m_DatasetBindingList = new BindingList<Dataset>();
+            m_DatasetBindingList = new MySortableBindingList<Dataset>();
             foreach (DatasetType dst in rootCapabilities.datasets)
             {
                 ds = db.CreateObject<Dataset>();
@@ -110,7 +110,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             return null;
         }
 
-        public IBindingList ProviderDatasets
+        public MySortableBindingList<Dataset> ProviderDatasets
         {
             get { return m_DatasetBindingList; }
         }
