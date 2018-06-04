@@ -315,7 +315,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     //If next element == lastelement
                     if ((i + 1) == OptimizedChangeLog.Count)
                     {
-                        handle = endChangeId;
+                        handle = LastChangeId;
                     }
                     else
                     {
