@@ -15,7 +15,7 @@
 # in the templates via {{ site.myvariable }}.
 title: GeoSynkronisering 
 author: Kartverket og Norge digital
-email: your-email@example.com
+email: post@kartverket.no
 description: >- # this means to ignore newlines until "baseurl:"
   Prosjekt for utarbeidelse av spesifikasjoner for grensesnitt som muliggjør 
   synkronisering av datalager med geografisk datainnhold på tvers av ulike 
