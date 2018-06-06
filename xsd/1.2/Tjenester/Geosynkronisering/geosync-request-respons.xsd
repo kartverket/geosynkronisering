@@ -128,4 +128,10 @@
 			<xs:element name="localId" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:complexType name="PrecisionType">
+		<xs:sequence>
+			<xs:element name="decimals" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="epsgCode" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
 </xs:schema>

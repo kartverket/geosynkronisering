@@ -155,6 +155,20 @@
 					<xs:sequence/>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="GetPrecision">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="datasetId" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetPrecisionResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="return" type="gsynk-r:PrecisionType" minOccurs="0" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 		</xs:schema>
 	</wsdl:types>
 	<wsdl:message name="ServiceExceptionReportMessage">
@@ -226,6 +240,12 @@
 	<wsdl:message name="SendReportResponseMessage">
 		<wsdl:part name="parameters" element="gsynk-r:SendReportResponse"/>
 	</wsdl:message>
+	<wsdl:message name="GetPrecisionMessage">
+		<wsdl:part name="parameters" element="gsynk-r:GetPrecision"/>
+	</wsdl:message>
+	<wsdl:message name="GetPrecisionResponseMessage">
+		<wsdl:part name="parameters" element="gsynk-r:GetPrecisionResponse"/>
+	</wsdl:message>
 	<wsdl:portType name="WebFeatureServiceReplicationPort">
 		<wsdl:operation name="AcknowlegeChangelogDownloaded">
 			<wsdl:input name="AcknowlegeChangelogDownloadedRequest" message="gsynk-r:AcknowlegeChangelogDownloadedMessage"/>
@@ -280,6 +300,11 @@
 		<wsdl:operation name="SendReport">
 			<wsdl:input name="SendReportRequest" message="gsynk-r:SendReportMessage"/>
 			<wsdl:output name="SendReportResponse" message="gsynk-r:SendReportResponseMessage"/>
+			<wsdl:fault name="ServiceExceptionReport" message="gsynk-r:ServiceExceptionReportMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetPrecision">
+			<wsdl:input name="GetPrecisionRequest" message="gsynk-r:GetPrecisionMessage"/>
+			<wsdl:output name="GetPrecisionResponse" message="gsynk-r:GetPrecisionResponseMessage"/>
 			<wsdl:fault name="ServiceExceptionReport" message="gsynk-r:ServiceExceptionReportMessage"/>
 		</wsdl:operation>
 	</wsdl:portType>
@@ -411,6 +436,18 @@
 				<soap:body use="literal"/>
 			</wsdl:input>
 			<wsdl:output name="SendReportResponse">
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="ServiceExceptionReport">
+				<soap:fault use="literal" name="ServiceExceptionReport"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="GetPrecision">
+			<soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt/#GetPrecision"/>
+			<wsdl:input name="GetPrecisionRequest">
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="GetPrecisionResponse">
 				<soap:body use="literal"/>
 			</wsdl:output>
 			<wsdl:fault name="ServiceExceptionReport">
