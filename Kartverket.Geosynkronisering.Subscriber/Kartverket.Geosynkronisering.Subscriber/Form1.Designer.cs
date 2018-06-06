@@ -59,8 +59,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.btnGetLastIndex = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.dgDataset = new System.Windows.Forms.DataGridView();
             this.buttonNew = new System.Windows.Forms.Button();
+            this.dgDataset = new System.Windows.Forms.DataGridView();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.btnAddSelected = new System.Windows.Forms.Button();
             this.dgvProviderDataset = new System.Windows.Forms.DataGridView();
@@ -88,10 +88,9 @@
             // buttonSave
             // 
             this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSave.Location = new System.Drawing.Point(1082, 773);
-            this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonSave.Location = new System.Drawing.Point(812, 629);
             this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(100, 28);
+            this.buttonSave.Size = new System.Drawing.Size(75, 23);
             this.buttonSave.TabIndex = 1;
             this.buttonSave.Text = "Save";
             this.toolTip1.SetToolTip(this.buttonSave, "Save changes");
@@ -101,10 +100,9 @@
             // btnDeleteSelected
             // 
             this.btnDeleteSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteSelected.Location = new System.Drawing.Point(1190, 773);
-            this.btnDeleteSelected.Margin = new System.Windows.Forms.Padding(4);
+            this.btnDeleteSelected.Location = new System.Drawing.Point(892, 629);
             this.btnDeleteSelected.Name = "btnDeleteSelected";
-            this.btnDeleteSelected.Size = new System.Drawing.Size(100, 28);
+            this.btnDeleteSelected.Size = new System.Drawing.Size(75, 23);
             this.btnDeleteSelected.TabIndex = 2;
             this.btnDeleteSelected.Text = "Delete";
             this.toolTip1.SetToolTip(this.btnDeleteSelected, "Delete selected dataset");
@@ -113,10 +111,9 @@
             // 
             // btnOfflineSync
             // 
-            this.btnOfflineSync.Location = new System.Drawing.Point(351, 39);
-            this.btnOfflineSync.Margin = new System.Windows.Forms.Padding(4);
+            this.btnOfflineSync.Location = new System.Drawing.Point(262, 31);
             this.btnOfflineSync.Name = "btnOfflineSync";
-            this.btnOfflineSync.Size = new System.Drawing.Size(100, 28);
+            this.btnOfflineSync.Size = new System.Drawing.Size(75, 23);
             this.btnOfflineSync.TabIndex = 17;
             this.btnOfflineSync.Text = "Offline sync";
             this.toolTip1.SetToolTip(this.btnOfflineSync, "Offline syncronization, input is a changelog zip-file.");
@@ -125,10 +122,9 @@
             // 
             // btnSimplify
             // 
-            this.btnSimplify.Location = new System.Drawing.Point(4, 39);
-            this.btnSimplify.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSimplify.Location = new System.Drawing.Point(3, 31);
             this.btnSimplify.Name = "btnSimplify";
-            this.btnSimplify.Size = new System.Drawing.Size(124, 54);
+            this.btnSimplify.Size = new System.Drawing.Size(93, 44);
             this.btnSimplify.TabIndex = 16;
             this.btnSimplify.Text = "Schema Transformation";
             this.toolTip1.SetToolTip(this.btnSimplify, "Mapping from the nested structure of one or more simple features to the simple fe" +
@@ -138,20 +134,18 @@
             // 
             // txbLastIndex
             // 
-            this.txbLastIndex.Location = new System.Drawing.Point(113, 4);
-            this.txbLastIndex.Margin = new System.Windows.Forms.Padding(4);
+            this.txbLastIndex.Location = new System.Drawing.Point(85, 3);
             this.txbLastIndex.Name = "txbLastIndex";
-            this.txbLastIndex.Size = new System.Drawing.Size(100, 22);
+            this.txbLastIndex.Size = new System.Drawing.Size(76, 20);
             this.txbLastIndex.TabIndex = 1;
             this.toolTip1.SetToolTip(this.txbLastIndex, "Provider lastIndex");
             // 
             // btnTestSyncronizationComplete
             // 
             this.btnTestSyncronizationComplete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnTestSyncronizationComplete.Location = new System.Drawing.Point(5, 772);
-            this.btnTestSyncronizationComplete.Margin = new System.Windows.Forms.Padding(4);
+            this.btnTestSyncronizationComplete.Location = new System.Drawing.Point(4, 628);
             this.btnTestSyncronizationComplete.Name = "btnTestSyncronizationComplete";
-            this.btnTestSyncronizationComplete.Size = new System.Drawing.Size(176, 28);
+            this.btnTestSyncronizationComplete.Size = new System.Drawing.Size(132, 23);
             this.btnTestSyncronizationComplete.TabIndex = 19;
             this.btnTestSyncronizationComplete.Text = "Synchronize dataset";
             this.toolTip1.SetToolTip(this.btnTestSyncronizationComplete, "Test complete syncronization");
@@ -161,10 +155,9 @@
             // btnResetSubscrLastindex
             // 
             this.btnResetSubscrLastindex.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnResetSubscrLastindex.Location = new System.Drawing.Point(414, 772);
-            this.btnResetSubscrLastindex.Margin = new System.Windows.Forms.Padding(4);
+            this.btnResetSubscrLastindex.Location = new System.Drawing.Point(310, 628);
             this.btnResetSubscrLastindex.Name = "btnResetSubscrLastindex";
-            this.btnResetSubscrLastindex.Size = new System.Drawing.Size(213, 28);
+            this.btnResetSubscrLastindex.Size = new System.Drawing.Size(160, 23);
             this.btnResetSubscrLastindex.TabIndex = 20;
             this.btnResetSubscrLastindex.Text = "Reset subscriber lastIndex";
             this.toolTip1.SetToolTip(this.btnResetSubscrLastindex, "Reset subscriber lastIndex");
@@ -174,21 +167,19 @@
             // txbSubscrLastindex
             // 
             this.txbSubscrLastindex.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txbSubscrLastindex.Location = new System.Drawing.Point(635, 775);
-            this.txbSubscrLastindex.Margin = new System.Windows.Forms.Padding(4);
+            this.txbSubscrLastindex.Location = new System.Drawing.Point(476, 631);
             this.txbSubscrLastindex.Name = "txbSubscrLastindex";
             this.txbSubscrLastindex.ReadOnly = true;
-            this.txbSubscrLastindex.Size = new System.Drawing.Size(132, 22);
+            this.txbSubscrLastindex.Size = new System.Drawing.Size(100, 20);
             this.txbSubscrLastindex.TabIndex = 21;
             this.toolTip1.SetToolTip(this.txbSubscrLastindex, "subscriber lastIndex");
             // 
             // txtLimitNumberOfFeatures
             // 
             this.txtLimitNumberOfFeatures.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLimitNumberOfFeatures.Location = new System.Drawing.Point(922, 775);
-            this.txtLimitNumberOfFeatures.Margin = new System.Windows.Forms.Padding(4);
+            this.txtLimitNumberOfFeatures.Location = new System.Drawing.Point(692, 631);
             this.txtLimitNumberOfFeatures.Name = "txtLimitNumberOfFeatures";
-            this.txtLimitNumberOfFeatures.Size = new System.Drawing.Size(68, 22);
+            this.txtLimitNumberOfFeatures.Size = new System.Drawing.Size(52, 20);
             this.txtLimitNumberOfFeatures.TabIndex = 25;
             this.txtLimitNumberOfFeatures.Text = "-1";
             this.toolTip1.SetToolTip(this.txtLimitNumberOfFeatures, "For debugging limit number of objects");
@@ -199,10 +190,9 @@
             this.cboDatasetName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cboDatasetName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboDatasetName.FormattingEnabled = true;
-            this.cboDatasetName.Location = new System.Drawing.Point(189, 775);
-            this.cboDatasetName.Margin = new System.Windows.Forms.Padding(4);
+            this.cboDatasetName.Location = new System.Drawing.Point(142, 631);
             this.cboDatasetName.Name = "cboDatasetName";
-            this.cboDatasetName.Size = new System.Drawing.Size(216, 24);
+            this.cboDatasetName.Size = new System.Drawing.Size(163, 21);
             this.cboDatasetName.TabIndex = 26;
             this.toolTip1.SetToolTip(this.cboDatasetName, "Current dataset");
             this.cboDatasetName.SelectedIndexChanged += new System.EventHandler(this.cboDatasetName_SelectedIndexChanged);
@@ -213,10 +203,9 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel});
             this.statusStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.statusStrip1.Location = new System.Drawing.Point(0, 854);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 690);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 19, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1420, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1065, 22);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -238,11 +227,10 @@
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(4, 4);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
+            this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1412, 837);
+            this.tabControl1.Size = new System.Drawing.Size(1059, 681);
             this.tabControl1.TabIndex = 2;
             // 
             // tabPage1
@@ -258,20 +246,20 @@
             this.tabPage1.Controls.Add(this.txbSubscrLastindex);
             this.tabPage1.Controls.Add(this.btnResetSubscrLastindex);
             this.tabPage1.Controls.Add(this.btnTestSyncronizationComplete);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Size = new System.Drawing.Size(1404, 808);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(1051, 655);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Main";
             // 
             // btnTestSyncronizationAll
             // 
             this.btnTestSyncronizationAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnTestSyncronizationAll.Location = new System.Drawing.Point(1251, 772);
+            this.btnTestSyncronizationAll.Location = new System.Drawing.Point(938, 628);
+            this.btnTestSyncronizationAll.Margin = new System.Windows.Forms.Padding(2);
             this.btnTestSyncronizationAll.Name = "btnTestSyncronizationAll";
-            this.btnTestSyncronizationAll.Size = new System.Drawing.Size(143, 28);
+            this.btnTestSyncronizationAll.Size = new System.Drawing.Size(107, 23);
             this.btnTestSyncronizationAll.TabIndex = 29;
             this.btnTestSyncronizationAll.Text = "Synchronize all";
             this.btnTestSyncronizationAll.UseVisualStyleBackColor = true;
@@ -282,10 +270,9 @@
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 1043);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Location = new System.Drawing.Point(4, 848);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(150, 17);
+            this.label2.Size = new System.Drawing.Size(111, 13);
             this.label2.TabIndex = 28;
             this.label2.Text = "Synchronize progress:";
             // 
@@ -293,20 +280,18 @@
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(9, 1062);
-            this.progressBar.Margin = new System.Windows.Forms.Padding(4);
+            this.progressBar.Location = new System.Drawing.Point(7, 864);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1388, 28);
+            this.progressBar.Size = new System.Drawing.Size(1041, 23);
             this.progressBar.TabIndex = 27;
             // 
             // labelLimitNumberOfFeatures
             // 
             this.labelLimitNumberOfFeatures.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelLimitNumberOfFeatures.AutoSize = true;
-            this.labelLimitNumberOfFeatures.Location = new System.Drawing.Point(784, 778);
-            this.labelLimitNumberOfFeatures.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelLimitNumberOfFeatures.Location = new System.Drawing.Point(588, 633);
             this.labelLimitNumberOfFeatures.Name = "labelLimitNumberOfFeatures";
-            this.labelLimitNumberOfFeatures.Size = new System.Drawing.Size(130, 17);
+            this.labelLimitNumberOfFeatures.Size = new System.Drawing.Size(98, 13);
             this.labelLimitNumberOfFeatures.TabIndex = 24;
             this.labelLimitNumberOfFeatures.Text = "Limit no. of objects:";
             this.labelLimitNumberOfFeatures.Visible = false;
@@ -318,22 +303,19 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listBoxLog.FormattingEnabled = true;
             this.listBoxLog.HorizontalScrollbar = true;
-            this.listBoxLog.ItemHeight = 16;
             this.listBoxLog.Location = new System.Drawing.Point(0, 0);
-            this.listBoxLog.Margin = new System.Windows.Forms.Padding(4);
             this.listBoxLog.Name = "listBoxLog";
-            this.listBoxLog.Size = new System.Drawing.Size(1404, 756);
+            this.listBoxLog.Size = new System.Drawing.Size(1054, 615);
             this.listBoxLog.TabIndex = 22;
             // 
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.SystemColors.Control;
             this.tabPage2.Controls.Add(this.tableLayoutPanel5);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Size = new System.Drawing.Size(1404, 808);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(1051, 655);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Detailed test";
             // 
@@ -343,13 +325,12 @@
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel2, 0, 0);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(4, 4);
-            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 2;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 56.1828F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 43.8172F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(1396, 800);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(1045, 649);
             this.tableLayoutPanel5.TabIndex = 3;
             // 
             // tableLayoutPanel2
@@ -364,8 +345,7 @@
             this.tableLayoutPanel2.Controls.Add(this.btnGetLastIndex, 3, 0);
             this.tableLayoutPanel2.Controls.Add(this.btnSimplify, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.btnOfflineSync, 1, 1);
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(4, 4);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 5;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -373,15 +353,14 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1388, 236);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1039, 192);
             this.tableLayoutPanel2.TabIndex = 2;
             // 
             // btnGetCapabilities
             // 
-            this.btnGetCapabilities.Location = new System.Drawing.Point(4, 4);
-            this.btnGetCapabilities.Margin = new System.Windows.Forms.Padding(4);
+            this.btnGetCapabilities.Location = new System.Drawing.Point(3, 3);
             this.btnGetCapabilities.Name = "btnGetCapabilities";
-            this.btnGetCapabilities.Size = new System.Drawing.Size(120, 27);
+            this.btnGetCapabilities.Size = new System.Drawing.Size(90, 22);
             this.btnGetCapabilities.TabIndex = 0;
             this.btnGetCapabilities.Text = "GetCapabilities";
             this.btnGetCapabilities.UseVisualStyleBackColor = true;
@@ -394,32 +373,29 @@
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.txbLastIndex, 1, 0);
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(1045, 39);
-            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(780, 31);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(219, 27);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(164, 22);
             this.tableLayoutPanel3.TabIndex = 9;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(4, 0);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(3, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(101, 27);
+            this.label1.Size = new System.Drawing.Size(76, 22);
             this.label1.TabIndex = 0;
             this.label1.Text = "lastIndex:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btnGetLastIndex
             // 
-            this.btnGetLastIndex.Location = new System.Drawing.Point(1045, 4);
-            this.btnGetLastIndex.Margin = new System.Windows.Forms.Padding(4);
+            this.btnGetLastIndex.Location = new System.Drawing.Point(780, 3);
             this.btnGetLastIndex.Name = "btnGetLastIndex";
-            this.btnGetLastIndex.Size = new System.Drawing.Size(123, 27);
+            this.btnGetLastIndex.Size = new System.Drawing.Size(92, 22);
             this.btnGetLastIndex.TabIndex = 3;
             this.btnGetLastIndex.Text = "GetLastIndex";
             this.btnGetLastIndex.UseVisualStyleBackColor = true;
@@ -428,17 +404,28 @@
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.buttonNew);
-            this.tabPage3.Controls.Add(this.dgDataset);
             this.tabPage3.Controls.Add(this.btnDeleteSelected);
             this.tabPage3.Controls.Add(this.buttonSave);
-            this.tabPage3.Location = new System.Drawing.Point(4, 25);
-            this.tabPage3.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPage3.Controls.Add(this.dgDataset);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage3.Size = new System.Drawing.Size(1404, 808);
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(1051, 655);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Datasets";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // buttonNew
+            // 
+            this.buttonNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonNew.Location = new System.Drawing.Point(973, 629);
+            this.buttonNew.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonNew.Name = "buttonNew";
+            this.buttonNew.Size = new System.Drawing.Size(75, 23);
+            this.buttonNew.TabIndex = 3;
+            this.buttonNew.Text = "New";
+            this.buttonNew.UseVisualStyleBackColor = true;
+            this.buttonNew.Click += new System.EventHandler(this.buttonNew_Click);
             // 
             // dgDataset
             // 
@@ -446,23 +433,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgDataset.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgDataset.Location = new System.Drawing.Point(-4, 0);
-            this.dgDataset.Margin = new System.Windows.Forms.Padding(4);
+            this.dgDataset.Location = new System.Drawing.Point(-3, 0);
             this.dgDataset.Name = "dgDataset";
-            this.dgDataset.Size = new System.Drawing.Size(1408, 765);
+            this.dgDataset.Size = new System.Drawing.Size(1056, 623);
             this.dgDataset.TabIndex = 1;
             this.dgDataset.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgDataset_CellFormatting);
-            // 
-            // buttonNew
-            // 
-            this.buttonNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonNew.Location = new System.Drawing.Point(1297, 773);
-            this.buttonNew.Name = "buttonNew";
-            this.buttonNew.Size = new System.Drawing.Size(100, 28);
-            this.buttonNew.TabIndex = 3;
-            this.buttonNew.Text = "New";
-            this.buttonNew.UseVisualStyleBackColor = true;
-            this.buttonNew.Click += new System.EventHandler(this.buttonNew_Click);
             // 
             // tabPage4
             // 
@@ -474,11 +449,10 @@
             this.tabPage4.Controls.Add(this.label5);
             this.tabPage4.Controls.Add(this.textBoxPassword);
             this.tabPage4.Controls.Add(this.textBoxUserName);
-            this.tabPage4.Location = new System.Drawing.Point(4, 25);
-            this.tabPage4.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage4.Size = new System.Drawing.Size(1404, 808);
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(1051, 655);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Get ProviderDataset";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -487,10 +461,9 @@
             // 
             this.btnAddSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAddSelected.Enabled = false;
-            this.btnAddSelected.Location = new System.Drawing.Point(1301, 772);
-            this.btnAddSelected.Margin = new System.Windows.Forms.Padding(4);
+            this.btnAddSelected.Location = new System.Drawing.Point(976, 628);
             this.btnAddSelected.Name = "btnAddSelected";
-            this.btnAddSelected.Size = new System.Drawing.Size(98, 28);
+            this.btnAddSelected.Size = new System.Drawing.Size(74, 23);
             this.btnAddSelected.TabIndex = 4;
             this.btnAddSelected.Text = "&Add selected";
             this.btnAddSelected.UseVisualStyleBackColor = true;
@@ -503,9 +476,8 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvProviderDataset.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvProviderDataset.Location = new System.Drawing.Point(0, 0);
-            this.dgvProviderDataset.Margin = new System.Windows.Forms.Padding(4);
             this.dgvProviderDataset.Name = "dgvProviderDataset";
-            this.dgvProviderDataset.Size = new System.Drawing.Size(1404, 730);
+            this.dgvProviderDataset.Size = new System.Drawing.Size(1053, 594);
             this.dgvProviderDataset.TabIndex = 0;
             this.dgvProviderDataset.SelectionChanged += new System.EventHandler(this.dgvProviderDataset_SelectionChanged);
             // 
@@ -513,10 +485,9 @@
             // 
             this.txbProviderURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txbProviderURL.Location = new System.Drawing.Point(199, 738);
-            this.txbProviderURL.Margin = new System.Windows.Forms.Padding(4);
+            this.txbProviderURL.Location = new System.Drawing.Point(149, 601);
             this.txbProviderURL.Name = "txbProviderURL";
-            this.txbProviderURL.Size = new System.Drawing.Size(1200, 22);
+            this.txbProviderURL.Size = new System.Drawing.Size(901, 20);
             this.txbProviderURL.TabIndex = 0;
             this.txbProviderURL.Text = "https://geosynk.nois.no/tilbyder/";
             // 
@@ -524,10 +495,9 @@
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(11, 741);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Location = new System.Drawing.Point(8, 603);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(131, 17);
+            this.label4.Size = new System.Drawing.Size(100, 13);
             this.label4.TabIndex = 1;
             this.label4.Text = "Data Provider URL:";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -535,10 +505,9 @@
             // btnGetProviderDatasets
             // 
             this.btnGetProviderDatasets.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGetProviderDatasets.Location = new System.Drawing.Point(1195, 772);
-            this.btnGetProviderDatasets.Margin = new System.Windows.Forms.Padding(4);
+            this.btnGetProviderDatasets.Location = new System.Drawing.Point(896, 628);
             this.btnGetProviderDatasets.Name = "btnGetProviderDatasets";
-            this.btnGetProviderDatasets.Size = new System.Drawing.Size(100, 28);
+            this.btnGetProviderDatasets.Size = new System.Drawing.Size(75, 23);
             this.btnGetProviderDatasets.TabIndex = 3;
             this.btnGetProviderDatasets.Text = "&Get Datasets";
             this.btnGetProviderDatasets.UseVisualStyleBackColor = true;
@@ -548,10 +517,9 @@
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(11, 778);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Location = new System.Drawing.Point(8, 633);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(181, 17);
+            this.label5.Size = new System.Drawing.Size(137, 13);
             this.label5.TabIndex = 4;
             this.label5.Text = "Authentication (User/Pass):";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -559,19 +527,21 @@
             // textBoxPassword
             // 
             this.textBoxPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBoxPassword.Location = new System.Drawing.Point(305, 775);
+            this.textBoxPassword.Location = new System.Drawing.Point(229, 631);
+            this.textBoxPassword.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxPassword.Name = "textBoxPassword";
             this.textBoxPassword.PasswordChar = '*';
-            this.textBoxPassword.Size = new System.Drawing.Size(100, 22);
+            this.textBoxPassword.Size = new System.Drawing.Size(76, 20);
             this.textBoxPassword.TabIndex = 2;
             this.textBoxPassword.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxPassword_KeyPress);
             // 
             // textBoxUserName
             // 
             this.textBoxUserName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBoxUserName.Location = new System.Drawing.Point(199, 775);
+            this.textBoxUserName.Location = new System.Drawing.Point(149, 631);
+            this.textBoxUserName.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxUserName.Name = "textBoxUserName";
-            this.textBoxUserName.Size = new System.Drawing.Size(100, 22);
+            this.textBoxUserName.Size = new System.Drawing.Size(76, 20);
             this.textBoxUserName.TabIndex = 1;
             // 
             // tableLayoutPanel1
@@ -581,24 +551,22 @@
             this.tableLayoutPanel1.Controls.Add(this.tabControl1, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 96.51294F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 3.487064F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1420, 876);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1065, 712);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1420, 876);
+            this.ClientSize = new System.Drawing.Size(1065, 712);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.Text = "Geosynkronisering Subscriber";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
