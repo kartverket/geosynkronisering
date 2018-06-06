@@ -366,7 +366,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             if (isFolder)
             {
-                var fileArray = Directory.GetFiles(changelogPath);
+                var fileArray = Directory.GetFiles(changelogPath, "*.xml");
                 if (fileArray[0].Contains('_'))
                 {
                     var comparison = new Comparison<string>(delegate(string a, string b)
@@ -448,7 +448,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
                 dataset.AbortedEndIndex = GetAbortedEndIndex(changeLog);
                 dataset.AbortedTransaction = i;
-                dataset.AbortedChangelogPath = changelogFilename;
+                if(File.Exists(changelogFilename))
+                    dataset.AbortedChangelogPath = changelogFilename;
+                else if(File.Exists(changelogFilename + ".zip"))
+                    dataset.AbortedChangelogPath = changelogFilename + ".zip";
+                else
+                    throw new FileNotFoundException("Changelogfile not found at either " + changelogFilename + " or " + changelogFilename + ".zip");
 
                 SubscriberDatasetManager.UpdateDataset(dataset);
                 status = DoWfsTransaction(changeLog, datasetId, i + 1);
@@ -477,11 +482,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             dataset.AbortedChangelogId = null;
             if (!string.IsNullOrEmpty(dataset.AbortedChangelogPath))
             {
-                if (File.Exists(dataset.AbortedChangelogPath + ".zip"))
-                    File.Delete(dataset.AbortedChangelogPath + ".zip");
-                else
+                if (File.Exists(dataset.AbortedChangelogPath))
                     File.Delete(dataset.AbortedChangelogPath);
-                Directory.Delete(dataset.AbortedChangelogPath, true);
+
+                var changelogDirectory = dataset.AbortedChangelogPath.Replace(".zip", "");
+
+                if (Directory.Exists(changelogDirectory))
+                    Directory.Delete(changelogDirectory, true);
+
                 dataset.AbortedChangelogPath = null;
             }
             SubscriberDatasetManager.UpdateDataset(dataset);
@@ -608,10 +616,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                var outPath = Path.GetDirectoryName(zipFile);
-
                 var downloadController = new DownloadController();
-                downloadController.UnpackZipFile(zipFile, outPath);
+                downloadController.UnpackZipFile(zipFile);
 
 
                 // Check if zip contains folder or file - Could be more than one file

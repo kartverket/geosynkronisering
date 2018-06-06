@@ -136,7 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="geosyncDB.sdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\Geosynk.ico" />
     <Content Include="Images\Geosynk.png" />
