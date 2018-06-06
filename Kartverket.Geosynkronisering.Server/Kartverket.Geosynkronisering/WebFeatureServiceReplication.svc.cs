@@ -228,6 +228,11 @@ namespace Kartverket.Geosynkronisering
             }
         }
 
+        public PrecisionType GetPrecision(string datasetId)
+        {
+            throw new NotImplementedException();
+        }
+
         #region Async Code for OrderChangeLog
 
         public ChangelogIdentificationType OrderChangeLogAsync(IChangelogProvider changelogprovider,
