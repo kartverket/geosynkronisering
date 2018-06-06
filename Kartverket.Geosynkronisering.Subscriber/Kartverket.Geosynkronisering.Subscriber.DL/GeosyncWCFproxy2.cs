@@ -10327,9 +10327,9 @@ namespace Kartverket.GeosyncWCF
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
     [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.opengis.net/ows/1.1")]
     public partial class ExceptionReport
