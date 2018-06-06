@@ -38,6 +38,7 @@
 			<xs:extension base="wfs:BaseRequestType">
 				<xs:sequence>
 					<xs:element name="datasetId" type="xs:string" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="datasetVersion" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true"/>
 				</xs:sequence>
 				<xs:attributeGroup ref="wfs:StandardPresentationParameters"/>
 				<xs:attributeGroup ref="wfs:StandardResolveParameters"/>
