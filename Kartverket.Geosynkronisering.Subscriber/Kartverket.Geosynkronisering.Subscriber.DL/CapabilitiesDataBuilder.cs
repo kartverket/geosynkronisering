@@ -63,9 +63,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             DCP dcp = dcps[0];
             RequestMethodType postReq = null;
             int index = 0;
-            foreach (ItemsChoiceType ict in dcp.Item.ItemsElementName)
+            foreach (ItemsChoiceType1 ict in dcp.Item.ItemsElementName)
             {
-                if (ict == ItemsChoiceType.Post) postReq = dcp.Item.Items[index];
+                if (ict == ItemsChoiceType1.Post) postReq = dcp.Item.Items[index];
                 index++;
             }
 
