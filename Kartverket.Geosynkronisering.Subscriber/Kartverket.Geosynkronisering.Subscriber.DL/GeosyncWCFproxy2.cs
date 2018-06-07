@@ -4000,21 +4000,21 @@ namespace Kartverket.GeosyncWCF
             this.isPrivateField = false;
         }
         
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAnyElementAttribute(Order=0)]
-        [System.Xml.Serialization.XmlAnyElementAttribute(Namespace="http://www.opengis.net/wfs/2.0", Order=0)]
-        [System.Xml.Serialization.XmlChoiceIdentifierAttribute("ItemElementName")]
-        public System.Xml.XmlElement Item
-        {
-            get
-            {
-                return this.itemField;
-            }
-            set
-            {
-                this.itemField = value;
-            }
-        }
+        // /// <remarks/>
+        // [System.Xml.Serialization.XmlAnyElementAttribute(Order=0)]
+        // [System.Xml.Serialization.XmlAnyElementAttribute(Namespace="http://www.opengis.net/wfs/2.0", Order=0)]
+        // [System.Xml.Serialization.XmlChoiceIdentifierAttribute("ItemElementName")]
+        // public System.Xml.XmlElement Item
+        // {
+        //     get
+        //     {
+        //         return this.itemField;
+        //     }
+        //     set
+        //     {
+        //         this.itemField = value;
+        //     }
+        // }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=1)]
