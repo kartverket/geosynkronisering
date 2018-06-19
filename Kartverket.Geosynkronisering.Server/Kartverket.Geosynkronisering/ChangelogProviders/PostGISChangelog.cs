@@ -68,10 +68,9 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     Npgsql.NpgsqlCommand command = null;
                     PrepareChangeLogQuery(conn, ref command, startChangeId, endChangeId, datasetId);
 
-                    List<OptimizedChangeLogElement> optimizedChangeLog = new List<OptimizedChangeLogElement>();
                     //Execute query against the changelog table and remove unnecessary transactions.
                     
-                    FillOptimizedChangeLog(ref command, ref optimizedChangeLog, startChangeId);
+                    FillOptimizedChangeLog(ref command, ref OptimizedChangeLog, startChangeId);
 
                     conn.Close();
                 }
