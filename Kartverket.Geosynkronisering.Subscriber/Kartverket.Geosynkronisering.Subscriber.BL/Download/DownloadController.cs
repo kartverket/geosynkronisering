@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using Ionic.Zip;
 using Kartverket.Geosynkronisering.Subscriber.DL;
 using NLog;
@@ -65,7 +65,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         {
             try
             {
-                using (var zip = ZipFile.Read(zipfile))
+                using (var zip = ZipFile.Read(zipfile, new ReadOptions { Encoding = Encoding.UTF8 }))
                 {
                     zip.ToList().ForEach(entry =>
                     {
