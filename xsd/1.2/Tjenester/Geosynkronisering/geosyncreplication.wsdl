@@ -129,6 +129,21 @@
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="OrderChangelog2">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="order" type="gsynk-r:ChangelogOrderType" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="datasetVersion" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="OrderChangelog2Response">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="return" type="gsynk-r:ChangelogIdentificationType" minOccurs="0" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="GetDatasetVersion">
 				<xs:complexType>
 					<xs:sequence>
@@ -228,6 +243,12 @@
 	<wsdl:message name="OrderChangelogResponseMessage">
 		<wsdl:part name="parameters" element="gsynk-r:OrderChangelogResponse"/>
 	</wsdl:message>
+	<wsdl:message name="OrderChangelog2Message">
+		<wsdl:part name="parameters" element="gsynk-r:OrderChangelog2"/>
+	</wsdl:message>
+	<wsdl:message name="OrderChangelog2ResponseMessage">
+		<wsdl:part name="parameters" element="gsynk-r:OrderChangelog2Response"/>
+	</wsdl:message>
 	<wsdl:message name="GetDatasetVersionMessage">
 		<wsdl:part name="parameters" element="gsynk-r:GetDatasetVersion"/>
 	</wsdl:message>
@@ -290,6 +311,11 @@
 		<wsdl:operation name="OrderChangelog">
 			<wsdl:input name="OrderChangelogRequest" message="gsynk-r:OrderChangelogMessage"/>
 			<wsdl:output name="OrderChangelogResponse" message="gsynk-r:OrderChangelogResponseMessage"/>
+			<wsdl:fault name="ServiceExceptionReport" message="gsynk-r:ServiceExceptionReportMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="OrderChangelog2">
+			<wsdl:input name="OrderChangelog2Request" message="gsynk-r:OrderChangelog2Message"/>
+			<wsdl:output name="OrderChangelog2Response" message="gsynk-r:OrderChangelog2ResponseMessage"/>
 			<wsdl:fault name="ServiceExceptionReport" message="gsynk-r:ServiceExceptionReportMessage"/>
 		</wsdl:operation>
 		<wsdl:operation name="GetDatasetVersion">
@@ -412,6 +438,18 @@
 				<soap:body use="literal"/>
 			</wsdl:input>
 			<wsdl:output name="OrderChangelogResponse">
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="ServiceExceptionReport">
+				<soap:fault use="literal" name="ServiceExceptionReport"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="OrderChangelog2">
+			<soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.2produkt/#OrderChangelog2"/>
+			<wsdl:input name="OrderChangelog2Request">
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="OrderChangelog2Response">
 				<soap:body use="literal"/>
 			</wsdl:output>
 			<wsdl:fault name="ServiceExceptionReport">
