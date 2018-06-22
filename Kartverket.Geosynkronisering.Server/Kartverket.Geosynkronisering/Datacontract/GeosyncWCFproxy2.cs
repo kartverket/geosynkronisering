@@ -106,27 +106,27 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.XmlSerializerFormatAttribute()]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetCapabilitiesType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(CapabilitiesBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSortingClauseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractProjectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(extended))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(simple))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LogicOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TemporalOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(SpatialOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ComparisonOpsType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         void AcknowlegeChangelogDownloaded(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogId);
         
@@ -137,27 +137,27 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.XmlSerializerFormatAttribute()]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetCapabilitiesType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(CapabilitiesBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSortingClauseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractProjectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(extended))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(simple))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LogicOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TemporalOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(SpatialOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ComparisonOpsType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         void CancelChangelog(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid);
         
@@ -168,27 +168,27 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.XmlSerializerFormatAttribute()]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetCapabilitiesType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(CapabilitiesBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSortingClauseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractProjectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(extended))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(simple))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LogicOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TemporalOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(SpatialOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ComparisonOpsType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
         object DescribeFeatureType(string datasetId, [System.ServiceModel.MessageParameterAttribute(Name="describefeaturetype")] Kartverket.GeosyncWCF.DescribeFeatureTypeType describefeaturetype1);
@@ -200,27 +200,27 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.XmlSerializerFormatAttribute()]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetCapabilitiesType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(CapabilitiesBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSortingClauseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractProjectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(extended))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(simple))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LogicOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TemporalOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(SpatialOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ComparisonOpsType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
         Kartverket.GeosyncWCF.REP_CapabilitiesType GetCapabilities([System.ServiceModel.MessageParameterAttribute(Name="getcapabilities")] Kartverket.GeosyncWCF.GetCapabilitiesType1 getcapabilities1);
@@ -230,27 +230,27 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.XmlSerializerFormatAttribute()]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetCapabilitiesType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(CapabilitiesBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSortingClauseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractProjectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(extended))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(simple))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LogicOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TemporalOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(SpatialOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ComparisonOpsType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
         Kartverket.GeosyncWCF.ChangelogType GetChangelog(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid);
@@ -262,27 +262,27 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.XmlSerializerFormatAttribute()]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetCapabilitiesType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(CapabilitiesBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSortingClauseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractProjectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(extended))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(simple))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LogicOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TemporalOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(SpatialOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ComparisonOpsType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
         Kartverket.GeosyncWCF.ChangelogStatusType GetChangelogStatus(Kartverket.GeosyncWCF.ChangelogIdentificationType changelogid);
@@ -293,27 +293,27 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.XmlSerializerFormatAttribute()]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetCapabilitiesType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(CapabilitiesBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSortingClauseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractProjectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(extended))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(simple))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LogicOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TemporalOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(SpatialOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ComparisonOpsType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
         Kartverket.GeosyncWCF.GetLastIndexResponse GetLastIndex(Kartverket.GeosyncWCF.GetLastIndexRequest request);
@@ -326,27 +326,27 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.XmlSerializerFormatAttribute()]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetCapabilitiesType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(CapabilitiesBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSortingClauseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractProjectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(extended))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(simple))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LogicOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TemporalOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(SpatialOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ComparisonOpsType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
         Kartverket.GeosyncWCF.ListStoredChangelogsResponse ListStoredChangelogs(Kartverket.GeosyncWCF.ListStoredChangelogsRequest request);
@@ -356,30 +356,60 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.XmlSerializerFormatAttribute()]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetCapabilitiesType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(CapabilitiesBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSortingClauseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractProjectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(extended))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(simple))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LogicOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TemporalOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(SpatialOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ComparisonOpsType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
         Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelog(Kartverket.GeosyncWCF.ChangelogOrderType order);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2produkt/#OrderChangelog2", ReplyAction="*")]
+        [System.ServiceModel.FaultContractAttribute(typeof(Kartverket.GeosyncWCF.ExceptionReport), Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2produkt/#OrderChangelog2", Name="ExceptionReport", Namespace="http://www.opengis.net/ows/1.1")]
+        [System.ServiceModel.XmlSerializerFormatAttribute()]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetCapabilitiesType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(CapabilitiesBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSortingClauseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractProjectionClauseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(extended))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(simple))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LogicOpsType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TemporalOpsType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(SpatialOpsType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ComparisonOpsType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
+        [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
+        Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelog2(Kartverket.GeosyncWCF.ChangelogOrderType order, string datasetVersion);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt/#GetDatasetVersi" +
             "on", ReplyAction="*")]
@@ -388,27 +418,27 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.XmlSerializerFormatAttribute()]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetCapabilitiesType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(CapabilitiesBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSortingClauseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractProjectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(extended))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(simple))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LogicOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TemporalOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(SpatialOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ComparisonOpsType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
         string GetDatasetVersion(string datasetId);
@@ -418,27 +448,27 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.XmlSerializerFormatAttribute()]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetCapabilitiesType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(CapabilitiesBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSortingClauseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractProjectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(extended))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(simple))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LogicOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TemporalOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(SpatialOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ComparisonOpsType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         void SendReport(Kartverket.GeosyncWCF.ReportType report);
         
@@ -447,27 +477,27 @@ namespace Kartverket.GeosyncWCF
         [System.ServiceModel.XmlSerializerFormatAttribute()]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetCapabilitiesType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(CapabilitiesBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSortingClauseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractProjectionClauseType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(extended))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(simple))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ResponsiblePartyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(EmptyType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TransactionResponseType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LogicOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(TemporalOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(SpatialOpsType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ComparisonOpsType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractSelectionClauseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractTransactionActionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(LockFeatureResponseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ExecutionStatusType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetResourceByIdType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AbstractReferenceBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DescriptionType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ContentsBaseType))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(UnNamedDomainType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BaseRequestType))]
         [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
         Kartverket.GeosyncWCF.PrecisionType GetPrecision(string datasetId);
@@ -1218,7 +1248,7 @@ namespace Kartverket.GeosyncWCF
         
         private ComparisonOpsType itemField;
         
-        private ItemChoiceType1 itemElementNameField;
+        private ItemChoiceType itemElementNameField;
         
         private SpatialOpsType item1Field;
         
@@ -1265,7 +1295,7 @@ namespace Kartverket.GeosyncWCF
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=1)]
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public ItemChoiceType1 ItemElementName
+        public ItemChoiceType ItemElementName
         {
             get
             {
@@ -1891,7 +1921,7 @@ namespace Kartverket.GeosyncWCF
     [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/fes/2.0", IncludeInSchema=false)]
-    public enum ItemChoiceType1
+    public enum ItemChoiceType
     {
         
         /// <remarks/>
@@ -3048,9 +3078,9 @@ namespace Kartverket.GeosyncWCF
     }
     
     /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(StoredQueryType))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(AbstractAdhocQueryExpressionType))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(QueryType))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(StoredQueryType))]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -3072,6 +3102,91 @@ namespace Kartverket.GeosyncWCF
             set
             {
                 this.handleField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class StoredQueryType : AbstractQueryExpressionType
+    {
+        
+        private ParameterType[] parameterField;
+        
+        private string idField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("Parameter", Order=0)]
+        public ParameterType[] Parameter
+        {
+            get
+            {
+                return this.parameterField;
+            }
+            set
+            {
+                this.parameterField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
+        public string id
+        {
+            get
+            {
+                return this.idField;
+            }
+            set
+            {
+                this.idField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class ParameterType
+    {
+        
+        private System.Xml.XmlNode[] anyField;
+        
+        private string nameField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlTextAttribute()]
+        [System.Xml.Serialization.XmlAnyElementAttribute(Order=0)]
+        public System.Xml.XmlNode[] Any
+        {
+            get
+            {
+                return this.anyField;
+            }
+            set
+            {
+                this.anyField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string name
+        {
+            get
+            {
+                return this.nameField;
+            }
+            set
+            {
+                this.nameField = value;
             }
         }
     }
@@ -3303,91 +3418,6 @@ namespace Kartverket.GeosyncWCF
             set
             {
                 this.featureVersionField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class StoredQueryType : AbstractQueryExpressionType
-    {
-        
-        private ParameterType[] parameterField;
-        
-        private string idField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Parameter", Order=0)]
-        public ParameterType[] Parameter
-        {
-            get
-            {
-                return this.parameterField;
-            }
-            set
-            {
-                this.parameterField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
-        public string id
-        {
-            get
-            {
-                return this.idField;
-            }
-            set
-            {
-                this.idField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class ParameterType
-    {
-        
-        private System.Xml.XmlNode[] anyField;
-        
-        private string nameField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        [System.Xml.Serialization.XmlAnyElementAttribute(Order=0)]
-        public System.Xml.XmlNode[] Any
-        {
-            get
-            {
-                return this.anyField;
-            }
-            set
-            {
-                this.anyField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
-        {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
             }
         }
     }
@@ -3985,7 +4015,7 @@ namespace Kartverket.GeosyncWCF
         
         private System.Xml.XmlElement itemField;
         
-        private ItemChoiceType itemElementNameField;
+        private ItemChoiceType1 itemElementNameField;
         
         private string[] textField;
         
@@ -4019,7 +4049,7 @@ namespace Kartverket.GeosyncWCF
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=1)]
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public ItemChoiceType ItemElementName
+        public ItemChoiceType1 ItemElementName
         {
             get
             {
@@ -4093,7 +4123,7 @@ namespace Kartverket.GeosyncWCF
     [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0", IncludeInSchema=false)]
-    public enum ItemChoiceType
+    public enum ItemChoiceType1
     {
         
         /// <remarks/>
@@ -5710,9 +5740,9 @@ namespace Kartverket.GeosyncWCF
     
     /// <remarks/>
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(BasicIdentificationType))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(IdentificationType))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ManifestType))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ReferenceGroupType))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(IdentificationType))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(DatasetDescriptionSummaryBaseType))]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
     [System.SerializableAttribute()]
@@ -5772,9 +5802,9 @@ namespace Kartverket.GeosyncWCF
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(IdentificationType))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ManifestType))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ReferenceGroupType))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(IdentificationType))]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -5814,98 +5844,6 @@ namespace Kartverket.GeosyncWCF
                 this.metadataField = value;
             }
         }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/ows/1.1")]
-    public partial class IdentificationType : BasicIdentificationType
-    {
-        
-        private BoundingBoxType[] itemsField;
-        
-        private string[] outputFormatField;
-        
-        private string[] items1Field;
-        
-        private Items1ChoiceType[] items1ElementNameField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("BoundingBox", typeof(BoundingBoxType), Order=0)]
-        [System.Xml.Serialization.XmlElementAttribute("WGS84BoundingBox", typeof(WGS84BoundingBoxType), Order=0)]
-        public BoundingBoxType[] Items
-        {
-            get
-            {
-                return this.itemsField;
-            }
-            set
-            {
-                this.itemsField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("OutputFormat", Order=1)]
-        public string[] OutputFormat
-        {
-            get
-            {
-                return this.outputFormatField;
-            }
-            set
-            {
-                this.outputFormatField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("AvailableCRS", typeof(string), DataType="anyURI", Order=2)]
-        [System.Xml.Serialization.XmlElementAttribute("SupportedCRS", typeof(string), DataType="anyURI", Order=2)]
-        [System.Xml.Serialization.XmlChoiceIdentifierAttribute("Items1ElementName")]
-        public string[] Items1
-        {
-            get
-            {
-                return this.items1Field;
-            }
-            set
-            {
-                this.items1Field = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Items1ElementName", Order=3)]
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public Items1ChoiceType[] Items1ElementName
-        {
-            get
-            {
-                return this.items1ElementNameField;
-            }
-            set
-            {
-                this.items1ElementNameField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/ows/1.1", IncludeInSchema=false)]
-    public enum Items1ChoiceType
-    {
-        
-        /// <remarks/>
-        AvailableCRS,
-        
-        /// <remarks/>
-        SupportedCRS,
     }
     
     /// <remarks/>
@@ -6221,6 +6159,98 @@ namespace Kartverket.GeosyncWCF
                 this.itemField = value;
             }
         }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/ows/1.1")]
+    public partial class IdentificationType : BasicIdentificationType
+    {
+        
+        private BoundingBoxType[] itemsField;
+        
+        private string[] outputFormatField;
+        
+        private string[] items1Field;
+        
+        private Items1ChoiceType[] items1ElementNameField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("BoundingBox", typeof(BoundingBoxType), Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute("WGS84BoundingBox", typeof(WGS84BoundingBoxType), Order=0)]
+        public BoundingBoxType[] Items
+        {
+            get
+            {
+                return this.itemsField;
+            }
+            set
+            {
+                this.itemsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("OutputFormat", Order=1)]
+        public string[] OutputFormat
+        {
+            get
+            {
+                return this.outputFormatField;
+            }
+            set
+            {
+                this.outputFormatField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("AvailableCRS", typeof(string), DataType="anyURI", Order=2)]
+        [System.Xml.Serialization.XmlElementAttribute("SupportedCRS", typeof(string), DataType="anyURI", Order=2)]
+        [System.Xml.Serialization.XmlChoiceIdentifierAttribute("Items1ElementName")]
+        public string[] Items1
+        {
+            get
+            {
+                return this.items1Field;
+            }
+            set
+            {
+                this.items1Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("Items1ElementName", Order=3)]
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public Items1ChoiceType[] Items1ElementName
+        {
+            get
+            {
+                return this.items1ElementNameField;
+            }
+            set
+            {
+                this.items1ElementNameField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/ows/1.1", IncludeInSchema=false)]
+    public enum Items1ChoiceType
+    {
+        
+        /// <remarks/>
+        AvailableCRS,
+        
+        /// <remarks/>
+        SupportedCRS,
     }
     
     /// <remarks/>
@@ -8382,6 +8412,1415 @@ namespace Kartverket.GeosyncWCF
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class EmptyType
+    {
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class CreatedOrModifiedFeatureType
+    {
+        
+        private ResourceIdType[] resourceIdField;
+        
+        private string handleField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("ResourceId", Namespace="http://www.opengis.net/fes/2.0", Order=0)]
+        public ResourceIdType[] ResourceId
+        {
+            get
+            {
+                return this.resourceIdField;
+            }
+            set
+            {
+                this.resourceIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string handle
+        {
+            get
+            {
+                return this.handleField;
+            }
+            set
+            {
+                this.handleField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class TransactionSummaryType
+    {
+        
+        private string totalInsertedField;
+        
+        private string totalUpdatedField;
+        
+        private string totalReplacedField;
+        
+        private string totalDeletedField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger", Order=0)]
+        public string totalInserted
+        {
+            get
+            {
+                return this.totalInsertedField;
+            }
+            set
+            {
+                this.totalInsertedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger", Order=1)]
+        public string totalUpdated
+        {
+            get
+            {
+                return this.totalUpdatedField;
+            }
+            set
+            {
+                this.totalUpdatedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger", Order=2)]
+        public string totalReplaced
+        {
+            get
+            {
+                return this.totalReplacedField;
+            }
+            set
+            {
+                this.totalReplacedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger", Order=3)]
+        public string totalDeleted
+        {
+            get
+            {
+                return this.totalDeletedField;
+            }
+            set
+            {
+                this.totalDeletedField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class TransactionResponseType
+    {
+        
+        private TransactionSummaryType transactionSummaryField;
+        
+        private CreatedOrModifiedFeatureType[] insertResultsField;
+        
+        private CreatedOrModifiedFeatureType[] updateResultsField;
+        
+        private CreatedOrModifiedFeatureType[] replaceResultsField;
+        
+        private string versionField;
+        
+        public TransactionResponseType()
+        {
+            this.versionField = "2.0.0";
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public TransactionSummaryType TransactionSummary
+        {
+            get
+            {
+                return this.transactionSummaryField;
+            }
+            set
+            {
+                this.transactionSummaryField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=1)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("Feature", IsNullable=false)]
+        public CreatedOrModifiedFeatureType[] InsertResults
+        {
+            get
+            {
+                return this.insertResultsField;
+            }
+            set
+            {
+                this.insertResultsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=2)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("Feature", IsNullable=false)]
+        public CreatedOrModifiedFeatureType[] UpdateResults
+        {
+            get
+            {
+                return this.updateResultsField;
+            }
+            set
+            {
+                this.updateResultsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=3)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("Feature", IsNullable=false)]
+        public CreatedOrModifiedFeatureType[] ReplaceResults
+        {
+            get
+            {
+                return this.replaceResultsField;
+            }
+            set
+            {
+                this.replaceResultsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string version
+        {
+            get
+            {
+                return this.versionField;
+            }
+            set
+            {
+                this.versionField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class FeaturesNotLockedType
+    {
+        
+        private ResourceIdType[] resourceIdField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("ResourceId", Namespace="http://www.opengis.net/fes/2.0", Order=0)]
+        public ResourceIdType[] ResourceId
+        {
+            get
+            {
+                return this.resourceIdField;
+            }
+            set
+            {
+                this.resourceIdField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class FeaturesLockedType
+    {
+        
+        private ResourceIdType[] resourceIdField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("ResourceId", Namespace="http://www.opengis.net/fes/2.0", Order=0)]
+        public ResourceIdType[] ResourceId
+        {
+            get
+            {
+                return this.resourceIdField;
+            }
+            set
+            {
+                this.resourceIdField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class LockFeatureResponseType
+    {
+        
+        private FeaturesLockedType featuresLockedField;
+        
+        private FeaturesNotLockedType featuresNotLockedField;
+        
+        private string lockIdField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public FeaturesLockedType FeaturesLocked
+        {
+            get
+            {
+                return this.featuresLockedField;
+            }
+            set
+            {
+                this.featuresLockedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public FeaturesNotLockedType FeaturesNotLocked
+        {
+            get
+            {
+                return this.featuresNotLockedField;
+            }
+            set
+            {
+                this.featuresNotLockedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string lockId
+        {
+            get
+            {
+                return this.lockIdField;
+            }
+            set
+            {
+                this.lockIdField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(CreateStoredQueryResponseType))]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class ExecutionStatusType
+    {
+        
+        private string statusField;
+        
+        public ExecutionStatusType()
+        {
+            this.statusField = "OK";
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string status
+        {
+            get
+            {
+                return this.statusField;
+            }
+            set
+            {
+                this.statusField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class CreateStoredQueryResponseType : ExecutionStatusType
+    {
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class StoredQueryListItemType
+    {
+        
+        private Title[] titleField;
+        
+        private System.Xml.XmlQualifiedName[] returnFeatureTypeField;
+        
+        private string idField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("Title", Order=0)]
+        public Title[] Title
+        {
+            get
+            {
+                return this.titleField;
+            }
+            set
+            {
+                this.titleField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("ReturnFeatureType", Order=1)]
+        public System.Xml.XmlQualifiedName[] ReturnFeatureType
+        {
+            get
+            {
+                return this.returnFeatureTypeField;
+            }
+            set
+            {
+                this.returnFeatureTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
+        public string id
+        {
+            get
+            {
+                return this.idField;
+            }
+            set
+            {
+                this.idField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(FeatureCollectionType))]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class SimpleFeatureCollectionType
+    {
+        
+        private System.Xml.XmlElement boundedByField;
+        
+        private MemberPropertyType[] memberField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public System.Xml.XmlElement boundedBy
+        {
+            get
+            {
+                return this.boundedByField;
+            }
+            set
+            {
+                this.boundedByField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("member", Order=1)]
+        public MemberPropertyType[] member
+        {
+            get
+            {
+                return this.memberField;
+            }
+            set
+            {
+                this.memberField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class MemberPropertyType
+    {
+        
+        private object itemField;
+        
+        private string[] textField;
+        
+        private string stateField;
+        
+        private typeType typeField;
+        
+        private bool typeFieldSpecified;
+        
+        private string hrefField;
+        
+        private string roleField;
+        
+        private string arcroleField;
+        
+        private string titleField;
+        
+        private showType showField;
+        
+        private bool showFieldSpecified;
+        
+        private actuateType actuateField;
+        
+        private bool actuateFieldSpecified;
+        
+        public MemberPropertyType()
+        {
+            this.typeField = typeType.simple;
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAnyElementAttribute(Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute("FeatureCollection", typeof(FeatureCollectionType), Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute("SimpleFeatureCollection", typeof(SimpleFeatureCollectionType), Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute("Tuple", typeof(TupleType), Order=0)]
+        public object Item
+        {
+            get
+            {
+                return this.itemField;
+            }
+            set
+            {
+                this.itemField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlTextAttribute()]
+        public string[] Text
+        {
+            get
+            {
+                return this.textField;
+            }
+            set
+            {
+                this.textField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string state
+        {
+            get
+            {
+                return this.stateField;
+            }
+            set
+            {
+                this.stateField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/1999/xlink")]
+        public typeType type
+        {
+            get
+            {
+                return this.typeField;
+            }
+            set
+            {
+                this.typeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool typeSpecified
+        {
+            get
+            {
+                return this.typeFieldSpecified;
+            }
+            set
+            {
+                this.typeFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/1999/xlink", DataType="anyURI")]
+        public string href
+        {
+            get
+            {
+                return this.hrefField;
+            }
+            set
+            {
+                this.hrefField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/1999/xlink", DataType="anyURI")]
+        public string role
+        {
+            get
+            {
+                return this.roleField;
+            }
+            set
+            {
+                this.roleField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/1999/xlink", DataType="anyURI")]
+        public string arcrole
+        {
+            get
+            {
+                return this.arcroleField;
+            }
+            set
+            {
+                this.arcroleField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/1999/xlink")]
+        public string title
+        {
+            get
+            {
+                return this.titleField;
+            }
+            set
+            {
+                this.titleField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/1999/xlink")]
+        public showType show
+        {
+            get
+            {
+                return this.showField;
+            }
+            set
+            {
+                this.showField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool showSpecified
+        {
+            get
+            {
+                return this.showFieldSpecified;
+            }
+            set
+            {
+                this.showFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/1999/xlink")]
+        public actuateType actuate
+        {
+            get
+            {
+                return this.actuateField;
+            }
+            set
+            {
+                this.actuateField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool actuateSpecified
+        {
+            get
+            {
+                return this.actuateFieldSpecified;
+            }
+            set
+            {
+                this.actuateFieldSpecified = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class FeatureCollectionType : SimpleFeatureCollectionType
+    {
+        
+        private additionalObjects additionalObjectsField;
+        
+        private truncatedResponse truncatedResponseField;
+        
+        private System.DateTime timeStampField;
+        
+        private string numberMatchedField;
+        
+        private string numberReturnedField;
+        
+        private string nextField;
+        
+        private string previousField;
+        
+        private string lockIdField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public additionalObjects additionalObjects
+        {
+            get
+            {
+                return this.additionalObjectsField;
+            }
+            set
+            {
+                this.additionalObjectsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public truncatedResponse truncatedResponse
+        {
+            get
+            {
+                return this.truncatedResponseField;
+            }
+            set
+            {
+                this.truncatedResponseField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public System.DateTime timeStamp
+        {
+            get
+            {
+                return this.timeStampField;
+            }
+            set
+            {
+                this.timeStampField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string numberMatched
+        {
+            get
+            {
+                return this.numberMatchedField;
+            }
+            set
+            {
+                this.numberMatchedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(DataType="nonNegativeInteger")]
+        public string numberReturned
+        {
+            get
+            {
+                return this.numberReturnedField;
+            }
+            set
+            {
+                this.numberReturnedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
+        public string next
+        {
+            get
+            {
+                return this.nextField;
+            }
+            set
+            {
+                this.nextField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
+        public string previous
+        {
+            get
+            {
+                return this.previousField;
+            }
+            set
+            {
+                this.previousField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string lockId
+        {
+            get
+            {
+                return this.lockIdField;
+            }
+            set
+            {
+                this.lockIdField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class additionalObjects
+    {
+        
+        private object itemField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("FeatureCollection", typeof(FeatureCollectionType), Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute("SimpleFeatureCollection", typeof(SimpleFeatureCollectionType), Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute("ValueCollection", typeof(ValueCollectionType), Order=0)]
+        public object Item
+        {
+            get
+            {
+                return this.itemField;
+            }
+            set
+            {
+                this.itemField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class ValueCollectionType
+    {
+        
+        private MemberPropertyType[] memberField;
+        
+        private additionalValues additionalValuesField;
+        
+        private truncatedResponse truncatedResponseField;
+        
+        private System.DateTime timeStampField;
+        
+        private string numberMatchedField;
+        
+        private string numberReturnedField;
+        
+        private string nextField;
+        
+        private string previousField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("member", Order=0)]
+        public MemberPropertyType[] member
+        {
+            get
+            {
+                return this.memberField;
+            }
+            set
+            {
+                this.memberField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public additionalValues additionalValues
+        {
+            get
+            {
+                return this.additionalValuesField;
+            }
+            set
+            {
+                this.additionalValuesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public truncatedResponse truncatedResponse
+        {
+            get
+            {
+                return this.truncatedResponseField;
+            }
+            set
+            {
+                this.truncatedResponseField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public System.DateTime timeStamp
+        {
+            get
+            {
+                return this.timeStampField;
+            }
+            set
+            {
+                this.timeStampField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string numberMatched
+        {
+            get
+            {
+                return this.numberMatchedField;
+            }
+            set
+            {
+                this.numberMatchedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(DataType="nonNegativeInteger")]
+        public string numberReturned
+        {
+            get
+            {
+                return this.numberReturnedField;
+            }
+            set
+            {
+                this.numberReturnedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
+        public string next
+        {
+            get
+            {
+                return this.nextField;
+            }
+            set
+            {
+                this.nextField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
+        public string previous
+        {
+            get
+            {
+                return this.previousField;
+            }
+            set
+            {
+                this.previousField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class additionalValues
+    {
+        
+        private object itemField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("FeatureCollection", typeof(FeatureCollectionType), Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute("SimpleFeatureCollection", typeof(SimpleFeatureCollectionType), Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute("ValueCollection", typeof(ValueCollectionType), Order=0)]
+        public object Item
+        {
+            get
+            {
+                return this.itemField;
+            }
+            set
+            {
+                this.itemField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class truncatedResponse
+    {
+        
+        private ExceptionReport exceptionReportField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.opengis.net/ows/1.1", Order=0)]
+        public ExceptionReport ExceptionReport
+        {
+            get
+            {
+                return this.exceptionReportField;
+            }
+            set
+            {
+                this.exceptionReportField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    // [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.opengis.net/ows/1.1")]
+    public partial class ExceptionReport
+    {
+        
+        private ExceptionType[] exceptionField;
+        
+        private string versionField;
+        
+        private string langField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("Exception", Order=0)]
+        public ExceptionType[] Exception
+        {
+            get
+            {
+                return this.exceptionField;
+            }
+            set
+            {
+                this.exceptionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string version
+        {
+            get
+            {
+                return this.versionField;
+            }
+            set
+            {
+                this.versionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/XML/1998/namespace")]
+        public string lang
+        {
+            get
+            {
+                return this.langField;
+            }
+            set
+            {
+                this.langField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/ows/1.1")]
+    public partial class ExceptionType
+    {
+        
+        private string[] exceptionTextField;
+        
+        private string exceptionCodeField;
+        
+        private string locatorField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("ExceptionText", Order=0)]
+        public string[] ExceptionText
+        {
+            get
+            {
+                return this.exceptionTextField;
+            }
+            set
+            {
+                this.exceptionTextField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string exceptionCode
+        {
+            get
+            {
+                return this.exceptionCodeField;
+            }
+            set
+            {
+                this.exceptionCodeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string locator
+        {
+            get
+            {
+                return this.locatorField;
+            }
+            set
+            {
+                this.locatorField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
+    public partial class TupleType
+    {
+        
+        private MemberPropertyType[] memberField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("member", Order=0)]
+        public MemberPropertyType[] member
+        {
+            get
+            {
+                return this.memberField;
+            }
+            set
+            {
+                this.memberField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/ows/1.1")]
+    public partial class ContentsBaseType
+    {
+        
+        private DatasetDescriptionSummaryBaseType[] datasetDescriptionSummaryField;
+        
+        private MetadataType[] otherSourceField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("DatasetDescriptionSummary", Order=0)]
+        public DatasetDescriptionSummaryBaseType[] DatasetDescriptionSummary
+        {
+            get
+            {
+                return this.datasetDescriptionSummaryField;
+            }
+            set
+            {
+                this.datasetDescriptionSummaryField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("OtherSource", Order=1)]
+        public MetadataType[] OtherSource
+        {
+            get
+            {
+                return this.otherSourceField;
+            }
+            set
+            {
+                this.otherSourceField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/ows/1.1")]
+    public partial class GetResourceByIdType
+    {
+        
+        private string[] resourceIDField;
+        
+        private string outputFormatField;
+        
+        private string serviceField;
+        
+        private string versionField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("ResourceID", DataType="anyURI", Order=0)]
+        public string[] ResourceID
+        {
+            get
+            {
+                return this.resourceIDField;
+            }
+            set
+            {
+                this.resourceIDField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string OutputFormat
+        {
+            get
+            {
+                return this.outputFormatField;
+            }
+            set
+            {
+                this.outputFormatField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string service
+        {
+            get
+            {
+                return this.serviceField;
+            }
+            set
+            {
+                this.serviceField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string version
+        {
+            get
+            {
+                return this.versionField;
+            }
+            set
+            {
+                this.versionField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/ows/1.1")]
+    public partial class ResponsiblePartyType
+    {
+        
+        private string individualNameField;
+        
+        private string organisationNameField;
+        
+        private string positionNameField;
+        
+        private ContactType contactInfoField;
+        
+        private CodeType roleField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string IndividualName
+        {
+            get
+            {
+                return this.individualNameField;
+            }
+            set
+            {
+                this.individualNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string OrganisationName
+        {
+            get
+            {
+                return this.organisationNameField;
+            }
+            set
+            {
+                this.organisationNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string PositionName
+        {
+            get
+            {
+                return this.positionNameField;
+            }
+            set
+            {
+                this.positionNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public ContactType ContactInfo
+        {
+            get
+            {
+                return this.contactInfoField;
+            }
+            set
+            {
+                this.contactInfoField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
+        public CodeType Role
+        {
+            get
+            {
+                return this.roleField;
+            }
+            set
+            {
+                this.roleField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/fes/2.0")]
     public abstract partial class AbstractSortingClauseType
     {
@@ -9120,1415 +10559,6 @@ namespace Kartverket.GeosyncWCF
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
     [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/ows/1.1")]
-    public partial class ResponsiblePartyType
-    {
-        
-        private string individualNameField;
-        
-        private string organisationNameField;
-        
-        private string positionNameField;
-        
-        private ContactType contactInfoField;
-        
-        private CodeType roleField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string IndividualName
-        {
-            get
-            {
-                return this.individualNameField;
-            }
-            set
-            {
-                this.individualNameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public string OrganisationName
-        {
-            get
-            {
-                return this.organisationNameField;
-            }
-            set
-            {
-                this.organisationNameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public string PositionName
-        {
-            get
-            {
-                return this.positionNameField;
-            }
-            set
-            {
-                this.positionNameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
-        public ContactType ContactInfo
-        {
-            get
-            {
-                return this.contactInfoField;
-            }
-            set
-            {
-                this.contactInfoField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
-        public CodeType Role
-        {
-            get
-            {
-                return this.roleField;
-            }
-            set
-            {
-                this.roleField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class EmptyType
-    {
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class CreatedOrModifiedFeatureType
-    {
-        
-        private ResourceIdType[] resourceIdField;
-        
-        private string handleField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ResourceId", Namespace="http://www.opengis.net/fes/2.0", Order=0)]
-        public ResourceIdType[] ResourceId
-        {
-            get
-            {
-                return this.resourceIdField;
-            }
-            set
-            {
-                this.resourceIdField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string handle
-        {
-            get
-            {
-                return this.handleField;
-            }
-            set
-            {
-                this.handleField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class TransactionSummaryType
-    {
-        
-        private string totalInsertedField;
-        
-        private string totalUpdatedField;
-        
-        private string totalReplacedField;
-        
-        private string totalDeletedField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger", Order=0)]
-        public string totalInserted
-        {
-            get
-            {
-                return this.totalInsertedField;
-            }
-            set
-            {
-                this.totalInsertedField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger", Order=1)]
-        public string totalUpdated
-        {
-            get
-            {
-                return this.totalUpdatedField;
-            }
-            set
-            {
-                this.totalUpdatedField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger", Order=2)]
-        public string totalReplaced
-        {
-            get
-            {
-                return this.totalReplacedField;
-            }
-            set
-            {
-                this.totalReplacedField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger", Order=3)]
-        public string totalDeleted
-        {
-            get
-            {
-                return this.totalDeletedField;
-            }
-            set
-            {
-                this.totalDeletedField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class TransactionResponseType
-    {
-        
-        private TransactionSummaryType transactionSummaryField;
-        
-        private CreatedOrModifiedFeatureType[] insertResultsField;
-        
-        private CreatedOrModifiedFeatureType[] updateResultsField;
-        
-        private CreatedOrModifiedFeatureType[] replaceResultsField;
-        
-        private string versionField;
-        
-        public TransactionResponseType()
-        {
-            this.versionField = "2.0.0";
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public TransactionSummaryType TransactionSummary
-        {
-            get
-            {
-                return this.transactionSummaryField;
-            }
-            set
-            {
-                this.transactionSummaryField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=1)]
-        [System.Xml.Serialization.XmlArrayItemAttribute("Feature", IsNullable=false)]
-        public CreatedOrModifiedFeatureType[] InsertResults
-        {
-            get
-            {
-                return this.insertResultsField;
-            }
-            set
-            {
-                this.insertResultsField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=2)]
-        [System.Xml.Serialization.XmlArrayItemAttribute("Feature", IsNullable=false)]
-        public CreatedOrModifiedFeatureType[] UpdateResults
-        {
-            get
-            {
-                return this.updateResultsField;
-            }
-            set
-            {
-                this.updateResultsField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=3)]
-        [System.Xml.Serialization.XmlArrayItemAttribute("Feature", IsNullable=false)]
-        public CreatedOrModifiedFeatureType[] ReplaceResults
-        {
-            get
-            {
-                return this.replaceResultsField;
-            }
-            set
-            {
-                this.replaceResultsField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string version
-        {
-            get
-            {
-                return this.versionField;
-            }
-            set
-            {
-                this.versionField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class FeaturesNotLockedType
-    {
-        
-        private ResourceIdType[] resourceIdField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ResourceId", Namespace="http://www.opengis.net/fes/2.0", Order=0)]
-        public ResourceIdType[] ResourceId
-        {
-            get
-            {
-                return this.resourceIdField;
-            }
-            set
-            {
-                this.resourceIdField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class FeaturesLockedType
-    {
-        
-        private ResourceIdType[] resourceIdField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ResourceId", Namespace="http://www.opengis.net/fes/2.0", Order=0)]
-        public ResourceIdType[] ResourceId
-        {
-            get
-            {
-                return this.resourceIdField;
-            }
-            set
-            {
-                this.resourceIdField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class LockFeatureResponseType
-    {
-        
-        private FeaturesLockedType featuresLockedField;
-        
-        private FeaturesNotLockedType featuresNotLockedField;
-        
-        private string lockIdField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public FeaturesLockedType FeaturesLocked
-        {
-            get
-            {
-                return this.featuresLockedField;
-            }
-            set
-            {
-                this.featuresLockedField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public FeaturesNotLockedType FeaturesNotLocked
-        {
-            get
-            {
-                return this.featuresNotLockedField;
-            }
-            set
-            {
-                this.featuresNotLockedField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string lockId
-        {
-            get
-            {
-                return this.lockIdField;
-            }
-            set
-            {
-                this.lockIdField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(CreateStoredQueryResponseType))]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class ExecutionStatusType
-    {
-        
-        private string statusField;
-        
-        public ExecutionStatusType()
-        {
-            this.statusField = "OK";
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string status
-        {
-            get
-            {
-                return this.statusField;
-            }
-            set
-            {
-                this.statusField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class CreateStoredQueryResponseType : ExecutionStatusType
-    {
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class StoredQueryListItemType
-    {
-        
-        private Title[] titleField;
-        
-        private System.Xml.XmlQualifiedName[] returnFeatureTypeField;
-        
-        private string idField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Title", Order=0)]
-        public Title[] Title
-        {
-            get
-            {
-                return this.titleField;
-            }
-            set
-            {
-                this.titleField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ReturnFeatureType", Order=1)]
-        public System.Xml.XmlQualifiedName[] ReturnFeatureType
-        {
-            get
-            {
-                return this.returnFeatureTypeField;
-            }
-            set
-            {
-                this.returnFeatureTypeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
-        public string id
-        {
-            get
-            {
-                return this.idField;
-            }
-            set
-            {
-                this.idField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/ows/1.1")]
-    public partial class ExceptionType
-    {
-        
-        private string[] exceptionTextField;
-        
-        private string exceptionCodeField;
-        
-        private string locatorField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ExceptionText", Order=0)]
-        public string[] ExceptionText
-        {
-            get
-            {
-                return this.exceptionTextField;
-            }
-            set
-            {
-                this.exceptionTextField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string exceptionCode
-        {
-            get
-            {
-                return this.exceptionCodeField;
-            }
-            set
-            {
-                this.exceptionCodeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string locator
-        {
-            get
-            {
-                return this.locatorField;
-            }
-            set
-            {
-                this.locatorField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(FeatureCollectionType))]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class SimpleFeatureCollectionType
-    {
-        
-        private System.Xml.XmlElement boundedByField;
-        
-        private MemberPropertyType[] memberField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public System.Xml.XmlElement boundedBy
-        {
-            get
-            {
-                return this.boundedByField;
-            }
-            set
-            {
-                this.boundedByField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("member", Order=1)]
-        public MemberPropertyType[] member
-        {
-            get
-            {
-                return this.memberField;
-            }
-            set
-            {
-                this.memberField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class MemberPropertyType
-    {
-        
-        private object itemField;
-        
-        private string[] textField;
-        
-        private string stateField;
-        
-        private typeType typeField;
-        
-        private bool typeFieldSpecified;
-        
-        private string hrefField;
-        
-        private string roleField;
-        
-        private string arcroleField;
-        
-        private string titleField;
-        
-        private showType showField;
-        
-        private bool showFieldSpecified;
-        
-        private actuateType actuateField;
-        
-        private bool actuateFieldSpecified;
-        
-        public MemberPropertyType()
-        {
-            this.typeField = typeType.simple;
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAnyElementAttribute(Order=0)]
-        [System.Xml.Serialization.XmlElementAttribute("FeatureCollection", typeof(FeatureCollectionType), Order=0)]
-        [System.Xml.Serialization.XmlElementAttribute("SimpleFeatureCollection", typeof(SimpleFeatureCollectionType), Order=0)]
-        [System.Xml.Serialization.XmlElementAttribute("Tuple", typeof(TupleType), Order=0)]
-        public object Item
-        {
-            get
-            {
-                return this.itemField;
-            }
-            set
-            {
-                this.itemField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public string[] Text
-        {
-            get
-            {
-                return this.textField;
-            }
-            set
-            {
-                this.textField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string state
-        {
-            get
-            {
-                return this.stateField;
-            }
-            set
-            {
-                this.stateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/1999/xlink")]
-        public typeType type
-        {
-            get
-            {
-                return this.typeField;
-            }
-            set
-            {
-                this.typeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool typeSpecified
-        {
-            get
-            {
-                return this.typeFieldSpecified;
-            }
-            set
-            {
-                this.typeFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/1999/xlink", DataType="anyURI")]
-        public string href
-        {
-            get
-            {
-                return this.hrefField;
-            }
-            set
-            {
-                this.hrefField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/1999/xlink", DataType="anyURI")]
-        public string role
-        {
-            get
-            {
-                return this.roleField;
-            }
-            set
-            {
-                this.roleField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/1999/xlink", DataType="anyURI")]
-        public string arcrole
-        {
-            get
-            {
-                return this.arcroleField;
-            }
-            set
-            {
-                this.arcroleField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/1999/xlink")]
-        public string title
-        {
-            get
-            {
-                return this.titleField;
-            }
-            set
-            {
-                this.titleField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/1999/xlink")]
-        public showType show
-        {
-            get
-            {
-                return this.showField;
-            }
-            set
-            {
-                this.showField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool showSpecified
-        {
-            get
-            {
-                return this.showFieldSpecified;
-            }
-            set
-            {
-                this.showFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/1999/xlink")]
-        public actuateType actuate
-        {
-            get
-            {
-                return this.actuateField;
-            }
-            set
-            {
-                this.actuateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool actuateSpecified
-        {
-            get
-            {
-                return this.actuateFieldSpecified;
-            }
-            set
-            {
-                this.actuateFieldSpecified = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class FeatureCollectionType : SimpleFeatureCollectionType
-    {
-        
-        private additionalObjects additionalObjectsField;
-        
-        private truncatedResponse truncatedResponseField;
-        
-        private System.DateTime timeStampField;
-        
-        private string numberMatchedField;
-        
-        private string numberReturnedField;
-        
-        private string nextField;
-        
-        private string previousField;
-        
-        private string lockIdField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public additionalObjects additionalObjects
-        {
-            get
-            {
-                return this.additionalObjectsField;
-            }
-            set
-            {
-                this.additionalObjectsField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public truncatedResponse truncatedResponse
-        {
-            get
-            {
-                return this.truncatedResponseField;
-            }
-            set
-            {
-                this.truncatedResponseField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public System.DateTime timeStamp
-        {
-            get
-            {
-                return this.timeStampField;
-            }
-            set
-            {
-                this.timeStampField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string numberMatched
-        {
-            get
-            {
-                return this.numberMatchedField;
-            }
-            set
-            {
-                this.numberMatchedField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(DataType="nonNegativeInteger")]
-        public string numberReturned
-        {
-            get
-            {
-                return this.numberReturnedField;
-            }
-            set
-            {
-                this.numberReturnedField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
-        public string next
-        {
-            get
-            {
-                return this.nextField;
-            }
-            set
-            {
-                this.nextField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
-        public string previous
-        {
-            get
-            {
-                return this.previousField;
-            }
-            set
-            {
-                this.previousField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string lockId
-        {
-            get
-            {
-                return this.lockIdField;
-            }
-            set
-            {
-                this.lockIdField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class additionalObjects
-    {
-        
-        private object itemField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("FeatureCollection", typeof(FeatureCollectionType), Order=0)]
-        [System.Xml.Serialization.XmlElementAttribute("SimpleFeatureCollection", typeof(SimpleFeatureCollectionType), Order=0)]
-        [System.Xml.Serialization.XmlElementAttribute("ValueCollection", typeof(ValueCollectionType), Order=0)]
-        public object Item
-        {
-            get
-            {
-                return this.itemField;
-            }
-            set
-            {
-                this.itemField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class ValueCollectionType
-    {
-        
-        private MemberPropertyType[] memberField;
-        
-        private additionalValues additionalValuesField;
-        
-        private truncatedResponse truncatedResponseField;
-        
-        private System.DateTime timeStampField;
-        
-        private string numberMatchedField;
-        
-        private string numberReturnedField;
-        
-        private string nextField;
-        
-        private string previousField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("member", Order=0)]
-        public MemberPropertyType[] member
-        {
-            get
-            {
-                return this.memberField;
-            }
-            set
-            {
-                this.memberField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public additionalValues additionalValues
-        {
-            get
-            {
-                return this.additionalValuesField;
-            }
-            set
-            {
-                this.additionalValuesField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public truncatedResponse truncatedResponse
-        {
-            get
-            {
-                return this.truncatedResponseField;
-            }
-            set
-            {
-                this.truncatedResponseField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public System.DateTime timeStamp
-        {
-            get
-            {
-                return this.timeStampField;
-            }
-            set
-            {
-                this.timeStampField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string numberMatched
-        {
-            get
-            {
-                return this.numberMatchedField;
-            }
-            set
-            {
-                this.numberMatchedField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(DataType="nonNegativeInteger")]
-        public string numberReturned
-        {
-            get
-            {
-                return this.numberReturnedField;
-            }
-            set
-            {
-                this.numberReturnedField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
-        public string next
-        {
-            get
-            {
-                return this.nextField;
-            }
-            set
-            {
-                this.nextField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
-        public string previous
-        {
-            get
-            {
-                return this.previousField;
-            }
-            set
-            {
-                this.previousField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class additionalValues
-    {
-        
-        private object itemField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("FeatureCollection", typeof(FeatureCollectionType), Order=0)]
-        [System.Xml.Serialization.XmlElementAttribute("SimpleFeatureCollection", typeof(SimpleFeatureCollectionType), Order=0)]
-        [System.Xml.Serialization.XmlElementAttribute("ValueCollection", typeof(ValueCollectionType), Order=0)]
-        public object Item
-        {
-            get
-            {
-                return this.itemField;
-            }
-            set
-            {
-                this.itemField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class truncatedResponse
-    {
-        
-        private ExceptionReport exceptionReportField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.opengis.net/ows/1.1", Order=0)]
-        public ExceptionReport ExceptionReport
-        {
-            get
-            {
-                return this.exceptionReportField;
-            }
-            set
-            {
-                this.exceptionReportField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    //[System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    //[System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.opengis.net/ows/1.1")]
-    public partial class ExceptionReport
-    {
-        
-        private ExceptionType[] exceptionField;
-        
-        private string versionField;
-        
-        private string langField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Exception", Order=0)]
-        public ExceptionType[] Exception
-        {
-            get
-            {
-                return this.exceptionField;
-            }
-            set
-            {
-                this.exceptionField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string version
-        {
-            get
-            {
-                return this.versionField;
-            }
-            set
-            {
-                this.versionField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(Form=System.Xml.Schema.XmlSchemaForm.Qualified, Namespace="http://www.w3.org/XML/1998/namespace")]
-        public string lang
-        {
-            get
-            {
-                return this.langField;
-            }
-            set
-            {
-                this.langField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/wfs/2.0")]
-    public partial class TupleType
-    {
-        
-        private MemberPropertyType[] memberField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("member", Order=0)]
-        public MemberPropertyType[] member
-        {
-            get
-            {
-                return this.memberField;
-            }
-            set
-            {
-                this.memberField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/ows/1.1")]
-    public partial class GetResourceByIdType
-    {
-        
-        private string[] resourceIDField;
-        
-        private string outputFormatField;
-        
-        private string serviceField;
-        
-        private string versionField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ResourceID", DataType="anyURI", Order=0)]
-        public string[] ResourceID
-        {
-            get
-            {
-                return this.resourceIDField;
-            }
-            set
-            {
-                this.resourceIDField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public string OutputFormat
-        {
-            get
-            {
-                return this.outputFormatField;
-            }
-            set
-            {
-                this.outputFormatField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string service
-        {
-            get
-            {
-                return this.serviceField;
-            }
-            set
-            {
-                this.serviceField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string version
-        {
-            get
-            {
-                return this.versionField;
-            }
-            set
-            {
-                this.versionField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.opengis.net/ows/1.1")]
-    public partial class ContentsBaseType
-    {
-        
-        private DatasetDescriptionSummaryBaseType[] datasetDescriptionSummaryField;
-        
-        private MetadataType[] otherSourceField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("DatasetDescriptionSummary", Order=0)]
-        public DatasetDescriptionSummaryBaseType[] DatasetDescriptionSummary
-        {
-            get
-            {
-                return this.datasetDescriptionSummaryField;
-            }
-            set
-            {
-                this.datasetDescriptionSummaryField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("OtherSource", Order=1)]
-        public MetadataType[] OtherSource
-        {
-            get
-            {
-                return this.otherSourceField;
-            }
-            set
-            {
-                this.otherSourceField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
-    [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt")]
     public enum ChangelogStatusType
     {
@@ -10726,6 +10756,11 @@ namespace Kartverket.GeosyncWCF
         public Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelog(Kartverket.GeosyncWCF.ChangelogOrderType order)
         {
             return base.Channel.OrderChangelog(order);
+        }
+        
+        public Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelog2(Kartverket.GeosyncWCF.ChangelogOrderType order, string datasetVersion)
+        {
+            return base.Channel.OrderChangelog2(order, datasetVersion);
         }
         
         public string GetDatasetVersion(string datasetId)
