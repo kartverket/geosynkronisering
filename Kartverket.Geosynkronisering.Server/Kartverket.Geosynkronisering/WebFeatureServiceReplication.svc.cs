@@ -175,6 +175,11 @@ namespace Kartverket.Geosynkronisering
             }
         }
 
+        public ChangelogIdentificationType OrderChangelog2(ChangelogOrderType order, string datasetVersion)
+        {
+            throw new NotImplementedException();
+        }
+
         public string GetDatasetVersion(string datasetId)
         {
             try
