@@ -1,0 +1,9 @@
+tocTab[tocTab.length] = new Array("0.1.2:1", "", "Etablere lokalt datalager", "EARoot/EA1/EA2/EA36.htm", "189.png", "112", "0", "", "Analysis diagram0","{B9297E01-83E4-43ae-B7D6-1C2E99F8E1E3}");
+tocTab[tocTab.length] = new Array("0.1.2:2", "", "«Pool» Abonnent", "EARoot/EA1/EA2/EA39.htm", "116.png", "E518", "0", "", "ActivityPartition0","{FD40787C-B5EF-4a95-B75E-A008C9846F85}");
+tocTab[tocTab.length] = new Array("0.1.2:3", "", "«Pool» Datalager", "EARoot/EA1/EA2/EA40.htm", "116.png", "E519", "0", "", "ActivityPartition0","{B458E2D8-6423-4db2-BF14-1D7C50E8002B}");
+tocTab[tocTab.length] = new Array("0.1.2:4", "", "«EndEvent» Datalager opprettet", "EARoot/EA1/EA2/EA41.htm", "4C9380A5-0_EndEvent.png", "E524", "E518", "", "Event0","{1DD852A2-818F-4285-832D-E4B637FA925A}");
+tocTab[tocTab.length] = new Array("0.1.2:5", "", "«Activity» Opprette datalager", "EARoot/EA1/EA2/EA42.htm", "4C9380A5-0_Activity.png", "E523", "E518", "", "Activity0","{16831B66-590F-4638-BD03-A3BF64950594}");
+tocTab[tocTab.length] = new Array("0.1.2:6", "", "«StartEvent» Starte med etablering av lokal database", "EARoot/EA1/EA2/EA43.htm", "4C9380A5-0_StartEvent.png", "E520", "E518", "", "Event0","{5E86F4D0-7155-40cb-8CE5-BFB190DCF856}");
+tocTab[tocTab.length] = new Array("0.1.2:7", "", "«Activity» Transformere til internt format", "EARoot/EA1/EA2/EA44.htm", "4C9380A5-0_Activity.png", "E522", "E518", "", "Activity0","{8F2F3DB5-8782-41f2-A37E-27C130FC600E}");
+tocTab[tocTab.length] = new Array("0.1.2:8", "", "«Activity» Validere applikasjonsskjema", "EARoot/EA1/EA2/EA45.htm", "4C9380A5-0_Activity.png", "E521", "E518", "", "Activity0","{F4E16257-2251-4337-A86D-093C4DF0435D}");
+tocTab[tocTab.length] = new Array("0.1.2:9", "", "«Activity» CreateSchema", "EARoot/EA1/EA2/EA46.htm", "4C9380A5-0_Activity.png", "E525", "E519", "", "Activity0","{3125986D-8D6F-49fb-9397-57C1B97BDFD7}");

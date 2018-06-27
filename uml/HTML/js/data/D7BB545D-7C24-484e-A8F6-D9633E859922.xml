@@ -1,0 +1,14 @@
+tocTab[tocTab.length] = new Array("0.1.3:1", "", "Finn og sjekk tilbydere", "EARoot/EA1/EA3/EA47.htm", "185.png", "105", "0", "", "Sequence diagram0","{C9F174CF-3E2E-45ae-A9F7-6D5D6923CBFE}");
+tocTab[tocTab.length] = new Array("0.1.3:2", "", "Finn tilbydere", "EARoot/EA1/EA3/EA49.htm", "189.png", "109", "0", "", "Analysis diagram0","{EB17039B-50FE-4eae-ABE3-AAE009969992}");
+tocTab[tocTab.length] = new Array("0.1.3:3", "", "«Pool» Abonnent", "EARoot/EA1/EA3/EA54.htm", "116.png", "E477", "0", "", "ActivityPartition0","{78165E30-6CD5-48ec-BC6E-00531A9963A0}");
+tocTab[tocTab.length] = new Array("0.1.3:4", "", "«Pool» Tjenestekatalog", "EARoot/EA1/EA3/EA55.htm", "116.png", "E479", "0", "", "ActivityPartition0","{29D23DBE-C870-4461-84DD-53185AA607EB}");
+tocTab[tocTab.length] = new Array("0.1.3:5", "", "«Activity» Finn aktuelle tilbydere", "EARoot/EA1/EA3/EA56.htm", "4C9380A5-0_Activity.png", "E510", "E477", "", "Activity0","{4F4E25E5-D2BF-495b-97C0-3C2470B77AA0}");
+tocTab[tocTab.length] = new Array("0.1.3:6", "", "«StartEvent» Finn tilbydere", "EARoot/EA1/EA3/EA57.htm", "4C9380A5-0_StartEvent.png", "E480", "E477", "", "Event0","{B584B5F7-EEDB-4cb5-82C9-A2F06D44A93E}");
+tocTab[tocTab.length] = new Array("0.1.3:7", "", "«Activity» For hver tilbyder", "EARoot/EA1/EA3/EA58.htm", "4C9380A5-0_Activity.png", "E513", "E477", "", "Activity0","{73F910E7-340B-4f62-B5AF-CA5DD3A52D9B}");
+tocTab[tocTab.length] = new Array("0.1.3:8", "", "«EndEvent» returner tilbyderliste", "EARoot/EA1/EA3/EA59.htm", "4C9380A5-0_EndEvent.png", "E512", "E477", "", "Event0","{538ADB82-E749-4859-B49D-E04F9CDD671F}");
+tocTab[tocTab.length] = new Array("0.1.3:9", "", "«EndEvent» returner tilbyderliste", "EARoot/EA1/EA3/EA60.htm", "4C9380A5-0_EndEvent.png", "E482", "E477", "", "ObjectNode0","{B52524CB-229A-43c9-899C-87981499FD86}");
+tocTab[tocTab.length] = new Array("0.1.3:10", "", "«Activity» Sjekke tjenestekatalog", "EARoot/EA1/EA3/EA61.htm", "4C9380A5-0_Activity.png", "E483", "E477", "", "Activity0","{2531056E-8088-4027-87D4-BE3D83D4CE6C}");
+tocTab[tocTab.length] = new Array("0.1.3:11", "", "«Activity» GetCapabilities", "EARoot/EA1/EA3/EA62.htm", "4C9380A5-0_Activity.png", "E509", "E479", "", "Activity0","{40659C01-5FC4-412f-9AD4-AC32E8919849}");
+tocTab[tocTab.length] = new Array("0.1.3:12", "", "«Activity» GetRecordById", "EARoot/EA1/EA3/EA63.htm", "4C9380A5-0_Activity.png", "E515", "E479", "", "Activity0","{2174FE03-A0AB-4577-B176-CD0CA4CB3CD7}");
+tocTab[tocTab.length] = new Array("0.1.3:13", "", "«Activity» GetRecords", "EARoot/EA1/EA3/EA64.htm", "4C9380A5-0_Activity.png", "E511", "E479", "", "Activity0","{E4C8A952-127F-4120-8E99-DAE981AB0689}");
+tocTab[tocTab.length] = new Array("0.1.3:14", "", "«Activity» Hent tilbyder informasjon", "EARoot/EA1/EA3/EA65.htm", "4C9380A5-0_Activity.png", "E514", "E513", "", "Activity0","{EE101C3C-8753-4480-AFDD-03C3A636DC3F}");

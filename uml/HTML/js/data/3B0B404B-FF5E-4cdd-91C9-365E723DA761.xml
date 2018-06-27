@@ -1,0 +1,2 @@
+tocTab[tocTab.length] = new Array("0.2.1", "1", "«applicationSchema» Geosynkronisering", "EARoot/EA2/EA1/EA144.htm", "4.png", "", "", "{6ADE94EC-58DF-4366-9CBD-52EA57AA61CD}", "Package");
+tocTab[tocTab.length] = new Array("0.2.2", "1", "«applicationSchema» ChangelogFile", "EARoot/EA2/EA2/EA166.htm", "4.png", "", "", "{5EE695D5-AFDC-480c-A5EB-229FE26EDDF0}", "Package");

@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Finn og sjekk tilbydere</title>
+<link href="../../../css/ea.css" rel="stylesheet" type="text/css" />
+<script>
+function initPage(src) {	
+	if(parent==this&&(this.location+"").indexOf('EARoot')!=-1)
+		document.location=(this.location+"").substring(0,(this.location+"").indexOf('EARoot'))+"index"+(this.location+"").substring((this.location+"").lastIndexOf('.'))+"?goto="+((this.location+"").substring((this.location+"").indexOf('EARoot')+7,(this.location+"").lastIndexOf('.')).replace(/\//g,':').replace(/EA/g,""));
+	else
+		parent.initPage(src);
+}
+
+function nameClassifier(name, separator)
+{
+  var str = name;
+  var classifierName;
+  var node = document.getElementById('name_classifier');
+  if(node != null)
+  {
+    classifierName = node.innerHTML;
+  }
+  if(classifierName != "")
+  {
+   str += separator + classifierName;
+  }
+  
+  return str;
+}
+</script>
+</head>
+<body onload="initPage(this);" class="Content">
+<div class="PageBody">
+	
+<img src="EA48.png" usemap="#EA48" border="0" />
+
+<MAP NAME="EA48">
+<area shape="rect" coords="407,354,522,409" href="EA53.htm" target="_self">
+<area shape="rect" coords="643,355,758,410" href="EA52.htm" target="_self">
+<area shape="rect" coords="388,10,548,331" href="../../EA2/EA1/EA155.htm" target="_self">
+<area shape="rect" coords="657,10,747,331" href="../../EA3/EA1/EA176.htm" target="_self">
+</MAP>
+
+	<div class="ObjectTitle">Finn og sjekk tilbydere : Interaction diagram</div>
+	<table border="0" cellpadding="0" cellspacing="0" class="ObjectDetails">
+		<tr>
+			<td width="15%" class="ObjectDetailsTopic">Created:</td>
+			<td width="85%" class="ObjectDetailsValue">11.12.2012 14:19:17</td>
+		</tr>
+		<tr>
+			<td width="15%" class="ObjectDetailsTopic">Modified:</td>
+			<td width="85%" class="ObjectDetailsValue">18.12.2012 09:22:02</td>
+		</tr>
+		<tr style="padding-top: 10px;">
+			<td width="15%" class="ObjectDetailsTopic"><img src="../../../images/plus03.gif" align="absmiddle" id="proj" onclick="parent.toggleData(this.id)" />Project:</td>
+			<td width="85%" class="ObjectDetailsValue"></td>			
+		</tr>
+		<tr id="proj00" style="display: none;">
+			<td width="15%" class="ObjectDetailsTopic" style="padding-left: 18px;">Author:</td>
+			<td width="85%" class="ObjectDetailsValue">tor</td>
+		</tr>
+		<tr id="proj01" style="display: none;">
+			<td width="15%" class="ObjectDetailsTopic" style="padding-left: 18px;">Version:</td>
+			<td width="85%" class="ObjectDetailsValue">1.0</td>
+		</tr>
+		<tr>
+			<td width="15%" class="ObjectDetailsTopic"><img src="../../../images/plus03.gif" align="absmiddle" id="adv" onclick="parent.toggleData(this.id)" />Advanced:</td>
+			<td width="85%" class="ObjectDetailsValue"></td>			
+		</tr>
+		<tr id="adv00" style="display: none;">
+			<td width="15%" class="ObjectDetailsTopic" style="padding-left: 18px;">ID:</td>
+			<td width="85%" class="ObjectDetailsValue">{C9F174CF-3E2E-45ae-A9F7-6D5D6923CBFE}</td>
+		</tr>
+	</table>
+	<div class="ObjectDetailsNotes">Prosessbeskrivelse:&lt;br/&gt;&lt;ol&gt;<br />&lt;li&gt;Abonnent kaller GetCapabilities mot geonorge for å finne hvilke muligheter CSW grensesnittet tillater&lt;/li&gt;&lt;li&gt;Abonnent gjør et søk mot geonorge for å finne tilbydere med synkroniseringstjeneste for en gitt produktspesifikasjon&lt;/li&gt;&lt;li&gt;Abonnent henter informasjon for hver tjeneste&lt;/li&gt;&lt;li&gt;Abonnent sjekker at metadata refererer til riktig applikasjonsskjema&lt;/li&gt;&lt;li&gt;Abonnent kaller tilbyder for å sjekke om den er tilgjengelig og hvilke muligheter grensesnittet tilbyr&lt;/li&gt;&lt;li&gt;Abonnent henter applikasjonsskjema for dataset fra tilbyder&lt;/li&gt;&lt;/ol&gt;&lt;p/&gt;</div>
+
+</div>
+ 
+</body>
+</html>
