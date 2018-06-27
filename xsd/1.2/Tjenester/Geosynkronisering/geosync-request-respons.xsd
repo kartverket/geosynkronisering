@@ -132,6 +132,7 @@
 		<xs:sequence>
 			<xs:element name="decimals" type="xs:integer" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="epsgCode" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="tolerance" type="xs:double" minOccurs="1" maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
 </xs:schema>
