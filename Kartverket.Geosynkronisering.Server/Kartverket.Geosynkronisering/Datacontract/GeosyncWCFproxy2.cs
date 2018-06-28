@@ -541,7 +541,9 @@ namespace Kartverket.GeosyncWCF
         private string decimalsField;
         
         private string epsgCodeField;
-        
+
+        private double toleranceField;
+
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(DataType="integer", Order=0)]
         public string decimals
@@ -569,10 +571,25 @@ namespace Kartverket.GeosyncWCF
                 this.epsgCodeField = value;
             }
         }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order = 2)]
+        public double tolerance
+        {
+            get
+            {
+                return this.toleranceField;
+            }
+            set
+            {
+                this.toleranceField = value;
+            }
+        }
     }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
+
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.7.2558.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
