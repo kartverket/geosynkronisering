@@ -861,8 +861,6 @@ namespace Kartverket.GeosyncWCF
         
         private string datasetIdField;
         
-        private string datasetVersionField;
-        
         private string startIndexField;
         
         private string countField;
@@ -898,20 +896,6 @@ namespace Kartverket.GeosyncWCF
             set
             {
                 this.datasetIdField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=1)]
-        public string datasetVersion
-        {
-            get
-            {
-                return this.datasetVersionField;
-            }
-            set
-            {
-                this.datasetVersionField = value;
             }
         }
         
