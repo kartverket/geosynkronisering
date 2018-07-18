@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Oversikt</title>
+<link href="../../../css/ea.css" rel="stylesheet" type="text/css" />
+<script>
+function initPage(src) {	
+	if(parent==this&&(this.location+"").indexOf('EARoot')!=-1)
+		document.location=(this.location+"").substring(0,(this.location+"").indexOf('EARoot'))+"index"+(this.location+"").substring((this.location+"").lastIndexOf('.'))+"?goto="+((this.location+"").substring((this.location+"").indexOf('EARoot')+7,(this.location+"").lastIndexOf('.')).replace(/\//g,':').replace(/EA/g,""));
+	else
+		parent.initPage(src);
+}
+
+function nameClassifier(name, separator)
+{
+  var str = name;
+  var classifierName;
+  var node = document.getElementById('name_classifier');
+  if(node != null)
+  {
+    classifierName = node.innerHTML;
+  }
+  if(classifierName != "")
+  {
+   str += separator + classifierName;
+  }
+  
+  return str;
+}
+</script>
+</head>
+<body onload="initPage(this);" class="Content">
+<div class="PageBody">
+	
+<img src="EA11.png" usemap="#EA11" border="0" />
+
+<MAP NAME="EA11">
+<area shape="rect" coords="681,336,791,396" href="EA35.htm" target="_self">
+<area shape="rect" coords="875,359,905,389" href="EA23.htm" target="_self">
+<area shape="rect" coords="378,338,488,398" href="EA34.htm" target="_self">
+<area shape="rect" coords="519,336,656,399" href="EA33.htm" target="_self">
+<area shape="rect" coords="355,287,805,444" href="EA28.htm" target="_self">
+<area shape="rect" coords="171,327,281,387" href="EA27.htm" target="_self">
+<area shape="rect" coords="47,111,77,141" href="EA30.htm" target="_self">
+<area shape="rect" coords="736,85,871,152" href="EA26.htm" target="_self">
+<area shape="rect" coords="650,90,692,132" href="EA22.htm" target="_self">
+<area shape="rect" coords="517,160,639,220" href="EA25.htm" target="_self">
+<area shape="rect" coords="460,101,502,143" href="EA29.htm" target="_self">
+<area shape="rect" coords="236,92,346,152" href="EA32.htm" target="_self">
+<area shape="rect" coords="10,10,958,503" href="EA15.htm" target="_self">
+</MAP>
+
+	<div class="ObjectTitle">Oversikt : BPEL diagram</div>
+	<table border="0" cellpadding="0" cellspacing="0" class="ObjectDetails">
+		<tr>
+			<td width="15%" class="ObjectDetailsTopic">Created:</td>
+			<td width="85%" class="ObjectDetailsValue">17.12.2012 14:14:58</td>
+		</tr>
+		<tr>
+			<td width="15%" class="ObjectDetailsTopic">Modified:</td>
+			<td width="85%" class="ObjectDetailsValue">24.09.2013 17:05:29</td>
+		</tr>
+		<tr style="padding-top: 10px;">
+			<td width="15%" class="ObjectDetailsTopic"><img src="../../../images/plus03.gif" align="absmiddle" id="proj" onclick="parent.toggleData(this.id)" />Project:</td>
+			<td width="85%" class="ObjectDetailsValue"></td>			
+		</tr>
+		<tr id="proj00" style="display: none;">
+			<td width="15%" class="ObjectDetailsTopic" style="padding-left: 18px;">Author:</td>
+			<td width="85%" class="ObjectDetailsValue">tor</td>
+		</tr>
+		<tr id="proj01" style="display: none;">
+			<td width="15%" class="ObjectDetailsTopic" style="padding-left: 18px;">Version:</td>
+			<td width="85%" class="ObjectDetailsValue">1.0</td>
+		</tr>
+		<tr>
+			<td width="15%" class="ObjectDetailsTopic"><img src="../../../images/plus03.gif" align="absmiddle" id="adv" onclick="parent.toggleData(this.id)" />Advanced:</td>
+			<td width="85%" class="ObjectDetailsValue"></td>			
+		</tr>
+		<tr id="adv00" style="display: none;">
+			<td width="15%" class="ObjectDetailsTopic" style="padding-left: 18px;">ID:</td>
+			<td width="85%" class="ObjectDetailsValue">{7FFF4706-1E77-4ad1-8D14-A74C009961FB}</td>
+		</tr>
+	</table>
+	<div class="ObjectDetailsNotes">Prosessen startet med at synkronisering av et datasett ønskes og avsluttes med et synkronisert dataset&lt;br/&gt;&lt;br/&gt;&lt;ol&gt;<br />&lt;li&gt;Applikasjonsskjema for dataset velges&lt;/li&gt;&lt;li&gt;Evt filter for utvalg av data defineres&lt;/li&gt;&lt;li&gt;Evt så lages nytt datalager hos abonnent&lt;/li&gt;&lt;li&gt;Mappingregler fra applikasjonsskjema til internt datalager defineres&lt;/li&gt;&lt;li&gt;Abonnent finner aktuelle tilbydere&lt;/li&gt;&lt;li&gt;For hver tilbyder så sjekkes denne for grensesnittmuligheter og tilgjengelighet&lt;/li&gt;&lt;li&gt;For hver tilbyder så bestilles synkronisering&lt;/li&gt;&lt;li&gt;For hver tilbyder så synkroniseres data&lt;/li&gt;&lt;/ol&gt;<br />&lt;br/&gt;&lt;br/&gt;</div>
+
+</div>
+ 
+</body>
+</html>

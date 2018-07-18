@@ -12,10 +12,13 @@ using NLog;
 namespace Kartverket.Geosynkronisering
 {
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
-    [ServiceBehavior(Namespace = "http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt")]
+    [ServiceBehavior(Namespace = "http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt")]
+
+    // NLog for logging (nuget package)
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "WebFeatureServiceReplication" in code, svc and config file together.
     public class WebFeatureServiceReplication : WebFeatureServiceReplicationPort
     {
+        protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private geosyncEntities db;
 
         public WebFeatureServiceReplication()
@@ -39,7 +42,7 @@ namespace Kartverket.Geosynkronisering
         /// <param name="datasetId"></param>
         /// <param name="describefeaturetype1"></param>
         /// <returns></returns>
-        public XmlDocument DescribeFeatureType(string datasetId, DescribeFeatureTypeType describefeaturetype1)
+        public object DescribeFeatureType(string datasetId, DescribeFeatureTypeType describefeaturetype1)
         {
             try
             {
@@ -71,6 +74,10 @@ namespace Kartverket.Geosynkronisering
                 throw new FaultException(ex.Message);
             }
         }
+
+        
+
+
 
         public GetLastIndexResponse GetLastIndex(GetLastIndexRequest request)
         {
@@ -161,6 +168,96 @@ namespace Kartverket.Geosynkronisering
             try
             {
                 return OrderChangelogAsyncCaller(order);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
+        }
+
+        public ChangelogIdentificationType OrderChangelog2(ChangelogOrderType order, string datasetVersion)
+        {
+            try
+            {
+                var providerVersion = GetDataset(order.datasetId).Version;
+
+                if (providerVersion != datasetVersion)
+                    throw new ArgumentException(
+                        $"Wrong datasetVersion supplied. Provider: {providerVersion.Trim()}, Subscriber: {datasetVersion}");
+
+                return OrderChangelog(order);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
+        }
+
+        public string GetDatasetVersion(string datasetId)
+        {
+            try
+            {
+                return GetDataset(datasetId).Version;
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
+        }
+
+        private static int GetId(string datasetId)
+        {
+            var dataset = datasetId;
+            if (dataset == "") throw new ArgumentException("Missing datasetId in request");
+            int id;
+            int.TryParse(dataset, out id);
+            return id;
+        }
+
+        private Dataset GetDataset(string datasetId)
+        {
+            var id = GetId(datasetId);
+            var datasets = from d in db.Datasets where d.DatasetId == id select d;
+            var dataset = datasets.First();
+            return dataset;
+        }
+
+        public void SendReport(ReportType report)
+        {
+            try
+            { 
+            switch (report.type)
+            {
+                case ReportTypeEnumType.error:
+                    Logger.Error(report.description);
+                    break;
+                case ReportTypeEnumType.info:
+                    Logger.Info(report.description);
+                    break;
+                default:
+                    Logger.Info(report.description);
+                    break;
+            }
+
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
+        }
+
+        public PrecisionType GetPrecision(string datasetId)
+        {
+            try
+            {
+                var dataset = GetDataset(datasetId);
+
+                return new PrecisionType
+                {
+                    decimals = dataset.Decimals,
+                    epsgCode = dataset.DefaultCrs,
+                    tolerance = dataset.Tolerance
+                };
             }
             catch (Exception ex)
             {

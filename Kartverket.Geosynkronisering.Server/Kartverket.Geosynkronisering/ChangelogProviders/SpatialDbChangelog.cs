@@ -29,6 +29,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         private string zipFile;
         private string streamFileLocation;
         private string tmpzipFile;
+        private string _version;
 
         public void Intitalize(int datasetId)
         {
@@ -43,9 +44,22 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             zipFile = destFileName + ".zip";
             streamFileLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Changelogfiles\\" + zipFile;
             tmpzipFile = Path.Combine(Path.GetTempPath(), zipFile);
+            _version = DatasetsData.Version(datasetId);
         }
 
         public abstract string GetLastIndex(int datasetId);
+
+        public string GetDatasetVersion(int datasetId)
+        {
+            _version = DatasetsData.Version(datasetId);
+            return _version;
+        }
+
+        public virtual void HandleReport(GetLastIndexRequest request)
+        {
+            
+            Logger.Error("FEIL OPPSTÅTT HOS ABONNENT");            
+        }
 
         public OrderChangelog GenerateInitialChangelog(int datasetId)
         {
@@ -614,6 +628,9 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
             return true;
         }
+
+
+      
     }
 
     public class OptimizedChangeLogElement

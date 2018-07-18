@@ -564,8 +564,8 @@ namespace Kartverket.Geosynkronisering.Database
                 lstTitles.Add(title);
                 featType.Title = lstTitles.ToArray();
                 featType.Items = new[] { "urn:ogc:def:crs:EPSG::" + DatasetsData.DefaultCrs(id) };
-                featType.ItemsElementName = new ItemsChoiceType1[1];
-                featType.ItemsElementName.SetValue(ItemsChoiceType1.DefaultCRS, 0);
+                featType.ItemsElementName = new ItemsChoiceType[1];
+                featType.ItemsElementName.SetValue(ItemsChoiceType.DefaultCRS, 0);
                 featType.OutputFormats = new OutputFormatListType();
                 List<string> formats = new List<string>();
                 formats.Add("text/xml; subtype=gml/3.2.1"); //DB?
@@ -625,9 +625,9 @@ namespace Kartverket.Geosynkronisering.Database
             dcp.Item = new HTTP();
             
             //GET
-            ItemsChoiceType ictGet = new ItemsChoiceType();
-            ictGet = ItemsChoiceType.Get;           
-            List<ItemsChoiceType> listIct = new List<ItemsChoiceType>();
+            ItemsChoiceType1 ictGet = new ItemsChoiceType1();
+            ictGet = ItemsChoiceType1.Get;           
+            List<ItemsChoiceType1> listIct = new List<ItemsChoiceType1>();
             listIct.Add(ictGet);            
             List <RequestMethodType> reqMethods = new List<RequestMethodType>();
             RequestMethodType reqMethod = new RequestMethodType();
@@ -636,9 +636,9 @@ namespace Kartverket.Geosynkronisering.Database
             
 
             //POST
-            ItemsChoiceType ictPost = new ItemsChoiceType();
-            ictPost = new ItemsChoiceType();
-            ictPost = ItemsChoiceType.Post;            
+            ItemsChoiceType1 ictPost = new ItemsChoiceType1();
+            ictPost = new ItemsChoiceType1();
+            ictPost = ItemsChoiceType1.Post;            
             listIct.Add(ictPost);                       
             reqMethod = new RequestMethodType();
             reqMethod.href = ServiceData.ServiceUrl(true);

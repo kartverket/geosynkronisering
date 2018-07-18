@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Synkronisere</title>
+<link href="../../../css/ea.css" rel="stylesheet" type="text/css" />
+<script>
+function initPage(src) {	
+	if(parent==this&&(this.location+"").indexOf('EARoot')!=-1)
+		document.location=(this.location+"").substring(0,(this.location+"").indexOf('EARoot'))+"index"+(this.location+"").substring((this.location+"").lastIndexOf('.'))+"?goto="+((this.location+"").substring((this.location+"").indexOf('EARoot')+7,(this.location+"").lastIndexOf('.')).replace(/\//g,':').replace(/EA/g,""));
+	else
+		parent.initPage(src);
+}
+
+function nameClassifier(name, separator)
+{
+  var str = name;
+  var classifierName;
+  var node = document.getElementById('name_classifier');
+  if(node != null)
+  {
+    classifierName = node.innerHTML;
+  }
+  if(classifierName != "")
+  {
+   str += separator + classifierName;
+  }
+  
+  return str;
+}
+</script>
+</head>
+<body onload="initPage(this);" class="Content">
+<div class="PageBody">
+	
+<img src="EA101.png" usemap="#EA101" border="0" />
+
+<MAP NAME="EA101">
+<area shape="rect" coords="960,491,1143,551" href="EA111.htm" target="_self">
+<area shape="rect" coords="557,489,667,549" href="EA112.htm" target="_self">
+<area shape="rect" coords="396,486,506,546" href="EA113.htm" target="_self">
+<area shape="rect" coords="176,485,286,545" href="EA114.htm" target="_self">
+<area shape="rect" coords="837,309,947,369" href="EA124.htm" target="_self">
+<area shape="rect" coords="1190,106,1220,136" href="EA109.htm" target="_self">
+<area shape="rect" coords="981,127,1103,187" href="EA115.htm" target="_self">
+<area shape="rect" coords="840,129,950,189" href="EA121.htm" target="_self">
+<area shape="rect" coords="698,131,808,191" href="EA122.htm" target="_self">
+<area shape="rect" coords="550,131,660,191" href="EA119.htm" target="_self">
+<area shape="rect" coords="412,129,522,189" href="EA118.htm" target="_self">
+<area shape="rect" coords="525,44,555,74" href="EA123.htm" target="_self">
+<area shape="rect" coords="349,88,391,130" href="EA117.htm" target="_self">
+<area shape="rect" coords="167,77,306,137" href="EA120.htm" target="_self">
+<area shape="rect" coords="140,29,1135,221" href="EA108.htm" target="_self">
+<area shape="rect" coords="61,81,91,111" href="EA110.htm" target="_self">
+<area shape="rect" coords="14,10,1257,233" href="EA105.htm" target="_self">
+<area shape="rect" coords="13,430,1257,605" href="EA107.htm" target="_self">
+<area shape="rect" coords="10,267,1257,402" href="EA106.htm" target="_self">
+</MAP>
+
+	<div class="ObjectTitle">Synkronisere : BPEL diagram</div>
+	<table border="0" cellpadding="0" cellspacing="0" class="ObjectDetails">
+		<tr>
+			<td width="15%" class="ObjectDetailsTopic">Created:</td>
+			<td width="85%" class="ObjectDetailsValue">17.12.2012 17:50:42</td>
+		</tr>
+		<tr>
+			<td width="15%" class="ObjectDetailsTopic">Modified:</td>
+			<td width="85%" class="ObjectDetailsValue">17.12.2012 18:09:33</td>
+		</tr>
+		<tr style="padding-top: 10px;">
+			<td width="15%" class="ObjectDetailsTopic"><img src="../../../images/plus03.gif" align="absmiddle" id="proj" onclick="parent.toggleData(this.id)" />Project:</td>
+			<td width="85%" class="ObjectDetailsValue"></td>			
+		</tr>
+		<tr id="proj00" style="display: none;">
+			<td width="15%" class="ObjectDetailsTopic" style="padding-left: 18px;">Author:</td>
+			<td width="85%" class="ObjectDetailsValue">tor</td>
+		</tr>
+		<tr id="proj01" style="display: none;">
+			<td width="15%" class="ObjectDetailsTopic" style="padding-left: 18px;">Version:</td>
+			<td width="85%" class="ObjectDetailsValue">1.0</td>
+		</tr>
+		<tr>
+			<td width="15%" class="ObjectDetailsTopic"><img src="../../../images/plus03.gif" align="absmiddle" id="adv" onclick="parent.toggleData(this.id)" />Advanced:</td>
+			<td width="85%" class="ObjectDetailsValue"></td>			
+		</tr>
+		<tr id="adv00" style="display: none;">
+			<td width="15%" class="ObjectDetailsTopic" style="padding-left: 18px;">ID:</td>
+			<td width="85%" class="ObjectDetailsValue">{1EE7F500-1921-41bd-8A15-BB4C548E1218}</td>
+		</tr>
+	</table>
+	<div class="ObjectDetailsNotes">Prosessbeskrivelse:&lt;br/&gt;&lt;ol&gt;<br />&lt;li&gt;Abonnent sjekker om bestilling er ferdig&lt;/li&gt;&lt;li&gt;Hvis bestillingen er ferdig så hentes beskrivelse av endringsloggen&lt;/li&gt;&lt;li&gt;Endringsloggen lastes ned fra tilbyder&lt;/li&gt;&lt;li&gt;Endringer lagres til abonnentens database&lt;/li&gt;&lt;li&gt;Abonnent gir melding til tilbyder om at endringslogg er lastet ned og lagt inn&lt;/li&gt;&lt;/ol&gt;&lt;p/&gt;</div>
+
+</div>
+ 
+</body>
+</html>
