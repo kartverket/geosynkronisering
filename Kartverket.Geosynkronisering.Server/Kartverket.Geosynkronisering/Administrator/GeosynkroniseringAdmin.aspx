@@ -162,14 +162,9 @@
                                                          <asp:BoundField DataField="TargetNamespacePrefix" HeaderText="TargetNamespacePrefix" 
                                                         SortExpression="TargetNamespacePrefix" />
                                                     <asp:BoundField DataField="Version" HeaderText="Version" SortExpression="Version" />
-                                                    <asp:CommandField ShowDeleteButton="True" ShowEditButton="True" 
-                                                        ShowInsertButton="True" ButtonType="Image" 
-                                                        CancelImageUrl="~/Images/Edit_UndoHS.png" CancelText="Avbryt" 
-                                                        DeleteImageUrl="~/Images/delete_12x12.png" DeleteText="Slett" 
-                                                        EditImageUrl="~/Images/EditTableHS.png" EditText="Rediger" 
-                                                        InsertText="Lagre" NewImageUrl="~/Images/AddTableHS.png" NewText="Ny" 
-                                                        SelectText="Velg" UpdateImageUrl="~/Images/saveHS.png" UpdateText="Lagre" 
-                                                        InsertImageUrl="~/Images/saveHS.png" />
+                                                    <asp:BoundField DataField="Tolerance" HeaderText="Tolerance" />
+                                                    <asp:BoundField DataField="Decimals" HeaderText="Decimals" />
+                                                    <asp:CommandField ButtonType="Image" CancelImageUrl="~/Images/Edit_UndoHS.png" CancelText="Avbryt" DeleteImageUrl="~/Images/delete_12x12.png" DeleteText="Slett" EditImageUrl="~/Images/EditTableHS.png" EditText="Rediger" InsertImageUrl="~/Images/saveHS.png" InsertText="Lagre" NewImageUrl="~/Images/AddTableHS.png" NewText="Ny" SelectText="Velg" ShowDeleteButton="True" ShowEditButton="True" ShowInsertButton="True" UpdateImageUrl="~/Images/saveHS.png" UpdateText="Lagre" />
                                                 </Fields>
                                                 <InsertRowStyle CssClass="GridView" />
                                                 <PagerSettings Mode="NextPreviousFirstLast" Position="Bottom" Visible="true" />
