@@ -216,7 +216,8 @@ namespace Kartverket.Geosynkronisering
 
         private Dataset GetDataset(string datasetId)
         {
-            var datasets = from d in db.Datasets where d.DatasetId == GetId(datasetId) select d;
+            var id = GetId(datasetId);
+            var datasets = from d in db.Datasets where d.DatasetId == id select d;
             var dataset = datasets.First();
             return dataset;
         }
