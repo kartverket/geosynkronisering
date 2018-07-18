@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server Compact Edition
 -- --------------------------------------------------
--- Date Created: 07/18/2018 10:48:16
+-- Date Created: 07/18/2018 11:10:09
 -- Generated from EDMX file: C:\git\geosynk\Kartverket.Geosynkronisering.Server\Kartverket.Geosynkronisering\GeosyncModel.edmx
 -- --------------------------------------------------
 
@@ -47,8 +47,8 @@ CREATE TABLE [Datasets] (
     [TargetNamespace] nvarchar(256)  NULL,
     [TargetNamespacePrefix] nvarchar(100)  NULL,
     [Version] nvarchar(4000)  NULL,
-    [Decimals] int  DEFAULT 3  NULL,
-    [Tolerance] int  DEFAULT -1  NULL 
+    [Decimals] nvarchar(4000)  NULL,
+    [Tolerance] float  NOT NULL
 );
 GO
 

@@ -29,8 +29,8 @@
     <Property Name="TargetNamespace" Type="nvarchar" Nullable="true" MaxLength="256" />
     <Property Name="TargetNamespacePrefix" Type="nvarchar" Nullable="true" MaxLength="100" />
     <Property Name="Version" Type="nvarchar" Nullable="true" />
-    <Property Name="Decimals" Type="int" Nullable="true" DefaultValue="3" />
-    <Property Name="Tolerance" Type="int" Nullable="true" DefaultValue="-1" />
+    <Property Name="Decimals" Type="nvarchar" Nullable="true" DefaultValue="3" />
+    <Property Name="Tolerance" Type="float" Nullable="false" DefaultValue="-1" />
   </EntityType>
   <EntityType Name="ServerConfigs">
     <Key>
@@ -112,8 +112,8 @@
           <Property Type="String" Name="TargetNamespace" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="TargetNamespacePrefix" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Version" Type="String" Nullable="true" />
-          <Property Name="Decimals" Type="Int32" Nullable="true" DefaultValue="3" />
-          <Property Name="Tolerance" Type="Int32" Nullable="true" ConcurrencyMode="Fixed" DefaultValue="-1" />
+          <Property Name="Decimals" Type="String" Nullable="true" DefaultValue="3" />
+          <Property Name="Tolerance" Type="Double" Nullable="false" ConcurrencyMode="Fixed" DefaultValue="-1" />
         </EntityType>
         <EntityType Name="ServerConfig">
           <Key>

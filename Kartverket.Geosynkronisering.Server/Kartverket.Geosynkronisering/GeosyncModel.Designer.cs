@@ -542,7 +542,7 @@ namespace Kartverket.Geosynkronisering
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
-        public Nullable<global::System.Int32> Decimals
+        public global::System.String Decimals
         {
             get
             {
@@ -552,21 +552,21 @@ namespace Kartverket.Geosynkronisering
             {
                 OnDecimalsChanging(value);
                 ReportPropertyChanging("Decimals");
-                _Decimals = StructuralObject.SetValidValue(value);
+                _Decimals = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("Decimals");
                 OnDecimalsChanged();
             }
         }
-        private Nullable<global::System.Int32> _Decimals = 3;
-        partial void OnDecimalsChanging(Nullable<global::System.Int32> value);
+        private global::System.String _Decimals = "3";
+        partial void OnDecimalsChanging(global::System.String value);
         partial void OnDecimalsChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public Nullable<global::System.Int32> Tolerance
+        public global::System.Double Tolerance
         {
             get
             {
@@ -581,8 +581,8 @@ namespace Kartverket.Geosynkronisering
                 OnToleranceChanged();
             }
         }
-        private Nullable<global::System.Int32> _Tolerance = -1;
-        partial void OnToleranceChanging(Nullable<global::System.Int32> value);
+        private global::System.Double _Tolerance = -1D;
+        partial void OnToleranceChanging(global::System.Double value);
         partial void OnToleranceChanged();
 
         #endregion
