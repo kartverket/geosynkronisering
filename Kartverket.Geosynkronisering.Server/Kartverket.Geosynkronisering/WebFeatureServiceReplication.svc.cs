@@ -177,25 +177,27 @@ namespace Kartverket.Geosynkronisering
 
         public ChangelogIdentificationType OrderChangelog2(ChangelogOrderType order, string datasetVersion)
         {
-            var id = GetId(order.datasetId);
+            try
+            {
+                var providerVersion = GetDataset(order.datasetId).Version;
 
-            var dataset = GetDataset(id);
+                if (providerVersion != datasetVersion)
+                    throw new ArgumentException(
+                        $"Wrong datasetVersion supplied. Provider: {providerVersion.Trim()}, Subscriber: {datasetVersion}");
 
-            var providerVersion = dataset.Version;
-            if (providerVersion != datasetVersion) throw new ArgumentException($"Wrong datasetVersion supplied. Provider: {providerVersion.Trim()}, Subscriber: {datasetVersion}");
-
-            return OrderChangelog(order);
+                return OrderChangelog(order);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
         public string GetDatasetVersion(string datasetId)
         {
             try
             {
-                var id = GetId(datasetId);
-
-                var dataset = GetDataset(id);
-
-                return dataset.Version;
+                return GetDataset(datasetId).Version;
             }
             catch (Exception ex)
             {
@@ -212,9 +214,9 @@ namespace Kartverket.Geosynkronisering
             return id;
         }
 
-        private Dataset GetDataset(int id)
+        private Dataset GetDataset(string datasetId)
         {
-            var datasets = from d in db.Datasets where d.DatasetId == id select d;
+            var datasets = from d in db.Datasets where d.DatasetId == GetId(datasetId) select d;
             var dataset = datasets.First();
             return dataset;
         }
@@ -245,7 +247,21 @@ namespace Kartverket.Geosynkronisering
 
         public PrecisionType GetPrecision(string datasetId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var dataset = GetDataset(datasetId);
+
+                return new PrecisionType
+                {
+                    decimals = dataset.Decimals,
+                    epsgCode = dataset.DefaultCrs,
+                    tolerance = dataset.Tolerance
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
         #region Async Code for OrderChangeLog
