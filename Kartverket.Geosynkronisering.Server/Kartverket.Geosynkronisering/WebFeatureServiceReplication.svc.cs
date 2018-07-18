@@ -177,36 +177,46 @@ namespace Kartverket.Geosynkronisering
 
         public ChangelogIdentificationType OrderChangelog2(ChangelogOrderType order, string datasetVersion)
         {
-            throw new NotImplementedException();
+            var id = GetId(order.datasetId);
+
+            var dataset = GetDataset(id);
+
+            var providerVersion = dataset.Version;
+            if (providerVersion != datasetVersion) throw new ArgumentException($"Wrong datasetVersion supplied. Provider: {providerVersion.Trim()}, Subscriber: {datasetVersion}");
+
+            return OrderChangelog(order);
         }
 
         public string GetDatasetVersion(string datasetId)
         {
             try
             {
-                string dataset = datasetId;
-                if (dataset == "") throw new ArgumentException("Missing dataset in request");
-                int id = 0;
-                int.TryParse(dataset, out id);
+                var id = GetId(datasetId);
 
-                string resp;
-                string initType;
-                var datasets = from d in db.Datasets where d.DatasetId == id select d;
-                initType = datasets.First().DatasetProvider;
+                var dataset = GetDataset(id);
 
-                //Initiate provider from config/dataset
-                Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
-                IChangelogProvider changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
-                changelogprovider.Intitalize(id);
-                resp = changelogprovider.GetDatasetVersion(id);
-              
-                return resp;
-
+                return dataset.Version;
             }
             catch (Exception ex)
             {
                 throw new FaultException(ex.Message);
             }
+        }
+
+        private static int GetId(string datasetId)
+        {
+            var dataset = datasetId;
+            if (dataset == "") throw new ArgumentException("Missing datasetId in request");
+            int id;
+            int.TryParse(dataset, out id);
+            return id;
+        }
+
+        private Dataset GetDataset(int id)
+        {
+            var datasets = from d in db.Datasets where d.DatasetId == id select d;
+            var dataset = datasets.First();
+            return dataset;
         }
 
         public void SendReport(ReportType report)
