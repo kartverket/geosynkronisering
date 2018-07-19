@@ -940,7 +940,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             {
                 "Name",
                 "ProviderDatasetId",
-                "Applicationschema"
+                "TargetNamespace"
             };
 
             foreach (DataGridViewColumn col in dgvProviderDataset.Columns)
