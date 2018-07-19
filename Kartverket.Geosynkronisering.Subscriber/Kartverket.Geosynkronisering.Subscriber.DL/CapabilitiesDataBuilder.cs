@@ -134,8 +134,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             // Populate Dataset-List from database
             Connection = new SqlCeConnection
             {
-                ConnectionString =
-                    "Data Source = C:\\git\\geosynk\\Kartverket.Geosynkronisering.Subscriber\\Kartverket.Geosynkronisering.Subscriber\\bin\\Debug\\geosyncDB.sdf"
+                ConnectionString = System.Configuration.ConfigurationManager.
+                    ConnectionStrings["geosyncDBEntities"].ConnectionString
             };
 
             Dataset = ReadAll<Dataset>("Dataset");
@@ -155,7 +155,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public void Dispose()
         {
-            //throw new NotImplementedException();
+            Connection.Close();
+            Dataset = null;
         }
 
         public List<Dataset> Dataset { get; set; }
