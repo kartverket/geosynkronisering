@@ -87,6 +87,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 dataset.UserName = geoClientDataset.UserName;
                 if (geoClientDataset.Password != "******")
                     dataset.Password = geoClientDataset.Password;
+                dataset.Version = geoClientDataset.Version;
 
                 localDb.SaveChanges();
                 return true;
@@ -112,7 +113,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                                        ChangelogDirectory = dataset.ChangelogDirectory,
                                        AbortedChangelogId = dataset.AbortedChangelogId,
                                        UserName = dataset.UserName,
-                                       Password = dataset.Password
+                                       Password = dataset.Password,
+                                       Version = dataset.Version
                                    };
             return geoClientDataset;
         }

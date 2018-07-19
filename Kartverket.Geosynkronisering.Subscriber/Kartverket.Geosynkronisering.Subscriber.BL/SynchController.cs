@@ -74,7 +74,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 order.count = dataset.MaxCount.ToString();
                 order.startIndex = startIndex.ToString();
 
-                var resp = client.OrderChangelog(order);
+                var resp = string.IsNullOrEmpty(dataset.Version)
+                    ? client.OrderChangelog(order)
+                    : client.OrderChangelog2(order, dataset.Version.Trim());
 
                 dataset.AbortedChangelogId = resp.changelogId;
                 SubscriberDatasetManager.UpdateDataset(dataset);
@@ -325,6 +327,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 OnOrderProcessingChange((progressCounter + 1)*100/2);
 
                 changeLogId = OrderChangelog(datasetId, startIndex);
+              
             }
             else
             {
