@@ -25,29 +25,28 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
             client.Endpoint.Address = new System.ServiceModel.EndpointAddress(ProviderURL);
 
-            GetCapabilitiesType1 req = new GetCapabilitiesType1();
-
-            REP_CapabilitiesType rootCapabilities = client.GetCapabilities(req);
-
-            ReadGetCapabilities(db, rootCapabilities);
+            ReadGetCapabilities(db, client);
         }
 
 
         private IBindingList m_DatasetBindingList;
 
 
-        private void ReadGetCapabilities(geosyncDBEntities db, REP_CapabilitiesType rootCapabilities)
+        private void ReadGetCapabilities(geosyncDBEntities db, WebFeatureServiceReplicationPort client)
         {
+            var req = new GetCapabilitiesType1();
+            var rootCapabilities = client.GetCapabilities(req);
+
             //Build Cababilities.XML
             //ServiceIndentification
-            Dataset ds;
             m_DatasetBindingList = new BindingList<Dataset>();
-            foreach (DatasetType dst in rootCapabilities.datasets)
+            foreach (var dst in rootCapabilities.datasets)
             {
-                ds = new Dataset
+                var ds = new Dataset
                 {
-                    ProviderDatasetId = dst.datasetId,
-                    Name = dst.name
+                    ProviderDatasetId = dst.datasetId.Trim(),
+                    Name = dst.name.Trim(),
+                    Version = client.GetDatasetVersion(dst.datasetId).Trim()
                 };
 
                 DomainType dt = GetConstraint("CountDefault", rootCapabilities.OperationsMetadata.Constraint);
@@ -176,11 +175,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             }
         }
 
-        public void DeleteObject(Dataset dataset)
-        {
-            throw new NotImplementedException();
-        }
-
         public static List<T> ReadAll<T>(string tableName)
         {
             using (IDbConnection db = new SqlCeConnection(Connection.ConnectionString))
@@ -205,6 +199,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         private void UpdateDataset(Dataset dataset)
         {
             Connection.Update(dataset);
+        }
+
+        public void DeleteObject(Dataset dataset)
+        {
+            Connection.Delete(dataset);
+            Dataset.Remove(dataset);
         }
     }
 }
