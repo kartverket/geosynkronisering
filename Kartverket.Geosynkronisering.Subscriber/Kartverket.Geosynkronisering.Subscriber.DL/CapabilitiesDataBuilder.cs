@@ -139,18 +139,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             };
 
             Dataset = ReadAll<Dataset>("Dataset");
-
-            //Dataset = SelectDatasets();
-
-            //Connection.Open();
-            //var cmd = new SqlCeCommand("SELECT * FROM Dataset") {Connection = Connection};
-            //foreach (var i in cmd.ExecuteResultSet(new ResultSetOptions()))
-            //{
-
-            //}
-            //cmd.ExecuteNonQuery();
-            //Connection.Close();
-
         }
 
         public void Dispose()
