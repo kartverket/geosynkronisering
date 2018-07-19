@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Dapper.Contrib.Extensions;
 using NLog;
 
 namespace Kartverket.Geosynkronisering.Subscriber.DL
@@ -55,10 +56,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public static string GetDatasource()
         {
-            using (var localDb = new geosyncDBEntities())
-            {
-                return localDb.Connection.DataSource;
-            }
+            return geosyncDBEntities.Connection.DataSource;
         }
 
 
@@ -79,7 +77,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 dataset.ProviderDatasetId = geoClientDataset.ProviderDatasetId;
                 dataset.SyncronizationUrl = geoClientDataset.SynchronizationUrl;
                 dataset.ClientWfsUrl = geoClientDataset.ClientWfsUrl;
-                dataset.Applicationschema = geoClientDataset.Applicationschema;
+                dataset.TargetNamespace = geoClientDataset.Applicationschema;
                 dataset.MappingFile = geoClientDataset.MappingFile;
                 dataset.AbortedEndIndex = geoClientDataset.AbortedEndIndex;
                 dataset.AbortedTransaction = geoClientDataset.AbortedTransaction;
@@ -101,12 +99,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                                    {
                                        DatasetId = dataset.DatasetId,
                                        Name = dataset.Name,
-                                       LastIndex = dataset.LastIndex.HasValue ? dataset.LastIndex.Value : -1,
+                                       LastIndex = dataset.LastIndex > 0 ? dataset.LastIndex : -1,
                                        SynchronizationUrl = dataset.SyncronizationUrl,
                                        ClientWfsUrl = dataset.ClientWfsUrl,
-                                       MaxCount = dataset.MaxCount.HasValue ? dataset.MaxCount.Value : -1,
+                                       MaxCount = dataset.MaxCount> 0 ? dataset.MaxCount : -1,
                                        ProviderDatasetId = dataset.ProviderDatasetId,
-                                       Applicationschema = dataset.Applicationschema,
+                                       Applicationschema = dataset.TargetNamespace,
                                        MappingFile = dataset.MappingFile,
                                        AbortedEndIndex = dataset.AbortedEndIndex,
                                        AbortedTransaction = dataset.AbortedTransaction,
@@ -119,19 +117,19 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             return geoClientDataset;
         }
 
-        public static int GetNextDatasetID()
-        {
-            int max = 0;
-            using (var localDb = new geosyncDBEntities())
-            {
-                var res = from d in localDb.Dataset select d.DatasetId;
-                foreach (Int32 id in res)
-                {
-                    if (max < id) max = id;
-                }
-            }
-            return max + 1;
-        }
+        //public static int GetNextDatasetID()
+        //{
+        //    int max = 0;
+        //    using (var localDb = new geosyncDBEntities())
+        //    {
+        //        var res = from d in localDb.Dataset select d.DatasetId;
+        //        foreach (Int32 id in res)
+        //        {
+        //            if (max < id) max = id;
+        //        }
+        //    }
+        //    return max + 1;
+        //}
 
         public static IList<Int32> GetListOfDatasetIDs()
         {
@@ -178,15 +176,17 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             using (var localDb = new geosyncDBEntities())
             {
                 var res = (from d in localDb.Dataset where d.DatasetId == datasetID select d.MaxCount).FirstOrDefault();
-                return res.GetValueOrDefault();
+                return res;
             }
         }
         public static string GetLastIndex(int datasetID)
         {
             using (var localDb = new geosyncDBEntities())
             {
+                if (localDb.Dataset == null) return null;
+
                 var res = from d in localDb.Dataset where d.DatasetId == datasetID select d.LastIndex;
-                if (res.FirstOrDefault() != null) return res.First().ToString(); else return "";
+                if (res.FirstOrDefault() >  0) return res.First().ToString(); else return "";
             }
         }
 
@@ -221,7 +221,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         {
             using (var localDb = new geosyncDBEntities())
             {
-                var res = from d in localDb.Dataset where d.DatasetId == DatasetID select d.Applicationschema;
+                var res = from d in localDb.Dataset where d.DatasetId == DatasetID select d.TargetNamespace;
                 if (res.First() != null) return res.First().ToString(); else return "";
             }
         }
@@ -235,15 +235,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                     var ds = (Dataset)datasetBindingList[selected];
                     try
                     {
-                        ds.DatasetId = GetNextDatasetID();
                         ds.LastIndex = 0;
                         ds.ClientWfsUrl = "";
                         ds.UserName = UserName;
                         ds.Password = Password;
                         ds.SyncronizationUrl = providerUrl;
-                        localDb.AddObject(ds.EntityKey.EntitySetName, ds);
+                        localDb.AddObject(ds);
                         localDb.SaveChanges();
-                        localDb.AcceptAllChanges();
                     }
                     catch (Exception ex)
                     {
@@ -263,12 +261,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                     var ds = new Dataset();
                     try
                     {
-                        ds.DatasetId = GetNextDatasetID();
                         ds.LastIndex = 0;
                         ds.ClientWfsUrl = "";
-                        localDb.AddObject("Dataset", ds);
+                        localDb.AddObject(ds);
                         localDb.SaveChanges();
-                        localDb.AcceptAllChanges();
                     }
                     catch (Exception ex)
                     {
@@ -318,5 +314,30 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         }
 
    
+    }
+
+    public class Dataset
+    {
+        public string ProviderDatasetId { get; set; }
+        public string Name { get; set; }
+        public int MaxCount { get; set; }
+        //public string Applicationschema { get; set; }
+        public string TargetNamespace { get; set; }
+        
+        public string SyncronizationUrl { get; set; }
+
+        [Key]
+        public int DatasetId { get; set; }
+        public long LastIndex { get; set; }
+        public string ClientWfsUrl { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public string MappingFile { get; set; }
+        public long? AbortedEndIndex { get; set; }
+        public long? AbortedTransaction { get; set; }
+        public string AbortedChangelogPath { get; set; }
+        public string ChangelogDirectory { get; set; }
+        public string AbortedChangelogId { get; set; }
+        public string Version { get; set; }
     }
 }

@@ -1,6 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Data.SqlServerCe;
+using Dapper;
+using Dapper.Contrib.Extensions;
 using Kartverket.GeosyncWCF;
 
 
@@ -38,14 +44,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             m_DatasetBindingList = new BindingList<Dataset>();
             foreach (DatasetType dst in rootCapabilities.datasets)
             {
-                ds = db.CreateObject<Dataset>();
-                ds.EntityKey = db.CreateEntityKey("Dataset", ds);
+                ds = new Dataset
+                {
+                    ProviderDatasetId = dst.datasetId,
+                    Name = dst.name
+                };
 
-                ds.ProviderDatasetId = dst.datasetId;
-                ds.Name = dst.name;
                 DomainType dt = GetConstraint("CountDefault", rootCapabilities.OperationsMetadata.Constraint);
                 if (dt != null) ds.MaxCount = Convert.ToInt32(dt.DefaultValue.Value);
-                ds.Applicationschema = dst.applicationSchema;
+                ds.TargetNamespace = dst.applicationSchema;
                 Operation op = GetOperation("OrderChangelog", rootCapabilities.OperationsMetadata.Operation);
                 if (op != null)
                 {
@@ -113,6 +120,91 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         public IBindingList ProviderDatasets
         {
             get { return m_DatasetBindingList; }
+        }
+    }
+
+    internal class geosyncDBEntities : IDisposable
+    {
+        public geosyncDBEntities()
+        {
+            SqlMapperExtensions.TableNameMapper = (type) => {
+                //use exact name
+                return type.Name;
+            };
+
+            // Populate Dataset-List from database
+            Connection = new SqlCeConnection
+            {
+                ConnectionString =
+                    "Data Source = C:\\git\\geosynk\\Kartverket.Geosynkronisering.Subscriber\\Kartverket.Geosynkronisering.Subscriber\\bin\\Debug\\geosyncDB.sdf"
+            };
+
+            Dataset = ReadAll<Dataset>("Dataset");
+
+            //Dataset = SelectDatasets();
+
+            //Connection.Open();
+            //var cmd = new SqlCeCommand("SELECT * FROM Dataset") {Connection = Connection};
+            //foreach (var i in cmd.ExecuteResultSet(new ResultSetOptions()))
+            //{
+
+            //}
+            //cmd.ExecuteNonQuery();
+            //Connection.Close();
+
+        }
+
+        public void Dispose()
+        {
+            //throw new NotImplementedException();
+        }
+
+        public List<Dataset> Dataset { get; set; }
+        public static SqlCeConnection Connection { get; set; }
+
+        public void AddObject(Dataset ds)
+        {
+            Dataset.Add(ds);
+        }
+
+        public void SaveChanges()
+        {
+            foreach (var dataset in Dataset)
+            {
+                if (DatasetExists(dataset.DatasetId)) UpdateDataset(dataset);
+                else InsertDataset(dataset);
+            }
+        }
+
+        public void DeleteObject(Dataset dataset)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static List<T> ReadAll<T>(string tableName)
+        {
+            using (IDbConnection db = new SqlCeConnection(Connection.ConnectionString))
+            {
+                return db.Query<T>("SELECT * FROM " + tableName).ToList();
+            }
+        }
+
+        public static bool DatasetExists(int datasetId)
+        {
+            using (IDbConnection db = new SqlCeConnection(Connection.ConnectionString))
+            {
+                return db.Query<int>($"SELECT 1 FROM Dataset WHERE DatasetId = {datasetId}").ToList().FirstOrDefault() == 1;
+            }
+        }
+
+        private void InsertDataset(Dataset dataset)
+        {
+            Connection.Insert(dataset);
+        }
+
+        private void UpdateDataset(Dataset dataset)
+        {
+            Connection.Update(dataset);
         }
     }
 }
