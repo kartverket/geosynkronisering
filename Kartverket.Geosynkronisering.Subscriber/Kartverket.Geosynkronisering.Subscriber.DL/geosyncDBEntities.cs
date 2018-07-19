@@ -63,12 +63,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             }
         }
 
-        private void InsertDataset(Dataset dataset)
+        private static void InsertDataset(Dataset dataset)
         {
             Connection.Insert(dataset);
         }
 
-        private void UpdateDataset(Dataset dataset)
+        private static void UpdateDataset(Dataset dataset)
         {
             Connection.Update(dataset);
         }
