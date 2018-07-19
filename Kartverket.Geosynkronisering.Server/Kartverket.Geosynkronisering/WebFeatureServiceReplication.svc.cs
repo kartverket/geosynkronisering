@@ -181,7 +181,7 @@ namespace Kartverket.Geosynkronisering
             {
                 var providerVersion = GetDataset(order.datasetId).Version;
 
-                if (providerVersion != datasetVersion)
+                if (providerVersion.Trim() != datasetVersion.Trim())
                     throw new ArgumentException(
                         $"Wrong datasetVersion supplied. Provider: {providerVersion.Trim()}, Subscriber: {datasetVersion}");
 
