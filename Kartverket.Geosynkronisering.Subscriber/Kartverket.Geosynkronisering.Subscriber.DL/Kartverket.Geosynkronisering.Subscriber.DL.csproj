@@ -94,6 +94,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CapabilitiesDataBuilder.cs" />
+    <Compile Include="Dataset.cs" />
+    <Compile Include="geosyncDBEntities.cs" />
     <Compile Include="GeosyncWCFproxy2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubscriberDataset.cs" />

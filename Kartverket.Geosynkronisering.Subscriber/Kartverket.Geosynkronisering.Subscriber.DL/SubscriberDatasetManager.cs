@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using Dapper.Contrib.Extensions;
 using NLog;
 
 namespace Kartverket.Geosynkronisering.Subscriber.DL
@@ -13,7 +12,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public static SubscriberDataset GetDataset(string datasetName)
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 Dataset dataset = (from d in localDb.Dataset where d.Name == datasetName select d).FirstOrDefault();
                 if (dataset == null)
@@ -27,7 +26,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public static SubscriberDataset GetDataset(int datasetId)
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 Dataset dataset = (from d in localDb.Dataset where d.DatasetId == datasetId select d).FirstOrDefault();
                 if (dataset == null)
@@ -40,7 +39,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public static List<SubscriberDataset> GetAllDataset()
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 List<Dataset> datasets = (from d in localDb.Dataset select d).ToList();
 
@@ -56,14 +55,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public static string GetDatasource()
         {
-            return geosyncDBEntities.Connection.DataSource;
+            return GeosyncDbEntities.Connection.DataSource;
         }
 
 
 
         public static bool UpdateDataset(SubscriberDataset geoClientDataset)
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 Dataset dataset =
                     (from d in localDb.Dataset where d.DatasetId == geoClientDataset.DatasetId select d)
@@ -135,7 +134,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public static IList<Int32> GetListOfDatasetIDs()
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 IList<Int32> idList = new List<Int32>();
                 var res = from d in localDb.Dataset select d.DatasetId;
@@ -149,7 +148,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public static string SyncronizationUrl(Int32 DatasetID)
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 var res = from d in localDb.Dataset where d.DatasetId == DatasetID select d.SyncronizationUrl;
                 if (res.First() != null) return res.First().ToString(); else return "";
@@ -158,7 +157,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public static string ProviderDatasetId(Int32 DatasetID)
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 var res = from d in localDb.Dataset where d.DatasetId == DatasetID select d.ProviderDatasetId;
                 if (res.First() != null) return res.First().ToString(); else return "";
@@ -166,7 +165,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         }
         public static string MappingFile(Int32 DatasetID)
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 var res = from d in localDb.Dataset where d.DatasetId == DatasetID select d.MappingFile;
                 if (res.First() != null) return res.First().ToString(); else return "";
@@ -175,7 +174,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public static int GetMaxCount(int datasetID)
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 var res = (from d in localDb.Dataset where d.DatasetId == datasetID select d.MaxCount).FirstOrDefault();
                 return res;
@@ -183,7 +182,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         }
         public static string GetLastIndex(int datasetID)
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 if (localDb.Dataset == null) return null;
 
@@ -194,7 +193,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public static string ClientWfsUrl(int datasetID)
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 var res = from d in localDb.Dataset where d.DatasetId == datasetID select d.ClientWfsUrl;
                 if (res.First() != null) return res.First().ToString(); else return "";
@@ -203,7 +202,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public static List<string> GetDatasetNames()
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 var res = (from d in localDb.Dataset select d.Name).ToList();
                 return res;
@@ -212,7 +211,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public static IDictionary<int, string> GetDatasetNamesAsDictionary()
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 var dict = localDb.Dataset.Select( t => new { t.DatasetId, t.Name } )
                    .ToDictionary( t => t.DatasetId, t => t.Name );
@@ -221,7 +220,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         }
         public static string TargetNamespace(Int32 DatasetID)
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 var res = from d in localDb.Dataset where d.DatasetId == DatasetID select d.TargetNamespace;
                 if (res.First() != null) return res.First().ToString(); else return "";
@@ -230,7 +229,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public static bool AddDatasets(IBindingList datasetBindingList, IList<int> selectedDatasets, string providerUrl, string UserName, string Password)
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 foreach (int selected in selectedDatasets)
                 {
@@ -258,7 +257,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public static bool AddEmptyDataset()
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                     var ds = new Dataset();
                     try
@@ -286,7 +285,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         /// <returns>True if OK, else False</returns>
         public static bool RemoveDatasets(List<SubscriberDataset> datasetBindingList, IList<int> selectedDatasets)
         {
-            using (var localDb = new geosyncDBEntities())
+            using (var localDb = new GeosyncDbEntities())
             {
                 foreach (int selected in selectedDatasets)
                 {
@@ -313,33 +312,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             }
 
             return true;
-        }
-
-   
-    }
-
-    public class Dataset
-    {
-        public string ProviderDatasetId { get; set; }
-        public string Name { get; set; }
-        public int MaxCount { get; set; }
-        //public string Applicationschema { get; set; }
-        public string TargetNamespace { get; set; }
-        
-        public string SyncronizationUrl { get; set; }
-
-        [Key]
-        public int DatasetId { get; set; }
-        public long LastIndex { get; set; }
-        public string ClientWfsUrl { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public string MappingFile { get; set; }
-        public long? AbortedEndIndex { get; set; }
-        public long? AbortedTransaction { get; set; }
-        public string AbortedChangelogPath { get; set; }
-        public string ChangelogDirectory { get; set; }
-        public string AbortedChangelogId { get; set; }
-        public string Version { get; set; }
+        } 
     }
 }

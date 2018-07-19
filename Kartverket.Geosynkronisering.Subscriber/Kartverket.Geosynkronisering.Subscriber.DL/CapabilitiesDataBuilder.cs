@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
-using System.Data.SqlServerCe;
-using Dapper;
-using Dapper.Contrib.Extensions;
 using Kartverket.GeosyncWCF;
 
 
@@ -17,7 +11,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
     {
         public CapabilitiesDataBuilder(string ProviderURL, string UserName, string Password)
         {
-            geosyncDBEntities db = new geosyncDBEntities();
+            var db = new GeosyncDbEntities();
 
             WebFeatureServiceReplicationPortClient client = new WebFeatureServiceReplicationPortClient();
             client.ClientCredentials.UserName.UserName = UserName;
@@ -32,7 +26,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         private IBindingList m_DatasetBindingList;
 
 
-        private void ReadGetCapabilities(geosyncDBEntities db, WebFeatureServiceReplicationPort client)
+        private void ReadGetCapabilities(GeosyncDbEntities db, WebFeatureServiceReplicationPort client)
         {
             var req = new GetCapabilitiesType1();
             var rootCapabilities = client.GetCapabilities(req);
@@ -119,81 +113,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         public IBindingList ProviderDatasets
         {
             get { return m_DatasetBindingList; }
-        }
-    }
-
-    internal class geosyncDBEntities : IDisposable
-    {
-        public geosyncDBEntities()
-        {
-            SqlMapperExtensions.TableNameMapper = (type) => {
-                //use exact name
-                return type.Name;
-            };
-
-            // Populate Dataset-List from database
-            Connection = new SqlCeConnection
-            {
-                ConnectionString = System.Configuration.ConfigurationManager.
-                    ConnectionStrings["geosyncDBEntities"].ConnectionString
-            };
-
-            Dataset = ReadAll<Dataset>("Dataset");
-        }
-
-        public void Dispose()
-        {
-            Connection.Close();
-            Dataset = null;
-        }
-
-        public List<Dataset> Dataset { get; set; }
-        public static SqlCeConnection Connection { get; set; }
-
-        public void AddObject(Dataset ds)
-        {
-            Dataset.Add(ds);
-        }
-
-        public void SaveChanges()
-        {
-            foreach (var dataset in Dataset)
-            {
-                if (DatasetExists(dataset.DatasetId)) UpdateDataset(dataset);
-                else InsertDataset(dataset);
-            }
-        }
-
-        public static List<T> ReadAll<T>(string tableName)
-        {
-            using (IDbConnection db = new SqlCeConnection(Connection.ConnectionString))
-            {
-                return db.Query<T>("SELECT * FROM " + tableName).ToList();
-            }
-        }
-
-        public static bool DatasetExists(int datasetId)
-        {
-            using (IDbConnection db = new SqlCeConnection(Connection.ConnectionString))
-            {
-                return db.Query<int>($"SELECT 1 FROM Dataset WHERE DatasetId = {datasetId}").ToList().FirstOrDefault() == 1;
-            }
-        }
-
-        private void InsertDataset(Dataset dataset)
-        {
-            Connection.Insert(dataset);
-        }
-
-        private void UpdateDataset(Dataset dataset)
-        {
-            Connection.Update(dataset);
-        }
-
-        public void DeleteObject(Dataset dataset)
-        {
-            Connection.Delete(dataset);
-            Dataset.Remove(dataset);
         }
     }
 }
