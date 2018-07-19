@@ -63,7 +63,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
 
                 // To enable sorting in a DataGridView bound to a List
                 // See https://www.codeproject.com/Articles/31418/Implementing-a-Sortable-BindingList-Very-Very-Quic
-                MySortableBindingList<SubscriberDataset> sortableBindingList = new MySortableBindingList<SubscriberDataset>(list1); //new SortableList<SubscriberDataset>();
+                MySortableBindingList<Dataset> sortableBindingList = new MySortableBindingList<Dataset>(list1); //new SortableList<SubscriberDataset>();
 
                 dgDataset.DataSource = sortableBindingList;
                 var col = dgDataset.Columns["DatasetId"];
@@ -480,7 +480,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-                var subscriberDatasets = (MySortableBindingList<SubscriberDataset>)dgDataset.DataSource;
+                var subscriberDatasets = (MySortableBindingList<Dataset>)dgDataset.DataSource;
                 //var subscriberDatasets = (List<SubscriberDataset>)dgDataset.DataSource;
                 foreach (var subscriberDataset in subscriberDatasets)
                 {
@@ -596,7 +596,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             {
                 selectedDataset.Add(dgr.Index);
             }
-            var subscriberDatasets = (MySortableBindingList<SubscriberDataset>)dgDataset.DataSource;
+            var subscriberDatasets = (MySortableBindingList<Dataset>)dgDataset.DataSource;
             //var subscriberDatasets = (List<SubscriberDataset>)dgDataset.DataSource;
 
 

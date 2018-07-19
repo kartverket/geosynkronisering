@@ -36,11 +36,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             m_DatasetBindingList = new BindingList<Dataset>();
             foreach (var dst in rootCapabilities.datasets)
             {
+                var precision = client.GetPrecision(dst.datasetId);
                 var ds = new Dataset
                 {
                     ProviderDatasetId = dst.datasetId.Trim(),
                     Name = dst.name.Trim(),
-                    Version = client.GetDatasetVersion(dst.datasetId).Trim()
+                    Version = client.GetDatasetVersion(dst.datasetId).Trim(),
+                    Tolerance = precision.tolerance,
+                    EpsgCode = precision.epsgCode,
+                    Decimals = precision.decimals
                 };
 
                 DomainType dt = GetConstraint("CountDefault", rootCapabilities.OperationsMetadata.Constraint);

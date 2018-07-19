@@ -89,12 +89,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
-        private WebFeatureServiceReplicationPortClient buildClient(SubscriberDataset dataset)
+        private WebFeatureServiceReplicationPortClient buildClient(Dataset dataset)
         {
             var client = new WebFeatureServiceReplicationPortClient();
             client.ClientCredentials.UserName.UserName = dataset.UserName;
             client.ClientCredentials.UserName.Password = dataset.Password;
-            client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
+            client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SyncronizationUrl);
             return client;
         }
 
@@ -299,7 +299,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
-        private long performSynchronization(SubscriberDataset dataset, int datasetId)
+        private long performSynchronization(Dataset dataset, int datasetId)
         {
 
             //Check if previous transactions failed
@@ -429,7 +429,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return lastChangeIndexProvider;
         }
 
-        private bool LoopChangeLog(IEnumerable<string> fileList, SubscriberDataset dataset, int datasetId,
+        private bool LoopChangeLog(IEnumerable<string> fileList, Dataset dataset, int datasetId,
             int progressCounter,
             string changelogFilename, long transactionStart)
         {
@@ -476,7 +476,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return status;
         }
 
-        private static void ResetDataset(SubscriberDataset dataset, long endIndex)
+        private static void ResetDataset(Dataset dataset, long endIndex)
         {
             if (endIndex > 0)
                 dataset.LastIndex = endIndex;

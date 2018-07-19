@@ -25,5 +25,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         public string ChangelogDirectory { get; set; }
         public string AbortedChangelogId { get; set; }
         public string Version { get; set; }
+        public double Tolerance { get; set; }
+        public string EpsgCode { get; set; }
+        public string Decimals { get; set; }
     }
 }

@@ -10,44 +10,33 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
-        public static SubscriberDataset GetDataset(string datasetName)
+        public static Dataset GetDataset(string datasetName)
         {
             using (var localDb = new GeosyncDbEntities())
             {
-                Dataset dataset = (from d in localDb.Dataset where d.Name == datasetName select d).FirstOrDefault();
-                if (dataset == null)
-                    return null;
-
-                var geoClientDataset = MapToGeoClientDataset(dataset);
-
-                return geoClientDataset;
+                return (from d in localDb.Dataset where d.Name == datasetName select d).FirstOrDefault();
             }
         }
 
-        public static SubscriberDataset GetDataset(int datasetId)
+        public static Dataset GetDataset(int datasetId)
         {
             using (var localDb = new GeosyncDbEntities())
             {
-                Dataset dataset = (from d in localDb.Dataset where d.DatasetId == datasetId select d).FirstOrDefault();
-                if (dataset == null)
-                    return null;
-
-                var geoClientDataset = MapToGeoClientDataset(dataset);
-                return geoClientDataset;
+                return (from d in localDb.Dataset where d.DatasetId == datasetId select d).FirstOrDefault();
             }
         }
 
-        public static List<SubscriberDataset> GetAllDataset()
+        public static List<Dataset> GetAllDataset()
         {
             using (var localDb = new GeosyncDbEntities())
             {
-                List<Dataset> datasets = (from d in localDb.Dataset select d).ToList();
+                var datasets = (from d in localDb.Dataset select d).ToList();
 
-                var geoClientDatasets = new List<SubscriberDataset>();
+                var geoClientDatasets = new List<Dataset>();
 
                 foreach (var dataset in datasets)
                 {
-                    geoClientDatasets.Add(MapToGeoClientDataset(dataset));
+                    geoClientDatasets.Add(dataset);
                 }
                 return geoClientDatasets;
             }
@@ -60,11 +49,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
 
 
-        public static bool UpdateDataset(SubscriberDataset geoClientDataset)
+        public static bool UpdateDataset(Dataset geoClientDataset)
         {
             using (var localDb = new GeosyncDbEntities())
             {
-                Dataset dataset =
+                var dataset =
                     (from d in localDb.Dataset where d.DatasetId == geoClientDataset.DatasetId select d)
                         .FirstOrDefault();
                 if (dataset == null)
@@ -74,9 +63,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 dataset.LastIndex = geoClientDataset.LastIndex;
                 dataset.Name = geoClientDataset.Name;
                 dataset.ProviderDatasetId = geoClientDataset.ProviderDatasetId;
-                dataset.SyncronizationUrl = geoClientDataset.SynchronizationUrl;
+                dataset.SyncronizationUrl = geoClientDataset.SyncronizationUrl;
                 dataset.ClientWfsUrl = geoClientDataset.ClientWfsUrl;
-                dataset.TargetNamespace = geoClientDataset.Applicationschema;
+                dataset.TargetNamespace = geoClientDataset.TargetNamespace;
                 dataset.MappingFile = geoClientDataset.MappingFile;
                 dataset.AbortedEndIndex = geoClientDataset.AbortedEndIndex;
                 dataset.AbortedTransaction = geoClientDataset.AbortedTransaction;
@@ -93,30 +82,30 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             }
         }
 
-        private static SubscriberDataset MapToGeoClientDataset(Dataset dataset)
-        {
-            var geoClientDataset = new SubscriberDataset
-                                   {
-                                       DatasetId = dataset.DatasetId,
-                                       Name = dataset.Name,
-                                       LastIndex = dataset.LastIndex > 0 ? dataset.LastIndex : -1,
-                                       SynchronizationUrl = dataset.SyncronizationUrl,
-                                       ClientWfsUrl = dataset.ClientWfsUrl,
-                                       MaxCount = dataset.MaxCount> 0 ? dataset.MaxCount : -1,
-                                       ProviderDatasetId = dataset.ProviderDatasetId,
-                                       Applicationschema = dataset.TargetNamespace,
-                                       MappingFile = dataset.MappingFile,
-                                       AbortedEndIndex = dataset.AbortedEndIndex,
-                                       AbortedTransaction = dataset.AbortedTransaction,
-                                       AbortedChangelogPath = dataset.AbortedChangelogPath,
-                                       ChangelogDirectory = dataset.ChangelogDirectory,
-                                       AbortedChangelogId = dataset.AbortedChangelogId,
-                                       UserName = dataset.UserName,
-                                       Password = dataset.Password,
-                                       Version = dataset.Version
-                                   };
-            return geoClientDataset;
-        }
+        //private static SubscriberDataset MapToGeoClientDataset(Dataset dataset)
+        //{
+        //    var geoClientDataset = new SubscriberDataset
+        //                           {
+        //                               DatasetId = dataset.DatasetId,
+        //                               Name = dataset.Name,
+        //                               LastIndex = dataset.LastIndex > 0 ? dataset.LastIndex : -1,
+        //                               SynchronizationUrl = dataset.SyncronizationUrl,
+        //                               ClientWfsUrl = dataset.ClientWfsUrl,
+        //                               MaxCount = dataset.MaxCount> 0 ? dataset.MaxCount : -1,
+        //                               ProviderDatasetId = dataset.ProviderDatasetId,
+        //                               Applicationschema = dataset.TargetNamespace,
+        //                               MappingFile = dataset.MappingFile,
+        //                               AbortedEndIndex = dataset.AbortedEndIndex,
+        //                               AbortedTransaction = dataset.AbortedTransaction,
+        //                               AbortedChangelogPath = dataset.AbortedChangelogPath,
+        //                               ChangelogDirectory = dataset.ChangelogDirectory,
+        //                               AbortedChangelogId = dataset.AbortedChangelogId,
+        //                               UserName = dataset.UserName,
+        //                               Password = dataset.Password,
+        //                               Version = dataset.Version
+        //                           };
+        //    return geoClientDataset;
+        //}
 
         //public static int GetNextDatasetID()
         //{
@@ -283,16 +272,16 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         /// <param name="datasetBindingList">The dataset binding list.</param>
         /// <param name="selectedDatasets">The selected datasets.</param>
         /// <returns>True if OK, else False</returns>
-        public static bool RemoveDatasets(List<SubscriberDataset> datasetBindingList, IList<int> selectedDatasets)
+        public static bool RemoveDatasets(List<Dataset> datasetBindingList, IList<int> selectedDatasets)
         {
             using (var localDb = new GeosyncDbEntities())
             {
-                foreach (int selected in selectedDatasets)
+                foreach (var selected in selectedDatasets)
                 {
 
-                    var geoClientDataset = (SubscriberDataset)datasetBindingList[selected];
+                    var geoClientDataset = datasetBindingList[selected];
 
-                    Dataset dataset =
+                    var dataset =
                          (from d in localDb.Dataset where d.DatasetId == geoClientDataset.DatasetId select d)
                              .FirstOrDefault();
                     if (dataset == null)
@@ -312,6 +301,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             }
 
             return true;
-        } 
+        }
+   
     }
 }

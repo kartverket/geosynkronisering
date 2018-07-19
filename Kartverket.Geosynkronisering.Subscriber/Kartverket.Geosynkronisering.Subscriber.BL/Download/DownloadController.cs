@@ -33,7 +33,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// </summary>
         /// <param name="downloadUri"></param>
         /// <param name="dataset"></param>
-        public bool DownloadChangelog(string downloadUri, SubscriberDataset dataset)
+        public bool DownloadChangelog(string downloadUri, Dataset dataset)
         {
             var webClient = new WebClient { Credentials = new NetworkCredential(dataset.UserName, dataset.Password) };
             webClient.DownloadFile(downloadUri, ChangelogFilename);
