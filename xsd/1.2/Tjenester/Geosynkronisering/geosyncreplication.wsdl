@@ -433,7 +433,7 @@
 			</wsdl:fault>
 		</wsdl:operation>
 		<wsdl:operation name="OrderChangelog">
-			<soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.2produkt/#OrderChangelog"/>
+			<soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt/#OrderChangelog"/>
 			<wsdl:input name="OrderChangelogRequest">
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -445,7 +445,7 @@
 			</wsdl:fault>
 		</wsdl:operation>
 		<wsdl:operation name="OrderChangelog2">
-			<soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.2produkt/#OrderChangelog2"/>
+			<soap:operation style="document" soapAction="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt/#OrderChangelog2"/>
 			<wsdl:input name="OrderChangelog2Request">
 				<soap:body use="literal"/>
 			</wsdl:input>
