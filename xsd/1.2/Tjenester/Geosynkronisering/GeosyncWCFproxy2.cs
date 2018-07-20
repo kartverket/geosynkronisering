@@ -351,8 +351,8 @@ namespace Kartverket.GeosyncWCF
         [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
         Kartverket.GeosyncWCF.ListStoredChangelogsResponse ListStoredChangelogs(Kartverket.GeosyncWCF.ListStoredChangelogsRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2produkt/#OrderChangelog", ReplyAction="*")]
-        [System.ServiceModel.FaultContractAttribute(typeof(Kartverket.GeosyncWCF.ExceptionReport), Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2produkt/#OrderChangelog", Name="ExceptionReport", Namespace="http://www.opengis.net/ows/1.1")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt/#OrderChangelog", ReplyAction="*")]
+        [System.ServiceModel.FaultContractAttribute(typeof(Kartverket.GeosyncWCF.ExceptionReport), Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt/#OrderChangelog", Name="ExceptionReport", Namespace="http://www.opengis.net/ows/1.1")]
         [System.ServiceModel.XmlSerializerFormatAttribute()]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetCapabilitiesType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(CapabilitiesBaseType))]
@@ -381,8 +381,10 @@ namespace Kartverket.GeosyncWCF
         [return: System.ServiceModel.MessageParameterAttribute(Name="return")]
         Kartverket.GeosyncWCF.ChangelogIdentificationType OrderChangelog(Kartverket.GeosyncWCF.ChangelogOrderType order);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2produkt/#OrderChangelog2", ReplyAction="*")]
-        [System.ServiceModel.FaultContractAttribute(typeof(Kartverket.GeosyncWCF.ExceptionReport), Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2produkt/#OrderChangelog2", Name="ExceptionReport", Namespace="http://www.opengis.net/ows/1.1")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt/#OrderChangelog2" +
+            "", ReplyAction="*")]
+        [System.ServiceModel.FaultContractAttribute(typeof(Kartverket.GeosyncWCF.ExceptionReport), Action="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt/#OrderChangelog2" +
+            "", Name="ExceptionReport", Namespace="http://www.opengis.net/ows/1.1")]
         [System.ServiceModel.XmlSerializerFormatAttribute()]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(GetCapabilitiesType))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(CapabilitiesBaseType))]
