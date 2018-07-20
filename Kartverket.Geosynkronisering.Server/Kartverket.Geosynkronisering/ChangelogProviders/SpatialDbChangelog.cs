@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -581,6 +583,8 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             // TODO: Should not be hardcoded
             string schemaLocation = nsChlogf.NamespaceName + " " + ServiceData.SchemaLocation();
             schemaLocation += " " + _pNsApp + " " + _pSchemaFileUri;
+
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
 
             //"2001-12-17T09:30:47Z"
             XElement changelogRoot =
