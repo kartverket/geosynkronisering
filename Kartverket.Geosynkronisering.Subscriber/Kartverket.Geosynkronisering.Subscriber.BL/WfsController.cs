@@ -89,15 +89,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         {
             var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-            var client = new WebFeatureServiceReplicationPortClient();
-
-            if (client.ClientCredentials != null)
-            {
-                client.ClientCredentials.UserName.UserName = dataset.UserName;
-                client.ClientCredentials.UserName.Password = dataset.Password;
-            }
-
-            client.Endpoint.Address = new EndpointAddress(dataset.SyncronizationUrl);
+            var client = SynchController.buildClient(dataset);
 
             var providerDatasets = CapabilitiesDataBuilder.ReadGetCapabilities(client);
 
