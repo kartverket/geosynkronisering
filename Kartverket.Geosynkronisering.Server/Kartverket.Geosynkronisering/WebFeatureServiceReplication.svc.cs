@@ -224,26 +224,44 @@ namespace Kartverket.Geosynkronisering
 
         public void SendReport(ReportType report)
         {
+            var message = ConstructMessage(report);
+
             try
-            { 
-            switch (report.type)
             {
-                case ReportTypeEnumType.error:
-                    Logger.Error(report.description);
-                    break;
-                case ReportTypeEnumType.info:
-                    Logger.Info(report.description);
-                    break;
-                default:
-                    Logger.Info(report.description);
-                    break;
-            }
+                switch (report.type)
+                {
+                    case ReportTypeEnumType.error:
+                        Logger.Error(message);
+                        break;
+                    case ReportTypeEnumType.info:
+                        Logger.Info(message);
+                        break;
+                    default:
+                        Logger.Info(message);
+                        break;
+                }
 
             }
             catch (Exception ex)
             {
                 throw new FaultException(ex.Message);
             }
+        }
+
+        private static string ConstructMessage(ReportType report)
+        {
+            var message = "Report from subscriber: ";
+            if (!string.IsNullOrWhiteSpace(report.subscriberType))
+                message += $"\r\n\tsubscriberType: {report.subscriberType}";
+            if (!string.IsNullOrWhiteSpace(report.subscriberId))
+                message += $"\r\n\tsubscriberId: {report.subscriberId}";
+            if (!string.IsNullOrWhiteSpace(report.changelogId))
+                message += $"\r\n\tchangelogId: {report.changelogId}";
+            if (report.localId.Length > 0)
+                message += $"\r\n\tlocalIds: {string.Join(",", report.localId)}";
+            if (!string.IsNullOrWhiteSpace(report.description))
+                message += $"\r\n\tdescription: {report.description}";
+            return message;
         }
 
         public PrecisionType GetPrecision(string datasetId)
