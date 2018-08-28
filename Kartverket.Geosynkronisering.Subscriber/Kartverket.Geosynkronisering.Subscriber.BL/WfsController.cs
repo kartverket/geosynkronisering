@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.ServiceModel;
 using System.Text;
 using System.Xml.Linq;
 using Kartverket.Geosynkronisering.Subscriber.DL;
 using NLog;
 using System.Xml;
+using Kartverket.GeosyncWCF;
 
 
 namespace Kartverket.Geosynkronisering.Subscriber.BL
@@ -27,63 +29,99 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// <returns></returns>
         public bool DoWfsTransactions(XElement changeLog, int datasetId)
         {
+            var success = false;
+
+            var xDoc = ConstructWfsTransaction(changeLog);
+
+            SaveWfsTransactionToDisk(xDoc.Root, datasetId);
+
+            // Post to WFS-T server (e.g. deegree or GeoServer)
             try
             {
-                bool success;
+                //20121122-Leg::  Get subscriber deegree / GeoServer url from db
+                var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
-                var xDoc = ConstructWfsTransaction(changeLog);
+                String url = dataset.ClientWfsUrl;
 
-                SaveWfsTransactionToDisk(xDoc.Root, datasetId);
+                var httpWebRequest = (HttpWebRequest) WebRequest.Create(url);
+                httpWebRequest.Method = "POST";
+                httpWebRequest.ContentType = "text/xml"; //"application/x-www-form-urlencoded";
+                httpWebRequest.Timeout = System.Threading.Timeout.Infinite;
+                //httpWebRequest.ReadWriteTimeout = System.Threading.Timeout.Infinite;
+                //httpWebRequest.AllowWriteStreamBuffering = false;
+                //httpWebRequest.SendChunked = true;
 
-                if (xDoc == null) return false;
-
-                // Post to WFS-T server (e.g. deegree or GeoServer)
-                try
-                {
-                    //20121122-Leg::  Get subscriber deegree / GeoServer url from db
-                    var dataset = SubscriberDatasetManager.GetDataset(datasetId);
-
-                    String url = dataset.ClientWfsUrl;
-
-                    var httpWebRequest = (HttpWebRequest) WebRequest.Create(url);
-                    httpWebRequest.Method = "POST";
-                    httpWebRequest.ContentType = "text/xml"; //"application/x-www-form-urlencoded";
-                    httpWebRequest.Timeout = System.Threading.Timeout.Infinite;
-                    //httpWebRequest.ReadWriteTimeout = System.Threading.Timeout.Infinite;
-                    //httpWebRequest.AllowWriteStreamBuffering = false;
-                    //httpWebRequest.SendChunked = true;
-
-                    var writer = new StreamWriter(httpWebRequest.GetRequestStream());
+                var writer = new StreamWriter(httpWebRequest.GetRequestStream());
                     
-                    xDoc.Save(writer, SaveOptions.DisableFormatting);
+                xDoc.Save(writer, SaveOptions.DisableFormatting);
                     
-                    writer.Close();
-                    //GC.Collect();
+                writer.Close();
+                //GC.Collect();
 
-                    // get response from request
-                    HttpWebResponse httpWebResponse = CheckResponseForErrors(httpWebRequest);
+                // get response from request
+                HttpWebResponse httpWebResponse = CheckResponseForErrors(httpWebRequest);
 
-                    success = CreateTransactionSummary(httpWebResponse);
-                }
-                catch (WebException webEx)
-                {
-                    Logger.ErrorException("DoWfsTransactions WebException:", webEx);
-                    throw new Exception("WebException error : " + webEx.Message);
-                }
-                catch (Exception ex)
-                {
-                    Logger.ErrorException("DoWfsTransactions Exception (inner):", ex);
-                    return false;
-                }
+                success = CreateTransactionSummary(httpWebResponse);
+            }
+            catch (WebException webEx)
+            {
+                if (webEx.Message.Contains("null")) throw new Exception("WebException error: This error most often occurs when there's something wrong with namespaces. Check deegree configuration. Exception: " + webEx.Message);
 
-                return success;
+                CheckApplicationSchema(datasetId);
 
+                if (webEx.Message.ToLowerInvariant().Contains("geometry") && webEx.Message.ToLowerInvariant().Contains("invalid")) SendErrorReport(datasetId, webEx.Message);
+
+                throw new Exception("WebException error: " + webEx.Message);
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("DoWfsTransactions failed:", ex);
-                throw;
+                Logger.ErrorException("DoWfsTransactions Exception (inner): ", ex);
+
+                if (ex.Source != "System") SendErrorReport(datasetId, ex.Message);
+
+                return false;
             }
+
+            return success;
+        }
+
+        private static void CheckApplicationSchema(int datasetId)
+        {
+            var dataset = SubscriberDatasetManager.GetDataset(datasetId);
+
+            var client = new WebFeatureServiceReplicationPortClient();
+
+            if (client.ClientCredentials != null)
+            {
+                client.ClientCredentials.UserName.UserName = dataset.UserName;
+                client.ClientCredentials.UserName.Password = dataset.Password;
+            }
+
+            client.Endpoint.Address = new EndpointAddress(dataset.SyncronizationUrl);
+
+            var providerDatasets = CapabilitiesDataBuilder.ReadGetCapabilities(client);
+
+            if (providerDatasets.Any(d =>
+                d.TargetNamespace == dataset.TargetNamespace &&
+                d.ProviderDatasetId == dataset.ProviderDatasetId)) return;
+
+            var errorMessage = $"No datasets on provider for datasetId {dataset.ProviderDatasetId} with applicationSchema {dataset.TargetNamespace}";
+            SendErrorReport(datasetId, errorMessage);
+
+            throw new Exception($"WebException error: {errorMessage}");
+        }
+
+        private static void SendErrorReport(int datasetId, string errorMessage)
+        {
+            var dataset = SubscriberDatasetManager.GetDataset(datasetId);
+            SynchController.SendReport(new ReportType
+            {
+                datasetId = datasetId.ToString(),
+                changelogId = dataset.AbortedChangelogId,
+                description = errorMessage,
+                subscriberType = "Felleskomponent",
+                type = ReportTypeEnumType.error
+            });
         }
 
         private HttpWebResponse CheckResponseForErrors(HttpWebRequest httpWebRequest)

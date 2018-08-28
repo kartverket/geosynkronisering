@@ -21,20 +21,26 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
             client.Endpoint.Address = new EndpointAddress(providerUrl);
 
-            ReadGetCapabilities(client);
+            ProviderDatasets = new BindingList<Dataset>();
+
+            foreach (var dataset in ReadGetCapabilities(client))
+            {
+                ProviderDatasets.Add(dataset);
+            }
+
         }
 
         public IBindingList ProviderDatasets { get; private set; }
 
 
-        private void ReadGetCapabilities(WebFeatureServiceReplicationPort client)
+        public static IEnumerable<Dataset> ReadGetCapabilities(WebFeatureServiceReplicationPort client)
         {
+            var datasets = new List<Dataset>();
             var req = new GetCapabilitiesType1();
             var rootCapabilities = client.GetCapabilities(req);
 
             //Build Cababilities.XML
             //ServiceIndentification
-            ProviderDatasets = new BindingList<Dataset>();
             foreach (var dst in rootCapabilities.datasets)
             {
                 var precision = client.GetPrecision(dst.datasetId);
@@ -59,8 +65,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                     ds.SyncronizationUrl = postUrl;
                 }
 
-                ProviderDatasets.Add(ds);
+                datasets.Add(ds);
             }
+
+            return datasets;
         }
 
         private static string GetPostUrl(IReadOnlyList<DCP> dcps)

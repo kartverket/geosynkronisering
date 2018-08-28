@@ -34,7 +34,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             };
         }
 
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
+        public static readonly Logger Logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         public TransactionSummary TransactionsSummary;
 
@@ -89,7 +89,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
-        private WebFeatureServiceReplicationPortClient buildClient(Dataset dataset)
+        private static WebFeatureServiceReplicationPortClient buildClient(Dataset dataset)
         {
             var client = new WebFeatureServiceReplicationPortClient();
             client.ClientCredentials.UserName.UserName = dataset.UserName;
@@ -215,6 +215,34 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
+        public static bool SendReport(ReportType report)
+        {
+            try
+            {
+                var dataset = SubscriberDatasetManager.GetDataset(int.Parse(report.datasetId));
+
+                var client = buildClient(dataset);
+
+                client.SendReport(report);
+
+                return true;
+            }
+            catch (WebException webEx)
+            {
+                if (webEx.Status == WebExceptionStatus.Success)
+                {
+                    return false;
+                }
+
+                Logger.ErrorException("SendReport WebException:", webEx);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorException("SendReport failed:", ex);
+                throw;
+            }
+        }
 
         /// <summary>
         /// Henter siste endringsnr fra tilbyder. Brukes for at klient enkelt kan sjekke om det er noe nytt siden siste synkronisering
