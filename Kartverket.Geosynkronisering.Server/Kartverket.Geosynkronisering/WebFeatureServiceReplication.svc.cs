@@ -193,7 +193,7 @@ namespace Kartverket.Geosynkronisering
         {
             try
             {
-                return GetDataset(datasetId).Version;
+                return GetDataset(datasetId).Version.Trim();
             }
             catch (Exception ex)
             {
