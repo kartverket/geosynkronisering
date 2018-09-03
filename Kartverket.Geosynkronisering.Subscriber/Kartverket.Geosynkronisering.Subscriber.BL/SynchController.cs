@@ -78,6 +78,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     ? client.OrderChangelog(order)
                     : client.OrderChangelog2(order, dataset.Version.Trim());
 
+                if(resp.changelogId == "-1") throw new Exception("Provider datasetVersion differs from subscriber.");
+
                 dataset.AbortedChangelogId = resp.changelogId;
                 SubscriberDatasetManager.UpdateDataset(dataset);
                 return dataset.AbortedChangelogId;
