@@ -85,7 +85,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return success;
         }
 
-        private static void CheckApplicationSchema(int datasetId)
+        private void CheckApplicationSchema(int datasetId)
         {
             var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
@@ -103,17 +103,26 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             throw new Exception($"WebException error: {errorMessage}");
         }
 
-        private static void SendErrorReport(int datasetId, string errorMessage)
+        private void SendErrorReport(int datasetId, string errorMessage)
         {
             var dataset = SubscriberDatasetManager.GetDataset(datasetId);
-            SynchController.SendReport(new ReportType
+
+            var changelogId = GetChangelogId(dataset);
+
+            ParentSynchController.SendReport(new ReportType
             {
-                datasetId = datasetId.ToString(),
-                changelogId = dataset.AbortedChangelogId,
+                datasetId = dataset.ProviderDatasetId,
+                changelogId = changelogId,
                 description = errorMessage,
                 subscriberType = "Felleskomponent",
                 type = ReportTypeEnumType.error
-            });
+            }, datasetId);
+        }
+
+        private static string GetChangelogId(Dataset dataset)
+        {
+            return string.IsNullOrEmpty(dataset.AbortedChangelogId) ? string.IsNullOrEmpty(dataset.AbortedChangelogPath) ? "unknown"
+                            : dataset.AbortedChangelogPath.Split('\\')[dataset.AbortedChangelogPath.Split('\\').Length - 1].Replace(".zip", "") : dataset.AbortedChangelogId;
         }
 
         private HttpWebResponse CheckResponseForErrors(HttpWebRequest httpWebRequest)
