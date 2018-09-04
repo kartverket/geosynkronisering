@@ -262,7 +262,7 @@ namespace Kartverket.Geosynkronisering
                 message += $"\r\n\tsubscriberId: {report.subscriberId}";
             if (!string.IsNullOrWhiteSpace(report.changelogId))
                 message += $"\r\n\tchangelogId: {report.changelogId}";
-            if (report.localId.Length > 0)
+            if (report.localId != null && report.localId.Length > 0)
                 message += $"\r\n\tlocalIds: {string.Join(",", report.localId)}";
             if (!string.IsNullOrWhiteSpace(report.description))
                 message += $"\r\n\tdescription: {report.description}";

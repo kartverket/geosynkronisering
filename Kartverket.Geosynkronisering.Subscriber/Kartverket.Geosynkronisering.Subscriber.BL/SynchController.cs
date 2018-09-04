@@ -217,11 +217,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
         }
 
-        public static bool SendReport(ReportType report)
+        public bool SendReport(ReportType report, int datasetId)
         {
             try
             {
-                var dataset = SubscriberDatasetManager.GetDataset(int.Parse(report.datasetId));
+                var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
                 var client = buildClient(dataset);
 
@@ -245,7 +245,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 throw;
             }
         }
-
+    
         /// <summary>
         /// Henter siste endringsnr fra tilbyder. Brukes for at klient enkelt kan sjekke om det er noe nytt siden siste synkronisering
         /// </summary>
