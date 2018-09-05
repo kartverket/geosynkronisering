@@ -167,8 +167,6 @@ namespace Kartverket.Geosynkronisering
         {
             try
             {
-                CheckStartIndex(order);
-
                 return OrderChangelogAsyncCaller(order);
             }
             catch (Exception ex)
@@ -177,17 +175,10 @@ namespace Kartverket.Geosynkronisering
             }
         }
 
-        private static void CheckStartIndex(ChangelogOrderType order)
-        {
-            if (order.startIndex == "0") order.startIndex = "1";
-        }
-
         public ChangelogIdentificationType OrderChangelog2(ChangelogOrderType order, string datasetVersion)
         {
             try
             {
-                CheckStartIndex(order);
-
                 var providerVersion = GetDataset(order.datasetId).Version;
 
                 return providerVersion.Trim() != datasetVersion.Trim() ? new ChangelogIdentificationType {changelogId = "-1"} : OrderChangelogAsyncCaller(order);
