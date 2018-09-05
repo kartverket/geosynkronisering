@@ -266,7 +266,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         public OrderChangelog OrderChangelog(int startIndex, int count, string todoFilter, int datasetId)
         {
             // If startIndex == 1: Check if initital changelog exists
-            if (startIndex == 1)
+            if (startIndex < 2)
             {
                 using (geosyncEntities db = new geosyncEntities())
                 {
@@ -285,7 +285,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 }
             }
 
-            // If initial changelog don't exists or startIndex != 1
+            // If initial changelog don't exists or startIndex > 1
             return _OrderChangelog(startIndex, count, todoFilter, datasetId);
         }
 
