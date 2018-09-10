@@ -8,6 +8,7 @@ using Kartverket.Geosynkronisering.Subscriber.BL;
 using Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping;
 using Kartverket.Geosynkronisering.Subscriber.DL;
 using NLog;
+using static Kartverket.Geosynkronisering.Subscriber.BL.FeedbackController;
 
 namespace Kartverket.Geosynkronisering.Subscriber
 {
@@ -134,13 +135,12 @@ namespace Kartverket.Geosynkronisering.Subscriber
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void Progress_UpdateLogList(object sender, EventArgs e)
+        protected void Progress_UpdateLogList(object sender, LogListEventArgs e)
         {
             try
             {
                 var prg = (FeedbackController.Progress)sender;
-
-                var newLogListItem = prg.NewLogListItem;
+                var newLogListItem = e.Item;
 
                 Action action = () => listBoxLog.Items.Add(newLogListItem);
                 Invoke(action);

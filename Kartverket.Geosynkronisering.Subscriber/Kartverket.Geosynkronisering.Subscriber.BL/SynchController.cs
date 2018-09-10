@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Xml.Linq;
 using Kartverket.GeosyncWCF;
 using Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping;
@@ -260,9 +261,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         /// <param name="datasetId"></param>
         public void DoSynchronization(int datasetId)
         {
+            var dataset = SubscriberDatasetManager.GetDataset(datasetId);
+
             try
             {
-                var dataset = SubscriberDatasetManager.GetDataset(datasetId);
                 var stopwatch = Stopwatch.StartNew();
 
                 var lastIndexProvider = performSynchronization(dataset, datasetId);
@@ -293,6 +295,16 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 Logger.ErrorException("DoSynchronization Exception:", ex);
                 OnUpdateLogList(ex.Message);
+                OnUpdateLogList("Details:");
+
+                PropertyInfo[] properties = dataset.GetType().GetProperties();
+
+                foreach (PropertyInfo property in properties)
+                {
+                    OnUpdateLogList($"\t{property.Name} : {property.GetValue(dataset, null)}");
+                }
+
+                OnUpdateLogList("End details.");
                 throw new Exception(ex.Message);
             }
         }

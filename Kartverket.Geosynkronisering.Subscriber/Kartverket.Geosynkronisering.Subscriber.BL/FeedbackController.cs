@@ -7,16 +7,25 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 {
     public class FeedbackController
     {
+        public class LogListEventArgs : EventArgs
+        {
+            public string Item { get; }
+            public LogListEventArgs(string item)
+            {
+                Item = item;
+            }
+        }
 
         public class Progress
         {
+            public delegate void LogListEventHandler(object sender, LogListEventArgs e);  
+
             public event System.EventHandler NewSynchMilestoneReached;
-            public event System.EventHandler UpdateLogList;
             public event System.EventHandler OrderProcessingStart;
             public event System.EventHandler OrderProcessingChange;
+            public event LogListEventHandler UpdateLogList;
 
             public string MilestoneDescription;
-            public string NewLogListItem;
             public long TotalNumberOfOrders;
             public int OrdersProcessedCount;
 
@@ -40,9 +49,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             public void OnUpdateLogList(string info)
             {
                 if (UpdateLogList == null) { return; }
-                this.NewLogListItem = info;
 
-                UpdateLogList.BeginInvoke(this, new EventArgs(),
+                UpdateLogList.BeginInvoke(this, new LogListEventArgs(info),
                           new AsyncCallback(UpdateLogListCompleted), null);
             }
 
