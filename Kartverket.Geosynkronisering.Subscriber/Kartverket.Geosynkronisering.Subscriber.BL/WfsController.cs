@@ -73,7 +73,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 catch (Exception ex)
                 {
                     Logger.ErrorException("DoWfsTransactions Exception (inner):", ex);
-                    return false;
+                    throw new Exception(ex.Message);
                 }
 
                 return success;

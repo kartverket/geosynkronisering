@@ -295,15 +295,31 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 Logger.ErrorException("DoSynchronization Exception:", ex);
                 OnUpdateLogList(ex.Message);
+
+                Logger.Log(LogLevel.Error, "Details:");
                 OnUpdateLogList("Details:");
 
                 PropertyInfo[] properties = dataset.GetType().GetProperties();
 
                 foreach (PropertyInfo property in properties)
                 {
-                    OnUpdateLogList($"\t{property.Name} : {property.GetValue(dataset, null)}");
+                    dynamic propValue;
+
+                    if (property.Name == "Password")
+                    {
+                        propValue = "****";
+                    }
+                    else
+                    {
+                        propValue = property.GetValue(dataset, null);
+                    }
+
+                    string propLogEntry = $"\t{property.Name} : {propValue}";
+                    Logger.Log(LogLevel.Error, propLogEntry);
+                    OnUpdateLogList(propLogEntry);
                 }
 
+                Logger.Log(LogLevel.Error, "End details.");
                 OnUpdateLogList("End details.");
                 throw new Exception(ex.Message);
             }
@@ -605,7 +621,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception e)
             {
-                throw new Exception(e.Message);
+                throw new Exception($"WFS Transaction error: {e.Message}");
             }
 
         }

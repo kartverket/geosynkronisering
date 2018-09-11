@@ -50,14 +50,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 if (UpdateLogList == null) { return; }
 
-                UpdateLogList.BeginInvoke(this, new LogListEventArgs(info),
-                          new AsyncCallback(UpdateLogListCompleted), null);
-            }
-
-            private void UpdateLogListCompleted(IAsyncResult ar)
-            {
-                if (UpdateLogList == null) { return; }
-                UpdateLogList.EndInvoke(ar);
+                UpdateLogList.Invoke(this, new LogListEventArgs(info));
             }
 
             // OrderProcessingStart
