@@ -93,6 +93,10 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         public static WebFeatureServiceReplicationPortClient buildClient(Dataset dataset)
         {
+            Console.WriteLine("SecurityProtocol:" + System.Net.ServicePointManager.SecurityProtocol.ToString());
+            //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; // Use TLS 1.2 as default
+            //Console.WriteLine("SecurityProtocol after setting TLS 1.2:" + System.Net.ServicePointManager.SecurityProtocol.ToString());
+
             var client = new WebFeatureServiceReplicationPortClient();
             client.ClientCredentials.UserName.UserName = dataset.UserName;
             client.ClientCredentials.UserName.Password = dataset.Password;

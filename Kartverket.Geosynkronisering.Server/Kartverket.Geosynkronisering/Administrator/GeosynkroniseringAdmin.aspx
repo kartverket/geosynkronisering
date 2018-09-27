@@ -32,7 +32,7 @@
                 </td>
                 <td width="60%">                        
                     <asp:Label ID="Label2" runat="server" CssClass="HeaderText" 
-                        Text="Geosynkronisering Administrator"></asp:Label>
+                        Text="Geosynkronisering Administrator 1.2"></asp:Label>
                 </td>
                 <td width="20%">                        
                     &nbsp;</td>
