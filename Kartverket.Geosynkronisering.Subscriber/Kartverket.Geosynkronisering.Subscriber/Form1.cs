@@ -378,8 +378,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 ////page2.Hide();
                 ////page2.Enabled = false;
 
-                //string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                //this.Text += " v." + version;
                 String version = Application.ProductVersion;
                 this.Text += " v." + version; 
 
