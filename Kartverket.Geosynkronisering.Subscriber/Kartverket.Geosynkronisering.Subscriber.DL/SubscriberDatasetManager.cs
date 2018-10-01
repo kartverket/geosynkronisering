@@ -126,7 +126,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogException(LogLevel.Error, "Error saving selected datasets!", ex);
+                        Logger.Error(ex, "Error saving selected datasets!");
                         return false;
                     }
                 }
@@ -149,7 +149,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogException(LogLevel.Error, "Error saving selected datasets!", ex);
+                    Logger.Error(ex, "Error saving selected datasets!");
                     return false;
                 }
             }
@@ -183,7 +183,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogException(LogLevel.Error, "Error removing selected datasets!", ex);
+                        Logger.Error(ex, "Error removing selected datasets!");
                         return false;
                     }
                 }

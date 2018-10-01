@@ -75,7 +75,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("DoWfsTransactions Exception (inner): ", ex);
+                Logger.Error(ex, "DoWfsTransactions Exception (inner): ");
 
                 if (ex.Source != "System") SendErrorReport(datasetId, ex.Message);
 
@@ -154,7 +154,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                                         errorResponse.StatusCode + " " + errorResponse.StatusDescription +
                                         "\r\n" + error;
                                     Logger.Info(wfsMessage);
-                                    Logger.ErrorException("DoWfsTransactions WebException:" + wfsMessage, wex);
+                                    Logger.Error("DoWfsTransactions WebException:" + wfsMessage, wex);
                                     this.ParentSynchController.OnUpdateLogList(root.InnerText);
                                     throw new WebException(root.InnerText);
                                 }
@@ -165,7 +165,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                                         errorResponse.StatusCode + " " + errorResponse.StatusDescription +
                                         "\r\n" + error;
                                     Logger.Info(wfsMessage);
-                                    Logger.ErrorException("DoWfsTransactions WebException:" + wfsMessage, wex);
+                                    Logger.Error("DoWfsTransactions WebException:" + wfsMessage, wex);
                                     ParentSynchController.OnUpdateLogList(wfsMessage);
                                     throw new Exception("WebException error : " + wex.Message);
 
@@ -173,7 +173,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             }
                             //Not an exception-report. Likely the service could not be found at the given url.
                             Logger.Info(error);
-                            Logger.ErrorException("DoWfsTransactions WebException:" + error, wex);
+                            Logger.Error("DoWfsTransactions WebException:" + error, wex);
                             ParentSynchController.OnUpdateLogList(
                                 "Error occured. Message from server: " + error);
                             throw new Exception("WebException error : " + wex);
@@ -181,7 +181,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         }
                     }
                 }
-                Logger.ErrorException("DoWfsTransactions WebException:", wex);
+                Logger.Error("DoWfsTransactions WebException:", wex);
 
                 throw new Exception("WebException error : " + wex.Message);
             }
