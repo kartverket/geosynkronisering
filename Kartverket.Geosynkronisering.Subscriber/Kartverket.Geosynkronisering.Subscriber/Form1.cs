@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+//using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Kartverket.Geosynkronisering.Subscriber.BL;
@@ -377,6 +378,11 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 ////page2.Hide();
                 ////page2.Enabled = false;
 
+                //string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                //this.Text += " v." + version;
+                String version = Application.ProductVersion;
+                this.Text += " v." + version; 
+
 
                 UpdateToolStripStatusLabel("Initializing...");
 
@@ -387,6 +393,8 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 logger.Info("===== Kartverket.Geosynkronisering.Subscriber Start =====");
                 listBoxLog.Items.Clear();
                 UpdateToolStripStatusLabel("Ready");
+
+
             }
             catch (Exception ex)
             {
