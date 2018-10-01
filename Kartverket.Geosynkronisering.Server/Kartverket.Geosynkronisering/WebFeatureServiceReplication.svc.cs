@@ -293,7 +293,7 @@ namespace Kartverket.Geosynkronisering
             }
             catch (Exception ex)
             {
-                logger.ErrorException(ex.Message, ex);
+                Logger.Error(ex, ex.Message);
 
                 return null;
             }

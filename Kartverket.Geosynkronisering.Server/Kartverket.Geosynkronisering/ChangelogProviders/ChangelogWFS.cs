@@ -68,7 +68,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             catch (System.Exception exp)
             {
                 //20130821-Leg:Added logging of wfsGetFeatureDocument
-                logger.ErrorException("GetFeatureCollectionFromWFS: wfsGetFeatureDocument:" + wfsGetFeatureDocument.ToString() + "\r\n" + "GetFeatureCollectionFromWFS function failed:", exp);
+                logger.Error(exp, "GetFeatureCollectionFromWFS: wfsGetFeatureDocument:" + wfsGetFeatureDocument.ToString() + "\r\n" + "GetFeatureCollectionFromWFS function failed:");
                 throw new System.Exception("GetFeatureCollectionFromWFS function failed", exp);
             }
         }

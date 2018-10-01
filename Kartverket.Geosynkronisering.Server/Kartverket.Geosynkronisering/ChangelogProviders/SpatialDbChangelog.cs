@@ -134,7 +134,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 }
                 catch (Exception ex)
                 {
-                    Logger.ErrorException(string.Format("Failed to create or upload file {0}", zipFile), ex);
+                    Logger.Error(ex, string.Format("Failed to create or upload file {0}", zipFile));
                     throw ex;
                 }
 
@@ -146,7 +146,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 }
                 catch (Exception ex)
                 {
-                    Logger.ErrorException(string.Format("Failed to create or upload file {0}", zipFile), ex);
+                    Logger.Error(ex, string.Format("Failed to create or upload file {0}", zipFile));
                     throw ex;
                 }
 
@@ -157,10 +157,10 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 }
                 catch (Exception ex)
                 {
-                    Logger.ErrorException(
+                    Logger.Error(ex, 
                         string.Format(
                             "Failed on SaveChanges, Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog startIndex:{0} count:{1} changelogId:{2}",
-                            LastChangeId, count, ldbo.ChangelogId), ex);
+                            LastChangeId, count, ldbo.ChangelogId));
                     throw ex;
                 }
                 Logger.Info(
@@ -219,8 +219,8 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 catch (Exception ex)
                 {
                     chlmng.SetStatus(_currentOrderChangeLog.changelogId, ChangelogStatusType.cancelled);
-                    Logger.ErrorException(
-                        string.Format("Failed to make Change Log {0}", destPath + destFileName + ".xml"), ex);
+                    Logger.Error(ex, 
+                        string.Format("Failed to make Change Log {0}", destPath + destFileName + ".xml"));
                     throw ex;
                 }
 
@@ -237,7 +237,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 catch (Exception ex)
                 {
                     chlmng.SetStatus(_currentOrderChangeLog.changelogId, ChangelogStatusType.cancelled);
-                    Logger.ErrorException(string.Format("Failed to create or upload file {0}", zipFile), ex);
+                    Logger.Error(ex, string.Format("Failed to create or upload file {0}", zipFile));
                     throw ex;
                 }
 
@@ -249,7 +249,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 }
                 catch (Exception ex)
                 {
-                    Logger.ErrorException(string.Format("Failed to create or upload file {0}", zipFile), ex);
+                    Logger.Error(ex, string.Format("Failed to create or upload file {0}", zipFile));
                     throw ex;
                 }
 
@@ -383,7 +383,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 if (!CheckChangelogHasFeatures(changeLog))
                 {
                     Exception exp = new Exception("CheckChangelogHasFeatures found 0 features");
-                    Logger.ErrorException("CheckChangelogHasFeatures found 0 features", exp);
+                    Logger.Error(exp, "CheckChangelogHasFeatures found 0 features");
                     throw exp;
                 }
 
@@ -392,7 +392,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             }
             catch (Exception exp)
             {
-                Logger.ErrorException("BuildChangeLogFile function failed:", exp);
+                Logger.Error(exp, "BuildChangeLogFile function failed:");
                 throw new Exception("BuildChangeLogFile function failed", exp);
             }
             Logger.Info("BuildChangeLogFile END");
