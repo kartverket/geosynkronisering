@@ -86,7 +86,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("OrderChangelog failed:", ex);
+                Logger.Error(ex, "OrderChangelog failed:");
                 throw;
             }
         }
@@ -127,7 +127,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("GetChangelogStatusResponse failed:", ex);
+                Logger.Error(ex, "GetChangelogStatusResponse failed:");
                 throw;
             }
         }
@@ -175,12 +175,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (WebException webEx)
             {
-                Logger.ErrorException("GetChangelog failed:", webEx);
+                Logger.Error("GetChangelog failed:", webEx);
                 throw;
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("GetChangelog failed:", ex);
+                Logger.Error(ex, "GetChangelog failed:");
                 throw;
             }
             return true;
@@ -211,12 +211,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     return false;
                 }
 
-                Logger.ErrorException("AcknowledgeChangelogDownloaded WebException:", webEx);
+                Logger.Error(webEx, "AcknowledgeChangelogDownloaded WebException:");
                 throw;
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("AcknowledgeChangelogDownloaded failed:", ex);
+                Logger.Error(ex, "AcknowledgeChangelogDownloaded failed:");
                 throw;
             }
         }
@@ -240,12 +240,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     return false;
                 }
 
-                Logger.ErrorException("SendReport WebException:", webEx);
+                Logger.Error(webEx, "SendReport WebException:");
                 throw;
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("SendReport failed:", ex);
+                Logger.Error(ex, "SendReport failed:");
                 throw;
             }
         }
@@ -270,12 +270,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             catch (WebException webEx)
             {
-                Logger.ErrorException("GetLastIndexFromProvider WebException:", webEx);
+                Logger.Error(webEx, "GetLastIndexFromProvider WebException:");
                 throw;
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("GetLastIndexFromProvider failed:", ex);
+                Logger.Error(ex, "GetLastIndexFromProvider failed:");
                 throw;
             }
         }
@@ -322,12 +322,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (WebException webEx)
             {
-                Logger.ErrorException("DoSynchronization WebException:", webEx);
+                Logger.Error(webEx, "DoSynchronization WebException:");
                 throw new Exception(webEx.Message);
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("DoSynchronization Exception:", ex);
+                Logger.Error(ex, "DoSynchronization Exception:");
                 OnUpdateLogList(ex.Message);
                 throw new Exception(ex.Message);
             }
@@ -581,9 +581,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                Logger.ErrorException(
+                Logger.Error(ex, 
                     string.Format("Failed to get ChangeLog Status for changelog {0} from provider {1}", changeLogId,
-                        "TEST"), ex);
+                        "TEST"));
                 throw new IOException(ex.Message);
             }
         }
@@ -678,7 +678,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             catch (Exception ex)
             {
-                Logger.ErrorException("TestOfflineSyncronizationComplete:", ex);
+                Logger.Error(ex, "TestOfflineSyncronizationComplete:");
                 throw;
             }
 

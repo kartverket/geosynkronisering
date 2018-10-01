@@ -92,7 +92,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             {
                 var errMsg = "Form1_Load failed when opening database:" + SubscriberDatasetManager.GetDatasource();
 
-                logger.ErrorException(errMsg, ex);
+                logger.Error(ex, errMsg);
                 errMsg += "\r\n" + "Remember to copy the database to the the folder:" +
                           AppDomain.CurrentDomain.GetData("APPBASE");
                 MessageBox.Show(ex.Message + "\r\n" + errMsg);
@@ -390,7 +390,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             }
             catch (Exception ex)
             {
-                logger.ErrorException("Form1_Load failed:", ex);
+                logger.Error(ex, "Form1_Load failed:");
                 MessageBox.Show(ex.Message + ex.StackTrace);
             }
         }

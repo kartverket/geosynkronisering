@@ -78,7 +78,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             catch (Exception ex)
             {
-                Logger.ErrorException("UnpackZipFile failed for file :" + zipfile, ex);
+                Logger.Error(ex, "UnpackZipFile failed for file :" + zipfile);
                 return false;
             }
 
