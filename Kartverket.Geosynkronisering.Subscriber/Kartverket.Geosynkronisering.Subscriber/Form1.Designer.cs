@@ -437,7 +437,7 @@
             this.dgDataset.Name = "dgDataset";
             this.dgDataset.Size = new System.Drawing.Size(1056, 623);
             this.dgDataset.TabIndex = 1;
-            this.dgDataset.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgDataset_CellFormatting);
+            //this.dgDataset.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgDataset_CellFormatting);
             // 
             // tabPage4
             // 

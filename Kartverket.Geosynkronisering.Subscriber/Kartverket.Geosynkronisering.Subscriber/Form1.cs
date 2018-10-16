@@ -47,17 +47,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-                List<string> invisibleColumns = new List<string>()
-                {
-                    "DatasetId",
-                    "AbortedEndIndex",
-                    "AbortedTransaction",
-                    "AbortedChangelogPath",
-                    "AbortedChangelogId",
-                    //"UserName",
-                    //"Password"
-                };
-
                 // dgDataset.DataSource = SubscriberDatasetManager.GetAllDataset();
                 var list1 = SubscriberDatasetManager.GetAllDataset();
 
@@ -74,14 +63,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 {
                     column.SortMode = DataGridViewColumnSortMode.Automatic;
                 }
-
-#if !DEBUG
-                foreach (var invisibleColumn in invisibleColumns)
-                {
-                    dgDataset.Columns[invisibleColumn].Visible = false;
-                };
-                
-#endif
 
                 dgDataset.AutoSize = true;
                 //dgDataset.AllowUserToOrderColumns = true; // 20171113-Leg
