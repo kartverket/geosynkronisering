@@ -78,7 +78,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     ? client.OrderChangelog(order)
                     : client.OrderChangelog2(order, dataset.Version.Trim());
 
-                if(resp.changelogId == "-1") throw new Exception("Provider datasetVersion differs from subscriber.");
+                if (resp.changelogId == "-1") throw new Exception("Provider reports a datasetVersion that differs from that of the subscriber.\r\nThis may be due to several reasons.\r\nActions needed are emptying the local database, replacing the subscriber dataset with the new version from the provider and finally resynchronizing the dataset.");
 
                 dataset.AbortedChangelogId = resp.changelogId;
                 SubscriberDatasetManager.UpdateDataset(dataset);
