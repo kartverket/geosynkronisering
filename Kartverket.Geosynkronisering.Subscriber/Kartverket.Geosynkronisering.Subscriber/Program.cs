@@ -10,7 +10,7 @@ using Kartverket.Geosynkronisering.Subscriber.DL;
 
 namespace Kartverket.Geosynkronisering.Subscriber
 {
-    public static class Program
+    public static partial class Program
     {
         //We want to be able to write to console if the process has been started from one
         [System.Runtime.InteropServices.DllImport("kernel32.dll")]

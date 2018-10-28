@@ -37,7 +37,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
         /// </summary>
         private IEnumerable<XElement> _attributeMappingsGeom;
 
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         //public string NamespacePrefix
         //{
@@ -149,7 +149,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
             catch (Exception ex)
             {
                 setXmlMappingFile = false;
-                logger.ErrorException("SetXmlMappingFile:", ex);
+                Logger.Error(ex, "SetXmlMappingFile:");
                 throw;
             }
 
@@ -536,7 +536,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
 
             catch (Exception ex)
             {
-                logger.ErrorException("Simplify failed:", ex);
+                Logger.Error(ex, "Simplify failed:");
                 throw;
             }
             return retVal;
@@ -597,7 +597,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
             }
             catch (Exception ex)
             {
-                logger.ErrorException("SimplifyInsertElement failed:", ex);
+                Logger.Error(ex, "SimplifyInsertElement failed:");
                 throw;
             }
         }
@@ -644,7 +644,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
             catch (Exception ex)
             {
 
-                logger.ErrorException("SimplifyInsertGeomElement failed:", ex);
+                Logger.Error(ex, "SimplifyInsertGeomElement failed:");
                 throw;
             }
         }
@@ -708,7 +708,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
             }
             catch (Exception ex)
             {
-                logger.ErrorException("MappingfileReplaceNamespacePrefix failed:", ex);
+                Logger.Error(ex, "MappingfileReplaceNamespacePrefix failed:");
                 throw;
             }
         }
@@ -744,7 +744,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
             }
             catch (Exception ex)
             {
-                logger.ErrorException("TargetAttrArrReplaceNamespacePrefix failed:", ex);
+                Logger.Error(ex, "TargetAttrArrReplaceNamespacePrefix failed:");
                 throw;
             }
         }
@@ -787,7 +787,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
             }
             catch (Exception ex)
             {
-                logger.ErrorException("SetXmlMappingFile failed:", ex);
+                Logger.Error(ex, "SetXmlMappingFile failed:");
                 return null;
                 //throw;
             }

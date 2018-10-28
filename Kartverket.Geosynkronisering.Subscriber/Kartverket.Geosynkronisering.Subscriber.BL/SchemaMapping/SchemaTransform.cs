@@ -9,7 +9,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
 {
     public class SchemaTransform
     {
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         /// <summary>
         /// Transform the changelog file to a simplified form based on GeoServer mappiing file.
@@ -37,7 +37,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
 
                 // Get Mappingfile and TargetNamespace from database
                 var dataset = DL.SubscriberDatasetManager.GetDataset(datasetId);
-                XDocument xdoc = XDocument.Load(dataset.Applicationschema);
+                var xdoc = XDocument.Load(dataset.TargetNamespace);
                 string namespaceUri = xdoc.Root.Attribute("targetNamespace").Value;
                 
                 //mappingFileName = path.Substring(0, path.LastIndexOf("bin")) + dataset.MappingFile; //"SchemaMapping" + @"\" + dataset.MappingFile;
@@ -71,19 +71,19 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping
                     msg += "\r\n" + "Target: " + newFileName;
                     msg += "\r\n" + "Mappingfile: " + mappingFileName;
                     msg += "\r\n" + "Schema: " + geoserverMap.NamespaceUri;
-                    logger.Info("SchemaTransform Schema transformation OK {0}", msg);
+                    Logger.Info("SchemaTransform Schema transformation OK {0}", msg);
                 }
 
                 stopWatch.Stop();
                 TimeSpan ts = stopWatch.Elapsed;
                 string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
-                logger.Info("SchemaTransformSimplify RunTime: {0}", elapsedTime);
+                Logger.Info("SchemaTransformSimplify RunTime: {0}", elapsedTime);
 
 
             }
             catch (Exception ex)
             {
-                logger.ErrorException("SetXmlMappingFile:", ex);
+                Logger.Error(ex, "SetXmlMappingFile:");
                 throw;
             }
 

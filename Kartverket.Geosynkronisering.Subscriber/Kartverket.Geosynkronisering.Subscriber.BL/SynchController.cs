@@ -34,7 +34,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             };
         }
 
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
+        public static readonly Logger Logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         public TransactionSummary TransactionsSummary;
 
@@ -74,7 +74,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 order.count = dataset.MaxCount.ToString();
                 order.startIndex = startIndex.ToString();
 
-                var resp = client.OrderChangelog(order);
+                var resp = string.IsNullOrEmpty(dataset.Version)
+                    ? client.OrderChangelog(order)
+                    : client.OrderChangelog2(order, dataset.Version.Trim());
+
+                if (resp.changelogId == "-1") throw new Exception("Provider reports a datasetVersion that differs from that of the subscriber.\r\nThis may be due to several reasons.\r\nActions needed are emptying the local database, replacing the subscriber dataset with the new version from the provider and finally resynchronizing the dataset.");
 
                 dataset.AbortedChangelogId = resp.changelogId;
                 SubscriberDatasetManager.UpdateDataset(dataset);
@@ -82,17 +86,21 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("OrderChangelog failed:", ex);
+                Logger.Error(ex, "OrderChangelog failed:");
                 throw;
             }
         }
 
-        private WebFeatureServiceReplicationPortClient buildClient(SubscriberDataset dataset)
+        public static WebFeatureServiceReplicationPortClient buildClient(Dataset dataset)
         {
+            Console.WriteLine("SecurityProtocol:" + System.Net.ServicePointManager.SecurityProtocol.ToString());
+            //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; // Use TLS 1.2 as default
+            //Console.WriteLine("SecurityProtocol after setting TLS 1.2:" + System.Net.ServicePointManager.SecurityProtocol.ToString());
+
             var client = new WebFeatureServiceReplicationPortClient();
             client.ClientCredentials.UserName.UserName = dataset.UserName;
             client.ClientCredentials.UserName.Password = dataset.Password;
-            client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SynchronizationUrl);
+            client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SyncronizationUrl);
             return client;
         }
 
@@ -119,7 +127,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("GetChangelogStatusResponse failed:", ex);
+                Logger.Error(ex, "GetChangelogStatusResponse failed:");
                 throw;
             }
         }
@@ -167,12 +175,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (WebException webEx)
             {
-                Logger.ErrorException("GetChangelog failed:", webEx);
+                Logger.Error("GetChangelog failed:", webEx);
                 throw;
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("GetChangelog failed:", ex);
+                Logger.Error(ex, "GetChangelog failed:");
                 throw;
             }
             return true;
@@ -203,17 +211,45 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     return false;
                 }
 
-                Logger.ErrorException("AcknowledgeChangelogDownloaded WebException:", webEx);
+                Logger.Error(webEx, "AcknowledgeChangelogDownloaded WebException:");
                 throw;
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("AcknowledgeChangelogDownloaded failed:", ex);
+                Logger.Error(ex, "AcknowledgeChangelogDownloaded failed:");
                 throw;
             }
         }
 
+        public bool SendReport(ReportType report, int datasetId)
+        {
+            try
+            {
+                var dataset = SubscriberDatasetManager.GetDataset(datasetId);
 
+                var client = buildClient(dataset);
+
+                client.SendReport(report);
+
+                return true;
+            }
+            catch (WebException webEx)
+            {
+                if (webEx.Status == WebExceptionStatus.Success)
+                {
+                    return false;
+                }
+
+                Logger.Error(webEx, "SendReport WebException:");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "SendReport failed:");
+                throw;
+            }
+        }
+    
         /// <summary>
         /// Henter siste endringsnr fra tilbyder. Brukes for at klient enkelt kan sjekke om det er noe nytt siden siste synkronisering
         /// </summary>
@@ -234,12 +270,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             catch (WebException webEx)
             {
-                Logger.ErrorException("GetLastIndexFromProvider WebException:", webEx);
+                Logger.Error(webEx, "GetLastIndexFromProvider WebException:");
                 throw;
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("GetLastIndexFromProvider failed:", ex);
+                Logger.Error(ex, "GetLastIndexFromProvider failed:");
                 throw;
             }
         }
@@ -286,18 +322,18 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (WebException webEx)
             {
-                Logger.ErrorException("DoSynchronization WebException:", webEx);
+                Logger.Error(webEx, "DoSynchronization WebException:");
                 throw new Exception(webEx.Message);
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("DoSynchronization Exception:", ex);
+                Logger.Error(ex, "DoSynchronization Exception:");
                 OnUpdateLogList(ex.Message);
                 throw new Exception(ex.Message);
             }
         }
 
-        private long performSynchronization(SubscriberDataset dataset, int datasetId)
+        private long performSynchronization(Dataset dataset, int datasetId)
         {
 
             //Check if previous transactions failed
@@ -325,6 +361,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 OnOrderProcessingChange((progressCounter + 1)*100/2);
 
                 changeLogId = OrderChangelog(datasetId, startIndex);
+              
             }
             else
             {
@@ -426,7 +463,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return lastChangeIndexProvider;
         }
 
-        private bool LoopChangeLog(IEnumerable<string> fileList, SubscriberDataset dataset, int datasetId,
+        private bool LoopChangeLog(IEnumerable<string> fileList, Dataset dataset, int datasetId,
             int progressCounter,
             string changelogFilename, long transactionStart)
         {
@@ -473,7 +510,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             return status;
         }
 
-        private static void ResetDataset(SubscriberDataset dataset, long endIndex)
+        private static void ResetDataset(Dataset dataset, long endIndex)
         {
             if (endIndex > 0)
                 dataset.LastIndex = endIndex;
@@ -544,9 +581,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (Exception ex)
             {
-                Logger.ErrorException(
+                Logger.Error(ex, 
                     string.Format("Failed to get ChangeLog Status for changelog {0} from provider {1}", changeLogId,
-                        "TEST"), ex);
+                        "TEST"));
                 throw new IOException(ex.Message);
             }
         }
@@ -641,7 +678,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             catch (Exception ex)
             {
-                Logger.ErrorException("TestOfflineSyncronizationComplete:", ex);
+                Logger.Error(ex, "TestOfflineSyncronizationComplete:");
                 throw;
             }
 

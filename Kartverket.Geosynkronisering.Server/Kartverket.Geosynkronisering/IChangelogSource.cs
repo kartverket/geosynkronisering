@@ -12,6 +12,8 @@ namespace Kartverket.Geosynkronisering
 
         void Intitalize( int datasetId);
 
+        string GetDatasetVersion(int datasetId);
+        
         //XmlDocument GetCapabilities();
          string GetLastIndex(int datasetId);
         //XmlDocument DescribeFeatureType();

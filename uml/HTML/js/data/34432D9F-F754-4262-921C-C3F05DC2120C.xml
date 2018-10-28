@@ -1,0 +1,4 @@
+tocTab[tocTab.length] = new Array("0.3.2.7:1", "", "Main", "EARoot/EA3/EA2/EA7/EA453.htm", "175.png", "72", "0", "", "Logical diagram0","{EBAE45D5-1AC7-48bd-98C7-38B36A2B0469}");
+tocTab[tocTab.length] = new Array("0.3.2.7:2", "", "CapabilitiesBase", "EARoot/EA3/EA2/EA7/EA456.htm", "5.png", "E311", "0", "", "Class0","{8E813BCB-B3DF-4aae-BBF9-E43E062CE518}");
+tocTab[tocTab.length] = new Array("0.3.2.7:3", "", "«DataType» ExceptionReport", "EARoot/EA3/EA2/EA7/EA457.htm", "5.png", "E312", "0", "", "Class0","{92E723B9-D7F5-402d-8986-4DBC661CE0D7}");
+tocTab[tocTab.length] = new Array("0.3.2.7:4", "", "GetCapabilities", "EARoot/EA3/EA2/EA7/EA458.htm", "5.png", "E313", "0", "", "Class0","{E45DF321-A489-4c6e-8241-4C79A8B49CF4}");

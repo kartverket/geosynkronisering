@@ -1,0 +1,4 @@
+tocTab[tocTab.length] = new Array("0.1", "1", "Brukstilfeller", "EARoot/EA1/EA1.htm", "29.png", "", "", "{8997F603-E35A-42df-95A1-D471B13033B5}", "Package");
+tocTab[tocTab.length] = new Array("0.2", "1", "Tjenester", "EARoot/EA2/EA125.htm", "31.png", "", "", "{3B0B404B-FF5E-4cdd-91C9-365E723DA761}", "Package");
+tocTab[tocTab.length] = new Array("0.3", "1", "OGC", "EARoot/EA3/EA170.htm", "31.png", "", "", "{A8B58733-685C-4fac-83F2-A5440B3D5D04}", "Package");
+tocTab[tocTab.length] = new Array("0.4", "1", "Felleskomponent", "EARoot/EA4/EA461.htm", "32.png", "", "", "{499E6BE3-958D-4706-83F4-2DADF9564581}", "Package");

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+//using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Kartverket.Geosynkronisering.Subscriber.BL;
@@ -46,24 +47,13 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-                List<string> invisibleColumns = new List<string>()
-                {
-                    "DatasetId",
-                    "AbortedEndIndex",
-                    "AbortedTransaction",
-                    "AbortedChangelogPath",
-                    "AbortedChangelogId",
-                    //"UserName",
-                    //"Password"
-                };
-
                 // dgDataset.DataSource = SubscriberDatasetManager.GetAllDataset();
                 var list1 = SubscriberDatasetManager.GetAllDataset();
 
 
                 // To enable sorting in a DataGridView bound to a List
                 // See https://www.codeproject.com/Articles/31418/Implementing-a-Sortable-BindingList-Very-Very-Quic
-                MySortableBindingList<SubscriberDataset> sortableBindingList = new MySortableBindingList<SubscriberDataset>(list1); //new SortableList<SubscriberDataset>();
+                MySortableBindingList<Dataset> sortableBindingList = new MySortableBindingList<Dataset>(list1); //new SortableList<SubscriberDataset>();
 
                 dgDataset.DataSource = sortableBindingList;
                 var col = dgDataset.Columns["DatasetId"];
@@ -73,14 +63,6 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 {
                     column.SortMode = DataGridViewColumnSortMode.Automatic;
                 }
-
-#if !DEBUG
-                foreach (var invisibleColumn in invisibleColumns)
-                {
-                    dgDataset.Columns[invisibleColumn].Visible = false;
-                };
-                
-#endif
 
                 dgDataset.AutoSize = true;
                 //dgDataset.AllowUserToOrderColumns = true; // 20171113-Leg
@@ -92,7 +74,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             {
                 var errMsg = "Form1_Load failed when opening database:" + SubscriberDatasetManager.GetDatasource();
 
-                logger.ErrorException(errMsg, ex);
+                logger.Error(ex, errMsg);
                 errMsg += "\r\n" + "Remember to copy the database to the the folder:" +
                           AppDomain.CurrentDomain.GetData("APPBASE");
                 MessageBox.Show(ex.Message + "\r\n" + errMsg);
@@ -377,6 +359,9 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 ////page2.Hide();
                 ////page2.Enabled = false;
 
+                String version = Application.ProductVersion;
+                this.Text += " v." + version; 
+
 
                 UpdateToolStripStatusLabel("Initializing...");
 
@@ -387,10 +372,12 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 logger.Info("===== Kartverket.Geosynkronisering.Subscriber Start =====");
                 listBoxLog.Items.Clear();
                 UpdateToolStripStatusLabel("Ready");
+
+
             }
             catch (Exception ex)
             {
-                logger.ErrorException("Form1_Load failed:", ex);
+                logger.Error(ex, "Form1_Load failed:");
                 MessageBox.Show(ex.Message + ex.StackTrace);
             }
         }
@@ -480,7 +467,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
         {
             try
             {
-                var subscriberDatasets = (MySortableBindingList<SubscriberDataset>)dgDataset.DataSource;
+                var subscriberDatasets = (MySortableBindingList<Dataset>)dgDataset.DataSource;
                 //var subscriberDatasets = (List<SubscriberDataset>)dgDataset.DataSource;
                 foreach (var subscriberDataset in subscriberDatasets)
                 {
@@ -596,7 +583,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             {
                 selectedDataset.Add(dgr.Index);
             }
-            var subscriberDatasets = (MySortableBindingList<SubscriberDataset>)dgDataset.DataSource;
+            var subscriberDatasets = (MySortableBindingList<Dataset>)dgDataset.DataSource;
             //var subscriberDatasets = (List<SubscriberDataset>)dgDataset.DataSource;
 
 
@@ -940,7 +927,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
             {
                 "Name",
                 "ProviderDatasetId",
-                "Applicationschema"
+                "TargetNamespace"
             };
 
             foreach (DataGridViewColumn col in dgvProviderDataset.Columns)
