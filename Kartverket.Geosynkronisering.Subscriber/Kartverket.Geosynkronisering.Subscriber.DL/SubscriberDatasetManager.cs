@@ -37,7 +37,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public static string GetDatasource()
         {
-            return GeosyncDbEntities.Connection.DataSource;
+            return GeosyncDbEntities.ConnectionString;
         }
 
 
