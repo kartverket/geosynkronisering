@@ -35,7 +35,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 {
                     Connection.Open();
 
-                    using (var cmd = new SQLiteCommand(File.ReadAllText("databaseSchema.sqlce"), Connection)) cmd.ExecuteNonQuery();
+                    using (var cmd = new SQLiteCommand(Database.Schema, Connection)) cmd.ExecuteNonQuery();
                 }
         }
 
