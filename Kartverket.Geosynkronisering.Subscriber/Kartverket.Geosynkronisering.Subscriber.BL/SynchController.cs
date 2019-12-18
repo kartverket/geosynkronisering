@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.Xml.Linq;
 using Kartverket.GeosyncWCF;
 using Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping;
@@ -97,7 +99,19 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; // Use TLS 1.2 as default
             //Console.WriteLine("SecurityProtocol after setting TLS 1.2:" + System.Net.ServicePointManager.SecurityProtocol.ToString());
 
-            var client = new WebFeatureServiceReplicationPortClient();
+
+            // Fix for running in .net Core, cannot read  <system.serviceModel>
+            var binding = new System.ServiceModel.BasicHttpsBinding
+            {
+                Security =
+                {
+                    Mode = System.ServiceModel.BasicHttpsSecurityMode.Transport,
+                    Transport = {ClientCredentialType = System.ServiceModel.HttpClientCredentialType.Basic}
+                }
+            };
+            var client = new WebFeatureServiceReplicationPortClient(binding,
+                    new System.ServiceModel.EndpointAddress(dataset.SyncronizationUrl));
+
             client.ClientCredentials.UserName.UserName = dataset.UserName;
             client.ClientCredentials.UserName.Password = dataset.Password;
             client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SyncronizationUrl);

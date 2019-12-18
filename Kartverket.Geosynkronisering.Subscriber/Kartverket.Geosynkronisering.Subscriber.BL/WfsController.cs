@@ -254,7 +254,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     } while (count > 0);
                 }
             }
-            httpWebResponse.Close();
+            //httpWebResponse.Close();
             if (httpWebResponse.StatusCode == HttpStatusCode.OK &&
                 resultString.ToString().Contains("ExceptionReport") == false)
             {
@@ -310,6 +310,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 Logger.Info(wfsMessage);
                 ParentSynchController.OnUpdateLogList(wfsMessage);
             }
+            httpWebResponse.Close();
             return success;
         }
 

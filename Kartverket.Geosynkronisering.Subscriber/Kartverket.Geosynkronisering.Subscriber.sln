@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kartverket.Geosynkroniserin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kartverket.Geosynkronisering.Subscriber", "Kartverket.Geosynkronisering.Subscriber\Kartverket.Geosynkronisering.Subscriber.csproj", "{4D4983E4-A02F-4B05-A006-787A7B13988B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test_Subscriber_NetCore", "Test_Subscriber_NetCore\Test_Subscriber_NetCore.csproj", "{E84195E9-83A7-4920-953A-6A8029098DFD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{4D4983E4-A02F-4B05-A006-787A7B13988B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D4983E4-A02F-4B05-A006-787A7B13988B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D4983E4-A02F-4B05-A006-787A7B13988B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E84195E9-83A7-4920-953A-6A8029098DFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E84195E9-83A7-4920-953A-6A8029098DFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E84195E9-83A7-4920-953A-6A8029098DFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E84195E9-83A7-4920-953A-6A8029098DFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

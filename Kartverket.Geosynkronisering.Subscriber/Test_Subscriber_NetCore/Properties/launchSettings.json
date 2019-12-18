@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Test_Subscriber_NetCore": {
+      "commandName": "Project",
+      "commandLineArgs": "2"
+    }
+  }
+}
