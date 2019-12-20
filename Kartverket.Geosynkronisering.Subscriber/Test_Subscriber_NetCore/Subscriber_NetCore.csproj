@@ -6,11 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
-    <PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Kartverket.Geosynkronisering.Subscriber.BL\Kartverket.Geosynkronisering.Subscriber.BL.csproj" />
     <ProjectReference Include="..\Kartverket.Geosynkronisering.Subscriber.DL\Kartverket.Geosynkronisering.Subscriber.DL.csproj" />
   </ItemGroup>

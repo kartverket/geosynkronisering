@@ -70,7 +70,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
                 return db.Query<int>($"SELECT 1 FROM Dataset WHERE DatasetId = {datasetId}").ToList().FirstOrDefault() == 1;
         }
 
-        private static void InsertDataset(Dataset dataset)
+        public static void InsertDataset(Dataset dataset)
         {
             using (IDbConnection db = new SQLiteConnection(ConnectionString)) db.Insert(dataset);
         }
@@ -78,6 +78,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
         private static void UpdateDataset(Dataset dataset)
         {
             using (IDbConnection db = new SQLiteConnection(ConnectionString)) db.Update(dataset);
+        }
+
+        public static void DeleteDataset(Dataset dataset)
+        {
+            using (IDbConnection db = new SQLiteConnection(ConnectionString)) db.Delete(dataset);
         }
 
         public void DeleteObject(Dataset dataset)

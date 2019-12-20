@@ -119,16 +119,13 @@ namespace Test_Subscriber_NetCore
             if (!GetYorN()) return;
 
             var datasets = GeosyncDbEntities.ReadAll<Dataset>("Dataset").Where(d => datasetIds.Contains(d.DatasetId));
-
-            using (var db = new GeosyncDbEntities())
+            
+            foreach (var dataset in datasets)
             {
-                foreach (var dataset in datasets)
-                {
-                    Console.WriteLine($"Removing dataset {dataset.DatasetId}");
-                    db.DeleteObject(dataset);
-                    db.SaveChanges();
-                }
+                Console.WriteLine($"Removing dataset {dataset.DatasetId}");
+                GeosyncDbEntities.DeleteDataset(dataset);
             }
+
         }
 
         private static void ResetDatasets(string[] args)
@@ -160,14 +157,14 @@ namespace Test_Subscriber_NetCore
 
             var datasets = capabilitiesDataBuilder.ProviderDatasetsList.Where(d => requiredDatasets.Contains(d.ProviderDatasetId));
 
-            AddDatasets(args[2], args[3], datasets, args[4]);
+            AddDatasets(args[1], args[2], args[3], datasets, args[4]);
         }
 
         private static void AddAllDatasets(string[] args)
         {
             var capabilitiesDataBuilder = new CapabilitiesDataBuilder(args[1], args[2], args[3]);
 
-            AddDatasets(args[2], args[3], capabilitiesDataBuilder.ProviderDatasetsList, args[4]);
+            AddDatasets(args[1], args[2], args[3], capabilitiesDataBuilder.ProviderDatasetsList, args[4]);
         }
 
         private static void WriteHelp()
@@ -201,18 +198,15 @@ namespace Test_Subscriber_NetCore
             }
         }
 
-        private static void AddDatasets(string user, string password, IEnumerable<Dataset> datasets, string clientWfsUrl)
+        private static void AddDatasets(string url, string user, string password, IEnumerable<Dataset> datasets, string clientWfsUrl)
         {
-            using (var db = new GeosyncDbEntities())
+            foreach (var dataset in datasets)
             {
-                foreach (var dataset in datasets)
-                {
-                    dataset.ClientWfsUrl = clientWfsUrl;
-                    dataset.UserName = user;
-                    dataset.Password = password;
-                    db.AddObject(dataset);
-                    db.SaveChanges();
-                }
+                dataset.SyncronizationUrl = url;
+                dataset.ClientWfsUrl = clientWfsUrl;
+                dataset.UserName = user;
+                dataset.Password = password;
+                GeosyncDbEntities.InsertDataset(dataset);
             }
         }
 
