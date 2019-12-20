@@ -28,7 +28,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         private static void CreateDatabaseIfNotExists()
         {
-            var filePath = Directory.GetCurrentDirectory() + "\\" + ConnectionString.Split(';')[0].Split('=')[1];
+            var filePath = ConnectionString.Split(';')[0].Split('=')[1];
 
             using (var Connection = new SQLiteConnection(ConnectionString))
                 if (!File.Exists(filePath))

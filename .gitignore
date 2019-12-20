@@ -261,3 +261,5 @@ __pycache__/
 *.pyc
 /Kartverket.Geosynkronisering.Server/Kartverket.Geosynkronisering/Changelogfiles
 *.sqlite
+/Kartverket.Geosynkronisering.Subscriber/Kartverket.Geosynkronisering.Subscriber.DL/Properties/PublishProfiles/FolderProfile.pubxml
+/Kartverket.Geosynkronisering.Subscriber/Test_Subscriber_NetCore/Properties/PublishProfiles
