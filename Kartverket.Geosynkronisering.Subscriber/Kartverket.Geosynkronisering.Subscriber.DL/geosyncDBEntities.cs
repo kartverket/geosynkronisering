@@ -9,7 +9,7 @@ using Dapper.Contrib.Extensions;
 
 namespace Kartverket.Geosynkronisering.Subscriber.DL
 {
-    internal class GeosyncDbEntities : IDisposable
+    public class GeosyncDbEntities : IDisposable
     {
         public List<Dataset> Dataset { get; set; }
 
@@ -82,9 +82,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         public void DeleteObject(Dataset dataset)
         {
-            using (IDbConnection db = new SQLiteConnection(ConnectionString)) db.Delete(dataset);
+            var deletedDataset = Dataset.FirstOrDefault(d => d.DatasetId == dataset.DatasetId);
 
-            Dataset.Remove(dataset);
+            using (IDbConnection db = new SQLiteConnection(ConnectionString)) db.Delete(deletedDataset);
+
+            Dataset.Remove(deletedDataset);
         }
     }
 }
