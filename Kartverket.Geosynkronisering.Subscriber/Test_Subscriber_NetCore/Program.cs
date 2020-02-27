@@ -191,6 +191,9 @@ namespace Test_Subscriber_NetCore
                 case Operations.list:
                     Console.WriteLine($"Usage: list || list $serviceUrl $username $password");
                     break;
+                case Operations.sync:
+                    Console.WriteLine($"Usage: {Operations.sync} $datasetId1 $datasetId2 ...");
+                    break;
                 default:
                     WriteHelp();
                     break;
