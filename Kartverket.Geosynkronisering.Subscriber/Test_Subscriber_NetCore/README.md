@@ -1,12 +1,12 @@
 ﻿
-# Geosynkronisering CORESubscriber 
+# Geosynchronization CORESubscriber 
 
 Lightweight console-subscriber for Geosynchronization written in .NET Core.
 
 Version 1.2.3
 
 The Subscriber.DL and Subscriber.BL has been rewritten to .net standard 2.0 for compability with .net core,
-and is now used by the new core subscriper and by the Windows Application.
+and are now used by the new core subscriper and by the Windows Application.
 
 
 The previous subscriber for non-windows will be deprecated.
