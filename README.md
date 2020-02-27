@@ -4,6 +4,10 @@
 The Subscriber.DL and Subscriber.BL has been rewritten to .net standard 2.0 for compability with .net core,
 and are now used by the new core subscriper and by the Windows Application.
 
+For better compability with .NET Standard and .NET Core:
+- Changed subscriber database to SQLite from SQL server Compact.
+- Updated and replaced som nuget packages.
+
 
 
 ## Downloads
