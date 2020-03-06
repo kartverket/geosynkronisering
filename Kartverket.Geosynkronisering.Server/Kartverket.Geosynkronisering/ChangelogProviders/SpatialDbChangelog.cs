@@ -598,12 +598,16 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             string schemaLocation = nsChlogf.NamespaceName + " " + ServiceData.SchemaLocation();
             schemaLocation += " " + _pNsApp + " " + _pSchemaFileUri;
 
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            //20200220-Leg: return timeStamp in format "2020-02-14T14:02:27.41+01:00" independent of CultureInfo
+            var timeStamp = GetTimestamp();
+            Logger.Info("BuildChangelogRoot TransactionCollection.timeStamp:{0}", timeStamp);
+            //Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
 
             //"2001-12-17T09:30:47Z"
             XElement changelogRoot =
                 new XElement(nsChlogf + "TransactionCollection",
-                    new XAttribute("timeStamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffzzz")),
+                    new XAttribute("timeStamp", timeStamp),
+                    //new XAttribute("timeStamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffzzz")),
                     new XAttribute("numberMatched", ""), new XAttribute("numberReturned", ""),
                     new XAttribute("startIndex", ""), new XAttribute("endIndex", ""),
                     new XAttribute(XNamespace.Xmlns + "xsi", nsXsi),
@@ -616,6 +620,25 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             changelogRoot.Add(new XElement(nsChlogf + "transactions", new XAttribute("service", "WFS"),
                 new XAttribute("version", "2.0.0")));
             return changelogRoot;
+        }
+
+        /// <summary>
+        /// return timeStamp in format "2020-02-14T14:02:27.41+01:00" independent of CultureInfo
+        /// </summary>
+        /// <param name="cultureInfoName"></param>
+        /// <returns></returns>
+        private static string GetTimestamp(string cultureInfoName = "")
+        {
+            // return  in format timeStamp="2020-02-14T14:02:27.41+01:00"
+            System.Globalization.DateTimeFormatInfo dateTimeFormatInfo = new DateTimeFormatInfo();
+            CultureInfo culture = CultureInfo.CreateSpecificCulture(cultureInfoName); // InvariantCulture as default
+            dateTimeFormatInfo = culture.DateTimeFormat;
+            dateTimeFormatInfo.LongTimePattern = "THH:mm:ss.ffzzz"; // T15:31:25.51+01:00
+            dateTimeFormatInfo.ShortDatePattern = "yyyy-MM-dd";
+
+            var dateTtime = DateTime.Now.ToString(culture);
+            var timeStamp = dateTtime.Replace(" ", ""); // remove space from "2020-02-14 T14:02:27.41+01:00"
+            return timeStamp;
         }
 
         private bool CheckChangelogHasFeatures(XElement changeLog)

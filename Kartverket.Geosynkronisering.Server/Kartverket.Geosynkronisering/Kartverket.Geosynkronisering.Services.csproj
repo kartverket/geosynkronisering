@@ -14,7 +14,7 @@
     <RootNamespace>Kartverket.Geosynkronisering</RootNamespace>
     <AssemblyName>Kartverket.Geosynkronisering</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
@@ -230,7 +230,7 @@
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>43397</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/Kartverket.Geosynkronisering.Services</IISUrl>
+          <IISUrl>http://localhost:43397/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
