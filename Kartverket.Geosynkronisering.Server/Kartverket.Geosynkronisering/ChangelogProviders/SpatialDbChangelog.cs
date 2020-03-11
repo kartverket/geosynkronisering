@@ -161,12 +161,12 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 {
                     Logger.Error(ex, 
                         string.Format(
-                            "Failed on SaveChanges, Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog startIndex:{0} count:{1} changelogId:{2}",
+                            "Failed on SaveChanges, Kartverket.Geosynkronisering.ChangelogProviders.SpatialDbChangelog.OrderChangelog startIndex:{0} count:{1} changelogId:{2}",
                             LastChangeId, count, ldbo.ChangelogId));
                     throw ex;
                 }
                 Logger.Info(
-                    "Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog" +
+                    "Kartverket.Geosynkronisering.ChangelogProviders.SpatialDbChangelog.OrderChangelog" +
                     " startIndex:{0}" + " count:{1}" + " changelogId:{2}", LastChangeId, count, ldbo.ChangelogId);
 
                 Logger.Info("GenerateInitialChangelog END");
@@ -256,7 +256,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 }
 
                 Logger.Info(
-                    "Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog" +
+                    "Kartverket.Geosynkronisering.ChangelogProviders.SpatialDbChangelog.OrderChangelog" +
                     " startIndex:{0}" + " count:{1}" + " changelogId:{2}", startIndex, count,
                     _currentOrderChangeLog.changelogId);
 
@@ -331,7 +331,9 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     //If next element == lastelement
                     if ((i + 1) == OptimizedChangeLog.Count)
                     {
-                        handle = LastChangeId;
+                        // 20200311-Leg: Regression error introduced in Commit 59bc7283 (date 20180604)
+                        handle = endChangeId;
+                        //handle = LastChangeId;
                     }
                     else
                     {
@@ -579,6 +581,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         private void UpdateRootAttributes(XElement changeLog, int counter, int startChangeId, Int64 endChangeId)
         {
+            Logger.Info("UpdateRootAttributes numberMatched:{0} numberReturned:{1} startIndex:{2} endIndex:{3}  ", counter, counter, startChangeId, endChangeId);
             changeLog.SetAttributeValue("numberMatched", counter);
             changeLog.SetAttributeValue("numberReturned", counter);
             changeLog.SetAttributeValue("startIndex", startChangeId);

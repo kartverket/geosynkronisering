@@ -190,7 +190,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 endChangeId = dr.GetInt64(0);
                 dr.Close();
 
-                Logger.Info("SqlServerSpatialChangelog.GetMaxChangeLogId END");
+                Logger.Info("SqlServerSpatialChangelog.GetMaxChangeLogId END. endChangeId:{0}", endChangeId);
                 return endChangeId;
             }
             catch (System.Exception exp)
