@@ -1,6 +1,6 @@
 # Geosynkronisering
 
-## Version 1.2.3
+## Subscriber Version 1.2.3
 The Subscriber.DL and Subscriber.BL has been rewritten to .net standard 2.0 for compability with .net core,
 and are now used by the new core subscriper and by the new Windows Application.
 
@@ -20,3 +20,9 @@ https://github.com/kartverket/geosynkronisering/wiki/Download
 https://github.com/kartverket/geosynkronisering/tree/fixDotnetstandard/Kartverket.Geosynkronisering.Subscriber/Test_Subscriber_NetCore
 
 Deprecated version: https://github.com/kartverket/CORESubscriber
+
+## Provider Version 1.2.3
+- Updated to .NET 4.7.2.
+- Fixed timeStamp error.
+- Fixed regression error introduced in Commit 59bc728) in BuildChangeLogFile.
+- nuget DotNetZip updated to v.1.13.4.
