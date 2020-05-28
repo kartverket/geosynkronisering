@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Kartverket.Geosynkronisering {
-    
-    
-    public partial class GeosynkroniseringAdmin {
-        
+namespace Kartverket.Geosynkronisering
+{
+
+
+    public partial class GeosynkroniseringAdmin
+    {
+
         /// <summary>
         /// Administrator control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlForm Administrator;
-        
+
         /// <summary>
         /// Panel2 control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel Panel2;
-        
+
         /// <summary>
         /// Image1 control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Image Image1;
-        
+
         /// <summary>
         /// Label2 control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label2;
-        
+
         /// <summary>
         /// lbtnConfig control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton lbtnConfig;
-        
+
         /// <summary>
         /// lbtnDataset control.
         /// </summary>
@@ -65,7 +67,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton lbtnDataset;
-        
+
         /// <summary>
         /// lbtnChangeLog control.
         /// </summary>
@@ -74,7 +76,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton lbtnChangeLog;
-        
+
         /// <summary>
         /// mvwViews control.
         /// </summary>
@@ -83,7 +85,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.MultiView mvwViews;
-        
+
         /// <summary>
         /// vwConfig control.
         /// </summary>
@@ -92,7 +94,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.View vwConfig;
-        
+
         /// <summary>
         /// Label4 control.
         /// </summary>
@@ -101,7 +103,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label4;
-        
+
         /// <summary>
         /// dvServerConfig control.
         /// </summary>
@@ -110,7 +112,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DetailsView dvServerConfig;
-        
+
         /// <summary>
         /// Label5 control.
         /// </summary>
@@ -119,7 +121,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label5;
-        
+
         /// <summary>
         /// dvService control.
         /// </summary>
@@ -128,7 +130,61 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DetailsView dvService;
-        
+
+        /// <summary>
+        /// btnLogfile control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnLogfile;
+
+        /// <summary>
+        /// txtHiddenLogfileControl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputHidden txtHiddenLogfileControl;
+
+        /// <summary>
+        /// btnClearLogfile control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnClearLogfile;
+
+        /// <summary>
+        /// btnSendmail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnSendmail;
+
+        /// <summary>
+        /// lblLogfileText control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblLogfileText;
+
+        /// <summary>
+        /// TextBoxLogfile control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TextBoxLogfile;
+
         /// <summary>
         /// vwDataset control.
         /// </summary>
@@ -137,7 +193,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.View vwDataset;
-        
+
         /// <summary>
         /// Label1 control.
         /// </summary>
@@ -146,7 +202,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label1;
-        
+
         /// <summary>
         /// vDataset control.
         /// </summary>
@@ -155,7 +211,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DetailsView vDataset;
-        
+
         /// <summary>
         /// btnCreateInitialData control.
         /// </summary>
@@ -164,7 +220,16 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnCreateInitialData;
-        
+
+        /// <summary>
+        /// btnLErrorfile control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnLErrorfile;
+
         /// <summary>
         /// lblErrorText control.
         /// </summary>
@@ -173,7 +238,16 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblErrorText;
-        
+
+        /// <summary>
+        /// TextBoxErrorfile control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TextBoxErrorfile;
+
         /// <summary>
         /// vwChangeLog control.
         /// </summary>
@@ -182,7 +256,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.View vwChangeLog;
-        
+
         /// <summary>
         /// Label3 control.
         /// </summary>
@@ -191,7 +265,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label3;
-        
+
         /// <summary>
         /// gwStoredChangeLogs control.
         /// </summary>
@@ -200,7 +274,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gwStoredChangeLogs;
-        
+
         /// <summary>
         /// edsDataset control.
         /// </summary>
@@ -209,7 +283,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.EntityDataSource edsDataset;
-        
+
         /// <summary>
         /// edsStoredChangeLogs control.
         /// </summary>
@@ -218,7 +292,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.EntityDataSource edsStoredChangeLogs;
-        
+
         /// <summary>
         /// edsServerConfig control.
         /// </summary>
@@ -227,7 +301,7 @@ namespace Kartverket.Geosynkronisering {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.EntityDataSource edsServerConfig;
-        
+
         /// <summary>
         /// edsService control.
         /// </summary>

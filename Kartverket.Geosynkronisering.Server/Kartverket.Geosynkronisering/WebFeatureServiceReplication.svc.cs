@@ -8,6 +8,7 @@ using Kartverket.GeosyncWCF;
 using Kartverket.Geosynkronisering.Database;
 using Kartverket.Geosynkronisering.Properties;
 using NLog;
+using NLog.Fluent;
 
 namespace Kartverket.Geosynkronisering
 {
@@ -222,20 +223,35 @@ namespace Kartverket.Geosynkronisering
         {
             var message = ConstructMessage(report);
 
+            // 20200511-Leg: Use Logger.Warn for all reports sent from error in subscriber
             try
             {
                 switch (report.type)
                 {
                     case ReportTypeEnumType.error:
+                        Logger.Warn(message);
                         Logger.Error(message);
                         break;
                     case ReportTypeEnumType.info:
-                        Logger.Info(message);
+                        Logger.Warn(message);
+                        //Logger.Info(message);
                         break;
                     default:
-                        Logger.Info(message);
+                        Logger.Warn(message);
+                        //Logger.Info(message);
                         break;
                 }
+                // Send mail to contact person, it may fail if not filled out
+                try
+                {
+                    var mail = new Mail();
+                    mail.SendMail(message);
+                }
+                catch (Exception e)
+                {
+                    logger.Info("SendMail failed, check settings in web.config(appSettings) and in 'Konfigurasjon > EMail' ");
+                }
+               
 
             }
             catch (Exception ex)

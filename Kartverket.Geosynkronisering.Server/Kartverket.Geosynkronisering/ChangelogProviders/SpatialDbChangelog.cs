@@ -59,7 +59,9 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         public virtual void HandleReport(GetLastIndexRequest request)
         {
-            
+
+            // 20200511-Leg: Use Logger.Warn for all reports sent from error in subscriber
+            Logger.Warn("FEIL OPPSTÅTT HOS ABONNENT");
             Logger.Error("FEIL OPPSTÅTT HOS ABONNENT");            
         }
 
