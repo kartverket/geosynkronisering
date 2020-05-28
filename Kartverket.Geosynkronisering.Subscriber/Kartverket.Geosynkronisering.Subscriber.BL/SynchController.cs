@@ -171,17 +171,17 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 Logger.Info("GetChangelog downloaduri: " + downloaduri);
 
                 var changelogDir = string.IsNullOrEmpty(dataset.ChangelogDirectory)
-                    ? Environment.GetEnvironmentVariable("TEMP")
-                    : dataset.ChangelogDirectory;
+                    ? Path.GetTempPath()
+                    : dataset.ChangelogDirectory.TrimEnd(Path.DirectorySeparatorChar);
 #if (NOT_FTP)
-                string fileName = changelogDir + @"\" + changelogid + "_Changelog.xml";
+                string fileName = Path.Combine(changelogDir, changelogid + "_Changelog.xml");
 #else
                 CreateFolderIfMissing(changelogDir);
                 const string ftpPath = "abonnent";
-                CreateFolderIfMissing(changelogDir + @"\" + ftpPath);
+                CreateFolderIfMissing(Path.Combine(changelogDir, ftpPath));
                 // Create the abonnent folder if missing               
 
-                var fileName = changelogDir + @"\" + ftpPath + @"\" + Path.GetFileName(downloaduri);
+                var fileName = Path.Combine(changelogDir, ftpPath, Path.GetFileName(downloaduri));
 #endif
 
                 downloadController = new DownloadController {ChangelogFilename = fileName};
@@ -437,7 +437,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         private static int ExtractNumber(string a)
         {
-            var aFileArray = a.Split('\\');
+            var aFileArray = a.Split(Path.DirectorySeparatorChar);
             var aFile = aFileArray[aFileArray.Length - 1];
             return int.Parse(aFile.Substring(0, aFile.IndexOf('_')));
         }
