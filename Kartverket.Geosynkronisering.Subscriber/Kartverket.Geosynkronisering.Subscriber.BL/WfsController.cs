@@ -122,7 +122,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         private static string GetChangelogId(Dataset dataset)
         {
             return string.IsNullOrEmpty(dataset.AbortedChangelogId) ? string.IsNullOrEmpty(dataset.AbortedChangelogPath) ? "unknown"
-                            : dataset.AbortedChangelogPath.Split('\\')[dataset.AbortedChangelogPath.Split('\\').Length - 1].Replace(".zip", "") : dataset.AbortedChangelogId;
+                            : dataset.AbortedChangelogPath.Split(Path.DirectorySeparatorChar)[dataset.AbortedChangelogPath.Split(Path.DirectorySeparatorChar).Length - 1].Replace(".zip", "") : dataset.AbortedChangelogId;
         }
 
         private HttpWebResponse CheckResponseForErrors(HttpWebRequest httpWebRequest)
@@ -216,8 +216,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         private void SaveWfsTransactionToDisk(XElement root, int datasetId)
         {
             XDocument xDoc = new XDocument(root);
-            string tempDir = Environment.GetEnvironmentVariable("TEMP");
-            string fileName = tempDir + @"\" + "Kartverket.Geosynkronisering.Subscriber.DatasetId." + datasetId + ".LastTransaction.xml";
+            string tempDir = Path.GetTempPath();
+            string fileName = Path.Combine(tempDir, "Kartverket.Geosynkronisering.Subscriber.DatasetId." + datasetId + ".LastTransaction.xml");
             xDoc.Save(fileName);
         }
 
