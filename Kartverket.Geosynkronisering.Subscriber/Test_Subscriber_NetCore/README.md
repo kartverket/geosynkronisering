@@ -21,26 +21,37 @@ Find releases for Windows and Linux here:
 coming...
 
 ## Usage
-### Adding datasets
-
-#### Commandline
-```
-Subscriber_NetCore.exe add $serviceUrl $username $password $wfsUrl $datasetid
-```
-
-### Removing datasets
-
-#### Commandline
-```
-Subscriber_NetCore.exe remove $datasetid1 $datasetid2 ... 
-```
-
 ### Listing datasets
 
 #### Commandline
 ```
-Subscriber_NetCore.exe list $serviceUrl $username $password $wfsUrl $datasetid
+Subscriber_NetCore.exe list || list $serviceUrl $username $password
 ```
+If no more arguments are given, lists local datasets. Else lists datasets on specified provider
+### Adding datasets
+
+#### Commandline
+```
+Subscriber_NetCore.exe add $serviceUrl $username $password $wfsUrl [ $datasetid ]
+```
+Adds datasets from provider. If no datasetId is specified, all are added
+
+### Synchronize specified datasets
+
+#### Commandline
+```
+Subscriber_NetCore.exe sync $datasetid1 $datasetid2 ... 
+```
+Sync dataset(s) using local datasetId (found using list)
+
+### Synchronize all datasets
+
+#### Commandline
+```
+Subscriber_NetCore.exe auto
+```
+Used for batch-running. Syncs all datasets without prompt
+
 
 ### Reset datasets
 
@@ -48,20 +59,15 @@ Subscriber_NetCore.exe list $serviceUrl $username $password $wfsUrl $datasetid
 ```
 Subscriber_NetCore.exe reset $datasetid1 $datasetid2 ... 
 ```
+Reset dataset(s)
 
-### Synchronize datasets
-
-#### Commandline
-```
-Subscriber_NetCore.exe sync $datasetid1 $datasetid2 ... 
-```
-
-### Synchronize all datasets
+### Removing datasets
 
 #### Commandline
 ```
-Subscriber_NetCore.exe all
+Subscriber_NetCore.exe remove $datasetid1 $datasetid2 ... 
 ```
+Remove dataset(s)
 
 ### Help
 

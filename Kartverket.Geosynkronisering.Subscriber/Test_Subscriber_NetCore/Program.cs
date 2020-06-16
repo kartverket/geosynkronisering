@@ -177,22 +177,28 @@ namespace Test_Subscriber_NetCore
             switch (operation)
             {
                 case Operations.add:
-                    Console.WriteLine($"Usage: {Operations.add} $serviceUrl $username $password $wfsUrl $datasetid");
+                    Console.WriteLine($"Usage: {Operations.add} $serviceUrl $username $password $wfsUrl [ $datasetid ]");
+                    Console.WriteLine($"\tAdds datasets from provider. If no datasetId is specified, all are added.");
                     break;
                 case Operations.auto:
                     Console.WriteLine($"Usage: {Operations.auto}");
+                    Console.WriteLine($"\tUsed for batch-running. Syncs all datasets without prompt");
                     break;
                 case Operations.reset:
                     Console.WriteLine($"Usage: {Operations.reset} $datasetId1 $datasetId2 ...");
+                    Console.WriteLine($"\tReset dataset(s)");
                     break;
                 case Operations.remove:
                     Console.WriteLine($"Usage: {Operations.remove} $datasetId1 $datasetId2 ...");
+                    Console.WriteLine($"\tRemove dataset(s)");
                     break;
                 case Operations.list:
-                    Console.WriteLine($"Usage: list || list $serviceUrl $username $password");
+                    Console.WriteLine($"Usage: {Operations.list} || {Operations.list} $serviceUrl $username $password");
+                    Console.WriteLine($"\tIf no more arguments are given, lists local datasets. Else lists datasets on specified provider");
                     break;
                 case Operations.sync:
                     Console.WriteLine($"Usage: {Operations.sync} $datasetId1 $datasetId2 ...");
+                    Console.WriteLine($"\tSync dataset(s) using local datasetId (found using list)");
                     break;
                 default:
                     WriteHelp();
@@ -215,7 +221,7 @@ namespace Test_Subscriber_NetCore
 
         private static void SynchronizeDatasets(IEnumerable<int> datasetIds)
         {
-            Console.WriteLine("INFO: Fetching list of datasetIds");
+            Console.WriteLine("INFO: Synchronizing all datasets");
 
             foreach (var datasetId in datasetIds) Synchronize(datasetId);
         }
