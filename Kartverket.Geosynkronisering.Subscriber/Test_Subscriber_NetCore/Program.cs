@@ -91,6 +91,7 @@ namespace Test_Subscriber_NetCore
             var datasets = GeosyncDbEntities.ReadAll<Dataset>("Dataset");
             datasets.ForEach(d => {
                 Console.WriteLine("-----------------------------------------------------------");
+                Console.WriteLine(NormalizeText("Name", d.Name));
                 Console.WriteLine(NormalizeText("DatasetId", d.DatasetId.ToString()));
                 Console.WriteLine(NormalizeText("ProviderDatasetId",d.ProviderDatasetId));
                 Console.WriteLine(NormalizeText("TargetNameSpace",d.TargetNamespace));
@@ -151,13 +152,20 @@ namespace Test_Subscriber_NetCore
         {
             var capabilitiesDataBuilder = new CapabilitiesDataBuilder(args[1], args[2], args[3]);
 
-            List<string> requiredDatasets = new List<string>();
+            var requiredDatasets = new List<string>();
 
-            for (var i = 4; i < args.Length; i++) requiredDatasets.Add(args[i]);
+            var aliases = new List<string>();
 
-            var datasets = capabilitiesDataBuilder.ProviderDatasetsList.Where(d => requiredDatasets.Contains(d.ProviderDatasetId));
+            for (var i = 4; i < args.Length; i++)
+            {
+                requiredDatasets.Add(args[i].Split(':')[0]);
 
-            AddDatasets(args[1], args[2], args[3], datasets, args[4]);
+                aliases.Add(args[i]);
+            }
+
+            var datasets = capabilitiesDataBuilder.ProviderDatasetsList.Where(d => requiredDatasets.Contains(d.ProviderDatasetId)).ToList();
+
+            AddDatasets(args[1], args[2], args[3], datasets, args[4], aliases);
         }
 
         private static void AddAllDatasets(string[] args)
@@ -177,7 +185,7 @@ namespace Test_Subscriber_NetCore
             switch (operation)
             {
                 case Operations.add:
-                    Console.WriteLine($"Usage: {Operations.add} $serviceUrl $username $password $wfsUrl [ $datasetid ]");
+                    Console.WriteLine($"Usage: {Operations.add} $serviceUrl $username $password $wfsUrl [ $datasetid:name ]");
                     Console.WriteLine($"\tAdds datasets from provider. If no datasetId is specified, all are added.");
                     break;
                 case Operations.auto:
@@ -207,14 +215,22 @@ namespace Test_Subscriber_NetCore
             }
         }
 
-        private static void AddDatasets(string url, string user, string password, IEnumerable<Dataset> datasets, string clientWfsUrl)
+        private static void AddDatasets(string url, string user, string password, List<Dataset> datasets, string clientWfsUrl, List<string> aliases = null)
         {
-            foreach (var dataset in datasets)
+            for (var i = 0; i < datasets.Count(); i++)
             {
+                var dataset = datasets[i];
+
                 dataset.SyncronizationUrl = url;
+                
                 dataset.ClientWfsUrl = clientWfsUrl;
+                
                 dataset.UserName = user;
+                
                 dataset.Password = password;
+                
+                if (aliases != null && aliases[i].Split(':').Length > 1) dataset.Name = aliases[i].Split(':')[1];
+
                 GeosyncDbEntities.InsertDataset(dataset);
             }
         }
