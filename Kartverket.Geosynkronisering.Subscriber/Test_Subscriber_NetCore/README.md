@@ -32,9 +32,11 @@ If no more arguments are given, lists local datasets. Else lists datasets on spe
 
 #### Commandline
 ```
-Subscriber_NetCore.exe add $serviceUrl $username $password $wfsUrl [ $datasetid ]
+Subscriber_NetCore.exe add $serviceUrl $username $password $wfsUrl [ $datasetid:name ]
 ```
-Adds datasets from provider. If no datasetId is specified, all are added
+Adds datasets from provider. If no datasetId is specified, all are added.
+
+If we want to give the dataset a specific name we do this in the form ${datasetId}:${Name} using colon as seperator.
 
 ### Synchronize specified datasets
 
