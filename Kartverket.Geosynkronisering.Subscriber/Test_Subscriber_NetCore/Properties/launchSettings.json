@@ -1,7 +1,8 @@
 {
   "profiles": {
     "Test_Subscriber_NetCore": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "sync 3"
     }
   }
 }

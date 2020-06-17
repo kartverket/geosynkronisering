@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Kartverket.Geosynkronisering.Subscriber.BL
 {
@@ -21,69 +22,104 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             public int OrdersProcessedCount;
 
             // NewSynchMilestoneReached
-            public void OnNewSynchMilestoneReached(string description)
+            public async System.Threading.Tasks.Task OnNewSynchMilestoneReachedAsync(string description)
             {
                 if (NewSynchMilestoneReached == null) { return; }
                 this.MilestoneDescription = description;
 
-                NewSynchMilestoneReached.BeginInvoke(this, new EventArgs(),
-                          new AsyncCallback(NewSynchMilestoneReachedCompleted), null);
+                //if (false)
+                //{
+                //    NewSynchMilestoneReached.BeginInvoke(this, new EventArgs(),
+                //        new AsyncCallback(NewSynchMilestoneReachedCompleted), null);
+                //}
+
+
+                // Migrating Delegate.BeginInvoke Calls for .NET Core, works OK for .NET framework too.
+                // Seee: https://devblogs.microsoft.com/dotnet/migrating-delegate-begininvoke-calls-for-net-core/
+                // Schedule the work using a Task and 
+                // NewSynchMilestoneReached.Invoke instead of NewSynchMilestoneReached.BeginInvoke.
+                //Console.WriteLine("Starting with Task.Run");
+                var workTask = System.Threading.Tasks.Task.Run(() => NewSynchMilestoneReached.Invoke(this, new EventArgs()));
+
+                // We await the task instead of calling EndInvoke.
+                await workTask;
+
             }
 
-            private void NewSynchMilestoneReachedCompleted(IAsyncResult ar)
-            {
-                if (NewSynchMilestoneReached == null) { return; }
-                NewSynchMilestoneReached.EndInvoke(ar);
-            }
+            //private void NewSynchMilestoneReachedCompleted(IAsyncResult ar)
+            //{
+            //    if (NewSynchMilestoneReached == null) { return; }
+            //    NewSynchMilestoneReached.EndInvoke(ar);
+            //}
 
             // UpdateLogList
-            public void OnUpdateLogList(string info)
+            public async Task OnUpdateLogList(string info)
             {
                 if (UpdateLogList == null) { return; }
                 this.NewLogListItem = info;
 
-                UpdateLogList.BeginInvoke(this, new EventArgs(),
-                          new AsyncCallback(UpdateLogListCompleted), null);
+                //UpdateLogList.BeginInvoke(this, new EventArgs(),
+                //    new AsyncCallback(UpdateLogListCompleted), null);
+
+                var workTask = System.Threading.Tasks.Task.Run(() => UpdateLogList.Invoke(this, new EventArgs()));
+
+                // We await the task instead of calling EndInvoke.
+                await workTask;
             }
 
-            private void UpdateLogListCompleted(IAsyncResult ar)
-            {
-                if (UpdateLogList == null) { return; }
-                UpdateLogList.EndInvoke(ar);
-            }
+            //private void UpdateLogListCompleted(IAsyncResult ar)
+            //{
+            //    if (UpdateLogList == null) { return; }
+            //    UpdateLogList.EndInvoke(ar);
+            //}
 
             // OrderProcessingStart
-            public void OnOrderProcessingStart(long totalNumberOfOrders)
+            public async Task OnOrderProcessingStart(long totalNumberOfOrders)
             {
                 if (OrderProcessingStart == null) { return; }
                 this.TotalNumberOfOrders = totalNumberOfOrders;
                 this.OrdersProcessedCount = 0;
 
-                OrderProcessingStart.BeginInvoke(this, new EventArgs(),
-                          new AsyncCallback(OrderProcessingStartCompleted), null);
+                //if (false)
+                //{
+                //    OrderProcessingStart.BeginInvoke(this, new EventArgs(),
+                //        new AsyncCallback(OrderProcessingStartCompleted), null);
+                //}
+
+                var workTask = System.Threading.Tasks.Task.Run(() => OrderProcessingStart.Invoke(this, new EventArgs()));
+                // We await the task instead of calling EndInvoke.
+                await workTask;
             }
 
-            private void OrderProcessingStartCompleted(IAsyncResult ar)
-            {
-                if (OrderProcessingStart == null) { return; }
-                OrderProcessingStart.EndInvoke(ar);
-            }
+            //private void OrderProcessingStartCompleted(IAsyncResult ar)
+            //{
+            //    if (OrderProcessingStart == null) { return; }
+            //    OrderProcessingStart.EndInvoke(ar);
+            //}
 
             // OrderProcessingChange
-            public void OnOrderProcessingChange(int count)
+            public async Task OnOrderProcessingChange(int count)
             {
                 if (OrderProcessingChange == null) { return; }
                 this.OrdersProcessedCount = count;
 
-                OrderProcessingChange.BeginInvoke(this, new EventArgs(),
-                          new AsyncCallback(OrderProcessingChangeCompleted), null);
+                //if (false)
+                //{
+                //    OrderProcessingChange.BeginInvoke(this, new EventArgs(),
+                //        new AsyncCallback(OrderProcessingChangeCompleted), null);
+                //}
+
+                var workTask = System.Threading.Tasks.Task.Run(() => OrderProcessingChange.Invoke(this, new EventArgs()));
+                // We await the task instead of calling EndInvoke.
+                await workTask;
+
             }
 
-            private void OrderProcessingChangeCompleted(IAsyncResult ar)
-            {
-                if (OrderProcessingChange == null) { return; }
-                OrderProcessingChange.EndInvoke(ar);
-            }
+            //private void OrderProcessingChangeCompleted(IAsyncResult ar)
+            //{
+            //    if (OrderProcessingChange == null) { return; }
+            //    OrderProcessingChange.EndInvoke(ar);
+            //}
         }
     }
 }

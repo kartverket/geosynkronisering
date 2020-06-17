@@ -231,6 +231,13 @@ namespace Test_Subscriber_NetCore
             var synchController = new SynchController();
             try
             {
+                // Added Event handling for CORESubscriber
+                synchController.NewSynchMilestoneReached += Progress_OnMilestoneReached;
+                synchController.UpdateLogList += Progress_UpdateLogList;
+                synchController.OrderProcessingStart += Progress_OrderProcessingStart;
+                synchController.OrderProcessingChange += Progress_OrderProcessingChange;
+
+
                 Console.Out.WriteLine("INFO: Starting synchronization of datasetId " + datasetId);
                 synchController.InitTransactionsSummary();
                 synchController.DoSynchronization(datasetId);
@@ -239,10 +246,67 @@ namespace Test_Subscriber_NetCore
             }
             catch (Exception e)
             {
-                Console.WriteLine("ERROR: " + e.Message);
+                Console.WriteLine("ERROR Synchronize: " + e.Message + e.StackTrace);
                 //throw;
             }
         }
+
+        #region Event handling
+
+        protected static void Progress_OnMilestoneReached(object sender, EventArgs e)
+        {
+            try
+            {
+                var prg = (FeedbackController.Progress)sender;
+
+                var newMilestoneDescription = prg.MilestoneDescription;
+                Console.Out.WriteLine("INFO: " + newMilestoneDescription);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR: " + ex.Message);
+            }
+        }
+        
+        protected static void Progress_UpdateLogList(object sender, EventArgs e)
+        {
+            try
+            {
+                var prg = (FeedbackController.Progress)sender;
+
+                var newLogListItem = prg.NewLogListItem;
+                Console.Out.WriteLine("LOG: " + newLogListItem);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR: " + ex.Message);
+            }
+        }
+
+        protected static void Progress_OrderProcessingStart(object sender, EventArgs e)
+        {
+            try
+            {
+                var prg = (FeedbackController.Progress)sender;
+                Console.Out.WriteLine("TotalNumberOfOrders: " + prg.TotalNumberOfOrders);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        protected static void Progress_OrderProcessingChange(object sender, EventArgs e)
+        {
+            try
+            {
+                var prg = (FeedbackController.Progress)sender;
+                Console.Out.WriteLine("OrdersProcessedCount: " + prg.OrdersProcessedCount);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+        #endregion
 
         private static void WriteTransactionSummary(SynchController synchController)
         {

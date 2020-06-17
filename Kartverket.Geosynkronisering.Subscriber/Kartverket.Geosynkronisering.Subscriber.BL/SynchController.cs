@@ -330,7 +330,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 // To set the progressbar to complete / finished
                 OnOrderProcessingChange(int.MaxValue);
 
-                OnNewSynchMilestoneReached("Synch completed");
+                OnNewSynchMilestoneReachedAsync("Synch completed");
 
 
             }
@@ -380,7 +380,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             else
             {
                 changeLogId = dataset.AbortedChangelogId;
-                OnNewSynchMilestoneReached("Found changelogId " + dataset.AbortedChangelogId +
+                OnNewSynchMilestoneReachedAsync("Found changelogId " + dataset.AbortedChangelogId +
                                            ". Querying for status.");
             }
 
@@ -444,22 +444,22 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         private long PrepareForOrder(int datasetId)
         {
-            OnNewSynchMilestoneReached("GetLastIndexFromProvider");
+            OnNewSynchMilestoneReachedAsync("GetLastIndexFromProvider");
 
             var lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
 
             var logMessage = "GetLastIndexFromProvider lastIndex: " + lastChangeIndexProvider;
             Logger.Info(logMessage);
             OnUpdateLogList(logMessage);
-            OnNewSynchMilestoneReached("GetLastIndexFromProvider OK");
+            OnNewSynchMilestoneReachedAsync("GetLastIndexFromProvider OK");
 
-            OnNewSynchMilestoneReached("GetLastIndexFromSubscriber");
+            OnNewSynchMilestoneReachedAsync("GetLastIndexFromSubscriber");
             var lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
 
             logMessage = "GetLastChangeIndexSubscriber lastIndex: " + lastChangeIndexSubscriber;
             Logger.Info(logMessage);
             OnUpdateLogList(logMessage);
-            OnNewSynchMilestoneReached("GetLastIndexFromSubscriber OK");
+            OnNewSynchMilestoneReachedAsync("GetLastIndexFromSubscriber OK");
 
             if (lastChangeIndexSubscriber >= lastChangeIndexProvider)
             {
@@ -468,11 +468,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                               lastChangeIndexSubscriber;
                 Logger.Info(logMessage);
                 OnUpdateLogList(logMessage); // Raise event to UI
-                OnNewSynchMilestoneReached(logMessage);
+                OnNewSynchMilestoneReachedAsync(logMessage);
                 return 0;
             }
 
-            OnNewSynchMilestoneReached("Order Changelog. Wait...");
+            OnNewSynchMilestoneReachedAsync("Order Changelog. Wait...");
 
             return lastChangeIndexProvider;
         }
@@ -574,7 +574,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     changeLogStatus = GetChangelogStatusResponse(datasetId, changeLogId);
                 }
                 if (changeLogStatus == ChangelogStatusType.finished)
-                    OnNewSynchMilestoneReached("ChangeLog from Provider ready for download.");
+                    OnNewSynchMilestoneReachedAsync("ChangeLog from Provider ready for download.");
                 else
                 {
                     switch (changeLogStatus)
@@ -635,7 +635,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 // TODO: This is a little dirty, but we can reuse the events of the SynchController parent for UI feedback
                 wfsController.ParentSynchController = this;
 
-                OnNewSynchMilestoneReached("DoWfsTransactions starting...");
+                OnNewSynchMilestoneReachedAsync("DoWfsTransactions starting...");
 
                 if (!wfsController.DoWfsTransactions(changeLog, datasetId)) return false;
                 Logger.Info("DoWfsTransactions OK, pass {0}", passNr);
