@@ -33,6 +33,8 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             var xDoc = ConstructWfsTransaction(changeLog);
 
+            xDoc.Descendants().Where(e => string.IsNullOrEmpty(e.Value)).Remove();
+
             SaveWfsTransactionToDisk(xDoc.Root, datasetId);
 
             // Post to WFS-T server (e.g. deegree or GeoServer)
