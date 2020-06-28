@@ -12,7 +12,7 @@ namespace Test_Subscriber_NetCore
         internal const string remove = "remove";
         internal const string list = "list";
         internal const string sync = "sync";
-        
+
         internal static List<string> all = new List<string> { help, add, list, auto, sync, reset, remove };
     }
 }

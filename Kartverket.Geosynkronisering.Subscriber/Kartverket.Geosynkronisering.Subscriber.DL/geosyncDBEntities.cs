@@ -13,13 +13,14 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
     {
         public List<Dataset> Dataset { get; set; }
 
-        public static string ConnectionString;
+        public static string ConnectionString
+        {
+            get { return System.Configuration.ConfigurationManager.ConnectionStrings["geosyncDBEntities"].ConnectionString; }
+        }
 
         public GeosyncDbEntities()
         {
             SqlMapperExtensions.TableNameMapper = type => type.Name;
-
-            ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["geosyncDBEntities"].ConnectionString;
 
             CreateDatabaseIfNotExists();
 

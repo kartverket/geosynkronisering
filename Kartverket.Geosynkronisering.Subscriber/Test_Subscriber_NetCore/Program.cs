@@ -18,14 +18,14 @@ namespace Test_Subscriber_NetCore
 
         private static void RunAsConsole(string[] args)
         {
-            var datasetIds = SubscriberDatasetManager.GetListOfDatasetIDs();
-
             if (args.Length < 1) { WriteHelp(); return; }
+
+            _ = new GeosyncDbEntities();
 
             switch (args[0].ToLower())
             {
                 case Operations.auto:
-                    SynchronizeDatasets(datasetIds);
+                    SynchronizeDatasets();
                     break;
                 case Operations.help:
                     if (args.Length > 1) WriteHelp(args[1]);
@@ -48,7 +48,7 @@ namespace Test_Subscriber_NetCore
                     else WriteHelp(Operations.list);
                     break;
                 case Operations.sync:
-                    SynchronizeDatasets(args, datasetIds);
+                    SynchronizeDatasets(args);
                     break;
                 default:
                     WriteHelp();
@@ -56,19 +56,15 @@ namespace Test_Subscriber_NetCore
             }
         }
 
-
-
-        private static void SynchronizeDatasets(string[] args, IList<int> datasetIds)
+        private static void SynchronizeDatasets(string[] args = null)
         {
+            var datasets = args == null ? SubscriberDatasetManager.GetAllDataset() : GetDatasetsFromArgs(args);
+
             Console.WriteLine($"Syncronize datasets {string.Join(',', args)}?");
 
             if (!GetYorN()) return;
 
-            foreach (var datasetId in GetDatasetIdsFromArgs(args))
-            {
-                if (datasetIds.Contains(datasetId)) Synchronize(datasetId);
-                else Console.WriteLine("ERROR: DatasetId " + datasetId + " does not exist");
-            };
+            foreach (var dataset in datasets) Synchronize(dataset.DatasetId);
         }
 
         private static void ListProviderDatasets(string[] args)
@@ -91,6 +87,7 @@ namespace Test_Subscriber_NetCore
             var datasets = GeosyncDbEntities.ReadAll<Dataset>("Dataset");
             datasets.ForEach(d => {
                 Console.WriteLine("-----------------------------------------------------------");
+                Console.WriteLine(NormalizeText("Name", d.Name));
                 Console.WriteLine(NormalizeText("DatasetId", d.DatasetId.ToString()));
                 Console.WriteLine(NormalizeText("ProviderDatasetId",d.ProviderDatasetId));
                 Console.WriteLine(NormalizeText("TargetNameSpace",d.TargetNamespace));
@@ -112,14 +109,12 @@ namespace Test_Subscriber_NetCore
 
         private static void RemoveDatasets(string[] args)
         {
-            var datasetIds = GetDatasetIdsFromArgs(args);
+            var datasets = GetDatasetsFromArgs(args);
 
-            Console.WriteLine($"Remove datasets {string.Join(',', datasetIds)}?");
+            Console.WriteLine($"Remove datasets {string.Join(',', datasets.Select(d => d.DatasetId.ToString()))}?");
 
             if (!GetYorN()) return;
 
-            var datasets = GeosyncDbEntities.ReadAll<Dataset>("Dataset").Where(d => datasetIds.Contains(d.DatasetId));
-            
             foreach (var dataset in datasets)
             {
                 Console.WriteLine($"Removing dataset {dataset.DatasetId}");
@@ -130,34 +125,49 @@ namespace Test_Subscriber_NetCore
 
         private static void ResetDatasets(string[] args)
         {
-            var datasetIds = GetDatasetIdsFromArgs(args);
+            var datasets = GetDatasetsFromArgs(args);
 
-            Console.WriteLine($"Reset datasets {string.Join(',', datasetIds)}?");
+            Console.WriteLine($"Reset datasets {string.Join(',', datasets.Select(d => d.DatasetId.ToString()))}?");
 
             if (!GetYorN()) return;
 
             var synchController = new SynchController();
 
-            datasetIds.ForEach(d => synchController.ResetSubscriberLastIndex(d));
+            datasets.ForEach(d => synchController.ResetSubscriberLastIndex(d.DatasetId));
 
         }
 
-        private static List<int> GetDatasetIdsFromArgs(string[] args)
+        private static List<Dataset> GetDatasetsFromArgs(string[] args)
         {
-            return args.ToList().GetRange(1, args.Length - 1).Select(a => int.Parse(a)).ToList();
+            var allDatasets = SubscriberDatasetManager.GetAllDataset();
+
+            var candidateIds = args.ToList().GetRange(1, args.Length - 1);
+
+            return candidateIds.SelectMany(a =>
+            {
+                if (int.TryParse(a, out int value)) return allDatasets.Where(d => d.DatasetId == int.Parse(a)).ToList();
+                return allDatasets.Where(d => d.Name.ToLower() == a.ToLower()).ToList();
+            }).ToList();
         }
 
         private static void AddSpecifiedDatasets(string[] args)
         {
             var capabilitiesDataBuilder = new CapabilitiesDataBuilder(args[1], args[2], args[3]);
 
-            List<string> requiredDatasets = new List<string>();
+            var requiredDatasets = new List<string>();
 
-            for (var i = 4; i < args.Length; i++) requiredDatasets.Add(args[i]);
+            var aliases = new List<string>();
 
-            var datasets = capabilitiesDataBuilder.ProviderDatasetsList.Where(d => requiredDatasets.Contains(d.ProviderDatasetId));
+            for (var i = 5; i < args.Length; i++)
+            {
+                requiredDatasets.Add(args[i].Split(':')[0]);
 
-            AddDatasets(args[1], args[2], args[3], datasets, args[4]);
+                aliases.Add(args[i]);
+            }
+
+            var datasets = capabilitiesDataBuilder.ProviderDatasetsList.Where(d => requiredDatasets.Contains(d.ProviderDatasetId)).ToList();
+
+            AddDatasets(args[1], args[2], args[3], datasets, args[4], aliases);
         }
 
         private static void AddAllDatasets(string[] args)
@@ -177,7 +187,7 @@ namespace Test_Subscriber_NetCore
             switch (operation)
             {
                 case Operations.add:
-                    Console.WriteLine($"Usage: {Operations.add} $serviceUrl $username $password $wfsUrl [ $datasetid ]");
+                    Console.WriteLine($"Usage: {Operations.add} $serviceUrl $username $password $wfsUrl [ $datasetid:name ]");
                     Console.WriteLine($"\tAdds datasets from provider. If no datasetId is specified, all are added.");
                     break;
                 case Operations.auto:
@@ -207,23 +217,24 @@ namespace Test_Subscriber_NetCore
             }
         }
 
-        private static void AddDatasets(string url, string user, string password, IEnumerable<Dataset> datasets, string clientWfsUrl)
+        private static void AddDatasets(string url, string user, string password, List<Dataset> datasets, string clientWfsUrl, List<string> aliases = null)
         {
-            foreach (var dataset in datasets)
+            for (var i = 0; i < datasets.Count(); i++)
             {
+                var dataset = datasets[i];
+
                 dataset.SyncronizationUrl = url;
+                
                 dataset.ClientWfsUrl = clientWfsUrl;
+                
                 dataset.UserName = user;
+                
                 dataset.Password = password;
+                
+                if (aliases != null && aliases[i].Contains(':')) dataset.Name = aliases[i].Split(':')[1];
+
                 GeosyncDbEntities.InsertDataset(dataset);
             }
-        }
-
-        private static void SynchronizeDatasets(IEnumerable<int> datasetIds)
-        {
-            Console.WriteLine("INFO: Synchronizing all datasets");
-
-            foreach (var datasetId in datasetIds) Synchronize(datasetId);
         }
 
         private static void Synchronize(int datasetId)
