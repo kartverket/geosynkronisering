@@ -291,11 +291,15 @@ namespace Kartverket.Geosynkronisering.Subscriber
             {
                 var prg = (FeedbackController.Progress)sender;
 
-                Action action = () => progressBar.Maximum = (int)prg.TotalNumberOfOrders;
+                Action action = () => toolStripProgressBar1.Maximum = (int)prg.TotalNumberOfOrders * 100;
                 Invoke(action);
 
-                action = () => progressBar.Value = 0;
+                action = () => toolStripProgressBar1.Value = 0;
                 Invoke(action);
+                statusStrip1.Refresh();
+
+                var logMessage = "Number of orders:" + prg.TotalNumberOfOrders;
+                listBoxLog.Items.Add(logMessage);
             }
             catch (Exception ex)
             {
@@ -314,11 +318,11 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 var prg = (FeedbackController.Progress)sender;
 
                 // For some reason, the progressbar value could seldom be larger that the Maximum
-                var value = Math.Min(prg.OrdersProcessedCount, progressBar.Maximum);
-                Action action = () => progressBar.Value = value; //prg.OrdersProcessedCount;
+                var value = Math.Min(prg.OrdersProcessedCount, toolStripProgressBar1.Maximum);
+                Action action = () => toolStripProgressBar1.Value = value; //prg.OrdersProcessedCount;
                 Invoke(action);
 
-
+                statusStrip1.Refresh();
                 //this.Update();
                 //Application.DoEvents();
             }
@@ -373,7 +377,7 @@ namespace Kartverket.Geosynkronisering.Subscriber
                 listBoxLog.Items.Clear();
                 UpdateToolStripStatusLabel("Ready");
 
-
+           
             }
             catch (Exception ex)
             {

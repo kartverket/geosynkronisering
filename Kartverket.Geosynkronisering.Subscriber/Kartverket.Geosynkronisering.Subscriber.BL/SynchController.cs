@@ -404,6 +404,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 fileList = ChangeLogMapper(fileList, datasetId);
             }
 
+            // 20200622-Leg: Estimate of number of orders
+            long totalNumberOfOrders = fileList.Count;
+            //totalNumberOfOrders = this.TotalNumberOfOrders;
+            OnOrderProcessingStart(totalNumberOfOrders);
+
             LoopChangeLog(fileList, dataset, datasetId, progressCounter, downloadController.ChangelogFilename, 0);
 
             AcknowledgeChangelogDownloaded(datasetId, changeLogId);
