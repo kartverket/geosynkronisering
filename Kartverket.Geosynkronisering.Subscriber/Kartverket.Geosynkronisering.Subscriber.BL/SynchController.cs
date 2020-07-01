@@ -337,13 +337,13 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             catch (WebException webEx)
             {
                 Logger.Error(webEx, "DoSynchronization WebException:");
-                throw new Exception(webEx.Message);
+                throw;
             }
             catch (Exception ex)
             {
                 Logger.Error(ex, "DoSynchronization Exception:");
                 OnUpdateLogList(ex.Message);
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
@@ -632,8 +632,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         private bool DoWfsTransaction(XElement changeLog, int datasetId, int passNr)
         {
-            try
-            {
                 // Build wfs-t transaction from changelog, and do the transaction   
                 var wfsController = new WfsController();
 
@@ -646,12 +644,6 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 Logger.Info("DoWfsTransactions OK, pass {0}", passNr);
                 OnUpdateLogList(string.Format("DoWfsTransactions OK, pass {0}", passNr));
                 return true;
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-
         }
 
         private static long GetAbortedEndIndex(XElement changeLog)
