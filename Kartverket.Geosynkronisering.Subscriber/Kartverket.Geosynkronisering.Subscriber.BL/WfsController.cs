@@ -33,7 +33,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             var xDoc = ConstructWfsTransaction(changeLog);
 
-            xDoc.Descendants().Where(e => string.IsNullOrEmpty(e.Value)).Remove();
+            xDoc.Descendants().Where(e => !e.HasElements && !e.HasAttributes && string.IsNullOrEmpty(e.Value)).Remove();
 
             SaveWfsTransactionToDisk(xDoc.Root, datasetId);
 
