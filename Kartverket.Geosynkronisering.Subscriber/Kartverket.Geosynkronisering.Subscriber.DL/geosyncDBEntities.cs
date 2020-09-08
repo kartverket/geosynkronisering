@@ -76,7 +76,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             using (IDbConnection db = new SQLiteConnection(ConnectionString)) db.Insert(dataset);
         }
 
-        private static void UpdateDataset(Dataset dataset)
+        public static void UpdateDataset(Dataset dataset)
         {
             using (IDbConnection db = new SQLiteConnection(ConnectionString)) db.Update(dataset);
         }
