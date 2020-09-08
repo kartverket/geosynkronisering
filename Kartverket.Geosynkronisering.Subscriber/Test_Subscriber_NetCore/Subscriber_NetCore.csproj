@@ -7,8 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NLog" Version="4.7.4" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.9.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Kartverket.Geosynkronisering.Subscriber.BL\Kartverket.Geosynkronisering.Subscriber.BL.csproj" />
     <ProjectReference Include="..\Kartverket.Geosynkronisering.Subscriber.DL\Kartverket.Geosynkronisering.Subscriber.DL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="nlog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -3,15 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using Kartverket.Geosynkronisering.Subscriber.BL;
 using Kartverket.Geosynkronisering.Subscriber.DL;
+using NLog;
 
 namespace Test_Subscriber_NetCore
 {
     class Program
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
         static void Main(string[] args)
         {
-            RunAsConsole(args);
-            Console.WriteLine();
+            // Support nlog on .net core
+            logger = NLog.Web.NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+
+            logger.Info("Starting Geosync Subscriber_NetCore");
+
+            try
+            {
+                //throw new NotImplementedException(); // Test that nlog works
+
+                Console.WriteLine();
+
+                RunAsConsole(args);
+            }
+            catch (Exception e)
+            {
+                logger.Error(e);
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         private static bool InDocker { get { return Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true"; } }
