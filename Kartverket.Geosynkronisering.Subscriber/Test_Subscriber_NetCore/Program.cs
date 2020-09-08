@@ -119,13 +119,15 @@ namespace Test_Subscriber_NetCore
         {
             var datasets = GetDatasetsFromArgs(args);
 
-            Console.WriteLine($"Remove datasets {string.Join(',', datasets.Select(d => d.DatasetId.ToString()))}?");
+            if (datasets.Count == 0) return;
+
+            Console.WriteLine($"Remove datasets {string.Join(',', datasets.Select(d => d.Name.ToString()))}?");
 
             if (!SkipPrompt(args) && !GetYorN()) return;
 
             foreach (var dataset in datasets)
             {
-                Console.WriteLine($"Removing dataset {dataset.DatasetId}");
+                Console.WriteLine($"Removing dataset {dataset.Name}");
                 GeosyncDbEntities.DeleteDataset(dataset);
             }
 
@@ -135,7 +137,9 @@ namespace Test_Subscriber_NetCore
         {
             var datasets = GetDatasetsFromArgs(args);
 
-            Console.WriteLine($"Reset datasets {string.Join(',', datasets.Select(d => d.DatasetId.ToString()))}?");
+            if (datasets.Count == 0) return;
+
+            Console.WriteLine($"Reset datasets {string.Join(',', datasets.Select(d => d.Name.ToString()))}?");
 
             if (!SkipPrompt(args) && !GetYorN()) return;
 
