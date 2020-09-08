@@ -2,7 +2,7 @@
   "profiles": {
     "Test_Subscriber_NetCore": {
       "commandName": "Project",
-      "commandLineArgs": "sync 3"
+      "commandLineArgs": "auto"
     }
   }
 }
