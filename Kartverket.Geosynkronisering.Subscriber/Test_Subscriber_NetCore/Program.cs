@@ -29,8 +29,7 @@ namespace Test_Subscriber_NetCore
             catch (Exception e)
             {
                 logger.Error(e);
-                Console.WriteLine(e);
-                throw;
+                Console.WriteLine(e.Message);
             }
         }
 
