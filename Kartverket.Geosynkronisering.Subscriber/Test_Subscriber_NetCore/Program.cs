@@ -326,7 +326,7 @@ namespace Test_Subscriber_NetCore
             try
             {
                 var prg = (FeedbackController.Progress)sender;
-                Console.Out.WriteLine("OrdersProcessedCount: " + prg.OrdersProcessedCount/100);
+                Console.Out.WriteLine("OrdersProcessedCount: " + prg.OrdersProcessedCount/100 + " of total: "+ prg.TotalNumberOfOrders);
             }
             catch (Exception ex)
             {
