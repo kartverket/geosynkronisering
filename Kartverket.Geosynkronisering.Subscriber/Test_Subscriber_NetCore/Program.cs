@@ -58,7 +58,7 @@ namespace Test_Subscriber_NetCore
 
         private static bool SkipPrompt(string[] args)
         {
-            return args != null && args.ToList().Select(a => a.ToLower()).Contains("--f");
+            return args != null && args.ToList().Any(a => a.ToLower() == "--f" || a.ToLower() == "-f");
         }
 
         private static void SynchronizeDatasets(string[] args = null)
