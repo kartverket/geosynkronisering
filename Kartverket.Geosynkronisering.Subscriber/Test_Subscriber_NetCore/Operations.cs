@@ -6,7 +6,6 @@ namespace Test_Subscriber_NetCore
     {
         internal const string help = "help";
         internal const string add = "add";
-        //internal static string sync = "sync";
         internal const string auto = "auto";
         internal const string reset = "reset";
         internal const string remove = "remove";

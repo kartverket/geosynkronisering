@@ -56,13 +56,21 @@ namespace Test_Subscriber_NetCore
             }
         }
 
+        private static bool SkipPrompt(string[] args)
+        {
+            return args == null || args.ToList().Any(a => a.ToLower() == "--f" || a.ToLower() == "-f");
+        }
+
         private static void SynchronizeDatasets(string[] args = null)
         {
             var datasets = args == null ? SubscriberDatasetManager.GetAllDataset() : GetDatasetsFromArgs(args);
 
-            Console.WriteLine($"Syncronize datasets {string.Join(',', args)}?");
+            if (!SkipPrompt(args))
+            {
+                Console.WriteLine($"Syncronize datasets {string.Join(',', datasets.Select(d => d.Name))}?");
 
-            if (!GetYorN()) return;
+                if (!GetYorN()) return;
+            }
 
             foreach (var dataset in datasets) Synchronize(dataset.DatasetId);
         }
@@ -111,13 +119,15 @@ namespace Test_Subscriber_NetCore
         {
             var datasets = GetDatasetsFromArgs(args);
 
-            Console.WriteLine($"Remove datasets {string.Join(',', datasets.Select(d => d.DatasetId.ToString()))}?");
+            if (datasets.Count == 0) return;
 
-            if (!GetYorN()) return;
+            Console.WriteLine($"Remove datasets {string.Join(',', datasets.Select(d => d.Name.ToString()))}?");
+
+            if (!SkipPrompt(args) && !GetYorN()) return;
 
             foreach (var dataset in datasets)
             {
-                Console.WriteLine($"Removing dataset {dataset.DatasetId}");
+                Console.WriteLine($"Removing dataset {dataset.Name}");
                 GeosyncDbEntities.DeleteDataset(dataset);
             }
 
@@ -127,9 +137,11 @@ namespace Test_Subscriber_NetCore
         {
             var datasets = GetDatasetsFromArgs(args);
 
-            Console.WriteLine($"Reset datasets {string.Join(',', datasets.Select(d => d.DatasetId.ToString()))}?");
+            if (datasets.Count == 0) return;
 
-            if (!GetYorN()) return;
+            Console.WriteLine($"Reset datasets {string.Join(',', datasets.Select(d => d.Name.ToString()))}?");
+
+            if (!SkipPrompt(args) && !GetYorN()) return;
 
             var synchController = new SynchController();
 
@@ -179,7 +191,7 @@ namespace Test_Subscriber_NetCore
 
         private static void WriteHelp()
         {
-            Console.WriteLine($"Args: {string.Join('|', Operations.all)}");
+            Console.WriteLine($"Args: {string.Join('|', Operations.all)}");            
         }
 
         private static void WriteHelp(string operation)
@@ -195,20 +207,23 @@ namespace Test_Subscriber_NetCore
                     Console.WriteLine($"\tUsed for batch-running. Syncs all datasets without prompt");
                     break;
                 case Operations.reset:
-                    Console.WriteLine($"Usage: {Operations.reset} $datasetId1 $datasetId2 ...");
+                    Console.WriteLine($"Usage: {Operations.reset} $datasetId1 $datasetId2 ... [--f]");
                     Console.WriteLine($"\tReset dataset(s)");
+                    Console.WriteLine($"\t--f\tSkip prompt");
                     break;
                 case Operations.remove:
-                    Console.WriteLine($"Usage: {Operations.remove} $datasetId1 $datasetId2 ...");
+                    Console.WriteLine($"Usage: {Operations.remove} $datasetId1 $datasetId2 ... [--f]");
                     Console.WriteLine($"\tRemove dataset(s)");
+                    Console.WriteLine($"\t--f\tSkip prompt");
                     break;
                 case Operations.list:
                     Console.WriteLine($"Usage: {Operations.list} || {Operations.list} $serviceUrl $username $password");
                     Console.WriteLine($"\tIf no more arguments are given, lists local datasets. Else lists datasets on specified provider");
                     break;
                 case Operations.sync:
-                    Console.WriteLine($"Usage: {Operations.sync} $datasetId1 $datasetId2 ...");
+                    Console.WriteLine($"Usage: {Operations.sync} $datasetId1 $datasetId2 ...  [--f]");
                     Console.WriteLine($"\tSync dataset(s) using local datasetId (found using list)");
+                    Console.WriteLine($"\t--f\tSkip prompt");
                     break;
                 default:
                     WriteHelp();
