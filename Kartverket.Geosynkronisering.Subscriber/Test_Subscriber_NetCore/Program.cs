@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Kartverket.Geosynkronisering.Subscriber.BL;
 using Kartverket.Geosynkronisering.Subscriber.DL;
 using NLog;
@@ -69,10 +70,46 @@ namespace Test_Subscriber_NetCore
                 case Operations.sync:
                     SynchronizeDatasets(args);
                     break;
+                case Operations.set:
+                    if (args.Length == 1) Console.WriteLine($"FieldNames: {string.Join(',',GetDatasetProperties().ToList().Select(p => p.Name))}");
+                    else SetFields(args);
+                    break;
                 default:
                     WriteHelp();
                     break;
             }
+        }
+
+        private static void SetFields(string[] args)
+        {
+            GetDatasetsFromArgs(args).ForEach(d => { 
+                GeosyncDbEntities.UpdateDataset(SetFieldValues(args, d));
+            });            
+        }
+
+        private static Dataset SetFieldValues(string[] args, Dataset dataset)
+        {
+            var list = args.ToList();
+
+            foreach (var property in GetDatasetProperties())
+            {
+                var key = list.FirstOrDefault(a => a.ToLower() == property.Name.ToLower());
+
+                if (key == null) continue;
+                
+                var valueIndex = list.IndexOf(key) + 1;
+
+                var value = list[valueIndex];
+
+                property.SetValue(dataset, value);
+            }
+
+            return dataset;
+        }
+
+        private static PropertyInfo[] GetDatasetProperties()
+        {
+            return new Dataset().GetType().GetProperties();
         }
 
         private static bool SkipPrompt(string[] args)
@@ -121,6 +158,7 @@ namespace Test_Subscriber_NetCore
                 Console.WriteLine(NormalizeText("SyncronizationUrl", d.SyncronizationUrl));
                 Console.WriteLine(NormalizeText("ClientWfsUrl", d.ClientWfsUrl));
                 Console.WriteLine(NormalizeText("AbortedChangelogPath", d.AbortedChangelogPath));
+                Console.WriteLine(NormalizeText("ChangelogDirectory ", d.ChangelogDirectory));
             });
 
         }
@@ -243,6 +281,10 @@ namespace Test_Subscriber_NetCore
                     Console.WriteLine($"Usage: {Operations.sync} $datasetId1 $datasetId2 ...  [--f]");
                     Console.WriteLine($"\tSync dataset(s) using local datasetId (found using list)");
                     Console.WriteLine($"\t--f\tSkip prompt");
+                    break;
+                case Operations.set:
+                    Console.WriteLine($"Usage: {Operations.set} $datasetId1 $datasetId2 ...  $fieldName1 $fieldValue1 $fieldName2 $fieldValue2 ...");
+                    Console.WriteLine($"\tSet fields for dataset(s) in sqlite database, e.g. for ChangelogDirectory");
                     break;
                 default:
                     WriteHelp();
