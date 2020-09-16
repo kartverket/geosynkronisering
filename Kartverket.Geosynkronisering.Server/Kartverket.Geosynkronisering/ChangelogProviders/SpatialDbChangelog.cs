@@ -59,7 +59,9 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         public virtual void HandleReport(GetLastIndexRequest request)
         {
-            
+
+            // 20200511-Leg: Use Logger.Warn for all reports sent from error in subscriber
+            Logger.Warn("FEIL OPPSTÅTT HOS ABONNENT");
             Logger.Error("FEIL OPPSTÅTT HOS ABONNENT");            
         }
 
@@ -161,12 +163,12 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 {
                     Logger.Error(ex, 
                         string.Format(
-                            "Failed on SaveChanges, Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog startIndex:{0} count:{1} changelogId:{2}",
+                            "Failed on SaveChanges, Kartverket.Geosynkronisering.ChangelogProviders.SpatialDbChangelog.OrderChangelog startIndex:{0} count:{1} changelogId:{2}",
                             LastChangeId, count, ldbo.ChangelogId));
                     throw ex;
                 }
                 Logger.Info(
-                    "Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog" +
+                    "Kartverket.Geosynkronisering.ChangelogProviders.SpatialDbChangelog.OrderChangelog" +
                     " startIndex:{0}" + " count:{1}" + " changelogId:{2}", LastChangeId, count, ldbo.ChangelogId);
 
                 Logger.Info("GenerateInitialChangelog END");
@@ -256,7 +258,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 }
 
                 Logger.Info(
-                    "Kartverket.Geosynkronisering.ChangelogProviders.PostGISChangelog.OrderChangelog" +
+                    "Kartverket.Geosynkronisering.ChangelogProviders.SpatialDbChangelog.OrderChangelog" +
                     " startIndex:{0}" + " count:{1}" + " changelogId:{2}", startIndex, count,
                     _currentOrderChangeLog.changelogId);
 
@@ -331,7 +333,9 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                     //If next element == lastelement
                     if ((i + 1) == OptimizedChangeLog.Count)
                     {
-                        handle = LastChangeId;
+                        // 20200311-Leg: Regression error introduced in Commit 59bc7283 (date 20180604)
+                        handle = endChangeId;
+                        //handle = LastChangeId;
                     }
                     else
                     {
@@ -579,6 +583,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         private void UpdateRootAttributes(XElement changeLog, int counter, int startChangeId, Int64 endChangeId)
         {
+            Logger.Info("UpdateRootAttributes numberMatched:{0} numberReturned:{1} startIndex:{2} endIndex:{3}  ", counter, counter, startChangeId, endChangeId);
             changeLog.SetAttributeValue("numberMatched", counter);
             changeLog.SetAttributeValue("numberReturned", counter);
             changeLog.SetAttributeValue("startIndex", startChangeId);
@@ -598,12 +603,16 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             string schemaLocation = nsChlogf.NamespaceName + " " + ServiceData.SchemaLocation();
             schemaLocation += " " + _pNsApp + " " + _pSchemaFileUri;
 
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            //20200220-Leg: return timeStamp in format "2020-02-14T14:02:27.41+01:00" independent of CultureInfo
+            var timeStamp = GetTimestamp();
+            Logger.Info("BuildChangelogRoot TransactionCollection.timeStamp:{0}", timeStamp);
+            //Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
 
             //"2001-12-17T09:30:47Z"
             XElement changelogRoot =
                 new XElement(nsChlogf + "TransactionCollection",
-                    new XAttribute("timeStamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffzzz")),
+                    new XAttribute("timeStamp", timeStamp),
+                    //new XAttribute("timeStamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffzzz")),
                     new XAttribute("numberMatched", ""), new XAttribute("numberReturned", ""),
                     new XAttribute("startIndex", ""), new XAttribute("endIndex", ""),
                     new XAttribute(XNamespace.Xmlns + "xsi", nsXsi),
@@ -616,6 +625,25 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             changelogRoot.Add(new XElement(nsChlogf + "transactions", new XAttribute("service", "WFS"),
                 new XAttribute("version", "2.0.0")));
             return changelogRoot;
+        }
+
+        /// <summary>
+        /// return timeStamp in format "2020-02-14T14:02:27.41+01:00" independent of CultureInfo
+        /// </summary>
+        /// <param name="cultureInfoName"></param>
+        /// <returns></returns>
+        private static string GetTimestamp(string cultureInfoName = "")
+        {
+            // return  in format timeStamp="2020-02-14T14:02:27.41+01:00"
+            System.Globalization.DateTimeFormatInfo dateTimeFormatInfo = new DateTimeFormatInfo();
+            CultureInfo culture = CultureInfo.CreateSpecificCulture(cultureInfoName); // InvariantCulture as default
+            dateTimeFormatInfo = culture.DateTimeFormat;
+            dateTimeFormatInfo.LongTimePattern = "THH:mm:ss.ffzzz"; // T15:31:25.51+01:00
+            dateTimeFormatInfo.ShortDatePattern = "yyyy-MM-dd";
+
+            var dateTtime = DateTime.Now.ToString(culture);
+            var timeStamp = dateTtime.Replace(" ", ""); // remove space from "2020-02-14 T14:02:27.41+01:00"
+            return timeStamp;
         }
 
         private bool CheckChangelogHasFeatures(XElement changeLog)

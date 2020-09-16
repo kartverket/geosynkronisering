@@ -12,12 +12,22 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
     {
         public CapabilitiesDataBuilder(string providerUrl, string userName, string password)
         {
-            Console.WriteLine("SecurityProtocol:" + System.Net.ServicePointManager.SecurityProtocol.ToString());
+            //Console.WriteLine("SecurityProtocol:" + System.Net.ServicePointManager.SecurityProtocol.ToString());
             //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; // Use TLS 1.2 as default
             //Console.WriteLine("SecurityProtocol after setting TLS 1.2:" + System.Net.ServicePointManager.SecurityProtocol.ToString());
 
-            var client = new WebFeatureServiceReplicationPortClient();
-
+            // Fix for running in .net Core, cannot read  <system.serviceModel>
+            var binding = new System.ServiceModel.BasicHttpsBinding
+            {
+                Security =
+                {
+                    Mode = System.ServiceModel.BasicHttpsSecurityMode.Transport,
+                    Transport = {ClientCredentialType = System.ServiceModel.HttpClientCredentialType.Basic}
+                }
+            };
+            var client = new WebFeatureServiceReplicationPortClient(binding,
+                    new System.ServiceModel.EndpointAddress(providerUrl));
+            
             if (client.ClientCredentials != null)
             {
                 client.ClientCredentials.UserName.UserName = userName;
@@ -27,15 +37,18 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
             client.Endpoint.Address = new EndpointAddress(providerUrl);
 
             ProviderDatasets = new BindingList<Dataset>();
+            ProviderDatasetsList = new List<Dataset>();
 
             foreach (var dataset in ReadGetCapabilities(client))
             {
                 ProviderDatasets.Add(dataset);
+                ProviderDatasetsList.Add(dataset);
             }
 
         }
 
         public IBindingList ProviderDatasets { get; private set; }
+        public List<Dataset> ProviderDatasetsList { get; private set; }
 
 
         public static IEnumerable<Dataset> ReadGetCapabilities(WebFeatureServiceReplicationPort client)

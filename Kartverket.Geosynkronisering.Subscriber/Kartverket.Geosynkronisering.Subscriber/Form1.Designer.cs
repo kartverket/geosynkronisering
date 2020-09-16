@@ -201,7 +201,8 @@
             // 
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel});
+            this.toolStripStatusLabel,
+            this.toolStripProgressBar1});
             this.statusStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.statusStrip1.Location = new System.Drawing.Point(0, 690);
             this.statusStrip1.Name = "statusStrip1";
@@ -437,7 +438,6 @@
             this.dgDataset.Name = "dgDataset";
             this.dgDataset.Size = new System.Drawing.Size(1056, 623);
             this.dgDataset.TabIndex = 1;
-            //this.dgDataset.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgDataset_CellFormatting);
             // 
             // tabPage4
             // 
@@ -634,7 +634,7 @@
         private System.Windows.Forms.Button btnGetProviderDatasets;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox textBoxPassword;
-        private System.Windows.Forms.TextBox textBoxUserName;        
+        private System.Windows.Forms.TextBox textBoxUserName;
     }
 }
 

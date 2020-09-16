@@ -40,6 +40,11 @@ namespace Kartverket.Geosynkronisering.Subscriber
             return SubscriberDatasetManager.GetListOfDatasetIDs();
         }
 
+        public static Dataset GetDataset(int datasetId)
+        {
+            return SubscriberDatasetManager.GetDataset(datasetId);
+        }
+
         public static List<Dataset> GetSupportedDatasetsAll()
         {
             // TODO: Check that username and password is NOT returned
@@ -78,16 +83,16 @@ namespace Kartverket.Geosynkronisering.Subscriber
             var synchController = new SynchController();
             try
             {
-                Console.Out.WriteLine(" Start DistributorActive: " + url);
+                Console.Out.WriteLine(" Start IsProviderActive: " + url);
                 var sTransactionSummary = GetTransactionSummary(synchController);
                 // 
                 var responseDistributor = synchController.GetCapabilitiesProviderDataset(url, userName, password);
-                Console.Out.WriteLine(" Finished DistributorActive: " + url);
+                Console.Out.WriteLine(" Finished IsProviderActive: " + url);
                 return responseDistributor.Count > 0;
             }
             catch (Exception e)
             {
-                var sErr = "Exception istributorActive: " + url + ", Error desc: " + e.Message;
+                var sErr = "Exception IsProviderActive: " + url + ", Error desc: " + e.Message;
                 Console.Out.WriteLine(sErr);
                 return false;
                 //throw;

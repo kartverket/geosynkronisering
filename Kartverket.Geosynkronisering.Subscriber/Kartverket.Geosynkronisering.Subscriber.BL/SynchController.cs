@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.Xml.Linq;
 using Kartverket.GeosyncWCF;
 using Kartverket.Geosynkronisering.Subscriber.BL.SchemaMapping;
@@ -93,11 +95,23 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         public static WebFeatureServiceReplicationPortClient buildClient(Dataset dataset)
         {
-            Console.WriteLine("SecurityProtocol:" + System.Net.ServicePointManager.SecurityProtocol.ToString());
+            //Console.WriteLine("SecurityProtocol:" + System.Net.ServicePointManager.SecurityProtocol.ToString());
             //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; // Use TLS 1.2 as default
             //Console.WriteLine("SecurityProtocol after setting TLS 1.2:" + System.Net.ServicePointManager.SecurityProtocol.ToString());
 
-            var client = new WebFeatureServiceReplicationPortClient();
+
+            // Fix for running in .net Core, cannot read  <system.serviceModel>
+            var binding = new System.ServiceModel.BasicHttpsBinding
+            {
+                Security =
+                {
+                    Mode = System.ServiceModel.BasicHttpsSecurityMode.Transport,
+                    Transport = {ClientCredentialType = System.ServiceModel.HttpClientCredentialType.Basic}
+                }
+            };
+            var client = new WebFeatureServiceReplicationPortClient(binding,
+                    new System.ServiceModel.EndpointAddress(dataset.SyncronizationUrl));
+
             client.ClientCredentials.UserName.UserName = dataset.UserName;
             client.ClientCredentials.UserName.Password = dataset.Password;
             client.Endpoint.Address = new System.ServiceModel.EndpointAddress(dataset.SyncronizationUrl);
@@ -157,17 +171,17 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 Logger.Info("GetChangelog downloaduri: " + downloaduri);
 
                 var changelogDir = string.IsNullOrEmpty(dataset.ChangelogDirectory)
-                    ? Environment.GetEnvironmentVariable("TEMP")
-                    : dataset.ChangelogDirectory;
+                    ? Path.GetTempPath()
+                    : dataset.ChangelogDirectory.TrimEnd(Path.DirectorySeparatorChar);
 #if (NOT_FTP)
-                string fileName = changelogDir + @"\" + changelogid + "_Changelog.xml";
+                string fileName = Path.Combine(changelogDir, changelogid + "_Changelog.xml");
 #else
                 CreateFolderIfMissing(changelogDir);
                 const string ftpPath = "abonnent";
-                CreateFolderIfMissing(changelogDir + @"\" + ftpPath);
+                CreateFolderIfMissing(Path.Combine(changelogDir, ftpPath));
                 // Create the abonnent folder if missing               
 
-                var fileName = changelogDir + @"\" + ftpPath + @"\" + Path.GetFileName(downloaduri);
+                var fileName = Path.Combine(changelogDir, ftpPath, Path.GetFileName(downloaduri));
 #endif
 
                 downloadController = new DownloadController {ChangelogFilename = fileName};
@@ -316,20 +330,20 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 // To set the progressbar to complete / finished
                 OnOrderProcessingChange(int.MaxValue);
 
-                OnNewSynchMilestoneReached("Synch completed");
+                OnNewSynchMilestoneReachedAsync("Synch completed");
 
 
             }
             catch (WebException webEx)
             {
                 Logger.Error(webEx, "DoSynchronization WebException:");
-                throw new Exception(webEx.Message);
+                throw;
             }
             catch (Exception ex)
             {
                 Logger.Error(ex, "DoSynchronization Exception:");
                 OnUpdateLogList(ex.Message);
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
@@ -366,7 +380,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             else
             {
                 changeLogId = dataset.AbortedChangelogId;
-                OnNewSynchMilestoneReached("Found changelogId " + dataset.AbortedChangelogId +
+                OnNewSynchMilestoneReachedAsync("Found changelogId " + dataset.AbortedChangelogId +
                                            ". Querying for status.");
             }
 
@@ -389,6 +403,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 fileList = ChangeLogMapper(fileList, datasetId);
             }
+
+            // 20200622-Leg: Estimate of number of orders
+            long totalNumberOfOrders = fileList.Count;
+            //totalNumberOfOrders = this.TotalNumberOfOrders;
+            OnOrderProcessingStart(totalNumberOfOrders);
 
             LoopChangeLog(fileList, dataset, datasetId, progressCounter, downloadController.ChangelogFilename, 0);
 
@@ -423,29 +442,29 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         private static int ExtractNumber(string a)
         {
-            var aFileArray = a.Split('\\');
+            var aFileArray = a.Split(Path.DirectorySeparatorChar);
             var aFile = aFileArray[aFileArray.Length - 1];
             return int.Parse(aFile.Substring(0, aFile.IndexOf('_')));
         }
 
         private long PrepareForOrder(int datasetId)
         {
-            OnNewSynchMilestoneReached("GetLastIndexFromProvider");
+            OnNewSynchMilestoneReachedAsync("GetLastIndexFromProvider");
 
             var lastChangeIndexProvider = GetLastIndexFromProvider(datasetId);
 
             var logMessage = "GetLastIndexFromProvider lastIndex: " + lastChangeIndexProvider;
             Logger.Info(logMessage);
             OnUpdateLogList(logMessage);
-            OnNewSynchMilestoneReached("GetLastIndexFromProvider OK");
+            OnNewSynchMilestoneReachedAsync("GetLastIndexFromProvider OK");
 
-            OnNewSynchMilestoneReached("GetLastIndexFromSubscriber");
+            OnNewSynchMilestoneReachedAsync("GetLastIndexFromSubscriber");
             var lastChangeIndexSubscriber = GetLastIndexFromSubscriber(datasetId);
 
             logMessage = "GetLastChangeIndexSubscriber lastIndex: " + lastChangeIndexSubscriber;
             Logger.Info(logMessage);
             OnUpdateLogList(logMessage);
-            OnNewSynchMilestoneReached("GetLastIndexFromSubscriber OK");
+            OnNewSynchMilestoneReachedAsync("GetLastIndexFromSubscriber OK");
 
             if (lastChangeIndexSubscriber >= lastChangeIndexProvider)
             {
@@ -454,11 +473,11 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                               lastChangeIndexSubscriber;
                 Logger.Info(logMessage);
                 OnUpdateLogList(logMessage); // Raise event to UI
-                OnNewSynchMilestoneReached(logMessage);
+                OnNewSynchMilestoneReachedAsync(logMessage);
                 return 0;
             }
 
-            OnNewSynchMilestoneReached("Order Changelog. Wait...");
+            OnNewSynchMilestoneReachedAsync("Order Changelog. Wait...");
 
             return lastChangeIndexProvider;
         }
@@ -560,7 +579,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                     changeLogStatus = GetChangelogStatusResponse(datasetId, changeLogId);
                 }
                 if (changeLogStatus == ChangelogStatusType.finished)
-                    OnNewSynchMilestoneReached("ChangeLog from Provider ready for download.");
+                    OnNewSynchMilestoneReachedAsync("ChangeLog from Provider ready for download.");
                 else
                 {
                     switch (changeLogStatus)
@@ -613,26 +632,18 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         private bool DoWfsTransaction(XElement changeLog, int datasetId, int passNr)
         {
-            try
-            {
                 // Build wfs-t transaction from changelog, and do the transaction   
                 var wfsController = new WfsController();
 
                 // TODO: This is a little dirty, but we can reuse the events of the SynchController parent for UI feedback
                 wfsController.ParentSynchController = this;
 
-                OnNewSynchMilestoneReached("DoWfsTransactions starting...");
+                OnNewSynchMilestoneReachedAsync("DoWfsTransactions starting...");
 
                 if (!wfsController.DoWfsTransactions(changeLog, datasetId)) return false;
                 Logger.Info("DoWfsTransactions OK, pass {0}", passNr);
                 OnUpdateLogList(string.Format("DoWfsTransactions OK, pass {0}", passNr));
                 return true;
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-
         }
 
         private static long GetAbortedEndIndex(XElement changeLog)

@@ -1,7 +1,5 @@
 # Geosynkronisering
 
 ## Downloads
-https://github.com/kartverket/geosynkronisering/wiki/Download
+https://github.com/kartverket/geosynkronisering/releases
 
-## Alternative subscriber for non-windows
-https://github.com/kartverket/CORESubscriber
