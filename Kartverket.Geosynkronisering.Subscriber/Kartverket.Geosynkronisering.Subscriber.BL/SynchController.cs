@@ -189,7 +189,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 #endif
 
                 downloadController = new DownloadController {ChangelogFilename = fileName};
-                downloadController.DownloadChangelog(downloaduri, dataset);
+                downloadController.DownloadChangelog(downloaduri, dataset);               
             }
             catch (WebException webEx)
             {
