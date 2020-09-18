@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -39,6 +40,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         public static readonly Logger Logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         public TransactionSummary TransactionsSummary;
+
+        private static int _timeout = -1;
+        private int timeout { get { return _timeout == -1 ? GetTimeout() : _timeout; } }
 
         public IBindingList GetCapabilitiesProviderDataset(string url, string UserName, string Password)
         {
@@ -563,19 +567,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 var changeLogStatus = GetChangelogStatusResponse(datasetId, changeLogId);
 
-                var starttid = DateTime.Now;
-                var elapsedTicks = DateTime.Now.Ticks - starttid.Ticks;
-
-                var elapsedSpan = new TimeSpan(elapsedTicks);
-                var timeout = 15;
-                //timeout = 50; // TODO: Fix for Norkart Provider,
+                var stopWatch = Stopwatch.StartNew();                
 
                 while ((changeLogStatus == ChangelogStatusType.queued || changeLogStatus == ChangelogStatusType.working) &&
-                       elapsedSpan.Minutes < timeout)
+                       stopWatch.Elapsed.TotalMinutes < timeout)
                 {
                     System.Threading.Thread.Sleep(3000);
-                    elapsedTicks = DateTime.Now.Ticks - starttid.Ticks;
-                    elapsedSpan = new TimeSpan(elapsedTicks);
                     changeLogStatus = GetChangelogStatusResponse(datasetId, changeLogId);
                 }
                 if (changeLogStatus == ChangelogStatusType.finished)
@@ -594,7 +591,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             throw new IOException("Recieved ChangelogStatus == failed from provider");
                         default:
                             Logger.Info("Timeout");
-                            throw new IOException("Timed out waiting for ChangelogStatus == finished from provider");
+                            throw new TimeoutException($"Timed out waiting for ChangelogStatus == finished from provider. Try increasing the TimeOut-value in the .config-file. Current value: {timeout} minutes");
                     }
                 }
             }
@@ -605,6 +602,18 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         "TEST"));
                 throw new IOException(ex.Message);
             }
+        }
+
+        private static int GetTimeout()
+        {
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+
+            var settings = config.GetSectionGroup("userSettings");
+            var section = settings.Sections["Kartverket.Geosynkronisering.Subscriber.Properties.Subscriber"] as ClientSettingsSection;
+
+            _timeout = int.Parse(section.Settings.Get("TimeOut").Value.ValueXml.InnerText);
+
+            return _timeout;
         }
 
         private static List<string> ChangeLogMapper(IEnumerable<string> fileList, int datasetId)
