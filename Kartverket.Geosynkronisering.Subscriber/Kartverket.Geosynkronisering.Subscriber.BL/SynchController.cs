@@ -567,17 +567,12 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             {
                 var changeLogStatus = GetChangelogStatusResponse(datasetId, changeLogId);
 
-                var starttid = DateTime.Now;
-                var elapsedTicks = DateTime.Now.Ticks - starttid.Ticks;
-
-                var elapsedSpan = new TimeSpan(elapsedTicks);                
+                var stopWatch = Stopwatch.StartNew();                
 
                 while ((changeLogStatus == ChangelogStatusType.queued || changeLogStatus == ChangelogStatusType.working) &&
-                       elapsedSpan.Minutes < timeout)
+                       stopWatch.Elapsed.TotalMinutes < timeout)
                 {
                     System.Threading.Thread.Sleep(3000);
-                    elapsedTicks = DateTime.Now.Ticks - starttid.Ticks;
-                    elapsedSpan = new TimeSpan(elapsedTicks);
                     changeLogStatus = GetChangelogStatusResponse(datasetId, changeLogId);
                 }
                 if (changeLogStatus == ChangelogStatusType.finished)
@@ -596,7 +591,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                             throw new IOException("Recieved ChangelogStatus == failed from provider");
                         default:
                             Logger.Info("Timeout");
-                            throw new IOException("Timed out waiting for ChangelogStatus == finished from provider");
+                            throw new TimeoutException($"Timed out waiting for ChangelogStatus == finished from provider. Try increasing the TimeOut-value in the .config-file. Current value: {timeout} minutes");
                     }
                 }
             }
