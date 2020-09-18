@@ -61,7 +61,7 @@ See https://github.com/dotnet/docs/blob/master/docs/core/rid-catalog.md#using-ri
 ```
 git clone https://github.com/kartverket/geosynkronisering.git
 
-cd Kartverket.Geosynkronisering.Subscriber/Test_Subscriber_NetCore
+cd geosynkronisering/Kartverket.Geosynkronisering.Subscriber/Test_Subscriber_NetCore
 
 dotnet publish -c Release --self-contained -r win10-x64
 ```
@@ -71,7 +71,7 @@ dotnet publish -c Release --self-contained -r win10-x64
 ```
 git clone https://github.com/kartverket/geosynkronisering.git
 
-cd Kartverket.Geosynkronisering.Subscriber/Test_Subscriber_NetCore
+cd geosynkronisering/Kartverket.Geosynkronisering.Subscriber/Test_Subscriber_NetCore
 
 dotnet publish -c Release --self-contained -r ubuntu-x64
 ```
@@ -81,7 +81,7 @@ dotnet publish -c Release --self-contained -r ubuntu-x64
 ```
 git clone https://github.com/kartverket/geosynkronisering.git
 
-cd Kartverket.Geosynkronisering.Subscriber/Test_Subscriber_NetCore
+cd geosynkronisering/Kartverket.Geosynkronisering.Subscriber/Test_Subscriber_NetCore
 
 dotnet publish -c Release --self-contained -r osx-x64
 ```
