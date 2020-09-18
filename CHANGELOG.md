@@ -2,6 +2,8 @@
 
 ## 1.2.3
 
+[Commits](https://github.com/kartverket/geosynkronisering/compare/e48b50a6d658...3be56f8320ff)
+
 ### Provider Version 1.2.3
 Updated to .NET 4.7.2.
 Fixed timeStamp error.
@@ -19,6 +21,8 @@ Updated and replaced some nuget packages.
 Fixed events for .NET core version.
 
 ## 1.2
+
+[Commits](https://github.com/kartverket/geosynkronisering/compare/1.1...1.2)
 
 ### Nye metoder:
 GetPrecision: Returnerer antall desimaler, toleransen og EPSG-koden til koordinatene for gjeldende datasett
