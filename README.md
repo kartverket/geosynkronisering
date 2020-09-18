@@ -54,7 +54,7 @@ https://www.microsoft.com/net/core
 
 ### Publish
 
-See https://github.com/dotnet/docs/blob/master/docs/core/rid-catalog.md#using-rids for RID (bold in examples)
+See https://github.com/dotnet/docs/blob/master/docs/core/rid-catalog.md#using-rids for RID
 
 #### Windows 10 64bit
 
@@ -63,7 +63,7 @@ git clone https://github.com/kartverket/geosynkronisering.git
 
 cd Kartverket.Geosynkronisering.Subscriber/Test_Subscriber_NetCore
 
-dotnet publish -c Release --self-contained -r **win10-x64**
+dotnet publish -c Release --self-contained -r win10-x64
 ```
 
 #### Ubuntu
@@ -73,7 +73,7 @@ git clone https://github.com/kartverket/geosynkronisering.git
 
 cd Kartverket.Geosynkronisering.Subscriber/Test_Subscriber_NetCore
 
-dotnet publish -c Release --self-contained -r **ubuntu-x64**
+dotnet publish -c Release --self-contained -r ubuntu-x64
 ```
 
 #### Mac
@@ -83,5 +83,5 @@ git clone https://github.com/kartverket/geosynkronisering.git
 
 cd Kartverket.Geosynkronisering.Subscriber/Test_Subscriber_NetCore
 
-dotnet publish -c Release --self-contained -r **osx-x64**
+dotnet publish -c Release --self-contained -r osx-x64
 ```
