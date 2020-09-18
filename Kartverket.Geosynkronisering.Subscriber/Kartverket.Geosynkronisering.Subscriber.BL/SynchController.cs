@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -39,6 +40,9 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         public static readonly Logger Logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         public TransactionSummary TransactionsSummary;
+
+        private static int _timeout = -1;
+        private int timeout { get { return _timeout == -1 ? GetTimeout() : _timeout; } }
 
         public IBindingList GetCapabilitiesProviderDataset(string url, string UserName, string Password)
         {
@@ -566,9 +570,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                 var starttid = DateTime.Now;
                 var elapsedTicks = DateTime.Now.Ticks - starttid.Ticks;
 
-                var elapsedSpan = new TimeSpan(elapsedTicks);
-                var timeout = 15;
-                //timeout = 50; // TODO: Fix for Norkart Provider,
+                var elapsedSpan = new TimeSpan(elapsedTicks);                
 
                 while ((changeLogStatus == ChangelogStatusType.queued || changeLogStatus == ChangelogStatusType.working) &&
                        elapsedSpan.Minutes < timeout)
@@ -605,6 +607,18 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
                         "TEST"));
                 throw new IOException(ex.Message);
             }
+        }
+
+        private static int GetTimeout()
+        {
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+
+            var settings = config.GetSectionGroup("userSettings");
+            var section = settings.Sections["Kartverket.Geosynkronisering.Subscriber.Properties.Subscriber"] as ClientSettingsSection;
+
+            _timeout = int.Parse(section.Settings.Get("TimeOut").Value.ValueXml.InnerText);
+
+            return _timeout;
         }
 
         private static List<string> ChangeLogMapper(IEnumerable<string> fileList, int datasetId)
