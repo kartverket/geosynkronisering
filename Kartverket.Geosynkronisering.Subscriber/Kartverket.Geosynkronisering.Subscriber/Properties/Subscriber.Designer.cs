@@ -12,7 +12,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.7.0.0")]
     internal sealed partial class Subscriber : global::System.Configuration.ApplicationSettingsBase {
         
         private static Subscriber defaultInstance = ((Subscriber)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Subscriber())));
@@ -44,6 +44,18 @@ namespace Kartverket.Geosynkronisering.Subscriber.Properties {
             }
             set {
                 this["DefaultServerURL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public int TimeOut {
+            get {
+                return ((int)(this["TimeOut"]));
+            }
+            set {
+                this["TimeOut"] = value;
             }
         }
     }
