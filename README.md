@@ -6,7 +6,7 @@
 
 [Downloads](https://github.com/kartverket/geosynkronisering/releases)
 
-[Documentation for alternative subscriber for non-windows](https://github.com/kartverket/geosynkronisering/tree/fixDotnetstandard/Kartverket.Geosynkronisering.Subscriber/Test_Subscriber_NetCore)
+[Documentation for alternative subscriber for non-windows](https://github.com/kartverket/geosynkronisering/tree/master/Kartverket.Geosynkronisering.Subscriber/Test_Subscriber_NetCore)
 
 [Deprecated version](https://github.com/kartverket/CORESubscriber)
 

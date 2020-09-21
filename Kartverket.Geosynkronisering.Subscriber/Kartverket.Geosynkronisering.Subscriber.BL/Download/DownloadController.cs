@@ -36,7 +36,30 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         public bool DownloadChangelog(string downloadUri, Dataset dataset)
         {
             var webClient = new WebClient { Credentials = new NetworkCredential(dataset.UserName, dataset.Password) };
-            webClient.DownloadFile(downloadUri, ChangelogFilename);
+
+            var tries = 0;
+
+            var waitMilliseconds = 300;
+
+            while (tries < 10)
+            {
+                try
+                {
+                    webClient.DownloadFile(downloadUri, ChangelogFilename);
+                    break;
+                }
+                catch (Exception e)
+                {
+                    System.Threading.Thread.Sleep(waitMilliseconds);
+
+                    waitMilliseconds *= 2;
+
+                    tries += 1;
+
+                    if (tries == 9) throw;
+                }
+            }
+            
             if (File.Exists(ChangelogFilename))
             {
                 UnpackZipFile(ChangelogFilename);
