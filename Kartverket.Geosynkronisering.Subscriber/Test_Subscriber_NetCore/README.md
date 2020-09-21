@@ -85,7 +85,7 @@ Remove dataset(s)
 
 ### Setting fields in database
 ```
-Subscriber_NetCore.exe $datasetId1 $datasetId2 ...  $fieldName1 $fieldValue1 $fieldName2 $fieldValue2 ...
+Subscriber_NetCore.exe set $datasetId1 $datasetId2 ...  $fieldName1 $fieldValue1 $fieldName2 $fieldValue2 ...
 ```
 Set fields for dataset(s) in sqlite database, e.g. path for field ChangelogDirectory
 
