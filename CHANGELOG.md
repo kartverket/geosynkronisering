@@ -21,6 +21,10 @@ Changed subscriber database to SQLite from SQL server Compact.
 Updated and replaced some nuget packages.
 Fixed events for .NET core version.
 
+### Utviklingsverktøy:
+Visual Studio 2019
+.NET Framevork 4.7.2 / .NET Standard 2.0 / .NET Core 2.2
+
 ## 1.2
 
 [Commits](https://github.com/kartverket/geosynkronisering/compare/1.1...1.2)
