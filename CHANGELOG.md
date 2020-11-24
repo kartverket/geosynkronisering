@@ -6,9 +6,13 @@
 
 ### Provider Version 1.2.3
 Updated to .NET 4.7.2.
+
 Fixed timeStamp error.
+
 Fixed regression error introduced in Commit 59bc728) in BuildChangeLogFile.
+
 nuget DotNetZip updated to v.1.13.4.
+
 Feedback report from subscriber fixed for Provider in UX and by mail. Feedback report log on seperate file.
 
 ### Subscriber Version 1.2.3
