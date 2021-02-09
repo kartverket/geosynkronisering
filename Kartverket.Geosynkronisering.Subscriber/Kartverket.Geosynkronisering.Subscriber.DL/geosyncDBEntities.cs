@@ -6,11 +6,14 @@ using System.IO;
 using System.Linq;
 using Dapper;
 using Dapper.Contrib.Extensions;
+using NLog;
 
 namespace Kartverket.Geosynkronisering.Subscriber.DL
 {
     public class GeosyncDbEntities : IDisposable
     {
+        public static readonly Logger Logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
+
         public List<Dataset> Dataset { get; set; }
 
         public static string ConnectionString
@@ -29,7 +32,16 @@ namespace Kartverket.Geosynkronisering.Subscriber.DL
 
         private static void CreateDatabaseIfNotExists()
         {
+            // test
+            var assemblyPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Logger.Info("CreateDatabaseIfNotExists-assemblyPath:{0}", assemblyPath);
+            
+            // Get path to correct folder if run as a service:
+            var basePath = AppDomain.CurrentDomain.BaseDirectory;
+            Logger.Info("CreateDatabaseIfNotExists-BaseDirectory:{0}", basePath);
+
             var filePath = ConnectionString.Split(';')[0].Split('=')[1];
+            Logger.Info("CreateDatabaseIfNotExists-sqlite db filepath:{0} ConnectionString:{1}", filePath, ConnectionString );
 
             using (var Connection = new SQLiteConnection(ConnectionString))
                 if (!File.Exists(filePath))

@@ -193,7 +193,7 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
             }
             catch (WebException webEx)
             {
-                Logger.Error("GetChangelog failed:", webEx);
+                Logger.Error(webEx, "GetChangelog failed:");
                 throw;
             }
             catch (Exception ex)
@@ -606,12 +606,42 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
         private static int GetTimeout()
         {
-            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+            Configuration config;
+            try
+            {
+                config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+            }
+            catch (Exception e)
+            {
+                // Get path to correct folder if run as part of a IIS service:
+                var basePath = AppDomain.CurrentDomain.BaseDirectory;
+                Logger.Info("GetTimeout-BaseDirectory:{0}", basePath);
+                var applicationName = "Kartverket.Geosynkronisering.Subscriber.exe"; //  Kartverket.Geosynkronisering.Subscriber.exe
+
+                var exePath = System.IO.Path.Combine(
+                    basePath, "bin", applicationName);
+                Logger.Info("GetTimeout-exePath:{0}", exePath);
+                try
+                {
+                    config = ConfigurationManager.OpenExeConfiguration(exePath);
+                }
+                catch (Exception exception)
+                {
+                    _timeout = 15;
+                    Logger.Info("GetTimeout-OpenExeConfiguration failed, use default value.Timeout:{ 0}", _timeout);
+                    return _timeout;
+                }
+                
+                Logger.Info("GetTimeout-OpenExeConfiguration OK using ConfigurationManager.OpenExeConfiguration(exePath).");
+            }
+
+            //var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
 
             var settings = config.GetSectionGroup("userSettings");
             var section = settings.Sections["Kartverket.Geosynkronisering.Subscriber.Properties.Subscriber"] as ClientSettingsSection;
 
             _timeout = int.Parse(section.Settings.Get("TimeOut").Value.ValueXml.InnerText);
+            Logger.Info("GetTimeout Timeout:{0}", _timeout);
 
             return _timeout;
         }
