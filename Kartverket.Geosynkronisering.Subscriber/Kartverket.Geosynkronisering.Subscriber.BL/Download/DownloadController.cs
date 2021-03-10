@@ -88,7 +88,15 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
         {
             try
             {
-                using (var zip = ZipFile.Read(zipfile, new ReadOptions { Encoding = Encoding.UTF8 }))
+                // Check encoding to fix filanames for "ø", e.g. Høydekurve.
+                Encoding encoding = Encoding.UTF8;
+                if (CheckEncoding(zipfile, encoding))
+                {
+                    encoding = null; // not UTF-8, use default encoding for unpacking zip-fle
+                }
+
+                // using (var zip = ZipFile.Read(zipfile, new ReadOptions { Encoding = Encoding.UTF8 }))
+                using (var zip = ZipFile.Read(zipfile, new ReadOptions { Encoding = encoding }))
                 {
                     zip.ToList().ForEach(entry =>
                     {
@@ -107,5 +115,35 @@ namespace Kartverket.Geosynkronisering.Subscriber.BL
 
             return true;
         }
+
+        /// <summary>
+        /// Check the filenames in a zip-file for encoding
+        /// </summary>
+        /// <param name="zipfile"></param>
+        /// <param name="encoding"></param>
+        /// <returns>true if encoding error, false if OK</returns>
+        private static bool CheckEncoding(string zipfile, Encoding encoding)
+        {
+            var encodingError = false;
+            using (var zip = ZipFile.Read(zipfile, new ReadOptions { Encoding = encoding }))
+            {
+                zip.ToList().ForEach(entry =>
+                {
+                    if (!encodingError)
+                    {
+                        var fileName = Path.GetFileName(entry.FileName);
+                        if (fileName != string.Empty) entry.FileName = fileName;
+
+                        if (Encoding.UTF8.GetChars(Encoding.UTF8.GetBytes(entry.FileName)).Any(ch => ch == 65533))
+                        {
+                            encodingError = true;
+                        }
+                    }
+                });
+
+            }
+            return encodingError;
+        }
+
     }
 }
