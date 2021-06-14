@@ -99,6 +99,7 @@ function nameClassifier(name, separator)
 		<ul class="ItemTitle">
 			<li onClick="parent.toggleItem('Attributes');" id="AttributesTitle">Attributes</li>
 			<li onClick="parent.toggleItem('TaggedVal');" id="TaggedValTitle">Tagged Values</li>
+			<li onClick="parent.toggleItem('CustomProperties');" id="CustomPropertiesTitle">Advanced</li>
 		</ul>
 <div class="ItemBody" id="AttributesTable">
 	<table border="0" cellspacing="0" cellpadding="0" class="Table">
@@ -155,7 +156,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;isPrivate</strong>
+					<i>Public <a href="../EA6/EA452.htm">ScopedName</a></i><br /><strong>&nbsp;&nbsp;returnFeatureTypes [1..*]</strong>
 				</td>
 			</tr>
 			<tr>
@@ -169,7 +170,7 @@ function nameClassifier(name, separator)
 						</tr>
 						<tr id="DetailsImageAttributes1264_01" style="display: none;">
 							<td width="75"><i>Initial:</i></td>
-							<td>#false</td>
+							<td></td>
 						</tr>
 						<tr id="DetailsImageAttributes1264_02" style="display: none;">
 							<td width="75"><i>Stereotype: </i></td>
@@ -251,7 +252,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public <a href="../EA6/EA452.htm">ScopedName</a></i><br /><strong>&nbsp;&nbsp;returnFeatureTypes [1..*]</strong>
+					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;isPrivate</strong>
 				</td>
 			</tr>
 			<tr>
@@ -265,7 +266,7 @@ function nameClassifier(name, separator)
 						</tr>
 						<tr id="DetailsImageAttributes1266_01" style="display: none;">
 							<td width="75"><i>Initial:</i></td>
-							<td></td>
+							<td>#false</td>
 						</tr>
 						<tr id="DetailsImageAttributes1266_02" style="display: none;">
 							<td width="75"><i>Stereotype: </i></td>
@@ -320,7 +321,20 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>
 	</table>
-</div>	</div>
+</div>		<div class="ItemBody" id="CustomPropertiesTable">
+			<table border="0" cellspacing="0" cellpadding="0" class="Table">
+				<tr>
+					<td width="30%" class="TableHeading">Property</td>
+					<td width="70%" class="TableHeading">Value</td>
+				</tr>
+			<tr>
+				<td width="30%" class="TableRow">isFinalSpecialization:</td>
+				<td width="70%" class="TableRow">0</td>
+			</tr>
+
+
+			</table>
+		</div>	</div>
 <div class="pageFooter"></div>
  
 </body>

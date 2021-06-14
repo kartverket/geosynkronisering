@@ -99,6 +99,7 @@ function nameClassifier(name, separator)
 		<ul class="ItemTitle">
 			<li onClick="parent.toggleItem('Attributes');" id="AttributesTitle">Attributes</li>
 			<li onClick="parent.toggleItem('TaggedVal');" id="TaggedValTitle">Tagged Values</li>
+			<li onClick="parent.toggleItem('CustomProperties');" id="CustomPropertiesTitle">Advanced</li>
 		</ul>
 <div class="ItemBody" id="AttributesTable">
 	<table border="0" cellspacing="0" cellpadding="0" class="Table">
@@ -107,7 +108,7 @@ function nameClassifier(name, separator)
 		</tr>
 						<tr>
 				<td width="100%" class="TableRow">
-					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsAdHocQuery</strong>
+					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsQuery</strong>
 				</td>
 			</tr>
 			<tr>
@@ -155,7 +156,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsExtendedOperators</strong>
+					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsAdHocQuery</strong>
 				</td>
 			</tr>
 			<tr>
@@ -251,7 +252,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsMinSpatialFilter</strong>
+					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsMinStandardFilter</strong>
 				</td>
 			</tr>
 			<tr>
@@ -299,7 +300,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsMinStandardFilter</strong>
+					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsStandardFilter</strong>
 				</td>
 			</tr>
 			<tr>
@@ -347,7 +348,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsMinTemporalFilter</strong>
+					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsMinSpatialFilter</strong>
 				</td>
 			</tr>
 			<tr>
@@ -395,7 +396,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsQuery</strong>
+					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsSpatialFilter</strong>
 				</td>
 			</tr>
 			<tr>
@@ -443,7 +444,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsSorting</strong>
+					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsMinTemporalFilter</strong>
 				</td>
 			</tr>
 			<tr>
@@ -491,7 +492,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsSpatialFilter</strong>
+					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsTemporalFilter</strong>
 				</td>
 			</tr>
 			<tr>
@@ -539,7 +540,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsStandardFilter</strong>
+					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsVersionNav</strong>
 				</td>
 			</tr>
 			<tr>
@@ -587,7 +588,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsTemporalFilter</strong>
+					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsSorting</strong>
 				</td>
 			</tr>
 			<tr>
@@ -635,7 +636,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsVersionNav</strong>
+					<i>Public Boolean</i><br /><strong>&nbsp;&nbsp;ImplementsExtendedOperators</strong>
 				</td>
 			</tr>
 			<tr>
@@ -704,7 +705,20 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>
 	</table>
-</div>	</div>
+</div>		<div class="ItemBody" id="CustomPropertiesTable">
+			<table border="0" cellspacing="0" cellpadding="0" class="Table">
+				<tr>
+					<td width="30%" class="TableHeading">Property</td>
+					<td width="70%" class="TableHeading">Value</td>
+				</tr>
+			<tr>
+				<td width="30%" class="TableRow">isFinalSpecialization:</td>
+				<td width="70%" class="TableRow">0</td>
+			</tr>
+
+
+			</table>
+		</div>	</div>
 <div class="pageFooter"></div>
  
 </body>

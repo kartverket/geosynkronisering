@@ -99,6 +99,7 @@ function nameClassifier(name, separator)
 		<ul class="ItemTitle">
 			<li onClick="parent.toggleItem('Attributes');" id="AttributesTitle">Attributes</li>
 			<li onClick="parent.toggleItem('TaggedVal');" id="TaggedValTitle">Tagged Values</li>
+			<li onClick="parent.toggleItem('CustomProperties');" id="CustomPropertiesTitle">Advanced</li>
 		</ul>
 <div class="ItemBody" id="AttributesTable">
 	<table border="0" cellspacing="0" cellpadding="0" class="Table">
@@ -155,7 +156,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;AnyInteracts</strong>
+					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;Before</strong>
 				</td>
 			</tr>
 			<tr>
@@ -203,7 +204,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;Before</strong>
+					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;Begins</strong>
 				</td>
 			</tr>
 			<tr>
@@ -251,7 +252,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;Begins</strong>
+					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;BegunBy</strong>
 				</td>
 			</tr>
 			<tr>
@@ -299,7 +300,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;BegunBy</strong>
+					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;TContains</strong>
 				</td>
 			</tr>
 			<tr>
@@ -395,7 +396,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;EndedBy</strong>
+					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;TEquals</strong>
 				</td>
 			</tr>
 			<tr>
@@ -443,7 +444,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;Meets</strong>
+					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;TOverlaps</strong>
 				</td>
 			</tr>
 			<tr>
@@ -491,7 +492,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;MetBy</strong>
+					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;Meets</strong>
 				</td>
 			</tr>
 			<tr>
@@ -587,7 +588,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;TContains</strong>
+					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;MetBy</strong>
 				</td>
 			</tr>
 			<tr>
@@ -635,7 +636,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;TEquals</strong>
+					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;EndedBy</strong>
 				</td>
 			</tr>
 			<tr>
@@ -683,7 +684,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;TOverlaps</strong>
+					<i>Public &lt;undefined&gt;</i><br /><strong>&nbsp;&nbsp;AnyInteracts</strong>
 				</td>
 			</tr>
 			<tr>
@@ -752,7 +753,20 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>
 	</table>
-</div>	</div>
+</div>		<div class="ItemBody" id="CustomPropertiesTable">
+			<table border="0" cellspacing="0" cellpadding="0" class="Table">
+				<tr>
+					<td width="30%" class="TableHeading">Property</td>
+					<td width="70%" class="TableHeading">Value</td>
+				</tr>
+			<tr>
+				<td width="30%" class="TableRow">isFinalSpecialization:</td>
+				<td width="70%" class="TableRow">0</td>
+			</tr>
+
+
+			</table>
+		</div>	</div>
 <div class="pageFooter"></div>
  
 </body>
