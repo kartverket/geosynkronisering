@@ -99,6 +99,7 @@ function nameClassifier(name, separator)
 		<ul class="ItemTitle">
 			<li onClick="parent.toggleItem('Attributes');" id="AttributesTitle">Attributes</li>
 			<li onClick="parent.toggleItem('TaggedVal');" id="TaggedValTitle">Tagged Values</li>
+			<li onClick="parent.toggleItem('CustomProperties');" id="CustomPropertiesTitle">Advanced</li>
 			<li onClick="parent.toggleItem('Links');" id="LinksTitle">Other Links</li>
 		</ul>
 <div class="ItemBody" id="AttributesTable">
@@ -108,7 +109,7 @@ function nameClassifier(name, separator)
 		</tr>
 						<tr>
 				<td width="100%" class="TableRow">
-					<i>Public <a href="../EA6/EA451.htm">CharacterString</a></i><br /><strong>&nbsp;&nbsp;inputFormat</strong>
+					<i>Public SC_CRS</i><br /><strong>&nbsp;&nbsp;srsName [0..1]</strong>
 				</td>
 			</tr>
 			<tr>
@@ -122,7 +123,7 @@ function nameClassifier(name, separator)
 						</tr>
 						<tr id="DetailsImageAttributes1290_01" style="display: none;">
 							<td width="75"><i>Initial:</i></td>
-							<td>"application/gml+xml; version=3.2"</td>
+							<td></td>
 						</tr>
 						<tr id="DetailsImageAttributes1290_02" style="display: none;">
 							<td width="75"><i>Stereotype: </i></td>
@@ -156,7 +157,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public SC_CRS</i><br /><strong>&nbsp;&nbsp;srsName [0..1]</strong>
+					<i>Public <a href="../EA6/EA451.htm">CharacterString</a></i><br /><strong>&nbsp;&nbsp;inputFormat</strong>
 				</td>
 			</tr>
 			<tr>
@@ -170,7 +171,7 @@ function nameClassifier(name, separator)
 						</tr>
 						<tr id="DetailsImageAttributes1291_01" style="display: none;">
 							<td width="75"><i>Initial:</i></td>
-							<td></td>
+							<td>"application/gml+xml; version=3.2"</td>
 						</tr>
 						<tr id="DetailsImageAttributes1291_02" style="display: none;">
 							<td width="75"><i>Stereotype: </i></td>
@@ -225,7 +226,20 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>
 	</table>
-</div>		<div class="ItemBody" id="LinksTable">
+</div>		<div class="ItemBody" id="CustomPropertiesTable">
+			<table border="0" cellspacing="0" cellpadding="0" class="Table">
+				<tr>
+					<td width="30%" class="TableHeading">Property</td>
+					<td width="70%" class="TableHeading">Value</td>
+				</tr>
+			<tr>
+				<td width="30%" class="TableRow">isFinalSpecialization:</td>
+				<td width="70%" class="TableRow">0</td>
+			</tr>
+
+
+			</table>
+		</div>		<div class="ItemBody" id="LinksTable">
 			<table align="center" border="0" cellspacing="0" cellpadding="0" class="Table">
 				<tr>
 					<td width="30%" class="TableHeading">Object</td>
@@ -242,14 +256,14 @@ function nameClassifier(name, separator)
 					<td width="40%" class="TableRow" valign="top">&nbsp;</td>
 				</tr>
 				<tr>
-					<td width="30%" class="TableRow" valign="top"><a href="EA313.htm">Insert</a></td>
+					<td width="30%" class="TableRow" valign="top"><a href="EA331.htm">Replace</a></td>
 					<td width="10%" class="TableRow" valign="top">Class</td>
 					<td width="10%" class="TableRow" valign="top">Generalization</td>
 					<td width="10%" class="TableRow" valign="top">From</td>
 					<td width="40%" class="TableRow" valign="top">&nbsp;</td>
 				</tr>
 				<tr>
-					<td width="30%" class="TableRow" valign="top"><a href="EA331.htm">Replace</a></td>
+					<td width="30%" class="TableRow" valign="top"><a href="EA313.htm">Insert</a></td>
 					<td width="10%" class="TableRow" valign="top">Class</td>
 					<td width="10%" class="TableRow" valign="top">Generalization</td>
 					<td width="10%" class="TableRow" valign="top">From</td>

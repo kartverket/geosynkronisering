@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Changelog</title>
+<title>Geosynkronisering::Changelog</title>
 <link href="../../../css/ea.css" rel="stylesheet" type="text/css" />
 <script>
 function initPage(src) {	
@@ -99,6 +99,7 @@ function nameClassifier(name, separator)
 	<div class="TableGroup" id="TableGroup">
 		<ul class="ItemTitle">
 			<li onClick="parent.toggleItem('Attributes');" id="AttributesTitle">Attributes</li>
+			<li onClick="parent.toggleItem('CustomProperties');" id="CustomPropertiesTitle">Advanced</li>
 			<li onClick="parent.toggleItem('Links');" id="LinksTitle">Other Links</li>
 		</ul>
 <div class="ItemBody" id="AttributesTable">
@@ -108,7 +109,7 @@ function nameClassifier(name, separator)
 		</tr>
 						<tr>
 				<td width="100%" class="TableRow">
-					<i>Public anyURI</i><br /><strong>&nbsp;&nbsp;downloadUri</strong>
+					<i>Public <a href="EA148.htm">ChangelogIdentification</a></i><br /><strong>&nbsp;&nbsp;id</strong>
 				</td>
 			</tr>
 			<tr>
@@ -157,7 +158,7 @@ function nameClassifier(name, separator)
 			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
 		</td>
 		<td>
-			adresse til nedlasting av endringsloggfil. Denne skal være i hht. applikasjonsskjema for endringsloggfil(ChangelogFile) og kan være pakket som zip fil og overføres vi FTP eller HTTP.&lt;br/&gt;
+			identifiserer endringsloggen&lt;br/&gt;
 		</td>
 	</tr>
 </table></div>
@@ -166,7 +167,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public integer</i><br /><strong>&nbsp;&nbsp;endIndex</strong>
+					<i>Public anyURI</i><br /><strong>&nbsp;&nbsp;downloadUri</strong>
 				</td>
 			</tr>
 			<tr>
@@ -215,7 +216,7 @@ function nameClassifier(name, separator)
 			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
 		</td>
 		<td>
-			nr som aktuell endringslogg slutter på&lt;br/&gt;
+			adresse til nedlasting av endringsloggfil. Denne skal være i hht. applikasjonsskjema for endringsloggfil(ChangelogFile) og kan være pakket som zip fil og overføres vi FTP eller HTTP.&lt;br/&gt;
 		</td>
 	</tr>
 </table></div>
@@ -224,7 +225,7 @@ function nameClassifier(name, separator)
 				</td>
 			</tr>			<tr>
 				<td width="100%" class="TableRow">
-					<i>Public <a href="EA148.htm">ChangelogIdentification</a></i><br /><strong>&nbsp;&nbsp;id</strong>
+					<i>Public integer</i><br /><strong>&nbsp;&nbsp;endIndex</strong>
 				</td>
 			</tr>
 			<tr>
@@ -273,7 +274,7 @@ function nameClassifier(name, separator)
 			<i>Notes: </i><span style="margin-left: .4cm;"> </span>
 		</td>
 		<td>
-			identifiserer endringsloggen&lt;br/&gt;
+			nr som aktuell endringslogg slutter på&lt;br/&gt;
 		</td>
 	</tr>
 </table></div>
@@ -283,7 +284,20 @@ function nameClassifier(name, separator)
 			</tr>
 	</table>
 </div>
-		<div class="ItemBody" id="LinksTable">
+		<div class="ItemBody" id="CustomPropertiesTable">
+			<table border="0" cellspacing="0" cellpadding="0" class="Table">
+				<tr>
+					<td width="30%" class="TableHeading">Property</td>
+					<td width="70%" class="TableHeading">Value</td>
+				</tr>
+			<tr>
+				<td width="30%" class="TableRow">isFinalSpecialization:</td>
+				<td width="70%" class="TableRow">0</td>
+			</tr>
+
+
+			</table>
+		</div>		<div class="ItemBody" id="LinksTable">
 			<table align="center" border="0" cellspacing="0" cellpadding="0" class="Table">
 				<tr>
 					<td width="30%" class="TableHeading">Object</td>

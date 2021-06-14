@@ -98,6 +98,7 @@ function nameClassifier(name, separator)
 	<div class="TableGroup" id="TableGroup">
 		<ul class="ItemTitle">
 			<li onClick="parent.toggleItem('Operations');" id="OperationsTitle">Operations</li>
+			<li onClick="parent.toggleItem('CustomProperties');" id="CustomPropertiesTitle">Advanced</li>
 		</ul>
 <div class="ItemBody" id="OperationsTable">
 	<table border="0" cellspacing="0" cellpadding="0" class="Table">
@@ -107,7 +108,7 @@ function nameClassifier(name, separator)
 						<tr>
 				<td width="100%" class="TableRow">
 					<i>Public</i><br />
-					<strong>DescribeRecord</strong>():void
+					<strong>GetCapabilities</strong>():void
 				</td>
 			</tr>
 			<tr>
@@ -131,7 +132,7 @@ function nameClassifier(name, separator)
 			<tr>
 				<td width="100%" class="TableRow">
 					<i>Public</i><br />
-					<strong>GetCapabilities</strong>():void
+					<strong>GetRecords</strong>():void
 				</td>
 			</tr>
 			<tr>
@@ -155,7 +156,7 @@ function nameClassifier(name, separator)
 			<tr>
 				<td width="100%" class="TableRow">
 					<i>Public</i><br />
-					<strong>GetDomain</strong>():void
+					<strong>DescribeRecord</strong>():void
 				</td>
 			</tr>
 			<tr>
@@ -179,7 +180,7 @@ function nameClassifier(name, separator)
 			<tr>
 				<td width="100%" class="TableRow">
 					<i>Public</i><br />
-					<strong>GetRecordById</strong>():void
+					<strong>GetDomain</strong>():void
 				</td>
 			</tr>
 			<tr>
@@ -203,7 +204,7 @@ function nameClassifier(name, separator)
 			<tr>
 				<td width="100%" class="TableRow">
 					<i>Public</i><br />
-					<strong>GetRecords</strong>():void
+					<strong>GetRecordById</strong>():void
 				</td>
 			</tr>
 			<tr>
@@ -227,7 +228,7 @@ function nameClassifier(name, separator)
 			<tr>
 				<td width="100%" class="TableRow">
 					<i>Public</i><br />
-					<strong>Harvest</strong>():void
+					<strong>Transaction</strong>():void
 				</td>
 			</tr>
 			<tr>
@@ -251,7 +252,7 @@ function nameClassifier(name, separator)
 			<tr>
 				<td width="100%" class="TableRow">
 					<i>Public</i><br />
-					<strong>Transaction</strong>():void
+					<strong>Harvest</strong>():void
 				</td>
 			</tr>
 			<tr>
@@ -274,7 +275,20 @@ function nameClassifier(name, separator)
 			</tr>
 
 		</table>
-</div>	</div>
+</div>		<div class="ItemBody" id="CustomPropertiesTable">
+			<table border="0" cellspacing="0" cellpadding="0" class="Table">
+				<tr>
+					<td width="30%" class="TableHeading">Property</td>
+					<td width="70%" class="TableHeading">Value</td>
+				</tr>
+			<tr>
+				<td width="30%" class="TableRow">isFinalSpecialization:</td>
+				<td width="70%" class="TableRow">0</td>
+			</tr>
+
+
+			</table>
+		</div>	</div>
 <div class="pageFooter"></div>
  
 </body>
