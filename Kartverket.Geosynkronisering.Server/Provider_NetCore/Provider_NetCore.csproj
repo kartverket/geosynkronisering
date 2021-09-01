@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net5.0</TargetFramework>
+		<IncludeAllContentForSelfExtract>True</IncludeAllContentForSelfExtract>
+		<!--<IncludeNativeLibrariesForSelfExtract>True</IncludeNativeLibrariesForSelfExtract>-->
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="bin\Release\net5.0\geosync.sqlite" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ChangelogManager\ChangelogManager.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="geosync.sqlite">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</None>
+	</ItemGroup>
+
+	<!--<ItemGroup>
+		<Folder Include="bin\Debug\net5.0\" />
+	</ItemGroup>-->
+</Project>

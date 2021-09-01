@@ -4,6 +4,7 @@ using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.Xml;
+using ChangelogManager;
 using Kartverket.GeosyncWCF;
 using Kartverket.Geosynkronisering.Database;
 using Kartverket.Geosynkronisering.Properties;
@@ -20,11 +21,13 @@ namespace Kartverket.Geosynkronisering
     public class WebFeatureServiceReplication : WebFeatureServiceReplicationPort
     {
         protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private geosyncEntities db;
+        private StoredChangelogsEntities db;
+        //private geosyncEntities db;
 
         public WebFeatureServiceReplication()
         {
-            db = new geosyncEntities();
+            db = new StoredChangelogsEntities();
+            //    db = new geosyncEntities();
         }
 
         private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
@@ -95,7 +98,9 @@ namespace Kartverket.Geosynkronisering
                 initType = datasets.First().DatasetProvider;
 
                 //Initiate provider from config/dataset
-                Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
+                Type providerType = Utils.GetProviderType(initType);
+                //Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
+
                 IChangelogProvider changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
                 changelogprovider.Intitalize(id);
                 resp = changelogprovider.GetLastIndex(id);
@@ -328,7 +333,8 @@ namespace Kartverket.Geosynkronisering
             var datasets = from d in db.Datasets where d.DatasetId == id select d;
             initType = datasets.First().DatasetProvider;
             //Initiate provider from config/dataset
-            Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
+            Type providerType = Utils.GetProviderType(initType);
+            //Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
             changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
             changelogprovider.Intitalize(id);
 

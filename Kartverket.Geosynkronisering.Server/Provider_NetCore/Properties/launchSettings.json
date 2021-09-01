@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Provider_NetCore": {
+      "commandName": "Project",
+      "commandLineArgs": "list"
+    }
+  }
+}

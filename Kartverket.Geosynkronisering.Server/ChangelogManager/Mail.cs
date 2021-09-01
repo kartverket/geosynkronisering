@@ -5,11 +5,11 @@ using System.Configuration;
 using System.Linq;
 using System.Net.Mime;
 using System.Web;
-using System.Web.UI.WebControls;
+//using System.Web.UI.WebControls;
 using Kartverket.Geosynkronisering.Database;
 using NLog;
 using MailKit.Net.Smtp;
-using MailKit;
+//using MailKit;
 using MimeKit;
 
 
