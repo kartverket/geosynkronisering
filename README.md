@@ -1,3 +1,12 @@
+# Geosynkronisering Provider 2.0 Beta.
+- The non UI-part of the Provider has been rewritten to .NET Standard 2.0 for compatibility with .NET Core, and are now used by the new core Provider  and by the ASP.Net Web Application.
+- In the UI added Timestamp on Changelog.
+For better compatibility with .NET Standard and .NET Core / .NET 5:
+- Changed provider settings database to SQLite from SQL server Compact and replaced Entity Framework with Dapper.
+- Updated and replaced NuGet packages.
+Tools: Visual Studio 2019 .NET Framework 4.7.2 / .NET Standard 2.0 / .NET 5.
+
+
 # Geosynkronisering
 
 [Changelog](./CHANGELOG.md)
