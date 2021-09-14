@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ChangelogManager;
 using Kartverket.Geosynkronisering;
-using Kartverket.Geosynkronisering.Database;
 using Test_Subscriber_NetCore;
 
 namespace Provider_NetCore
@@ -42,7 +41,9 @@ namespace Provider_NetCore
                     else WriteHelp(Operations.initial);
                     break;
                 case Operations.push:
-                    throw new NotImplementedException();
+                    var datasets = GetDatasetsFromArgs(args);
+                    if (!datasets.Any()) datasets = GetAllDatasets();
+                    Pusher.Synchronize(datasets);
                     break;
                 default:
                     WriteHelp();
@@ -65,18 +66,9 @@ namespace Provider_NetCore
 
         private static void CreateInitialData(Dataset dataset)
         {
-
-            int datasetId = dataset.DatasetId;
-            string initType = DatasetsData.DatasetProvider(datasetId);
-            Type providerType = Utils.GetProviderType(initType);
-
-            IChangelogProvider changelogprovider;
-            changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
-            changelogprovider.Intitalize(datasetId);
-
             try
             {
-                var resp = changelogprovider.GenerateInitialChangelog(datasetId);
+                var resp = Utils.GetChangelogProvider(dataset).GenerateInitialChangelog(dataset.DatasetId);
                 Console.WriteLine($"Created initial dataset for dataset:" + dataset.Name + " with datasetId:" + dataset.DatasetId);
             }
             catch (Exception ex)
@@ -101,7 +93,7 @@ namespace Provider_NetCore
 
         private static List<Dataset> GetDatasetsFromArgs(string[] args)
         {
-            var allDatasets = geosyncEntities.ReadAll<Dataset>("Datasets");
+            var allDatasets = GetAllDatasets();
 
             var candidateIds = args.ToList().GetRange(1, args.Length - 1);
 
@@ -112,6 +104,10 @@ namespace Provider_NetCore
             }).ToList();
         }
 
+        private static List<Dataset> GetAllDatasets()
+        {
+            return geosyncEntities.ReadAll<Dataset>("Datasets");
+        }
 
         private static void ListDatasets()
         {

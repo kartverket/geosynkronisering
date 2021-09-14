@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Web;
-using Microsoft.AspNetCore.Http.Abstractions;
+using ChangelogManager;
 
 namespace Kartverket.Geosynkronisering
 {
@@ -27,6 +24,17 @@ namespace Kartverket.Geosynkronisering
         //        }
         //    }
         //}
+
+        public static IChangelogProvider GetChangelogProvider(Dataset dataset)
+        {
+            var providerType = Utils.GetProviderType(dataset.DatasetProvider);
+
+            IChangelogProvider changelogprovider;
+            changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
+            changelogprovider.Intitalize(dataset.DatasetId);
+
+            return changelogprovider;
+        }
 
         public static string BaseSiteUrl
         {
