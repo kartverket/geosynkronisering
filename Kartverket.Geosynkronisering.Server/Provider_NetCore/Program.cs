@@ -42,8 +42,11 @@ namespace Provider_NetCore
                     break;
                 case Operations.push:
                     var datasets = GetDatasetsFromArgs(args);
-                    if (!datasets.Any()) datasets = GetAllDatasets();
+                    if (!datasets.Any()) WriteHelp(Operations.push);
                     Pusher.Synchronize(datasets);
+                    break;
+                case Operations.pushAll:
+                    Pusher.Synchronize(GetAllDatasets());
                     break;
                 default:
                     WriteHelp();
@@ -146,6 +149,9 @@ namespace Provider_NetCore
 
                 case Operations.list:
                     Console.WriteLine($"Usage: {Operations.list} || {Operations.list}");
+                    break;
+                case Operations.push:
+                    Console.WriteLine($"Usage: {Operations.push} datasetId1 datasetId2 ...");
                     break;
                 default:
                     WriteHelp();
