@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -72,7 +73,7 @@ namespace Provider_NetCore
 
             ReportStatus(Status.WRITE_CHANGES);
 
-            return WriteChanges(changelog);
+            return WriteChanges(changelog, lastIndex);
         }
 
         private static OrderChangelog OrderChangelog(IChangelogProvider provider, int lastIndex)
@@ -107,16 +108,32 @@ namespace Provider_NetCore
             return int.Parse(provider.GetLastIndex(_currentSubscriber.datasetid));
         }
 
-        private static Status WriteChanges(Kartverket.GeosyncWCF.ChangelogType changelogType)
+        private static Status WriteChanges(Kartverket.GeosyncWCF.ChangelogType changelogType, int lastIndex)
         {
-            throw new NotImplementedException();
-
             var changelogPath = GetChangelogPath(changelogType.downloadUri);
+
+            var url = GetDatasetUrl("features") + $"?copy_transaction_number={lastIndex}&dataset_version={_currentSubscriber.dataset.Version}&async=true";
+            
+            var stream = File.OpenRead(changelogPath);
+
+            var streamContent = new StreamContent(stream);
+
+            var defaultHeaders = _client.DefaultRequestHeaders;
+
+            _client.DefaultRequestHeaders.Add("Content-Type", "application/vnd.kartverket.geosynkronisering+zip");
+
+            var result = _client.PostAsync(url, streamContent).Result;
+
+            _client.DefaultRequestHeaders.Clear();
+
+            foreach (var header in defaultHeaders) _client.DefaultRequestHeaders.Add(header.Key, header.Value);
+
+            TestForSuccess(result);
 
             return Status.WRITE_CHANGES_OK;
         }
 
-        private static object GetChangelogPath(string downloadUri)
+        private static string GetChangelogPath(string downloadUri)
         {
             var zipFileName = downloadUri.Split('/').Last();
 
