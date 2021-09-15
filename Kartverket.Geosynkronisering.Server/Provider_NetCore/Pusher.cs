@@ -18,12 +18,15 @@ namespace Provider_NetCore
         static readonly Kartverket.Geosynkronisering.ChangelogManager _changelogManager = GetChangelogManager();
 
         public static Datasets_NgisSubscriber _currentSubscriber { get; private set; }
+        public static List<ActiveChangelog> _activeChangelogs { get; private set; }
 
         internal static void Synchronize(List<Dataset> datasets)
         {
             datasets.ForEach(dataset =>
             {
                 var subscribers = SqlHelper.GetSubscribers(dataset.DatasetId);
+
+                _activeChangelogs = new List<ActiveChangelog>();
 
                 subscribers.ForEach(async s =>
                 {
@@ -47,11 +50,11 @@ namespace Provider_NetCore
 
         private static async Task<Status> Push()
         {
-            ReportStatus(Status.GET_LAST_TRANSNR);
-
             var provider = Utils.GetChangelogProvider(_currentSubscriber.dataset);
 
             var lastIndex = GetLastIndex(provider);
+
+            ReportStatus(Status.GET_LAST_TRANSNR);
 
             var status = GetDatasetStatus();
 
@@ -63,22 +66,49 @@ namespace Provider_NetCore
 
             ReportStatus(Status.GENERATE_CHANGES);
 
-            var changelogOrder = OrderChangelog(provider, lastIndex);
+            try
+            {
+                await GetNewChangelogAsync(status, provider);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
 
-            var changelogStatus = await WaitForChangelog(changelogOrder);
-
-            if (changelogStatus != Kartverket.GeosyncWCF.ChangelogStatusType.finished) return Status.GENERATE_CHANGES_FAILED;
-
-            var changelog = _changelogManager.GetChangelog(changelogOrder.changelogId);
+                return Status.GENERATE_CHANGES_FAILED;
+            }
 
             ReportStatus(Status.WRITE_CHANGES);
 
-            return WriteChanges(changelog, lastIndex);
+            return WriteChanges(GetActiveChangelog(status), lastIndex);
         }
 
-        private static OrderChangelog OrderChangelog(IChangelogProvider provider, int lastIndex)
+        private static async Task GetNewChangelogAsync(DatasetStatus status, IChangelogProvider provider)
         {
-            return provider.OrderChangelog(lastIndex + 1, _currentSubscriber.dataset.ServerMaxCount ?? 10000, "", _currentSubscriber.datasetid);
+            if (_activeChangelogs.Count > 0 && _activeChangelogs.Any(c => c.copy_transaction_token == status.copy_transaction_token)) return;
+
+            var changelogOrder = OrderChangelog(provider, status.copy_transaction_token);
+
+            var changelogStatus = await WaitForChangelog(changelogOrder);
+
+            if (changelogStatus != Kartverket.GeosyncWCF.ChangelogStatusType.finished) throw new Exception("Unable to generate changelog");
+
+            var changelog = _changelogManager.GetChangelog(changelogOrder.changelogId);
+
+            _activeChangelogs.Add(new ActiveChangelog()
+            {
+                changelog = changelog,
+                copy_transaction_token = status.copy_transaction_token
+            });
+        }
+
+        private static Kartverket.GeosyncWCF.ChangelogType GetActiveChangelog(DatasetStatus status)
+        {
+            return _activeChangelogs.FirstOrDefault(c => c.copy_transaction_token == status.copy_transaction_token).changelog;
+        }
+
+        private static OrderChangelog OrderChangelog(IChangelogProvider provider, int copy_transaction_token)
+        {
+            return provider.OrderChangelog(copy_transaction_token + 1, _currentSubscriber.dataset.ServerMaxCount ?? 10000, "", _currentSubscriber.datasetid);
         }
 
         private static async Task<Kartverket.GeosyncWCF.ChangelogStatusType> WaitForChangelog(OrderChangelog changelogOrder)
@@ -113,7 +143,7 @@ namespace Provider_NetCore
             var changelogPath = GetChangelogPath(changelogType.downloadUri);
 
             var url = GetDatasetUrl("features") + $"?copy_transaction_number={lastIndex}&dataset_version={_currentSubscriber.dataset.Version}&async=true";
-            
+
             var stream = File.OpenRead(changelogPath);
 
             var streamContent = new StreamContent(stream);

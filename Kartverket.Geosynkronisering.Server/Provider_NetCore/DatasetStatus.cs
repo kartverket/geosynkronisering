@@ -2,7 +2,7 @@
 {
     internal class DatasetStatus
     {
-        public long copy_transaction_token;
+        public int copy_transaction_token;
 
     }
 }
