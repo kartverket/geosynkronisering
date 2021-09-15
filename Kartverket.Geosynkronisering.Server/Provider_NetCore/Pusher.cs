@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using ChangelogManager;
 using Kartverket.Geosynkronisering;
@@ -10,35 +14,46 @@ namespace Provider_NetCore
     {
         static readonly Kartverket.Geosynkronisering.ChangelogManager changelogManager = GetChangelogManager();
 
+        public static Dataset _CurrentDataset { get; private set; }
+        public static Datasets_NgisSubscriber _currentSubscriber { get; private set; }
+
         internal static void Synchronize(List<Dataset> datasets)
         {
-            datasets.ForEach(async dataset =>
+            datasets.ForEach(dataset =>
             {
-                try
+                _CurrentDataset = dataset;
+
+                var subscribers = SqlHelper.GetSubscribers(_CurrentDataset.DatasetId);
+
+                subscribers.ForEach(async s =>
                 {
-                    var finalStatus = await Push(dataset);
+                    try
+                    {
+                        _currentSubscriber = s;
 
-                    ReportStatus(finalStatus);
+                        var finalStatus = await Push();
 
-                }
-                catch (Exception e)
-                {
-                    Console.Error.WriteLine(e.Message);
+                        ReportStatus(finalStatus);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.Error.WriteLine(e.Message);
 
-                    ReportStatus(Status.UNKNOWN_ERROR);
-                }
+                        ReportStatus(Status.UNKNOWN_ERROR);
+                    }
+                });
             });
         }
 
-        private static async Task<Status> Push(Dataset dataset)
+        private static async Task<Status> Push()
         {
             ReportStatus(Status.GET_LAST_TRANSNR);
 
-            var provider = Utils.GetChangelogProvider(dataset);
+            var provider = Utils.GetChangelogProvider(_CurrentDataset);
 
-            var lastIndex = GetLastIndex(dataset, provider);
+            var lastIndex = GetLastIndex(provider);
 
-            var status = GetDatasetStatusFor(dataset);
+            var status = GetDatasetStatus();
 
             if (status.copy_transaction_token == lastIndex) return Status.NO_CHANGES;
 
@@ -48,7 +63,7 @@ namespace Provider_NetCore
 
             ReportStatus(Status.GENERATE_CHANGES);
 
-            var changelogOrder = OrderChangelog(dataset, provider, lastIndex);
+            var changelogOrder = OrderChangelog(provider, lastIndex);
 
             var changelogStatus = await WaitForChangelog(changelogOrder);
 
@@ -61,9 +76,9 @@ namespace Provider_NetCore
             return WriteChanges(changelog);
         }
 
-        private static OrderChangelog OrderChangelog(Dataset dataset, IChangelogProvider provider, int lastIndex)
+        private static OrderChangelog OrderChangelog(IChangelogProvider provider, int lastIndex)
         {
-            return provider.OrderChangelog(lastIndex + 1, dataset.ServerMaxCount ?? 10000, "", dataset.DatasetId);
+            return provider.OrderChangelog(lastIndex + 1, _CurrentDataset.ServerMaxCount ?? 10000, "", _CurrentDataset.DatasetId);
         }
 
         private static async Task<Kartverket.GeosyncWCF.ChangelogStatusType> WaitForChangelog(OrderChangelog changelogOrder)
@@ -88,31 +103,48 @@ namespace Provider_NetCore
             return new Kartverket.Geosynkronisering.ChangelogManager(db);
         }
 
-        private static int GetLastIndex(Dataset dataset, IChangelogProvider provider)
+        private static int GetLastIndex(IChangelogProvider provider)
         {
-            return int.Parse(provider.GetLastIndex(dataset.DatasetId));
+            return int.Parse(provider.GetLastIndex(_CurrentDataset.DatasetId));
         }
 
         private static Status WriteChanges(Kartverket.GeosyncWCF.ChangelogType changelogType)
         {
             throw new NotImplementedException();
 
-            var changelogPath = GetChangelogPath(changelogType);
+            var changelogPath = GetChangelogPath(changelogType.downloadUri);
 
             return Status.WRITE_CHANGES_OK;
         }
 
-        private static object GetChangelogPath(Kartverket.GeosyncWCF.ChangelogType changelogType)
+        private static object GetChangelogPath(string downloadUri)
         {
-            throw new NotImplementedException();
+            var zipFileName = downloadUri.Split('/').Last();
+
+            var filLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Changelogfiles\\" + zipFileName;
+
+            return filLocation;
         }
 
         private static void ReportStatus(Status status)
         {
-            throw new NotImplementedException();
+            var statusUrl = _currentSubscriber.subscriber.url.TrimEnd('/') + $"/datasets/{_CurrentDataset.DatasetId}/job-status";
+
+            var json = JsonSerializer.Serialize(status); 
+
+            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var client = new HttpClient();
+
+            var response = client.PostAsync(statusUrl, stringContent).Result;
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK
+                || response.StatusCode != System.Net.HttpStatusCode.Accepted
+                ) throw new Exception(response.ReasonPhrase);
+
         }
 
-        internal static DatasetStatus GetDatasetStatusFor(Dataset dataset)
+        internal static DatasetStatus GetDatasetStatus()
         {
             throw new NotImplementedException();
         }

@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
-using System.Text;
 using System.Data.SQLite;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using Dapper;
 using Dapper.Contrib.Extensions;
 
@@ -18,6 +14,8 @@ namespace ChangelogManager
         public List<StoredChangelog> StoredChangelogs { get; set; }
         public List<Service> Services { get; set; }
         public List<ServerConfig> ServerConfigs { get; set; }
+        public List<NgisSubscriber> Subscribers { get; set; }
+        public List<Datasets_NgisSubscriber> Datasets_Subscribers { get; set; }
 
         protected virtual void Dispose(bool disposing)
         {
@@ -87,6 +85,15 @@ namespace ChangelogManager
                     return "StoredChangelogs";
                 }
 
+                if (entityType == typeof(NgisSubscriber))
+                {
+                    return "Subscribers";
+                }
+
+                if (entityType == typeof(Datasets_NgisSubscriber))
+                {
+                    return "Datasets_Subscribers";
+                }
 
                 throw new Exception($"Not supported entity type {entityType}");
             };
@@ -99,6 +106,8 @@ namespace ChangelogManager
             StoredChangelogs = ReadAll<StoredChangelog>("StoredChangelogs");
             Services = ReadAll<Service>("Services");
             ServerConfigs = ReadAll<ServerConfig>("ServerConfigs");
+            Subscribers = ReadAll<NgisSubscriber>("Subscribers");
+            Datasets_Subscribers = ReadAll<Datasets_NgisSubscriber>("Datasets_Subscribers");
 
         }
         public static List<T> ReadAll<T>(string tableName)
