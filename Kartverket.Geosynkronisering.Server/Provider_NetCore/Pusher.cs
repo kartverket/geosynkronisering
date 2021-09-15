@@ -12,7 +12,9 @@ namespace Provider_NetCore
 {
     internal class Pusher
     {
-        static readonly Kartverket.Geosynkronisering.ChangelogManager changelogManager = GetChangelogManager();
+        static readonly HttpClient _client = new();
+
+        static readonly Kartverket.Geosynkronisering.ChangelogManager _changelogManager = GetChangelogManager();
 
         public static Datasets_NgisSubscriber _currentSubscriber { get; private set; }
 
@@ -66,7 +68,7 @@ namespace Provider_NetCore
 
             if (changelogStatus != Kartverket.GeosyncWCF.ChangelogStatusType.finished) return Status.GENERATE_CHANGES_FAILED;
 
-            var changelog = changelogManager.GetChangelog(changelogOrder.changelogId);
+            var changelog = _changelogManager.GetChangelog(changelogOrder.changelogId);
 
             ReportStatus(Status.WRITE_CHANGES);
 
@@ -80,14 +82,14 @@ namespace Provider_NetCore
 
         private static async Task<Kartverket.GeosyncWCF.ChangelogStatusType> WaitForChangelog(OrderChangelog changelogOrder)
         {
-            var changelogStatus = changelogManager.GetChangelogStatus(changelogOrder.changelogId);
+            var changelogStatus = _changelogManager.GetChangelogStatus(changelogOrder.changelogId);
 
             while (changelogStatus == Kartverket.GeosyncWCF.ChangelogStatusType.working
                 || changelogStatus == Kartverket.GeosyncWCF.ChangelogStatusType.queued)
             {
                 await Task.Delay(2000);
 
-                changelogStatus = changelogManager.GetChangelogStatus(changelogOrder.changelogId);
+                changelogStatus = _changelogManager.GetChangelogStatus(changelogOrder.changelogId);
             }
 
             return changelogStatus;
@@ -125,25 +127,39 @@ namespace Provider_NetCore
 
         private static void ReportStatus(Status status)
         {
-            var statusUrl = _currentSubscriber.subscriber.url.TrimEnd('/') + $"/datasets/{_currentSubscriber.datasetid}/job-status";
+            var response = _client.PostAsync(GetDatasetUrl($"job-status"), GetJsonStringContent(status)).Result;
 
-            var json = JsonSerializer.Serialize(status); 
+            TestForSuccess(response);
+        }
 
-            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+        private static StringContent GetJsonStringContent(Status status)
+        {
+            return new StringContent(JsonSerializer.Serialize(status), Encoding.UTF8, "application/json");
+        }
 
-            var client = new HttpClient();
+        private static string GetDatasetUrl(string postFix = null)
+        {
+            var url = _currentSubscriber.subscriber.url.TrimEnd('/') + $"/datasets/{_currentSubscriber.subscriberdatasetid}";
 
-            var response = client.PostAsync(statusUrl, stringContent).Result;
+            if (string.IsNullOrEmpty(postFix)) return url;
 
-            if (response.StatusCode != System.Net.HttpStatusCode.OK
-                || response.StatusCode != System.Net.HttpStatusCode.Accepted
-                ) throw new Exception(response.ReasonPhrase);
-
+            return url + "/" + postFix;
         }
 
         internal static DatasetStatus GetDatasetStatus()
         {
-            throw new NotImplementedException();
+            var response = _client.GetAsync(GetDatasetUrl()).Result;
+
+            TestForSuccess(response);
+
+            return JsonSerializer.Deserialize<DatasetStatus>(response.Content.ReadAsStringAsync().Result);
+        }
+
+        private static void TestForSuccess(HttpResponseMessage response)
+        {
+            if (response.StatusCode != System.Net.HttpStatusCode.OK
+                            || response.StatusCode != System.Net.HttpStatusCode.Accepted
+                            ) throw new Exception(response.ReasonPhrase);
         }
     }
 }
