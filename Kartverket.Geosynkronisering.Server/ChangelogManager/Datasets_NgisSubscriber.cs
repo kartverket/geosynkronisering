@@ -7,6 +7,6 @@
         public int subscriberid { get; set; }
         public int subscriberdatasetid { get; set; }
         public NgisSubscriber subscriber {get;set;}
-
+        public Dataset dataset { get; set; }
     }
 }

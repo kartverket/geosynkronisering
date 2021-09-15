@@ -14,7 +14,12 @@ namespace Provider_NetCore
             var subscribed = entities.Datasets_Subscribers.Where(d => d.datasetid == datasetId).ToList();
 
             subscribed.ForEach(
-                d => d.subscriber = entities.Subscribers.FirstOrDefault(s => s.id == d.subscriberid)
+                d =>
+                {
+                    d.subscriber = entities.Subscribers.FirstOrDefault(s => s.id == d.subscriberid);
+                    d.dataset = entities.Datasets.FirstOrDefault(s => s.DatasetId == d.datasetid);
+                }
+
             );
 
             return subscribed;

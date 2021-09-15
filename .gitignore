@@ -264,3 +264,4 @@ __pycache__/
 /Kartverket.Geosynkronisering.Subscriber/Kartverket.Geosynkronisering.Subscriber.DL/Properties/PublishProfiles/FolderProfile.pubxml
 /Kartverket.Geosynkronisering.Subscriber/Test_Subscriber_NetCore/Properties/PublishProfiles
 /Kartverket.Geosynkronisering.Server/Kartverket.Geosynkronisering/ChangelogProviders/SqlServerSpatialChangelog - Copy.cs
+/Kartverket.Geosynkronisering.Server/Provider_NetCore/geosync.sqlite-journal

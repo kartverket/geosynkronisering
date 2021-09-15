@@ -14,16 +14,13 @@ namespace Provider_NetCore
     {
         static readonly Kartverket.Geosynkronisering.ChangelogManager changelogManager = GetChangelogManager();
 
-        public static Dataset _CurrentDataset { get; private set; }
         public static Datasets_NgisSubscriber _currentSubscriber { get; private set; }
 
         internal static void Synchronize(List<Dataset> datasets)
         {
             datasets.ForEach(dataset =>
             {
-                _CurrentDataset = dataset;
-
-                var subscribers = SqlHelper.GetSubscribers(_CurrentDataset.DatasetId);
+                var subscribers = SqlHelper.GetSubscribers(dataset.DatasetId);
 
                 subscribers.ForEach(async s =>
                 {
@@ -49,7 +46,7 @@ namespace Provider_NetCore
         {
             ReportStatus(Status.GET_LAST_TRANSNR);
 
-            var provider = Utils.GetChangelogProvider(_CurrentDataset);
+            var provider = Utils.GetChangelogProvider(_currentSubscriber.dataset);
 
             var lastIndex = GetLastIndex(provider);
 
@@ -78,7 +75,7 @@ namespace Provider_NetCore
 
         private static OrderChangelog OrderChangelog(IChangelogProvider provider, int lastIndex)
         {
-            return provider.OrderChangelog(lastIndex + 1, _CurrentDataset.ServerMaxCount ?? 10000, "", _CurrentDataset.DatasetId);
+            return provider.OrderChangelog(lastIndex + 1, _currentSubscriber.dataset.ServerMaxCount ?? 10000, "", _currentSubscriber.datasetid);
         }
 
         private static async Task<Kartverket.GeosyncWCF.ChangelogStatusType> WaitForChangelog(OrderChangelog changelogOrder)
@@ -105,7 +102,7 @@ namespace Provider_NetCore
 
         private static int GetLastIndex(IChangelogProvider provider)
         {
-            return int.Parse(provider.GetLastIndex(_CurrentDataset.DatasetId));
+            return int.Parse(provider.GetLastIndex(_currentSubscriber.datasetid));
         }
 
         private static Status WriteChanges(Kartverket.GeosyncWCF.ChangelogType changelogType)
@@ -128,7 +125,7 @@ namespace Provider_NetCore
 
         private static void ReportStatus(Status status)
         {
-            var statusUrl = _currentSubscriber.subscriber.url.TrimEnd('/') + $"/datasets/{_CurrentDataset.DatasetId}/job-status";
+            var statusUrl = _currentSubscriber.subscriber.url.TrimEnd('/') + $"/datasets/{_currentSubscriber.datasetid}/job-status";
 
             var json = JsonSerializer.Serialize(status); 
 
