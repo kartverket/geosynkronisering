@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -13,12 +14,29 @@ namespace Provider_NetCore
 {
     internal class Pusher
     {
-        static readonly HttpClient _client = new();
-
         static readonly Kartverket.Geosynkronisering.ChangelogManager _changelogManager = GetChangelogManager();
 
         public static Datasets_NgisSubscriber _currentSubscriber { get; private set; }
+
         public static List<ActiveChangelog> _activeChangelogs { get; private set; }
+
+        static readonly HttpClient _client = new();
+
+        static HttpClient Client
+        {
+            get
+            {
+                SetCredentials();
+                return _client;
+            }
+        }
+
+        private static void SetCredentials()
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Basic",
+                    Convert.ToBase64String(Encoding.ASCII.GetBytes(_currentSubscriber.subscriber.username + ":" + _currentSubscriber.subscriber.password)));
+        }
 
         internal static void Synchronize(List<Dataset> datasets)
         {
@@ -28,19 +46,19 @@ namespace Provider_NetCore
 
                 _activeChangelogs = new List<ActiveChangelog>();
 
-                subscribers.ForEach(async s =>
+                subscribers.ForEach(async subscriber =>
                 {
                     try
                     {
-                        _currentSubscriber = s;
+                        _currentSubscriber = subscriber;
 
                         var finalStatus = await Push();
 
                         ReportStatus(finalStatus);
                     }
-                    catch (Exception e)
+                    catch (Exception exception)
                     {
-                        Console.Error.WriteLine(e.Message);
+                        Console.Error.WriteLine(exception.Message);
 
                         ReportStatus(Status.UNKNOWN_ERROR);
                     }
@@ -70,9 +88,9 @@ namespace Provider_NetCore
             {
                 await GetNewChangelogAsync(status, provider);
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine(exception.Message);
 
                 return Status.GENERATE_CHANGES_FAILED;
             }
@@ -148,15 +166,15 @@ namespace Provider_NetCore
 
             var streamContent = new StreamContent(stream);
 
-            var defaultHeaders = _client.DefaultRequestHeaders;
+            var defaultHeaders = Client.DefaultRequestHeaders;
 
-            _client.DefaultRequestHeaders.Add("Content-Type", "application/vnd.kartverket.geosynkronisering+zip");
+            Client.DefaultRequestHeaders.Add("Content-Type", "application/vnd.kartverket.geosynkronisering+zip");
 
-            var result = _client.PostAsync(url, streamContent).Result;
+            var result = Client.PostAsync(url, streamContent).Result;
 
-            _client.DefaultRequestHeaders.Clear();
+            Client.DefaultRequestHeaders.Clear();
 
-            foreach (var header in defaultHeaders) _client.DefaultRequestHeaders.Add(header.Key, header.Value);
+            foreach (var header in defaultHeaders) Client.DefaultRequestHeaders.Add(header.Key, header.Value);
 
             TestForSuccess(result);
 
@@ -174,7 +192,7 @@ namespace Provider_NetCore
 
         private static void ReportStatus(Status status)
         {
-            var response = _client.PostAsync(GetDatasetUrl($"job-status"), GetJsonStringContent(status)).Result;
+            var response = Client.PostAsync(GetDatasetUrl($"job-status"), GetJsonStringContent(status)).Result;
 
             TestForSuccess(response);
         }
@@ -195,7 +213,7 @@ namespace Provider_NetCore
 
         internal static DatasetStatus GetDatasetStatus()
         {
-            var response = _client.GetAsync(GetDatasetUrl()).Result;
+            var response = Client.GetAsync(GetDatasetUrl()).Result;
 
             TestForSuccess(response);
 
