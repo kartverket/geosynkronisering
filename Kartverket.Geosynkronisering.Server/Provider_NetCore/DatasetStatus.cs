@@ -2,7 +2,6 @@
 {
     internal class DatasetStatus
     {
-        public int copy_transaction_token;
-
+        public int? last_copy_transaction_number;
     }
 }

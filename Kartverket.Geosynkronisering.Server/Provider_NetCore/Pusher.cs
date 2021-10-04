@@ -27,8 +27,16 @@ namespace Provider_NetCore
             get
             {
                 SetCredentials();
+                SetClientHeaders();
                 return _client;
             }
+        }
+
+        private static void SetClientHeaders()
+        {
+            _client.DefaultRequestHeaders.Add("X-Client-Product-Version", "GeodataTest");
+            _client.DefaultRequestHeaders.Add("accept", "*/*");
+
         }
 
         private static void SetCredentials()
@@ -76,9 +84,9 @@ namespace Provider_NetCore
 
             var status = GetDatasetStatus();
 
-            if (status.copy_transaction_token == lastIndex) return Status.NO_CHANGES;
+            if (status.last_copy_transaction_number == lastIndex) return Status.NO_CHANGES;
 
-            if (status.copy_transaction_token > lastIndex) throw new Exception("Subscriber reports higher index than Provider");
+            if (status.last_copy_transaction_number > lastIndex) throw new Exception("Subscriber reports higher index than Provider");
 
             ReportStatus(Status.HAS_CHANGES);
 
@@ -102,9 +110,9 @@ namespace Provider_NetCore
 
         private static async Task GetNewChangelogAsync(DatasetStatus status, IChangelogProvider provider)
         {
-            if (_activeChangelogs.Count > 0 && _activeChangelogs.Any(c => c.copy_transaction_token == status.copy_transaction_token)) return;
+            if (_activeChangelogs.Count > 0 && _activeChangelogs.Any(c => c.copy_transaction_token == status.last_copy_transaction_number)) return;
 
-            var changelogOrder = OrderChangelog(provider, status.copy_transaction_token);
+            var changelogOrder = OrderChangelog(provider, status.last_copy_transaction_number ?? -1);
 
             var changelogStatus = await WaitForChangelog(changelogOrder);
 
@@ -115,13 +123,13 @@ namespace Provider_NetCore
             _activeChangelogs.Add(new ActiveChangelog()
             {
                 changelog = changelog,
-                copy_transaction_token = status.copy_transaction_token
-            });
+                copy_transaction_token = status.last_copy_transaction_number ?? -1
+            }); ;
         }
 
         private static Kartverket.GeosyncWCF.ChangelogType GetActiveChangelog(DatasetStatus status)
         {
-            return _activeChangelogs.FirstOrDefault(c => c.copy_transaction_token == status.copy_transaction_token).changelog;
+            return _activeChangelogs.FirstOrDefault(c => c.copy_transaction_token == status.last_copy_transaction_number).changelog;
         }
 
         private static OrderChangelog OrderChangelog(IChangelogProvider provider, int copy_transaction_token)
@@ -217,13 +225,15 @@ namespace Provider_NetCore
 
             TestForSuccess(response);
 
-            return JsonSerializer.Deserialize<DatasetStatus>(response.Content.ReadAsStringAsync().Result);
+            var result = response.Content.ReadAsStringAsync().Result;
+
+            return JsonSerializer.Deserialize<DatasetStatus>(result);
         }
 
         private static void TestForSuccess(HttpResponseMessage response)
         {
             if (response.StatusCode != System.Net.HttpStatusCode.OK
-                            || response.StatusCode != System.Net.HttpStatusCode.Accepted
+                            && response.StatusCode != System.Net.HttpStatusCode.Accepted
                             ) throw new Exception(response.ReasonPhrase);
         }
     }
