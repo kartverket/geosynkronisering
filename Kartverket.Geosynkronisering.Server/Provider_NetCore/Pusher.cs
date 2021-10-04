@@ -14,8 +14,6 @@ namespace Provider_NetCore
 {
     internal class Pusher
     {
-        static readonly Kartverket.Geosynkronisering.ChangelogManager _changelogManager = GetChangelogManager();
-
         public static Datasets_NgisSubscriber _currentSubscriber { get; private set; }
 
         public static List<ActiveChangelog> _activeChangelogs { get; private set; }
@@ -105,12 +103,12 @@ namespace Provider_NetCore
 
             ReportStatus(Status.WRITE_CHANGES);
 
-            return WriteChanges(GetActiveChangelog(status), lastIndex);
+            return WriteChanges(GetActiveChangelog(status.last_copy_transaction_number ?? -1), lastIndex);
         }
 
         private static async Task GetNewChangelogAsync(DatasetStatus status, IChangelogProvider provider)
         {
-            if (_activeChangelogs.Count > 0 && _activeChangelogs.Any(c => c.copy_transaction_token == status.last_copy_transaction_number)) return;
+            if (_activeChangelogs.Count > 0 && _activeChangelogs.Any(c => c.copy_transaction_number == status.last_copy_transaction_number)) return;
 
             var changelogOrder = OrderChangelog(provider, status.last_copy_transaction_number ?? -1);
 
@@ -118,35 +116,38 @@ namespace Provider_NetCore
 
             if (changelogStatus != Kartverket.GeosyncWCF.ChangelogStatusType.finished) throw new Exception("Unable to generate changelog");
 
-            var changelog = _changelogManager.GetChangelog(changelogOrder.changelogId);
+            var changelog = GetChangelogManager().GetChangelog(changelogOrder.changelogId);
 
             _activeChangelogs.Add(new ActiveChangelog()
             {
                 changelog = changelog,
-                copy_transaction_token = status.last_copy_transaction_number ?? -1
-            }); ;
+                copy_transaction_number = status.last_copy_transaction_number ?? -1,
+                dataset = _currentSubscriber.dataset
+            });
         }
 
-        private static Kartverket.GeosyncWCF.ChangelogType GetActiveChangelog(DatasetStatus status)
+        private static Kartverket.GeosyncWCF.ChangelogType GetActiveChangelog(int last_copy_transaction_number)
         {
-            return _activeChangelogs.FirstOrDefault(c => c.copy_transaction_token == status.last_copy_transaction_number).changelog;
+            return _activeChangelogs.FirstOrDefault(c => c.dataset.DatasetId == _currentSubscriber.dataset.DatasetId && c.copy_transaction_number == last_copy_transaction_number).changelog;
         }
 
         private static OrderChangelog OrderChangelog(IChangelogProvider provider, int copy_transaction_token)
         {
+            provider.CreateChangelog(copy_transaction_token + 1, _currentSubscriber.dataset.ServerMaxCount ?? 10000, "", _currentSubscriber.datasetid);
+            
             return provider.OrderChangelog(copy_transaction_token + 1, _currentSubscriber.dataset.ServerMaxCount ?? 10000, "", _currentSubscriber.datasetid);
         }
 
         private static async Task<Kartverket.GeosyncWCF.ChangelogStatusType> WaitForChangelog(OrderChangelog changelogOrder)
         {
-            var changelogStatus = _changelogManager.GetChangelogStatus(changelogOrder.changelogId);
+            var changelogStatus = GetChangelogManager().GetChangelogStatus(changelogOrder.changelogId);
 
             while (changelogStatus == Kartverket.GeosyncWCF.ChangelogStatusType.working
                 || changelogStatus == Kartverket.GeosyncWCF.ChangelogStatusType.queued)
             {
                 await Task.Delay(2000);
 
-                changelogStatus = _changelogManager.GetChangelogStatus(changelogOrder.changelogId);
+                changelogStatus = GetChangelogManager().GetChangelogStatus(changelogOrder.changelogId);
             }
 
             return changelogStatus;
@@ -174,15 +175,9 @@ namespace Provider_NetCore
 
             var streamContent = new StreamContent(stream);
 
-            var defaultHeaders = Client.DefaultRequestHeaders;
-
-            Client.DefaultRequestHeaders.Add("Content-Type", "application/vnd.kartverket.geosynkronisering+zip");
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/vnd.kartverket.geosynkronisering+zip");
 
             var result = Client.PostAsync(url, streamContent).Result;
-
-            Client.DefaultRequestHeaders.Clear();
-
-            foreach (var header in defaultHeaders) Client.DefaultRequestHeaders.Add(header.Key, header.Value);
 
             TestForSuccess(result);
 
@@ -193,7 +188,7 @@ namespace Provider_NetCore
         {
             var zipFileName = downloadUri.Split('/').Last();
 
-            var filLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Changelogfiles\\" + zipFileName;
+            var filLocation = AppDomain.CurrentDomain.BaseDirectory + "Changelogfiles\\" + zipFileName;
 
             return filLocation;
         }

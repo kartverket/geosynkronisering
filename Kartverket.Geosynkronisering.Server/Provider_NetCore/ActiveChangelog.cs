@@ -1,4 +1,5 @@
-﻿using Kartverket.GeosyncWCF;
+﻿using ChangelogManager;
+using Kartverket.GeosyncWCF;
 
 namespace Provider_NetCore
 {
@@ -9,6 +10,7 @@ namespace Provider_NetCore
         }
 
         public ChangelogType changelog { get; set; }
-        public int copy_transaction_token { get; set; }
+        public int copy_transaction_number { get; set; }
+        public Dataset dataset { get; set; }
     }
 }
