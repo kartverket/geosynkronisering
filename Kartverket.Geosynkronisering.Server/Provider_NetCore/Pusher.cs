@@ -103,14 +103,14 @@ namespace Provider_NetCore
 
             ReportStatus(Status.WRITE_CHANGES);
 
-            return WriteChanges(GetActiveChangelog(status.last_copy_transaction_number ?? -1), lastIndex);
+            return WriteChanges(GetActiveChangelog(status.last_copy_transaction_number), lastIndex);
         }
 
         private static async Task GetNewChangelogAsync(DatasetStatus status, IChangelogProvider provider)
         {
             if (_activeChangelogs.Count > 0 && _activeChangelogs.Any(c => c.copy_transaction_number == status.last_copy_transaction_number)) return;
 
-            var changelogOrder = OrderChangelog(provider, status.last_copy_transaction_number ?? -1);
+            var changelogOrder = OrderChangelog(provider, (int) status.last_copy_transaction_number);
 
             var changelogStatus = await WaitForChangelog(changelogOrder);
 
@@ -121,12 +121,12 @@ namespace Provider_NetCore
             _activeChangelogs.Add(new ActiveChangelog()
             {
                 changelog = changelog,
-                copy_transaction_number = status.last_copy_transaction_number ?? -1,
+                copy_transaction_number = (int) status.last_copy_transaction_number,
                 dataset = _currentSubscriber.dataset
             });
         }
 
-        private static Kartverket.GeosyncWCF.ChangelogType GetActiveChangelog(int last_copy_transaction_number)
+        private static Kartverket.GeosyncWCF.ChangelogType GetActiveChangelog(int? last_copy_transaction_number)
         {
             return _activeChangelogs.FirstOrDefault(c => c.dataset.DatasetId == _currentSubscriber.dataset.DatasetId && c.copy_transaction_number == last_copy_transaction_number).changelog;
         }
@@ -228,7 +228,11 @@ namespace Provider_NetCore
 
             var result = response.Content.ReadAsStringAsync().Result;
 
-            return JsonSerializer.Deserialize<DatasetStatus>(result);
+            var status = JsonSerializer.Deserialize<DatasetStatus>(result);
+
+            if (status.last_copy_transaction_number == null) status.last_copy_transaction_number = -1;
+
+            return status;
         }
 
         private static void TestForSuccess(HttpResponseMessage response)
