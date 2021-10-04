@@ -181,6 +181,12 @@ namespace Provider_NetCore
 
             TestForSuccess(result);
 
+            var status = result.Headers.GetValues("Location").FirstOrDefault();
+
+            var statusResult = Client.GetAsync(status).Result;
+
+            TestForSuccess(statusResult);
+
             return Status.WRITE_CHANGES_OK;
         }
 
