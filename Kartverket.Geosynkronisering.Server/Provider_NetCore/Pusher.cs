@@ -185,9 +185,18 @@ namespace Provider_NetCore
 
             var statusResult = Client.GetAsync(status).Result;
 
-            TestForSuccess(statusResult);
+            while (statusResult.StatusCode == System.Net.HttpStatusCode.Accepted)
+            {
+                statusResult = Client.GetAsync(status).Result;
 
-            return Status.WRITE_CHANGES_OK;
+                Task.Delay(2000).Wait();
+            }
+
+            Console.WriteLine(statusResult.Content.ReadAsStringAsync().Result);
+
+            return TestForSuccess(result) 
+                ? Status.WRITE_CHANGES_OK
+                : Status.UNKNOWN_ERROR;
         }
 
         private static string GetChangelogPath(string downloadUri)
@@ -235,11 +244,11 @@ namespace Provider_NetCore
             return status;
         }
 
-        private static void TestForSuccess(HttpResponseMessage response)
+        private static bool TestForSuccess(HttpResponseMessage response)
         {
-            if (response.StatusCode != System.Net.HttpStatusCode.OK
-                            && response.StatusCode != System.Net.HttpStatusCode.Accepted
-                            ) throw new Exception(response.ReasonPhrase);
+            if ((int)response.StatusCode >= 300) throw new Exception(response.ReasonPhrase);
+
+            return true;
         }
     }
 }
