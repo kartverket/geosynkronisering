@@ -192,7 +192,7 @@ namespace Provider_NetCore
                 Task.Delay(2000).Wait();
             }
 
-            Console.WriteLine(statusResult.Content.ReadAsStringAsync().Result);
+            Console.WriteLine("INFO: " + statusResult.Content.ReadAsStringAsync().Result);
 
             return TestForSuccess(result) 
                 ? Status.WRITE_CHANGES_OK
