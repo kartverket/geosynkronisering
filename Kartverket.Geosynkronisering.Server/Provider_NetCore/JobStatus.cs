@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Provider_NetCore
+﻿namespace Provider_NetCore
 {
     public class JobStatus
     {

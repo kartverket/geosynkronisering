@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ChangelogManager;
 using Kartverket.Geosynkronisering;
@@ -169,7 +170,7 @@ namespace Provider_NetCore
         {
             var changelogPath = GetChangelogPath(changelogType.downloadUri);
 
-            var url = GetDatasetUrl("features") + $"?copy_transaction_number={lastIndex}&dataset_version={_currentSubscriber.dataset.Version}&async=true";
+            var url = GetDatasetUrl("features") + $"?copy_transaction_number={lastIndex}&dataset_version={_currentSubscriber.dataset.Version}&async=true&locking_type=all_lock";
 
             var stream = File.OpenRead(changelogPath);
 
@@ -217,7 +218,17 @@ namespace Provider_NetCore
 
         private static StringContent GetJsonStringContent(Status status)
         {
-            return new StringContent(JsonSerializer.Serialize(status), Encoding.UTF8, "application/json");
+            return new StringContent(JsonSerializer.Serialize(status, GetJsonSerializerOptions()), Encoding.UTF8, "application/json");
+        }
+
+        private static JsonSerializerOptions GetJsonSerializerOptions()
+        {
+            return new JsonSerializerOptions()
+            {
+                Converters = {
+                    new JsonStringEnumConverter(),
+                }
+            };
         }
 
         private static string GetDatasetUrl(string postFix = null)
