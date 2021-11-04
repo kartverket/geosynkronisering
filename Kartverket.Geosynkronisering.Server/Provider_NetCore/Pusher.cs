@@ -194,7 +194,7 @@ namespace Provider_NetCore
 
             Console.WriteLine("INFO: " + statusResult.Content.ReadAsStringAsync().Result);
 
-            return TestForSuccess(result) 
+            return TestForSuccess(statusResult) 
                 ? Status.WRITE_CHANGES_OK
                 : Status.UNKNOWN_ERROR;
         }
