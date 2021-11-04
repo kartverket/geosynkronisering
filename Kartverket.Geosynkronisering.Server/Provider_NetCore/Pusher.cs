@@ -67,29 +67,58 @@ namespace Provider_NetCore
                     {
                         Console.Error.WriteLine(exception.Message);
 
-                        ReportStatus(Status.UNKNOWN_ERROR);
+                        ReportStatus(new ReportStatus{
+                            status = Status.UNKNOWN_ERROR,
+                            message = exception.Message
+                        });
                     }
                 });
             });
         }
 
-        private static async Task<Status> Push()
+        private static async Task<ReportStatus> Push()
         {
             var provider = Utils.GetChangelogProvider(_currentSubscriber.dataset);
 
             var lastIndex = GetLastIndex(provider);
 
-            ReportStatus(Status.GET_LAST_TRANSNR);
+            var reportStatus = new ReportStatus
+            {
+                status = Status.GET_LAST_TRANSNR,
+                last_transaction_number = lastIndex
+            };
+
+            ReportStatus(reportStatus);
 
             var status = GetDatasetStatus();
 
-            if (status.last_copy_transaction_number == lastIndex) return Status.NO_CHANGES;
+            if (status.last_copy_transaction_number == lastIndex)
+            {
+                reportStatus.status = Status.NO_CHANGES;
 
-            if (status.last_copy_transaction_number > lastIndex) throw new Exception("Subscriber reports higher index than Provider");
+                reportStatus.message = "No new changes found";
+                
+                return reportStatus;
+            }
 
-            ReportStatus(Status.HAS_CHANGES);
+            if (status.last_copy_transaction_number > lastIndex)
+            {
+                reportStatus.status = Status.UNKNOWN_ERROR;
 
-            ReportStatus(Status.GENERATE_CHANGES);
+                reportStatus.message = "Subscriber reports higher index than Provider";
+
+                return reportStatus;
+            }
+
+            reportStatus.status = Status.HAS_CHANGES;
+
+            reportStatus.last_copy_transaction_number = status.last_copy_transaction_number;
+
+            ReportStatus(reportStatus);
+
+            reportStatus.status = Status.GENERATE_CHANGES;
+
+            ReportStatus(reportStatus);
 
             try
             {
@@ -99,12 +128,16 @@ namespace Provider_NetCore
             {
                 Console.WriteLine(exception.Message);
 
-                return Status.GENERATE_CHANGES_FAILED;
+                reportStatus.status = Status.GENERATE_CHANGES_FAILED;
+
+                return reportStatus;
             }
 
-            ReportStatus(Status.WRITE_CHANGES);
+            reportStatus.status = Status.WRITE_CHANGES;
 
-            return WriteChanges(GetActiveChangelog(status.last_copy_transaction_number), lastIndex);
+            ReportStatus(reportStatus);
+
+            return WriteChanges(GetActiveChangelog(status.last_copy_transaction_number), lastIndex, reportStatus);
         }
 
         private static async Task GetNewChangelogAsync(DatasetStatus status, IChangelogProvider provider)
@@ -166,7 +199,7 @@ namespace Provider_NetCore
             return int.Parse(provider.GetLastIndex(_currentSubscriber.datasetid));
         }
 
-        private static Status WriteChanges(Kartverket.GeosyncWCF.ChangelogType changelogType, int lastIndex)
+        private static ReportStatus WriteChanges(Kartverket.GeosyncWCF.ChangelogType changelogType, int lastIndex, ReportStatus reportStatus)
         {
             var changelogPath = GetChangelogPath(changelogType.downloadUri);
 
@@ -193,11 +226,18 @@ namespace Provider_NetCore
                 Task.Delay(2000).Wait();
             }
 
-            Console.WriteLine("INFO: " + statusResult.Content.ReadAsStringAsync().Result);
+            var message = statusResult.Content.ReadAsStringAsync().Result;
 
-            return TestForSuccess(statusResult) 
+            Console.WriteLine("INFO: " + message);
+
+            reportStatus.message = JsonSerializer.Deserialize<dynamic>(message);
+
+          
+            reportStatus.status = TestForSuccess(statusResult) 
                 ? Status.WRITE_CHANGES_OK
                 : Status.UNKNOWN_ERROR;
+
+            return reportStatus;
         }
 
         private static string GetChangelogPath(string downloadUri)
@@ -209,14 +249,14 @@ namespace Provider_NetCore
             return filLocation;
         }
 
-        private static void ReportStatus(Status status)
+        private static void ReportStatus(ReportStatus status)
         {
             var response = Client.PostAsync(GetDatasetUrl($"job-status"), GetJsonStringContent(status)).Result;
 
             TestForSuccess(response);
         }
 
-        private static StringContent GetJsonStringContent(Status status)
+        private static StringContent GetJsonStringContent(ReportStatus status)
         {
             return new StringContent(JsonSerializer.Serialize(status, GetJsonSerializerOptions()), Encoding.UTF8, "application/json");
         }
