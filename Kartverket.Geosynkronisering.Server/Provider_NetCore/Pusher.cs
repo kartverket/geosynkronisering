@@ -59,9 +59,48 @@ namespace Provider_NetCore
                     {
                         _currentSubscriber = subscriber;
 
-                        var finalStatus = await Push();
+                        var finished = false;
 
-                        ReportStatus(finalStatus);
+                        var tries = 0;
+
+                        var maxTries = 3;
+
+                        while (!finished && tries < maxTries)
+                        {
+                            Console.WriteLine($"Starting synchronization of dataset {_currentSubscriber.dataset} ({tries +1}/{maxTries})");
+
+                            var finalStatus = await Push();
+
+                            ReportStatus(finalStatus);
+
+                            switch (finalStatus.status)
+                            {
+                                case Status.GET_LAST_TRANSNR:                                
+                                case Status.HAS_CHANGES:
+                                case Status.GENERATE_CHANGES:
+                                case Status.WRITE_CHANGES:
+                                    break;
+                                case Status.GENERATE_CHANGES_FAILED:
+                                case Status.UNKNOWN_ERROR:
+                                case Status.WRITE_CHANGES_OK:
+                                default:
+                                    {
+                                        tries++;
+                                        break;
+                                    }
+
+                                case Status.NO_CHANGES:
+                                    {
+                                        finished = true;
+                                        break;
+                                    }
+                            }
+
+                            if(tries == maxTries)
+                                Console.WriteLine($"Unable to synchronize {_currentSubscriber.dataset}. Final status: {finalStatus.status}");
+                            
+                        }
+
                     }
                     catch (Exception exception)
                     {
@@ -253,7 +292,11 @@ namespace Provider_NetCore
         {
             var response = Client.PostAsync(GetDatasetUrl($"job-status"), GetJsonStringContent(status)).Result;
 
+            Console.WriteLine($"Reported status: {status.status}");
+
             TestForSuccess(response);
+
+            Console.WriteLine($"Subscriber status: {response.Content.ReadAsStringAsync().Result}");
         }
 
         private static StringContent GetJsonStringContent(ReportStatus status)
