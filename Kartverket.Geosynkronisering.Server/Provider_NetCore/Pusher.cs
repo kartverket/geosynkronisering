@@ -19,6 +19,9 @@ namespace Provider_NetCore
 
         public static List<ActiveChangelog> _activeChangelogs { get; private set; }
 
+        private const string DatasetHeader = "application/vnd.kartverket.ngis.dataset+json";
+        private const string ChangelogHeader = "application/vnd.kartverket.geosynkronisering+zip";
+        private const string JsonHeader = "application/json";
         static readonly HttpClient _client = new();
 
         static HttpClient Client
@@ -34,8 +37,6 @@ namespace Provider_NetCore
         private static void SetClientHeaders()
         {
             _client.DefaultRequestHeaders.Add("X-Client-Product-Version", "GeodataTest");
-            _client.DefaultRequestHeaders.Add("accept", "*/*");
-
         }
 
         private static void SetCredentials()
@@ -249,7 +250,7 @@ namespace Provider_NetCore
 
             var streamContent = new StreamContent(stream);
 
-            streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/vnd.kartverket.geosynkronisering+zip");
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue(ChangelogHeader);
 
             var result = Client.PostAsync(url, streamContent).Result;
 
@@ -291,18 +292,22 @@ namespace Provider_NetCore
 
         private static void ReportStatus(ReportStatus status)
         {
-            var response = Client.PostAsync(GetDatasetUrl($"job-status"), GetJsonStringContent(status)).Result;
+            var url = GetDatasetUrl($"job-status");
+
+            var jsonString = GetJsonStringContent(status);
+
+            var response = Client.PostAsync(url, jsonString).Result;
 
             Console.WriteLine($"Reported status: {status.status}");
 
-            TestForSuccess(response);
+            if(!string.IsNullOrEmpty(status.message)) Console.WriteLine($"Reported message: {status.message}");
 
-            Console.WriteLine($"Subscriber status: {response.Content.ReadAsStringAsync().Result}");
+            TestForSuccess(response);
         }
 
         private static StringContent GetJsonStringContent(ReportStatus status)
         {
-            return new StringContent(JsonSerializer.Serialize(status, GetJsonSerializerOptions()), Encoding.UTF8, "application/json");
+            return new StringContent(JsonSerializer.Serialize(status, GetJsonSerializerOptions()), Encoding.UTF8, JsonHeader);
         }
 
         private static JsonSerializerOptions GetJsonSerializerOptions()
@@ -326,6 +331,8 @@ namespace Provider_NetCore
 
         internal static DatasetStatus GetDatasetStatus()
         {
+            SetClientHeader(DatasetHeader);
+
             var response = Client.GetAsync(GetDatasetUrl()).Result;
 
             TestForSuccess(response);
@@ -337,6 +344,11 @@ namespace Provider_NetCore
             if (status.last_copy_transaction_number == null) status.last_copy_transaction_number = -1;
 
             return status;
+        }
+
+        private static void SetClientHeader(string header)
+        {
+            Client.DefaultRequestHeaders.Add("accept", header);
         }
 
         private static bool TestForSuccess(HttpResponseMessage response)
