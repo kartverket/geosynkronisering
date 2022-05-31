@@ -162,6 +162,8 @@ namespace Provider_NetCore
 
             ReportStatus(providerStatus);
 
+            subscriberStatus.last_copy_transaction_number += 1;
+
             try
             {
                 await GetNewChangelogAsync(subscriberStatus, provider);
@@ -186,11 +188,11 @@ namespace Provider_NetCore
             return WriteChanges(activeChangelog, providerStatus);            
         }
 
-        private static async Task GetNewChangelogAsync(DatasetStatus status, IChangelogProvider provider)
+        private static async Task GetNewChangelogAsync(DatasetStatus subscriberStatus, IChangelogProvider provider)
         {
-            if (_activeChangelogs.Count > 0 && _activeChangelogs.Any(c => c.copy_transaction_number == status.last_copy_transaction_number)) return;
+            if (_activeChangelogs.Count > 0 && _activeChangelogs.Any(c => c.copy_transaction_number == subscriberStatus.last_copy_transaction_number)) return;
 
-            var changelogOrder = OrderChangelog(provider, (int) status.last_copy_transaction_number);
+            var changelogOrder = OrderChangelog(provider, (int) subscriberStatus.last_copy_transaction_number);
 
             var changelogStatus = await WaitForChangelog(changelogOrder);
 
@@ -201,7 +203,7 @@ namespace Provider_NetCore
             _activeChangelogs.Add(new ActiveChangelog()
             {
                 changelog = changelog,
-                copy_transaction_number = (int) status.last_copy_transaction_number,
+                copy_transaction_number = (int) subscriberStatus.last_copy_transaction_number,
                 dataset = _currentSubscriber.dataset
             });
         }
@@ -211,11 +213,11 @@ namespace Provider_NetCore
             return _activeChangelogs.FirstOrDefault(c => c.dataset.DatasetId == _currentSubscriber.dataset.DatasetId && c.copy_transaction_number == last_copy_transaction_number).changelog;
         }
 
-        private static OrderChangelog OrderChangelog(IChangelogProvider provider, int copy_transaction_token)
+        private static OrderChangelog OrderChangelog(IChangelogProvider provider, int last_copy_transaction_number)
         {
-            provider.CreateChangelog(copy_transaction_token + 1, _currentSubscriber.dataset.ServerMaxCount ?? 10000, "", _currentSubscriber.datasetid);
+            provider.CreateChangelog(last_copy_transaction_number, _currentSubscriber.dataset.ServerMaxCount ?? 10000, "", _currentSubscriber.datasetid);
             
-            return provider.OrderChangelog(copy_transaction_token + 1, _currentSubscriber.dataset.ServerMaxCount ?? 10000, "", _currentSubscriber.datasetid);
+            return provider.OrderChangelog(last_copy_transaction_number, _currentSubscriber.dataset.ServerMaxCount ?? 10000, "", _currentSubscriber.datasetid);
         }
 
         private static async Task<Kartverket.GeosyncWCF.ChangelogStatusType> WaitForChangelog(OrderChangelog changelogOrder)
@@ -249,7 +251,7 @@ namespace Provider_NetCore
         {
             var changelogPath = GetChangelogPath(changelogType.downloadUri);
 
-            var url = GetDatasetUrl("features") + $"?copy_transaction_number={int.Parse(changelogType.endIndex) -1}&dataset_version={_currentSubscriber.dataset.Version}&async=true&locking_type=all_lock&validation_mode=loose";
+            var url = GetDatasetUrl("features") + $"?copy_transaction_number={reportStatus.last_copy_transaction_number}&dataset_version={_currentSubscriber.dataset.Version}&async=true&locking_type=all_lock&validation_mode=loose";
             //var url = GetDatasetUrl("features") + $"?copy_transaction_number={lastIndex}&dataset_version={_currentSubscriber.dataset.Version}&async=true&locking_type=all_lock";
 
             var stream = File.OpenRead(changelogPath);
