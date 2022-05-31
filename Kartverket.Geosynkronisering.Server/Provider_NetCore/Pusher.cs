@@ -162,7 +162,7 @@ namespace Provider_NetCore
 
             ReportStatus(providerStatus);
 
-            var changelogStartIndex  = (int)subscriberStatus.last_copy_transaction_number + 1;
+            var changelogStartIndex = (int)subscriberStatus.last_copy_transaction_number;
 
             try
             {
