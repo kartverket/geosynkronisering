@@ -249,7 +249,7 @@ namespace Provider_NetCore
         {
             var changelogPath = GetChangelogPath(changelogType.downloadUri);
 
-            var url = GetDatasetUrl("features") + $"?copy_transaction_number={changelogType.endIndex}&dataset_version={_currentSubscriber.dataset.Version}&async=true&locking_type=all_lock&validation_mode=loose";
+            var url = GetDatasetUrl("features") + $"?copy_transaction_number={int.Parse(changelogType.endIndex) -1}&dataset_version={_currentSubscriber.dataset.Version}&async=true&locking_type=all_lock&validation_mode=loose";
             //var url = GetDatasetUrl("features") + $"?copy_transaction_number={lastIndex}&dataset_version={_currentSubscriber.dataset.Version}&async=true&locking_type=all_lock";
 
             var stream = File.OpenRead(changelogPath);
