@@ -127,62 +127,60 @@ namespace Provider_NetCore
 
             var lastIndex = GetLastIndex(provider);
 
-            var reportStatus = new ReportStatus
+            var providerStatus = new ReportStatus
             {
                 status = Status.GET_LAST_TRANSNR,
-                last_transaction_number = lastIndex
+                last_transaction_number = lastIndex                
             };
 
-            ReportStatus(reportStatus);
+            var subscriberStatus = GetDatasetStatus();
 
-            var status = GetDatasetStatus();
-
-            if (status.last_copy_transaction_number == lastIndex)
+            ReportStatus(providerStatus);
+            
+            if (subscriberStatus.last_copy_transaction_number == lastIndex)
             {
-                reportStatus.status = Status.NO_CHANGES;
+                providerStatus.status = Status.NO_CHANGES;
 
-                reportStatus.message = "No new changes found";
+                providerStatus.message = "No new changes found";
                 
-                return reportStatus;
+                return providerStatus;
             }
 
-            if (status.last_copy_transaction_number > lastIndex)
+            if (subscriberStatus.last_copy_transaction_number > lastIndex)
             {
-                reportStatus.status = Status.UNKNOWN_ERROR;
+                providerStatus.status = Status.UNKNOWN_ERROR;
 
-                reportStatus.message = "Subscriber reports higher index than Provider";
+                providerStatus.message = "Subscriber reports higher index than Provider";
 
-                return reportStatus;
+                return providerStatus;
             }
 
-            reportStatus.status = Status.HAS_CHANGES;
+            providerStatus.status = Status.HAS_CHANGES;
 
-            reportStatus.last_copy_transaction_number = status.last_copy_transaction_number;
+            ReportStatus(providerStatus);
 
-            ReportStatus(reportStatus);
+            providerStatus.status = Status.GENERATE_CHANGES;
 
-            reportStatus.status = Status.GENERATE_CHANGES;
-
-            ReportStatus(reportStatus);
+            ReportStatus(providerStatus);
 
             try
             {
-                await GetNewChangelogAsync(status, provider);
+                await GetNewChangelogAsync(subscriberStatus, provider);
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
 
-                reportStatus.status = Status.GENERATE_CHANGES_FAILED;
+                providerStatus.status = Status.GENERATE_CHANGES_FAILED;
 
-                return reportStatus;
+                return providerStatus;
             }
 
-            reportStatus.status = Status.WRITE_CHANGES;
+            providerStatus.status = Status.WRITE_CHANGES;
 
-            ReportStatus(reportStatus);
+            ReportStatus(providerStatus);
 
-            return WriteChanges(GetActiveChangelog(status.last_copy_transaction_number), lastIndex, reportStatus);
+            return WriteChanges(GetActiveChangelog(subscriberStatus.last_copy_transaction_number), lastIndex, providerStatus);            
         }
 
         private static async Task GetNewChangelogAsync(DatasetStatus status, IChangelogProvider provider)
@@ -282,6 +280,10 @@ namespace Provider_NetCore
             reportStatus.status = TestForSuccess(statusResult) 
                 ? Status.WRITE_CHANGES_OK
                 : Status.UNKNOWN_ERROR;
+
+            reportStatus.last_transaction_number = lastIndex;
+
+            reportStatus.last_copy_transaction_number = int.Parse(changelogType.endIndex);
 
             return reportStatus;
         }
