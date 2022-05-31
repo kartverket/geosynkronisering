@@ -68,7 +68,7 @@ namespace Provider_NetCore
 
                         while (!finished && tries < maxTries)
                         {
-                            Console.WriteLine($"Starting synchronization of dataset {_currentSubscriber.dataset} ({tries +1}/{maxTries})");
+                            Console.WriteLine($"Starting synchronization of dataset {_currentSubscriber.dataset.DatasetId} try {tries +1}/{maxTries}");
 
                             var finalStatus = await Push();
 
@@ -129,8 +129,7 @@ namespace Provider_NetCore
 
             var providerStatus = new ReportStatus
             {
-                status = Status.GET_LAST_TRANSNR,
-                last_transaction_number = lastIndex                
+                status = Status.GET_LAST_TRANSNR
             };
 
             var subscriberStatus = GetDatasetStatus();
@@ -176,11 +175,15 @@ namespace Provider_NetCore
                 return providerStatus;
             }
 
+            var activeChangelog = GetActiveChangelog(subscriberStatus.last_copy_transaction_number);
+
             providerStatus.status = Status.WRITE_CHANGES;
+
+            providerStatus.last_copy_transaction_number = int.Parse(activeChangelog.endIndex);
 
             ReportStatus(providerStatus);
 
-            return WriteChanges(GetActiveChangelog(subscriberStatus.last_copy_transaction_number), lastIndex, providerStatus);            
+            return WriteChanges(activeChangelog, lastIndex, providerStatus);            
         }
 
         private static async Task GetNewChangelogAsync(DatasetStatus status, IChangelogProvider provider)
@@ -281,9 +284,9 @@ namespace Provider_NetCore
                 ? Status.WRITE_CHANGES_OK
                 : Status.UNKNOWN_ERROR;
 
-            reportStatus.last_transaction_number = lastIndex;
+            //reportStatus.last_transaction_number = lastIndex;
 
-            reportStatus.last_copy_transaction_number = int.Parse(changelogType.endIndex);
+            //reportStatus.last_copy_transaction_number = int.Parse(changelogType.endIndex);
 
             return reportStatus;
         }
