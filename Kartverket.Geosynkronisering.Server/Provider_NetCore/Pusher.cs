@@ -101,7 +101,7 @@ namespace Provider_NetCore
                             {
                                 Console.WriteLine($"Unable to synchronize {_currentSubscriber.dataset.DatasetId}. Final status: {finalStatus.status}.");
 
-                                if(!string.IsNullOrEmpty(finalStatus.message)) Console.WriteLine($"Final message: {finalStatus.message}.");
+                                //if(!string.IsNullOrEmpty(finalStatus.message)) Console.WriteLine($"Final message: {finalStatus.message}.");
                             }
 
                             
@@ -305,7 +305,7 @@ namespace Provider_NetCore
 
             Console.WriteLine($"Reported status: {status.status}");
 
-            if(!string.IsNullOrEmpty(status.message)) Console.WriteLine($"Reported message: {status.message}");
+            //if(!string.IsNullOrEmpty(status.message)) Console.WriteLine($"Reported message: {status.message}");
 
             TestForSuccess(response);
         }
