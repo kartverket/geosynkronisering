@@ -272,15 +272,12 @@ namespace Provider_NetCore
             {
                 statusResult = Client.GetAsync(status).Result;
 
+                var message = statusResult.Content.ReadAsStringAsync().Result;
+                Console.WriteLine("INFO: " + message);
+                reportStatus.message = JsonSerializer.Deserialize<dynamic>(message);
+
                 Task.Delay(2000).Wait();
             }
-
-            var message = statusResult.Content.ReadAsStringAsync().Result;
-
-            Console.WriteLine("INFO: " + message);
-
-            reportStatus.message = JsonSerializer.Deserialize<dynamic>(message);
-
           
             reportStatus.status = TestForSuccess(statusResult) 
                 ? Status.WRITE_CHANGES_OK
