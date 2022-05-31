@@ -80,10 +80,10 @@ namespace Provider_NetCore
                                 case Status.HAS_CHANGES:
                                 case Status.GENERATE_CHANGES:
                                 case Status.WRITE_CHANGES:
+                                case Status.WRITE_CHANGES_OK:
                                     break;
                                 case Status.GENERATE_CHANGES_FAILED:
-                                case Status.UNKNOWN_ERROR:
-                                case Status.WRITE_CHANGES_OK:
+                                case Status.UNKNOWN_ERROR:                                
                                 default:
                                     {
                                         tries++;
