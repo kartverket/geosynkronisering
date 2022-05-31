@@ -183,7 +183,7 @@ namespace Provider_NetCore
 
             ReportStatus(providerStatus);
 
-            return WriteChanges(activeChangelog, lastIndex, providerStatus);            
+            return WriteChanges(activeChangelog, providerStatus);            
         }
 
         private static async Task GetNewChangelogAsync(DatasetStatus status, IChangelogProvider provider)
@@ -245,11 +245,11 @@ namespace Provider_NetCore
             return int.Parse(provider.GetLastIndex(_currentSubscriber.datasetid));
         }
 
-        private static ReportStatus WriteChanges(Kartverket.GeosyncWCF.ChangelogType changelogType, int lastIndex, ReportStatus reportStatus)
+        private static ReportStatus WriteChanges(Kartverket.GeosyncWCF.ChangelogType changelogType, ReportStatus reportStatus)
         {
             var changelogPath = GetChangelogPath(changelogType.downloadUri);
 
-            var url = GetDatasetUrl("features") + $"?copy_transaction_number={lastIndex}&dataset_version={_currentSubscriber.dataset.Version}&async=true&locking_type=all_lock&validation_mode=loose";
+            var url = GetDatasetUrl("features") + $"?copy_transaction_number={changelogType.endIndex}&dataset_version={_currentSubscriber.dataset.Version}&async=true&locking_type=all_lock&validation_mode=loose";
             //var url = GetDatasetUrl("features") + $"?copy_transaction_number={lastIndex}&dataset_version={_currentSubscriber.dataset.Version}&async=true&locking_type=all_lock";
 
             var stream = File.OpenRead(changelogPath);
