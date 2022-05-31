@@ -97,8 +97,13 @@ namespace Provider_NetCore
                                     }
                             }
 
-                            if(tries == maxTries)
-                                Console.WriteLine($"Unable to synchronize {_currentSubscriber.dataset.DatasetId}. Final status: {finalStatus.status}");
+                            if (tries == maxTries)
+                            {
+                                Console.WriteLine($"Unable to synchronize {_currentSubscriber.dataset.DatasetId}. Final status: {finalStatus.status}.");
+
+                                if(!string.IsNullOrEmpty(finalStatus.message)) Console.WriteLine($"Final message: {finalStatus.message}.");
+                            }
+
                             
                         }
 
