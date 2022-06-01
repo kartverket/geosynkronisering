@@ -397,6 +397,15 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 //Update attributes in chlogf:TransactionCollection
                 UpdateRootAttributes(changeLog, counter, startChangeId, portionEndIndex);
 
+                using (var db = new StoredChangelogsEntities())
+                {
+                    var changelogManager = new ChangelogManager(db);
+
+                    var changelog = changelogManager.ListStoredChangelogs(datasetId).@return.FirstOrDefault(s => s.startIndex == startChangeId.ToString());
+
+                    if (changelog != null) changelog.endIndex = portionEndIndex.ToString();
+                }               
+
                 if (!CheckChangelogHasFeatures(changeLog))
                 {
                     Exception exp = new Exception("CheckChangelogHasFeatures found 0 features");
