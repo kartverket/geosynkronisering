@@ -141,7 +141,8 @@ namespace Provider_NetCore
                 providerStatus.status = Status.NO_CHANGES;
 
                 providerStatus.message = "No new changes found";
-                
+                Console.WriteLine(providerStatus.message);
+
                 return providerStatus;
             }
 
@@ -150,6 +151,7 @@ namespace Provider_NetCore
                 providerStatus.status = Status.UNKNOWN_ERROR;
 
                 providerStatus.message = "Subscriber reports higher index than Provider";
+                Console.WriteLine(providerStatus.message);
 
                 return providerStatus;
             }
