@@ -32,6 +32,8 @@ namespace Kartverket.Geosynkronisering
 
         public XmlDocument DescribeFeatureType(int datasetId, DescribeFeatureTypeType describefeaturetype1)
         {
+            db = new StoredChangelogsEntities();
+
             var dataset = from d in db.Datasets where d.DatasetId == datasetId select d;
 
             string serviceUrl = dataset.First().TransformationConnection;
@@ -86,6 +88,8 @@ namespace Kartverket.Geosynkronisering
         {
             Kartverket.GeosyncWCF.ListStoredChangelogsResponse resp = new Kartverket.GeosyncWCF.ListStoredChangelogsResponse();
 
+            db = new StoredChangelogsEntities();
+
             var changelogs = from c in db.StoredChangelogs where c.Stored == true && c.DatasetId == datasetId select c;
 
             List<Kartverket.GeosyncWCF.StoredChangelogType> ret = new List<Kartverket.GeosyncWCF.StoredChangelogType>();
@@ -116,6 +120,8 @@ namespace Kartverket.Geosynkronisering
         {
             int nchangelogid = Int32.Parse(changelogid);
 
+            db = new StoredChangelogsEntities();
+
             var result = (from c in db.StoredChangelogs where c.ChangelogId == nchangelogid select c);
             
             Kartverket.GeosyncWCF.ChangelogStatusType resp = new GeosyncWCF.ChangelogStatusType();
@@ -142,6 +148,9 @@ namespace Kartverket.Geosynkronisering
         public Kartverket.GeosyncWCF.ChangelogType GetChangelog(string changelogid)
         {
             int nchangelogid = Int32.Parse(changelogid);
+
+            db = new StoredChangelogsEntities();
+
             var result = (from c in db.StoredChangelogs where c.ChangelogId == nchangelogid select c);
             
             Kartverket.GeosyncWCF.ChangelogType resp = new Kartverket.GeosyncWCF.ChangelogType();
@@ -152,6 +161,8 @@ namespace Kartverket.Geosynkronisering
                 {
                     if (changelog.DownloadUri == null)
                     {
+                        db = new StoredChangelogsEntities();
+
                         db.DeleteObject(changelog);
 
                         //db.StoredChangelogs.DeleteObject(changelog);
@@ -171,6 +182,8 @@ namespace Kartverket.Geosynkronisering
         public void AcknowledgeChangelogDownloaded( string changelogid)
         {                   
             DateTime deleteDate = DateTime.Now.AddDays(-10); // TODO: Add to dataset settings
+            
+            db = new StoredChangelogsEntities();
 
             var obsoleteFiles = (from c in db.StoredChangelogs where (c.Status == "started" || (c.Status == "Finished" && c.Stored == false)) && c.DateCreated < deleteDate select c);
 
@@ -180,6 +193,8 @@ namespace Kartverket.Geosynkronisering
                 {
                     var downloadUri = new Uri(of.DownloadUri);
                     DeleteFileOnServer(downloadUri);
+                    db = new StoredChangelogsEntities();
+
                     db.DeleteObject(of);
                     //db.StoredChangelogs.DeleteObject(of);
                 }
@@ -191,6 +206,9 @@ namespace Kartverket.Geosynkronisering
             //Delete files and db row if not a stored one...
             //var changelog = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c).First();
             int nchangelogid = Int32.Parse(changelogid);
+
+            db = new StoredChangelogsEntities();
+
             var result = (from c in db.StoredChangelogs where c.ChangelogId == nchangelogid select c);
             if (result != null && result.Count()>0)
             {
@@ -234,7 +252,9 @@ namespace Kartverket.Geosynkronisering
         }
 
         public OrderChangelog CreateChangeLog(int startIndex, int count, int datasetId)
-        {            
+        {
+            db = new StoredChangelogsEntities();
+
             StoredChangelog ldbo = new StoredChangelog();
             ldbo.Stored = false;            
             
@@ -260,6 +280,8 @@ namespace Kartverket.Geosynkronisering
         public StoredChangelog GetStoredChangelogRow(string changelogid)
         {
             int nchangelogid = Int32.Parse(changelogid);
+            db = new StoredChangelogsEntities();
+
             var changelog = (from c in db.StoredChangelogs where c.ChangelogId == nchangelogid select c).First();
             return changelog;
         }
@@ -267,11 +289,16 @@ namespace Kartverket.Geosynkronisering
         public bool SetStatus(string changelogid, Kartverket.GeosyncWCF.ChangelogStatusType status)
         {
             int nchangelogid = Int32.Parse(changelogid);
+
+            db = new StoredChangelogsEntities();
+
             var changelog = (from c in db.StoredChangelogs where c.ChangelogId == nchangelogid select c).First();
 
             changelog.Status = ((string)System.Enum.GetName(typeof(Kartverket.GeosyncWCF.ChangelogStatusType), status));
             try
             {
+                db = new StoredChangelogsEntities();
+
                 db.SaveChanges();
             }
             catch (Exception ex)
@@ -289,6 +316,8 @@ namespace Kartverket.Geosynkronisering
             changelog.DownloadUri = URI;
             try
             {
+                db = new StoredChangelogsEntities();
+
                 db.SaveChanges();
             }
             catch (Exception ex)

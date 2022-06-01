@@ -315,7 +315,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         protected long endChangeId = -1;
 
-        public void BuildChangeLogFile(int count, string wfsUrl, int startChangeId, string changeLogFileName, int datasetId)
+        public long BuildChangeLogFile(int count, string wfsUrl, int startChangeId, string changeLogFileName, int datasetId)
         {
             if (OptimizedChangelLogIndex == -1) OptimizedChangelLogIndex++;
             Logger.Info("BuildChangeLogFile START");
