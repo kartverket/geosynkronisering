@@ -11,14 +11,12 @@ namespace Kartverket.Geosynkronisering
 {
     public class ChangelogManager
     {
-        private StoredChangelogsEntities db { get
-            {
-                return new StoredChangelogsEntities();
-            } }
+        private StoredChangelogsEntities db;
         // private geosyncEntities db;
 
         public ChangelogManager(StoredChangelogsEntities _db) // public ChangelogManager(geosyncEntities _db)
         {
+            db = _db;
         }
 
         public System.Xml.XmlDocument GetCapabilities()
@@ -237,7 +235,7 @@ namespace Kartverket.Geosynkronisering
 
         public OrderChangelog CreateChangeLog(int startIndex, int count, int datasetId)
         {            
-            var ldbo = new StoredChangelog();
+            StoredChangelog ldbo = new StoredChangelog();
             ldbo.Stored = false;            
             
             ldbo.Status = ((string)System.Enum.GetName(typeof(Kartverket.GeosyncWCF.ChangelogStatusType),Kartverket.GeosyncWCF.ChangelogStatusType.queued));
@@ -246,10 +244,10 @@ namespace Kartverket.Geosynkronisering
 
             ldbo.DatasetId = datasetId;
             ldbo.DateCreated = DateTime.Now;
-            ldbo.ChangelogId = db.StoredChangelogs.Max(s => s.ChangelogId) + 1;
 
             //TODO make filter 
             //TODO check if similar stored changelog is already done
+            //db.StoredChangelogs.AddObject(ldbo);
             db.AddObject(ldbo);
             db.SaveChanges();
             
@@ -267,7 +265,7 @@ namespace Kartverket.Geosynkronisering
         }
 
         public bool SetStatus(string changelogid, Kartverket.GeosyncWCF.ChangelogStatusType status)
-        {            
+        {
             int nchangelogid = Int32.Parse(changelogid);
             var changelog = (from c in db.StoredChangelogs where c.ChangelogId == nchangelogid select c).First();
 
@@ -281,7 +279,6 @@ namespace Kartverket.Geosynkronisering
                 throw ex;
             }
             return true;
-            
         }
 
         public bool SetDownloadURI(string changelogid, string URI)
