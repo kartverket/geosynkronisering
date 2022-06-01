@@ -399,11 +399,12 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
                 using (var db = new StoredChangelogsEntities())
                 {
-                    var changelogManager = new ChangelogManager(db);
+                    var changelog = db.StoredChangelogs.LastOrDefault(s =>
+                        s.DatasetId == datasetId &&
+                        ((int)s.StartIndex).ToString() == startChangeId.ToString()
+                    );
 
-                    var changelog = changelogManager.ListStoredChangelogs(datasetId).@return.FirstOrDefault(s => s.startIndex == startChangeId.ToString());
-
-                    if (changelog != null) changelog.endIndex = portionEndIndex.ToString();
+                    if (changelog != null) changelog.EndIndex = (int)portionEndIndex;
                 }               
 
                 if (!CheckChangelogHasFeatures(changeLog))
