@@ -11,12 +11,14 @@ namespace Kartverket.Geosynkronisering
 {
     public class ChangelogManager
     {
-        private StoredChangelogsEntities db;
+        private StoredChangelogsEntities db { get
+            {
+                return new StoredChangelogsEntities();
+            } }
         // private geosyncEntities db;
 
         public ChangelogManager(StoredChangelogsEntities _db) // public ChangelogManager(geosyncEntities _db)
         {
-            db = _db;
         }
 
         public System.Xml.XmlDocument GetCapabilities()
