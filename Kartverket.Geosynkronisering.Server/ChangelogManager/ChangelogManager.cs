@@ -161,8 +161,6 @@ namespace Kartverket.Geosynkronisering
                 {
                     if (changelog.DownloadUri == null)
                     {
-                        db = new StoredChangelogsEntities();
-
                         db.DeleteObject(changelog);
 
                         //db.StoredChangelogs.DeleteObject(changelog);
@@ -193,8 +191,6 @@ namespace Kartverket.Geosynkronisering
                 {
                     var downloadUri = new Uri(of.DownloadUri);
                     DeleteFileOnServer(downloadUri);
-                    db = new StoredChangelogsEntities();
-
                     db.DeleteObject(of);
                     //db.StoredChangelogs.DeleteObject(of);
                 }
@@ -206,8 +202,6 @@ namespace Kartverket.Geosynkronisering
             //Delete files and db row if not a stored one...
             //var changelog = (from c in db.StoredChangelogs where c.ChangelogId == changelogid select c).First();
             int nchangelogid = Int32.Parse(changelogid);
-
-            db = new StoredChangelogsEntities();
 
             var result = (from c in db.StoredChangelogs where c.ChangelogId == nchangelogid select c);
             if (result != null && result.Count()>0)
@@ -297,8 +291,6 @@ namespace Kartverket.Geosynkronisering
             changelog.Status = ((string)System.Enum.GetName(typeof(Kartverket.GeosyncWCF.ChangelogStatusType), status));
             try
             {
-                db = new StoredChangelogsEntities();
-
                 db.SaveChanges();
             }
             catch (Exception ex)
@@ -311,13 +303,14 @@ namespace Kartverket.Geosynkronisering
         public bool SetDownloadURI(string changelogid, string URI)
         {
             int nchangelogid = Int32.Parse(changelogid);
+            
+            db = new StoredChangelogsEntities();
+
             var changelog = (from c in db.StoredChangelogs where c.ChangelogId == nchangelogid select c).First();
 
             changelog.DownloadUri = URI;
             try
             {
-                db = new StoredChangelogsEntities();
-
                 db.SaveChanges();
             }
             catch (Exception ex)
