@@ -250,8 +250,7 @@ namespace Kartverket.Geosynkronisering
 
             //TODO make filter 
             //TODO check if similar stored changelog is already done
-            db.StoredChangelogs.Add(ldbo);
-            //db.AddObject(ldbo);
+            db.AddObject(ldbo);
             db.SaveChanges();
             
 
