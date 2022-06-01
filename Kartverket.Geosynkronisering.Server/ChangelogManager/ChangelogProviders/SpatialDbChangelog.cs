@@ -404,7 +404,11 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                         ((int)s.StartIndex).ToString() == startChangeId.ToString()
                     );
 
-                    if (changelog != null) changelog.EndIndex = (int)portionEndIndex;
+                    if (changelog != null)
+                    {
+                        changelog.EndIndex = (int)portionEndIndex;
+                        db.SaveChanges();
+                    }
                 }               
 
                 if (!CheckChangelogHasFeatures(changeLog))
