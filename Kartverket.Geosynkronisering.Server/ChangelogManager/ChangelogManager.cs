@@ -246,6 +246,7 @@ namespace Kartverket.Geosynkronisering
 
             ldbo.DatasetId = datasetId;
             ldbo.DateCreated = DateTime.Now;
+            ldbo.ChangelogId = db.StoredChangelogs.Max(s => s.ChangelogId) + 1;
 
             //TODO make filter 
             //TODO check if similar stored changelog is already done
