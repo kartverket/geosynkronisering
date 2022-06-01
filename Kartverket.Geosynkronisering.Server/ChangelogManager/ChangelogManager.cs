@@ -11,16 +11,12 @@ namespace Kartverket.Geosynkronisering
 {
     public class ChangelogManager
     {
-        private StoredChangelogsEntities db { get
-            {
-                return new StoredChangelogsEntities();
-            }
-            
-        }
+        private StoredChangelogsEntities db;
         // private geosyncEntities db;
 
         public ChangelogManager(StoredChangelogsEntities _db) // public ChangelogManager(geosyncEntities _db)
         {
+            db = _db;
         }
 
         public System.Xml.XmlDocument GetCapabilities()
@@ -239,7 +235,7 @@ namespace Kartverket.Geosynkronisering
 
         public OrderChangelog CreateChangeLog(int startIndex, int count, int datasetId)
         {            
-            StoredChangelog ldbo = new StoredChangelog();
+            var ldbo = new StoredChangelog();
             ldbo.Stored = false;            
             
             ldbo.Status = ((string)System.Enum.GetName(typeof(Kartverket.GeosyncWCF.ChangelogStatusType),Kartverket.GeosyncWCF.ChangelogStatusType.queued));
@@ -251,8 +247,8 @@ namespace Kartverket.Geosynkronisering
 
             //TODO make filter 
             //TODO check if similar stored changelog is already done
-            //db.StoredChangelogs.AddObject(ldbo);
-            db.AddObject(ldbo);
+            db.StoredChangelogs.Add(ldbo);
+            //db.AddObject(ldbo);
             db.SaveChanges();
             
 
@@ -282,7 +278,8 @@ namespace Kartverket.Geosynkronisering
             {
                 throw ex;
             }
-            return true;            
+            return true;
+            
         }
 
         public bool SetDownloadURI(string changelogid, string URI)
