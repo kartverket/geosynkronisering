@@ -94,6 +94,7 @@ namespace Kartverket.Geosynkronisering
 
                 string resp;
                 string initType;
+                db = new StoredChangelogsEntities();
                 var datasets = from d in db.Datasets where d.DatasetId == id select d;
                 initType = datasets.First().DatasetProvider;
 
@@ -219,6 +220,7 @@ namespace Kartverket.Geosynkronisering
         private Dataset GetDataset(string datasetId)
         {
             var id = GetId(datasetId);
+            db = new StoredChangelogsEntities();
             var datasets = from d in db.Datasets where d.DatasetId == id select d;
             var dataset = datasets.First();
             return dataset;
@@ -330,6 +332,7 @@ namespace Kartverket.Geosynkronisering
             int startindex = -1;
             int count = -1;
             string initType;
+            db = new StoredChangelogsEntities();
             var datasets = from d in db.Datasets where d.DatasetId == id select d;
             initType = datasets.First().DatasetProvider;
             //Initiate provider from config/dataset
