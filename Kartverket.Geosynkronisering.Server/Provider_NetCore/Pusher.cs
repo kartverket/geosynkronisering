@@ -268,20 +268,20 @@ namespace Provider_NetCore
 
             var statusResult = Client.GetAsync(status).Result;
 
+            Console.Write("WAIT, processing push...");
             while (statusResult.StatusCode == System.Net.HttpStatusCode.Accepted)
             {
                 statusResult = Client.GetAsync(status).Result;
 
+                Console.Write(".");
                 Task.Delay(2000).Wait();
             }
+            Console.WriteLine();
 
             var message = statusResult.Content.ReadAsStringAsync().Result;
-
             Console.WriteLine("INFO: " + message);
-
             reportStatus.message = JsonSerializer.Deserialize<dynamic>(message);
 
-          
             reportStatus.status = TestForSuccess(statusResult) 
                 ? Status.WRITE_CHANGES_OK
                 : Status.UNKNOWN_ERROR;
