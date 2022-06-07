@@ -2,7 +2,7 @@
   "profiles": {
     "Provider_NetCore": {
       "commandName": "Project",
-      "commandLineArgs": "push 0"
+      "commandLineArgs": "push 23"
     }
   }
 }

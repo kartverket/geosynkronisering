@@ -11,14 +11,22 @@ using ChangelogManager;
 using Ionic.Zip;
 using Kartverket.GeosyncWCF;
 using Kartverket.Geosynkronisering.Database;
-using NLog;
+//using NLog;
+using Serilog;
+using Serilog.Events;
+
+
 
 namespace Kartverket.Geosynkronisering.ChangelogProviders
 {
     public abstract class SpatialDbChangelog : IChangelogProvider
     {
-        protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-            // NLog for logging (nuget package)
+        //protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        //protected readonly ILogger Logger = Log.Logger;
+
+        //protected readonly MyLogger Logger = MyLogger;
+
+        // NLog for logging (nuget package)
 
         protected string PDbConnectInfo;
         private string _pNsApp;
@@ -33,6 +41,23 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         private string streamFileLocation;
         private string tmpzipFile;
         private string _version;
+
+
+        /// <summary>
+        /// Wrapper for replacing nlog with Serilog
+        /// </summary>
+        //protected static class Logger
+        //{
+        //    public static void Info(string messageTemplate) => Log.Write(LogEventLevel.Information, messageTemplate);
+        //    public static void Info(string messageTemplate, params object[] propertyValues) => Log.Logger.Information(messageTemplate, propertyValues);
+        //    //static void Info()
+        //    //{
+        //    //    Log.Information();
+        //    //}
+        //    public static void Error(Exception exception, string messageTemplate) => Log.Write(LogEventLevel.Error, exception, messageTemplate);
+        //    public static void Error(string messageTemplate, params object[] propertyValues) => Log.Logger.Error(messageTemplate, propertyValues);
+        //    public static void Warn(string messageTemplate) => Log.Write(LogEventLevel.Warning, messageTemplate);
+        //}
 
         public void Intitalize(int datasetId)
         {
@@ -127,7 +152,8 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 ldbo.EndIndex = endIndex;
 
                 // New code to handle FTP download
-                ChangeLogHandler chgLogHandler = new ChangeLogHandler(ldbo, Logger);
+                ChangeLogHandler chgLogHandler = new ChangeLogHandler(ldbo, Log.Logger);
+                // ChangeLogHandler chgLogHandler = new ChangeLogHandler(ldbo, Logger);
                 string inFile = "";
                 try
                 {
@@ -235,7 +261,8 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 }
 
                 // New code to handle FTP download
-                ChangeLogHandler chgLogHandler = new ChangeLogHandler(Logger);
+                ChangeLogHandler chgLogHandler = new ChangeLogHandler(Log.Logger);
+                //ChangeLogHandler chgLogHandler = new ChangeLogHandler(Logger);
                 string inFile = "";
                 try
                 {
@@ -714,9 +741,11 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         //string m_changeLog;
         //StoredChangelog m_storedChangelog;
         //geosyncEntities m_db;
-        private Logger _mLogger;
+        //private Logger _mLogger;
 
-        public ChangeLogHandler(StoredChangelog sclog, Logger logger)
+        private ILogger _mLogger;
+        public ChangeLogHandler(StoredChangelog sclog, ILogger logger)
+        //public ChangeLogHandler(StoredChangelog sclog, Logger logger)
         {
             //m_storedChangelog = sclog;
             //m_db = db;
@@ -725,7 +754,8 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
 
         }
 
-        public ChangeLogHandler(Logger logger)
+        public ChangeLogHandler(ILogger logger)
+        // public ChangeLogHandler(Logger logger)
         {
             _mLogger = logger;
             _mWorkingDirectory = Path.GetTempPath();

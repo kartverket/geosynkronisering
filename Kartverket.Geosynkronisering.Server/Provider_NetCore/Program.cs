@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using ChangelogManager;
 using Kartverket.Geosynkronisering;
 using Test_Subscriber_NetCore;
+using Serilog;
+using Serilog.Events;
 
 namespace Provider_NetCore
 {
@@ -12,6 +15,50 @@ namespace Provider_NetCore
         static void Main(string[] args)
         {
             Console.WriteLine("Starting Geosync Provider_NetCore (.NET 5.0)!");
+
+            // Log with Serilog 
+            // So long as you've initialised Log.Logger at application start-up, everything should just work that way.
+            var currentExecutable = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
+            var logFile = @"logs/" + currentExecutable + "_log" + ".log";
+            var errorFile = @"logs/" + currentExecutable + "_error" + ".log";
+            var debugFile = @"logs/" + currentExecutable + "_debug" + ".log";
+            var warningFile = @"logs/" + currentExecutable + "_warning" + ".log";
+            var fatalFile = @"logs/" + currentExecutable + "_fatal" + ".log";
+            
+
+            // Split Log Data to seperate files
+            // See https://stackoverflow.com/questions/28292601/serilog-multiple-log-files
+            // https://vmsdurano.com/serilog-and-asp-net-core-split-log-data-using-filterexpression/
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .Enrich.FromLogContext()
+                .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Information).WriteTo.File(logFile, rollingInterval: RollingInterval.Day, shared: true))
+                .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Debug).WriteTo.File(debugFile, rollingInterval: RollingInterval.Day, shared: true))
+                .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error).WriteTo.File(errorFile, rollingInterval: RollingInterval.Day, shared: true))
+                .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Warning).WriteTo.File(warningFile, rollingInterval: RollingInterval.Day, shared: true))
+                .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Fatal).WriteTo.File(fatalFile, rollingInterval: RollingInterval.Day, shared: true))
+                .CreateLogger();
+
+
+            Log.Information("Starting Geosync Provider_NetCore (.NET 5.0)!");
+            if (false)
+            {
+                // Testing
+                Log.Debug("test debug level ");
+                Log.Warning("test warning level");
+
+                try
+                {
+                    var d = 0;
+                    var n = 10 / d;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "test error logging");
+                    Log.Fatal(ex, "test fatal logging"  );
+                    
+                }
+            }
             RunAsConsole(args);
         }
 

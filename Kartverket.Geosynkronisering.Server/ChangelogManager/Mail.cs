@@ -7,10 +7,12 @@ using System.Net.Mime;
 using System.Web;
 //using System.Web.UI.WebControls;
 using Kartverket.Geosynkronisering.Database;
-using NLog;
+//using NLog;
 using MailKit.Net.Smtp;
 //using MailKit;
 using MimeKit;
+using Serilog;
+using Serilog.Events;
 
 
 namespace Kartverket.Geosynkronisering
@@ -20,7 +22,7 @@ namespace Kartverket.Geosynkronisering
     /// </summary>
     public class Mail
     {
-        protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        //protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// From https://github.com/jstedfast/MailKit nuget package MailKit.

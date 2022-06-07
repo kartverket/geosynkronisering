@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Configuration;
 using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
@@ -11,16 +12,20 @@ using System.Web.UI.WebControls;
 using System.Web.Security;
 using Kartverket.Geosynkronisering.Database;
 using System.Reflection;
+using System.Text;
 using ChangelogManager;
 using Kartverket.GeosyncWCF;
-using NLog;
-using NLog.Targets;
+//using NLog;
+//using NLog.Targets;
+using Serilog;
+using Serilog.Events;
+
 
 namespace Kartverket.Geosynkronisering
 {
     public partial class GeosynkroniseringAdmin : Page
     {
-        protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        //protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         protected void ChangePage(object sender, CommandEventArgs e)
         {
@@ -775,9 +780,24 @@ namespace Kartverket.Geosynkronisering
             if (File.Exists(logFilename))
             {
                 Logger.Info("LogFile found:{0}, clear it", logFilename);
+
+#if nlog
                 var fileStream = File.Open(logFilename, FileMode.Open);
                 fileStream.SetLength(0);
                 fileStream.Close();
+#else
+                using (FileStream fs = new FileStream(logFilename, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                        fs.SetLength(0);
+                        fs.Close();
+                    
+                    if (false)
+                    {
+                        // test still working logging
+                        Log.Warning("Starting Test Serilog Warning emtied!");
+                    }
+                }
+#endif
                 Logger.Info("LogFile found:{0}, cleared", logFilename);
                 ResetTextBoxLogfile(TextBoxLogfile);
             }
@@ -792,12 +812,27 @@ namespace Kartverket.Geosynkronisering
         {
             try
             {
+#if nlog
                 using (StreamReader stream = File.OpenText(logFilename))
                 {
                     var contents = stream.ReadToEnd();
                     stream.Close();
                     return contents;
                 }
+
+#else //Serilog
+                // W/A reading serilog log-files: https://github.com/serilog/serilog-sinks-file/issues/86
+                using (FileStream fs = new FileStream(logFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    using (var sr = new StreamReader(fs, Encoding.UTF8))
+                    {
+                        var contents = sr.ReadToEnd();
+                        sr.Close();
+                        fs.Close();
+                        return contents;
+                    }
+                }
+#endif
             }
             catch (Exception ex)
             {
@@ -846,12 +881,76 @@ namespace Kartverket.Geosynkronisering
             }
         }
 
-        #endregion
+#endregion
 
-        #region nlog
+#region serilog
+        private string GetSerilogFilepath()
+        {
+            // serielog
+            var appSettings = ConfigurationManager.AppSettings;
+            var serilogPath = appSettings["serilog-filepath"];
+            if (serilogPath.ToUpper() == "%TEMP%")
+            {
+                serilogPath = Path.GetTempPath();
+            }
+
+            return serilogPath;
+        }
+        private string GetLogfilenameLog()
+        {
+
+            var serilogPath = GetSerilogFilepath();
+            var appSettings = ConfigurationManager.AppSettings;
+            var fileName = Path.Combine(serilogPath, appSettings["serilog-logfile"]);
+
+            var date = DateTime.Now.ToString("yyyyMMdd");
+            var dir = Path.GetDirectoryName(fileName);
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName) + date;
+            var exTension = Path.GetExtension(fileName);
+            fileName = Path.Combine(dir, fileNameWithoutExtension, exTension);
+
+            // nlog
+            //var fileTarget = (FileTarget) LogManager.Configuration.FindTargetByName("logfile");
+            //// Need to set timestamp here if filename uses date. 
+            //// For example - filename="${basedir}/logs/${shortdate}/trace.log"
+            //var logEventInfo = new LogEventInfo {TimeStamp = DateTime.Now};
+            //var fileName = fileTarget.FileName.Render(logEventInfo);
+
+            return fileName;
+        }
 
         private string GetLogfilenameWarn()
         {
+            // no date on warning file
+            var serilogPath = GetSerilogFilepath();
+            var appSettings = ConfigurationManager.AppSettings;
+            var fileName = Path.Combine(serilogPath, appSettings["serilog-warningfile"]);
+            return fileName;
+        }
+
+        private string GetLogfilenameError()
+        {
+            var serilogPath = GetSerilogFilepath();
+            var appSettings = ConfigurationManager.AppSettings;
+            var fileName = Path.Combine(serilogPath, appSettings["serilog-errorfile"]);
+
+            var date = DateTime.Now.ToString("yyyyMMdd");
+            var dir = Path.GetDirectoryName(fileName);
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName) + date;
+            var exTension = Path.GetExtension(fileName);
+            fileName = Path.Combine(dir, fileNameWithoutExtension, exTension);
+
+            return fileName;
+        }
+
+#endregion
+
+#if nlog
+#region nlog
+
+        private string GetLogfilenameWarn()
+        {
+            
             var fileTarget = (FileTarget) LogManager.Configuration.FindTargetByName("warnfile");
             var logEventInfo = new LogEventInfo();
             var fileName = fileTarget.FileName.Render(logEventInfo);
@@ -861,12 +960,16 @@ namespace Kartverket.Geosynkronisering
 
         private string GetLogfilenameLog()
         {
-            var fileTarget = (FileTarget) LogManager.Configuration.FindTargetByName("logfile");
 
+
+            // nlog
+            var fileTarget = (FileTarget)LogManager.Configuration.FindTargetByName("logfile");
             // Need to set timestamp here if filename uses date. 
             // For example - filename="${basedir}/logs/${shortdate}/trace.log"
-            var logEventInfo = new LogEventInfo {TimeStamp = DateTime.Now};
+            var logEventInfo = new LogEventInfo { TimeStamp = DateTime.Now };
             var fileName = fileTarget.FileName.Render(logEventInfo);
+
+
             return fileName;
         }
 
@@ -880,8 +983,9 @@ namespace Kartverket.Geosynkronisering
             var fileName = fileTarget.FileName.Render(logEventInfo);
             return fileName;
         }
+#endregion
+#endif
 
-        #endregion
 
 
         //protected void Page_Load(object sender, EventArgs e)

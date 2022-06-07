@@ -10,6 +10,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ChangelogManager;
 using Kartverket.Geosynkronisering;
+using Serilog;
 
 namespace Provider_NetCore
 {
@@ -143,6 +144,9 @@ namespace Provider_NetCore
                 providerStatus.message = "No new changes found";
                 Console.WriteLine(providerStatus.message);
 
+                var myLogger = Log.Logger;
+                Log.Information(providerStatus.message);
+                
                 return providerStatus;
             }
 
@@ -152,6 +156,7 @@ namespace Provider_NetCore
 
                 providerStatus.message = "Subscriber reports higher index than Provider";
                 Console.WriteLine(providerStatus.message);
+                Log.Information(providerStatus.message);
 
                 return providerStatus;
             }

@@ -1,4 +1,4 @@
-﻿using NLog;
+﻿//using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,16 +6,18 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Xml.Linq;
+using Serilog;
+using Serilog.Events;
 
 namespace Kartverket.Geosynkronisering.ChangelogProviders
 {
     public class ChangelogWFS
     {
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
+        //private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         public XElement GetFeatureCollectionFromWFS(string nsPrefixTargetNamespace, string nsAppStr, string wfsUrl, ref Dictionary<string, string> typeIdDict, List<string> gmlIds, int datasetId)
         {
-            logger.Info("GetFeatureCollectionFromWFS START");
+            Logger.Info("GetFeatureCollectionFromWFS START");
             XNamespace nsApp = nsAppStr;
             XNamespace nsFes = "http://www.opengis.net/fes/2.0";
             XNamespace nsWfs = "http://www.opengis.net/wfs/2.0";
@@ -55,20 +57,20 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
                 StreamWriter writer = new StreamWriter(httpWebRequest.GetRequestStream());
                 wfsGetFeatureDocument.Save(writer);
                 //wfsGetFeatureDocument.Save("C:\\temp\\gvtest_query.xml");
-                logger.Debug("GetFeature: " + wfsGetFeatureDocument.ToString());
+                Logger.Debug("GetFeature: " + wfsGetFeatureDocument.ToString());
                 writer.Close();
 
                 HttpWebResponse response = httpWebRequest.GetResponse() as HttpWebResponse;
 
                 XElement getFeatureResponse = XElement.Load(response.GetResponseStream());
                 //getFeatureResponse.Save("C:\\temp\\gvtest_response.xml");
-                logger.Info("GetFeatureCollectionFromWFS END");
+                Logger.Info("GetFeatureCollectionFromWFS END");
                 return getFeatureResponse;
             }
             catch (System.Exception exp)
             {
                 //20130821-Leg:Added logging of wfsGetFeatureDocument
-                logger.Error(exp, "GetFeatureCollectionFromWFS: wfsGetFeatureDocument:" + wfsGetFeatureDocument.ToString() + "\r\n" + "GetFeatureCollectionFromWFS function failed:");
+                Logger.Error(exp, "GetFeatureCollectionFromWFS: wfsGetFeatureDocument:" + wfsGetFeatureDocument.ToString() + "\r\n" + "GetFeatureCollectionFromWFS function failed:");
                 throw new System.Exception("GetFeatureCollectionFromWFS function failed", exp);
             }
         }

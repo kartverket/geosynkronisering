@@ -8,8 +8,10 @@ using ChangelogManager;
 using Kartverket.GeosyncWCF;
 using Kartverket.Geosynkronisering.Database;
 using Kartverket.Geosynkronisering.Properties;
-using NLog;
-using NLog.Fluent;
+//using NLog;
+//using NLog.Fluent;
+using Serilog;
+using Serilog.Events;
 
 namespace Kartverket.Geosynkronisering
 {
@@ -20,7 +22,7 @@ namespace Kartverket.Geosynkronisering
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "WebFeatureServiceReplication" in code, svc and config file together.
     public class WebFeatureServiceReplication : WebFeatureServiceReplicationPort
     {
-        protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        //protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private StoredChangelogsEntities db;
         //private geosyncEntities db;
 
@@ -30,7 +32,7 @@ namespace Kartverket.Geosynkronisering
             //    db = new geosyncEntities();
         }
 
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
+        //private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         public REP_CapabilitiesType GetCapabilities(GetCapabilitiesType1 getcapabilities1)
         {
@@ -256,7 +258,7 @@ namespace Kartverket.Geosynkronisering
                 }
                 catch (Exception e)
                 {
-                    logger.Info("SendMail failed, check settings in web.config(appSettings) and in 'Konfigurasjon > EMail' ");
+                    Logger.Info("SendMail failed, check settings in web.config(appSettings) and in 'Konfigurasjon > EMail' ");
                 }
                
 
