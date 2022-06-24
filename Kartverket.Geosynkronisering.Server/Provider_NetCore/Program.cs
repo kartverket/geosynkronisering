@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using ChangelogManager;
 using Kartverket.Geosynkronisering;
 using Test_Subscriber_NetCore;
@@ -59,6 +61,15 @@ namespace Provider_NetCore
                     
                 }
             }
+
+            // Make App_Data available
+            var contentRootPath = AppDomain.CurrentDomain.BaseDirectory;
+            var appData = "App_Data" + Path.DirectorySeparatorChar.ToString();
+            //AppDomain.CurrentDomain.SetData("DataDirectory", appData);
+            //AppDomain.CurrentDomain.SetData("DataDirectory", Path.Combine(contentRootPath, "App_Data", Path.DirectorySeparatorChar.ToString()));
+            AppDomain.CurrentDomain.SetData("DataDirectory", Path.Combine(contentRootPath, appData));
+
+
             RunAsConsole(args);
         }
 

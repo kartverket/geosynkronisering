@@ -1,0 +1,78 @@
+﻿<MudNavMenu Bordered="true" >
+    @*<MudNavMenu Bordered="true" Color="Color.Info">*@
+    @*<MudNavMenu Bordered="true" Style="background-color:#7FB3D5">*@
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Filled.Home">Home</MudNavLink>
+    @*<MudNavLink Href="/servers" Match="NavLinkMatch.Prefix">Servers</MudNavLink>*@
+    
+    <MudNavGroup Title="Konfugurasjon" Expanded="true">
+        <MudNavLink Href="/servicesconfig" Match="NavLinkMatch.Prefix">Tilbyder</MudNavLink>
+        <MudNavLink Href="/subscribers" Match="NavLinkMatch.Prefix">Abonnenter</MudNavLink>
+    </MudNavGroup>
+    
+
+    <MudNavGroup Title="Datasett" Expanded="true">
+        <MudNavLink Href="/dataset" Match="NavLinkMatch.Prefix">Datasett</MudNavLink>
+        <MudNavLink Href="/datasetsubscribers" Match="NavLinkMatch.Prefix">Datasett abonnenter</MudNavLink>
+    </MudNavGroup>
+    <MudNavLink Href="/storedchangelogs" Match="NavLinkMatch.Prefix">Endringslogg</MudNavLink>
+    
+    <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">Om</MudNavLink>
+
+@*    <MudNavGroup Title="Blazor default" Expanded="true">
+        <MudNavLink Href="/counter" Match="NavLinkMatch.Prefix">Counter</MudNavLink>
+        <MudNavLink Href="/fetchdata" Match="NavLinkMatch.Prefix">FetchData</MudNavLink>
+    </MudNavGroup>
+
+    <MudNavGroup Title="Test MudBlazor" Expanded="true">
+        <MudNavLink Href="/testmudblazortable" Match="NavLinkMatch.Prefix">mudblazor table</MudNavLink>
+    </MudNavGroup>
+*@
+
+
+</MudNavMenu>
+
+
+
+
+
+
+@*<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Blazor.Kartverket.Geosynkronisering.Provider</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="counter">
+                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="fetchdata">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+            </NavLink>
+        </div>
+    </nav>
+</div>*@
+
+@*@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}
+*@

@@ -1,0 +1,85 @@
+﻿@page "/storedchangelogs"
+@using ChangelogManager
+@using Serilog
+@inject IConfiguration Configuration
+<h3>Endringslogg</h3>
+
+@if (_listStoredChangelogs != null && _listStoredChangelogs.Count > 0)
+{
+    <MudTable Items="@_listStoredChangelogs" Hover="true" SortLabel="Sort By" Dense="true">
+        <HeaderContent>
+
+            <MudTh><MudTableSortLabel SortBy="new Func<StoredChangelog, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<StoredChangelog, object>(x=>x.OrderUri)">OrderUri</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<StoredChangelog, object>(x=>x.StartIndex)">StartIndex</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<StoredChangelog, object>(x=>x.DownloadUri)">DownloadUri</MudTableSortLabel></MudTh>
+
+            <MudTh><MudTableSortLabel SortBy="new Func<StoredChangelog, object>(x=>x.EndIndex)">EndIndex</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<StoredChangelog, object>(x=>x.Status)">Status</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<StoredChangelog, object>(x=>x.Stored)">Stored</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<StoredChangelog, object>(x=>x.ChangelogId)">ChangelogId</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<StoredChangelog, object>(x=>x.DateCreated)">DateCreated</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Nr">@context.Name</MudTd>
+            <MudTd DataLabel="OrderUri">@context.OrderUri</MudTd>
+            <MudTd DataLabel="StartIndex">@context.StartIndex</MudTd>
+            <MudTd DataLabel="DownloadUri">@context.DownloadUri</MudTd>
+            <MudTd DataLabel="EndIndex">@context.EndIndex</MudTd>
+            <MudTd DataLabel="Status">@context.Status</MudTd>
+            <MudTd DataLabel="Stored">@context.Stored</MudTd>
+            <MudTd DataLabel="ChangelogId">@context.ChangelogId</MudTd>
+            <MudTd DataLabel="DateCreated">@context.DateCreated</MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[]{50, 100} " />
+        </PagerContent>
+    </MudTable>
+}
+else
+{
+    <h3>_listStoredChangelogs = 0 or count = 0</h3>
+}
+
+
+@code {
+
+    private List<StoredChangelog> _listStoredChangelogs;
+    protected override async Task OnInitializedAsync()
+    {
+        if (false)
+        {
+            await InitializeAndReadAllData();
+        }
+    }
+
+    /// <summary>
+    /// Read StoredChangelogs
+    /// </summary>
+    /// <returns></returns>
+    private async Task InitializeAndReadAllData()
+    {
+        using (geosyncEntities db = new geosyncEntities())
+        {
+            var listStoredChangelogs = db.StoredChangelogs;
+            _listStoredChangelogs = listStoredChangelogs;
+            if (_listStoredChangelogs != null && _listStoredChangelogs.Count > 0)
+            {
+                Log.Information("listStoredChangelogs: {0}", listStoredChangelogs.Count);
+            }
+            else
+            {
+                Log.Debug("listStoredChangelogs: null or count = 0");
+            }
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitializeAndReadAllData();
+            StateHasChanged();
+        }
+    }
+}

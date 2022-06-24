@@ -8,11 +8,37 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="ActiveChangelog.cs" />
+	  <Compile Remove="DatasetStatus.cs" />
+	  <Compile Remove="Pusher.cs" />
+	  <Compile Remove="ReportStatus.cs" />
+	  <Compile Remove="SqlHelper.cs" />
+	  <Compile Remove="Status.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="App.config" />
+	  <None Remove="appsettings.Development.json" />
+	  <None Remove="appsettings.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="appsettings.Development.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+		<Content Include="appsettings.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
 		<Content Include="bin\Release\net5.0\geosync.sqlite" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\ChangelogManager\ChangelogManager.csproj" />
+		<ProjectReference Include="..\Pusher\Pusher.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -27,6 +53,12 @@
 	  <PackageReference Include="Serilog" Version="2.11.0" />
 	  <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
 	  <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="App_Data\geosync.sqlite">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 	<!--<ItemGroup>
