@@ -80,7 +80,8 @@ namespace Provider_NetCore
                             Console.WriteLine(msg);
                             Log.Information(msg);
 
-                            _feedProgress?.OnUpdateLogList(msg); // reports progress for anyone listening to event
+                            _feedProgress?.OnUpdateLogListAsync(msg); // reports progress for anyone listening to event
+                            _feedProgress?.OnUpdateLogListSync(msg); // reports progress for anyone listening to event
 
                             var finalStatus = await Push();
 
@@ -114,7 +115,8 @@ namespace Provider_NetCore
                                 msg = $"Unable to synchronize {_currentSubscriber.dataset.DatasetId}. Final status: {finalStatus.status}.";
                                 Console.WriteLine(msg);
                                 Log.Information(msg);
-                                _feedProgress?.OnUpdateLogList(msg); // reports progress for anyone listening to event
+                                _feedProgress?.OnUpdateLogListAsync(msg); // reports progress for anyone listening to event
+                                _feedProgress?.OnUpdateLogListSync(msg); // reports progress for anyone listening to event
 
                                 //if(!string.IsNullOrEmpty(finalStatus.message)) Console.WriteLine($"Final message: {finalStatus.message}.");
                             }
@@ -160,7 +162,11 @@ namespace Provider_NetCore
 
                 var myLogger = Log.Logger;
                 Log.Information(providerStatus.message);
-                
+
+                _feedProgress?.OnUpdateLogListAsync(providerStatus.message); // reports progress for anyone listening to event
+                _feedProgress?.OnUpdateLogListSync(providerStatus.message); // reports progress for anyone listening to event
+
+
                 return providerStatus;
             }
 
@@ -171,6 +177,9 @@ namespace Provider_NetCore
                 providerStatus.message = "Subscriber reports higher index than Provider";
                 Console.WriteLine(providerStatus.message);
                 Log.Information(providerStatus.message);
+                _feedProgress?.OnUpdateLogListAsync(providerStatus.message); // reports progress for anyone listening to event
+                _feedProgress?.OnUpdateLogListSync(providerStatus.message); // reports progress for anyone listening to event
+
 
                 return providerStatus;
             }
@@ -289,7 +298,11 @@ namespace Provider_NetCore
 
             var statusResult = Client.GetAsync(status).Result;
 
-            Console.Write("WAIT, processing push...");
+            var msg = "WAIT, processing push...";
+            _feedProgress?.OnUpdateLogListAsync(msg); // reports progress for anyone listening to event
+            _feedProgress?.OnUpdateLogListSync(msg); // reports progress for anyone listening to event
+
+            Console.Write(msg);
             while (statusResult.StatusCode == System.Net.HttpStatusCode.Accepted)
             {
                 statusResult = Client.GetAsync(status).Result;
@@ -334,7 +347,8 @@ namespace Provider_NetCore
             var msg = $"Reported status: {status.status}";
             Console.WriteLine(msg);
             Log.Information(msg);
-            _feedProgress?.OnUpdateLogList(msg); // reports progress for anyone listening to event
+            _feedProgress?.OnUpdateLogListAsync(msg); // reports progress for anyone listening to event
+            _feedProgress?.OnUpdateLogListSync(msg); // reports progress for anyone listening to event
 
             //if(!string.IsNullOrEmpty(status.message)) Console.WriteLine($"Reported message: {status.message}");
 

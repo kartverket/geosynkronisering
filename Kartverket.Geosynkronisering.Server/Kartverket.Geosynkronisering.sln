@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Provider_NetCore", "Provide
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor.Kartverket.Geosynkronisering.Provider", "Blazor.Kartverket.Geosynkronisering.Provider\Blazor.Kartverket.Geosynkronisering.Provider.csproj", "{C99F4E23-10B5-40D7-84AB-4547FEA3ACD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pusher", "Pusher\Pusher.csproj", "{4BEADD65-C0A6-44D1-A1D4-757B6E6009D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pusher", "Pusher\Pusher.csproj", "{4BEADD65-C0A6-44D1-A1D4-757B6E6009D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

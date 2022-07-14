@@ -45,19 +45,20 @@ namespace ChangelogManager
         {
             var connectionString = "";
             bool isConfigOK;
+            
             try
-            {
-                // Older applications typically uses app.config / web.config with XML
-                connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["geosyncEntities"]
-                    .ConnectionString;
-                isConfigOK = true;
-            }
-            catch (System.NullReferenceException e)
             {
                 // Supports .net Core appsettings.json
                 var config = JsonConfig.SetupJsonConfig();
                 connectionString = config.GetValue<string>("connectionStrings:geosyncEntities");
                 //connectionString = config.GetSection("connectionStrings:geosyncEntities").ToString();
+                isConfigOK = true;
+            }
+            catch (System.NullReferenceException e)
+            {
+                // Older applications typically uses app.config / web.config with XML
+                connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["geosyncEntities"]
+                    .ConnectionString;
                 isConfigOK = true;
             }
 

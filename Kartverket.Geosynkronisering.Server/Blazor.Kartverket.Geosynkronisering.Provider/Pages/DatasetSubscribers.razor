@@ -113,19 +113,23 @@
     </PagerContent>
 </MudTable>
 
-@*<MudText Typo="Typo.subtitle1">@_testPushFeedback</MudText>*@
-@if (_listPushLog.Count > 0)
-{
-    <MudTable Elevation="25" Items="@_listPushLog" Dense="true" @ref="_tablePushlog">
-        <HeaderContent>
-            <MudTh>Push log:</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd >@context.ToString()</MudTd>
-        </RowTemplate>
-    </MudTable>
-}
+<MudTable Elevation="25" Items="@_listPushLog" Dense="true" @ref="_tablePushlog">
+    <HeaderContent>
+        <MudTh>Push log:</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.ToString()</MudTd>
+    </RowTemplate>
+</MudTable>
 
+@*<MudTable Elevation="25" ServerData="@(new Func<TableState, Task<TableData<string>>>(ServerReload))" Dense="true" @ref="_tablePushlog">
+    <HeaderContent>
+        <MudTh>Push log Server:</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.ToString()</MudTd>
+    </RowTemplate>
+</MudTable>*@
 
 @code {
     private List<Datasets_NgisSubscriber> _listDatasetsNgisSubscribers;
@@ -139,94 +143,27 @@
     private MudTable<ChangelogManager.Datasets_NgisSubscriber> _table;
     private bool _hideMatProgressCircle = true;
     private int selectedRowNumber = -1;
-    
-    //FeedbackController.Progress _feedBack;
-    List<string> _listPushLog = new List<string>();
+
+    public List<string> _listPushLog { get; set; }
+    private int _conterPushLog = 0;
     private MudTable<string> _tablePushlog;
-    private string _testPushFeedback = "";
-    //private bool _shouldRender = true;
 
     protected override void OnInitialized()
     {
         // listen to events from pusher
-        
-        //_feedBack = new FeedbackController.Progress();
-        //Pusher pusher = new Pusher(_feedBack);
-        //_feedBack.UpdateLogList += Progress_UpdateLogList;
-
         Pusher pusher = new Pusher(Progress);
 
-        Progress.UpdateLogList += Progress_UpdateLogList;
-
+        // Blazor like this type of event
+        Progress.UpdateLogListSync += Progress_UpdateLogList;
+        _listPushLog = new List<string>();
+        _conterPushLog = 0;
     }
 
     public void Dispose()
     {
-        //_feedBack.UpdateLogList -= Progress_UpdateLogList;
-        Progress.UpdateLogList += Progress_UpdateLogList;
-        
+        // dispose of events
+        Progress.UpdateLogListSync -= Progress_UpdateLogList;
     }
-
-
-    //protected override async Task OnInitializedAsync()
-    //{
-
-    //}
-
-
-    /// <summary>
-    /// Listen to events from Pusher
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void Progress_UpdateLogList(object? sender, EventArgs e)
-    {
-        
-        
-        var prg = sender as FeedbackController.Progress;
-        var newLogListItem = prg.NewLogListItem;
-        Console.WriteLine("Progress_UpdateLogList:" + newLogListItem);
-        
-        //_testPushFeedback = newLogListItem;
-        //InvokeAsync(() =>
-        //{
-        //    StateHasChanged();
-        //});
-
-        //var t = Task.Run(() => AddRowToPushLog(newLogListItem) );
-        //t.Wait();
-        var task = AddRowToPushLog(newLogListItem);
-        //task.Wait();
-        //task.Wait();
-        //await task.ConfigureAwait(false);
-        //_listPushLog.Add(newLogListItem);
-        
-        //InvokeAsync(() =>
-        //{
-        //    StateHasChanged();
-        //});
-
-    }
-
-    private async Task AddRowToPushLog(string newLogListItem)
-    {
-        // TODO: Fix immediate redraw of _listPushLog table
-        //Action action = () => _listPushLog.Add(newLogListItem);
-        //await InvokeAsync(action);
-        _listPushLog.Add(newLogListItem);
-        await Task.Delay(15);
-        
-        //_tablePushlog.SetEditingItem(null);
-        //System.Threading.Thread.Sleep(25);
-        //await Task.Delay(15);
-        StateHasChanged();
-        //InvokeAsync(() =>
-        //{
-        //    StateHasChanged();
-        //});
-
-    }
-
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -234,11 +171,72 @@
         {
             GetDatasetsSubscribers();
             _readOnly = true;
-            //_canEdit = !_readOnly;
             StateHasChanged();
         }
     }
 
+    //protected override async Task OnInitializedAsync()
+    //{
+
+    //}
+
+    #region PushEvents
+
+    /// <summary>
+    /// /// Listen to events from Pusher
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void Progress_UpdateLogList(object? sender, EventArgs e)
+    {
+        var prg = sender as FeedbackController.Progress;
+        var newLogListItem = prg.NewLogListItem;
+        Console.WriteLine("Progress_UpdateLogList:" + newLogListItem);
+
+
+        if (false)
+        {
+            // Test only
+            _listPushLog.Add(newLogListItem);
+            _tablePushlog.ReloadServerData();
+        }
+
+        // Fix immediate redraw of _listPushLog table
+
+        if (true)
+        {
+            _conterPushLog++;
+            AddRowToPushLog(newLogListItem);
+
+        }
+        InvokeAsync(() =>
+        {
+            StateHasChanged();
+        });
+
+    }
+
+    private void AddRowToPushLog(string newLogListItem)
+    {
+        _listPushLog.Add(newLogListItem);
+        Console.WriteLine("AddRowToPushLog:" + newLogListItem);
+    }
+
+    private async Task<TableData<string>> ServerReload(TableState state)
+    {
+        // Test only
+        IEnumerable<string> data = _listPushLog;
+        await Task.Delay(30);
+        return new TableData<string>() { TotalItems = _listPushLog.Count, Items = _listPushLog };
+    }
+
+    #endregion
+
+    #region DatabaseUI
+
+    /// <summary>
+    /// Get GetDatasetsSubscribers from database
+    /// </summary>
     private void GetDatasetsSubscribers()
     {
         using (geosyncEntities db = new geosyncEntities())
@@ -246,22 +244,10 @@
             var listSubscribers = db.Datasets_Subscribers;
             _listDatasetsNgisSubscribers = listSubscribers;
         }
-
     }
 
     private string SelectedRowClassFunc(Datasets_NgisSubscriber element, int rowNumber)
     {
-        //if (!_readOnly)
-        //{
-        //    if (_table.SelectedItem == null)
-        //    {
-        //        _table.SetEditingItem(element);
-        //    }
-
-
-        //    selectedRowNumber = rowNumber;
-        //    return string.Empty;
-        //}
         if (_readOnly)
         {
             _table.SetEditingItem(null); // To fix problems when editing
@@ -290,7 +276,6 @@
     //public void SelectionChangedEvent(object row)
     {
         var row = tableRowClickEventArgs.Item;
-
 
         if (row == null)
         {
@@ -344,6 +329,10 @@
 
     }
 
+    /// <summary>
+    /// Delete row and commit to database
+    /// </summary>
+    /// <param name="id"></param>
     private void DeleteRow(int id)
     {
 
@@ -370,6 +359,10 @@
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Add new row and commit to database
+    /// </summary>
+    /// <returns></returns>
     private async Task AddNewRow()
     {
         var subscriber = new Datasets_NgisSubscriber();
@@ -444,7 +437,7 @@
     }
 
     /// <summary>
-    /// Search in table
+    /// Search in table (not in use)
     /// </summary>
     /// <param name="element"></param>
     /// <returns></returns>
@@ -460,13 +453,12 @@
             return true;
         return false;
     }
+    #endregion
 
+    #region Push
     private async Task PushDataSet(Datasets_NgisSubscriber selectedSubscriber)
-    // private async Task PushDataSet(int datasetId)
     {
-     
-        //var subscribers = SqlHelper.GetSubscribers(datasetId);
-        
+
         List<global::ChangelogManager.Dataset> listDatasets = new List<Dataset>();
         Dataset dataset = selectedSubscriber.dataset;
         var datasetId = selectedSubscriber.datasetid;
@@ -476,7 +468,6 @@
             if (dataset != null)
             {
                 listDatasets.Add(dataset);
-                
             }
         }
         if (listDatasets.Count == 0)
@@ -499,6 +490,7 @@
         }
         dialog.Close();
         _listPushLog.Clear();
+        _conterPushLog = 0;
         await Task.Delay(25);
         _hideMatProgressCircle = false;
         StateHasChanged();
@@ -506,7 +498,6 @@
         PushDataSet(listDatasets);
         _hideMatProgressCircle = true;
         StateHasChanged();
-
     }
 
     private bool PushDataSet(List<Dataset> listDatasets)
@@ -524,4 +515,5 @@
             return false;
         }
     }
+    #endregion
 }

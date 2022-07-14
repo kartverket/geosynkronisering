@@ -27,6 +27,7 @@ builder.Services.AddSingleton<WeatherForecastService>();
 
 builder.Services.AddMudServices();
 
+//builder.Services.AddScoped<FeedbackController.Progress>();
 builder.Services.AddSingleton<FeedbackController.Progress>();
 
 
