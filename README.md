@@ -1,3 +1,10 @@
+# Geosynkronisering Provider 2.1 Beta.
+-	The UI-part of the provider has got a new Blazor WEB application supporting Push.
+All the tables for push can be edited in the program in addition to the existing tables.
+-	For logging NLog has been replaced with the more modern Serilog in all projects.
+-	The Push code has been added to a new .NET core project.
+-	The Push-component now raises events that can be handled by both the non UI Provider push program and the new  and the Blazor program.
+
 # Geosynkronisering Provider 2.0 Beta.
 - The non UI-part of the Provider has been rewritten to .NET Standard 2.0 for compatibility with .NET Core, and are now used by the new core Provider  and by the ASP.Net Web Application.
 - In the UI added Timestamp on Changelog.
