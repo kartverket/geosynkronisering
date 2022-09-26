@@ -95,8 +95,12 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
         {
             string downloadUriBase = ServerConfigData.DownloadUriBase().TrimEnd('/');
 
+            int count = 1000; 
+
             using (StoredChangelogsEntities db = new StoredChangelogsEntities())  //using (geosyncEntities db = new geosyncEntities())
             {
+                count = db.Datasets.FirstOrDefault(d => d.DatasetId == datasetId)?.ServerMaxCount ?? 1000; // Get from dataset table
+
                 var initialChangelog = (from d in db.StoredChangelogs
                     where d.DatasetId == datasetId && d.StartIndex == 1 && d.Stored == true && d.Status == "finished"
                     orderby d.DateCreated descending
@@ -112,7 +116,7 @@ namespace Kartverket.Geosynkronisering.ChangelogProviders
             }
             LastChangeId = 1; // StartIndex always 1 on initial changelog
             int endIndex = Convert.ToInt32(GetLastIndex(datasetId));
-            int count = 1000; // TODO: Get from dataset table
+            
             Logger.Info("GenerateInitialChangelog START");
             StoredChangelog ldbo = new StoredChangelog();
             ldbo.Stored = true;

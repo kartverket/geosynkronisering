@@ -44,6 +44,10 @@ namespace Provider_NetCore
 
         private static void SetClientHeaders()
         {
+            // prevent too big header
+            if ( _client.DefaultRequestHeaders.Contains("X-Client-Product-Version"))
+                return;
+
             _client.DefaultRequestHeaders.Add("X-Client-Product-Version", "GeodataTest");
         }
 
@@ -76,7 +80,8 @@ namespace Provider_NetCore
 
                         while (!finished && tries < maxTries)
                         {
-                            var msg = $"Starting synchronization of dataset {_currentSubscriber.dataset.DatasetId} try {tries + 1}/{maxTries}";
+                            var msg = $"Starting synchronization of dataset {_currentSubscriber.dataset.DatasetId} with url {_currentSubscriber.subscriber.url} try {tries + 1}/{maxTries}";
+                            
                             Console.WriteLine(msg);
                             Log.Information(msg);
 
@@ -89,14 +94,14 @@ namespace Provider_NetCore
 
                             switch (finalStatus.status)
                             {
-                                case Status.GET_LAST_TRANSNR:                                
+                                case Status.GET_LAST_TRANSNR:
                                 case Status.HAS_CHANGES:
                                 case Status.GENERATE_CHANGES:
                                 case Status.WRITE_CHANGES:
                                 case Status.WRITE_CHANGES_OK:
                                     break;
                                 case Status.GENERATE_CHANGES_FAILED:
-                                case Status.UNKNOWN_ERROR:                                
+                                case Status.UNKNOWN_ERROR:
                                 default:
                                     {
                                         tries++;
@@ -121,7 +126,7 @@ namespace Provider_NetCore
                                 //if(!string.IsNullOrEmpty(finalStatus.message)) Console.WriteLine($"Final message: {finalStatus.message}.");
                             }
 
-                            
+
                         }
 
                     }
@@ -129,7 +134,8 @@ namespace Provider_NetCore
                     {
                         Console.Error.WriteLine(exception.Message);
                         Log.Error(exception, "Pusher.Synchronize");
-                        ReportStatus(new ReportStatus{
+                        ReportStatus(new ReportStatus
+                        {
                             status = Status.UNKNOWN_ERROR,
                             message = exception.Message
                         });
@@ -152,7 +158,7 @@ namespace Provider_NetCore
             var subscriberStatus = GetDatasetStatus();
 
             ReportStatus(providerStatus);
-            
+
             if (subscriberStatus.last_copy_transaction_number == lastIndex)
             {
                 providerStatus.status = Status.NO_CHANGES;
@@ -177,6 +183,7 @@ namespace Provider_NetCore
                 providerStatus.message = "Subscriber reports higher index than Provider";
                 Console.WriteLine(providerStatus.message);
                 Log.Information(providerStatus.message);
+                Log.Information("subscriberStatus.last_copy_transaction_number:{0} lastindex provider:{1} ", subscriberStatus.last_copy_transaction_number, lastIndex);
                 _feedProgress?.OnUpdateLogListAsync(providerStatus.message); // reports progress for anyone listening to event
                 _feedProgress?.OnUpdateLogListSync(providerStatus.message); // reports progress for anyone listening to event
 
@@ -215,7 +222,7 @@ namespace Provider_NetCore
 
             ReportStatus(providerStatus);
 
-            return WriteChanges(activeChangelog, providerStatus);            
+            return WriteChanges(activeChangelog, providerStatus);
         }
 
         private static async Task GetNewChangelogAsync(int changelogStartIndex, IChangelogProvider provider)
@@ -246,7 +253,7 @@ namespace Provider_NetCore
         private static OrderChangelog OrderChangelog(IChangelogProvider provider, int last_copy_transaction_number)
         {
             provider.CreateChangelog(last_copy_transaction_number, _currentSubscriber.dataset.ServerMaxCount ?? 10000, "", _currentSubscriber.datasetid);
-            
+
             return provider.OrderChangelog(last_copy_transaction_number, _currentSubscriber.dataset.ServerMaxCount ?? 10000, "", _currentSubscriber.datasetid);
         }
 
@@ -279,52 +286,69 @@ namespace Provider_NetCore
 
         private static ReportStatus WriteChanges(Kartverket.GeosyncWCF.ChangelogType activeChangelog, ReportStatus reportStatus)
         {
-            var changelogPath = GetChangelogPath(activeChangelog.downloadUri);
-
-            var url = GetDatasetUrl("features") + $"?copy_transaction_number={int.Parse(activeChangelog.endIndex)}&dataset_version={_currentSubscriber.dataset.Version}&async=true&locking_type=all_lock&validation_mode=loose";
-            //var url = GetDatasetUrl("features") + $"?copy_transaction_number={lastIndex}&dataset_version={_currentSubscriber.dataset.Version}&async=true&locking_type=all_lock";
-
-            var stream = File.OpenRead(changelogPath);
-
-            var streamContent = new StreamContent(stream);
-
-            streamContent.Headers.ContentType = new MediaTypeHeaderValue(ChangelogHeader);
-
-            var result = Client.PostAsync(url, streamContent).Result;
-
-            TestForSuccess(result);
-
-            var status = result.Headers.GetValues("Location").FirstOrDefault();
-
-            var statusResult = Client.GetAsync(status).Result;
-
-            var msg = "WAIT, processing push...";
-            _feedProgress?.OnUpdateLogListAsync(msg); // reports progress for anyone listening to event
-            _feedProgress?.OnUpdateLogListSync(msg); // reports progress for anyone listening to event
-
-            Console.Write(msg);
-            while (statusResult.StatusCode == System.Net.HttpStatusCode.Accepted)
+            try
             {
-                statusResult = Client.GetAsync(status).Result;
 
-                Console.Write(".");
-                Task.Delay(2000).Wait();
+                var changelogPath = GetChangelogPath(activeChangelog.downloadUri);
+
+                var url = GetDatasetUrl("features") + $"?copy_transaction_number={int.Parse(activeChangelog.endIndex)}&dataset_version={_currentSubscriber.dataset.Version}&async=true&locking_type=all_lock&validation_mode=loose";
+                //var url = GetDatasetUrl("features") + $"?copy_transaction_number={lastIndex}&dataset_version={_currentSubscriber.dataset.Version}&async=true&locking_type=all_lock";
+
+                var stream = File.OpenRead(changelogPath);
+                var streamContent = new StreamContent(stream);
+                streamContent.Headers.ContentType = new MediaTypeHeaderValue(ChangelogHeader);
+
+                var result = Client.PostAsync(url, streamContent).Result;
+
+                TestForSuccess(result);
+
+                var status = result.Headers.GetValues("Location").FirstOrDefault();
+
+                var statusResult = Client.GetAsync(status).Result;
+
+                var msg = "WAIT, processing push...";
+                _feedProgress?.OnUpdateLogListAsync(msg); // reports progress for anyone listening to event
+                _feedProgress?.OnUpdateLogListSync(msg); // reports progress for anyone listening to event
+
+                Console.Write(msg);
+                while (statusResult.StatusCode == System.Net.HttpStatusCode.Accepted)
+                {
+                    statusResult = Client.GetAsync(status).Result;
+
+                    Console.Write(".");
+                    Task.Delay(2000).Wait();
+                }
+                Console.WriteLine();
+
+                var message = statusResult.Content.ReadAsStringAsync().Result;
+                Console.WriteLine("INFO: " + message);
+                Log.Information("INFO: " + message);
+                _feedProgress?.OnUpdateLogListAsync("INFO: " + message); // reports progress for anyone listening to event
+                _feedProgress?.OnUpdateLogListSync("INFO: " + message); // reports progress for anyone listening to event
+
+                if (statusResult?.Content?.Headers?.ContentType?.MediaType != "text/html; charset=us-ascii")
+                {
+                    // JSON doesn't like HTML
+                    reportStatus.message = JsonSerializer.Deserialize<dynamic>(message);
+                }
+                //reportStatus.message = JsonSerializer.Deserialize<dynamic>(message);
+
+                reportStatus.status = TestForSuccess(statusResult)
+                    ? Status.WRITE_CHANGES_OK
+                    : Status.UNKNOWN_ERROR;
+
+                //reportStatus.last_transaction_number = lastIndex;
+
+                //reportStatus.last_copy_transaction_number = int.Parse(changelogType.endIndex);
+
+                return reportStatus;
             }
-            Console.WriteLine();
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Pusher.WriteChanges:" + ex.Message);
+                throw;
+            }
 
-            var message = statusResult.Content.ReadAsStringAsync().Result;
-            Console.WriteLine("INFO: " + message);
-            reportStatus.message = JsonSerializer.Deserialize<dynamic>(message);
-
-            reportStatus.status = TestForSuccess(statusResult) 
-                ? Status.WRITE_CHANGES_OK
-                : Status.UNKNOWN_ERROR;
-
-            //reportStatus.last_transaction_number = lastIndex;
-
-            //reportStatus.last_copy_transaction_number = int.Parse(changelogType.endIndex);
-
-            return reportStatus;
         }
 
         private static string GetChangelogPath(string downloadUri)
@@ -398,6 +422,9 @@ namespace Provider_NetCore
 
         private static void SetClientHeader(string header)
         {
+            // prevent too big header
+            Client.DefaultRequestHeaders.Accept.Clear();
+
             Client.DefaultRequestHeaders.Add("accept", header);
         }
 
