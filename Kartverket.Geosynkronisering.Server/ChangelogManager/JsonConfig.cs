@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -15,15 +16,13 @@ namespace ChangelogManager
 
         public static IConfiguration SetupJsonConfig(object bindTo = null)
         {
-            //Assembly.GetEntryAssembly()
-            var strPath = Assembly.GetEntryAssembly().Location; //AppDomain.CurrentDomain.BaseDirectory;
-            ////AppDomain.CurrentDomain.FriendlyName
-            //var strPath = Assembly.GetExecutingAssembly().Location;
+            // issue #157: fix for  self-contained executable, Assembly.GetEntryAssembly().Location failes
+            var strPath = Process.GetCurrentProcess().MainModule.FileName;
+            //var strPath = Assembly.GetEntryAssembly().Location; //AppDomain.CurrentDomain.BaseDirectory;
+
             var basePath = Path.GetDirectoryName(strPath);
 
             var strJsonFile = Path.Combine(basePath, "appsettings.json");
-            // var strJsonFile = Path.GetFileNameWithoutExtension(strPath) + ".json";
-            //var strJsonFile = strPath.Replace(".dll", ".json");
 
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(basePath) // Directory where the json files are located
