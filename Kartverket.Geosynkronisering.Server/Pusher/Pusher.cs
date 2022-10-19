@@ -45,7 +45,7 @@ namespace Provider_NetCore
         private static void SetClientHeaders()
         {
             // prevent too big header
-            if ( _client.DefaultRequestHeaders.Contains("X-Client-Product-Version"))
+            if (_client.DefaultRequestHeaders.Contains("X-Client-Product-Version"))
                 return;
 
             _client.DefaultRequestHeaders.Add("X-Client-Product-Version", "GeodataTest");
@@ -81,7 +81,7 @@ namespace Provider_NetCore
                         while (!finished && tries < maxTries)
                         {
                             var msg = $"Starting synchronization of dataset {_currentSubscriber.dataset.DatasetId} with url {_currentSubscriber.subscriber.url} try {tries + 1}/{maxTries}";
-                            
+
                             Console.WriteLine(msg);
                             Log.Information(msg);
 
@@ -303,6 +303,7 @@ namespace Provider_NetCore
                 TestForSuccess(result);
 
                 var status = result.Headers.GetValues("Location").FirstOrDefault();
+                Logger.Info("Pusher.WriteChanges status url from  result.Headers.GetValues(Location).FirstOrDefault(): {0}", status);
 
                 var statusResult = Client.GetAsync(status).Result;
 
@@ -326,10 +327,18 @@ namespace Provider_NetCore
                 _feedProgress?.OnUpdateLogListAsync("INFO: " + message); // reports progress for anyone listening to event
                 _feedProgress?.OnUpdateLogListSync("INFO: " + message); // reports progress for anyone listening to event
 
-                if (statusResult?.Content?.Headers?.ContentType?.MediaType != "text/html; charset=us-ascii")
+                try
                 {
-                    // JSON doesn't like HTML
-                    reportStatus.message = JsonSerializer.Deserialize<dynamic>(message);
+                    if (statusResult?.Content?.Headers?.ContentType?.MediaType != "text/html; charset=us-ascii")
+                    {
+                        // JSON doesn't like HTML
+                        reportStatus.message = JsonSerializer.Deserialize<dynamic>(message);
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e, "Pusher.WriteChanges at JsonSerializer.Deserialize<dynamic>(message) status Url:" + status);
                 }
                 //reportStatus.message = JsonSerializer.Deserialize<dynamic>(message);
 
