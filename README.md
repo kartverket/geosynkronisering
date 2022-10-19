@@ -1,3 +1,8 @@
+# Geosynkronisering Provider 2.1.3 Beta.
+-	Fixed problem with push of large datasets (prevent too big headers)
+- Better logging
+- Portion size for creation of initial changelog is now read from database
+
 # Geosynkronisering Provider 2.1 Beta.
 -	The UI-part of the provider has got a new Blazor WEB application supporting Push.
 All the tables for push can be edited in the program in addition to the existing tables.
