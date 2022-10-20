@@ -1,16 +1,17 @@
 ﻿<MudNavMenu Bordered="true" >
-    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Filled.Home">Home</MudNavLink>
+    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Filled.Home">Home</MudNavLink>
+    @*<MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Filled.Home">Home</MudNavLink>*@
     <MudNavGroup Title="Konfugurasjon" Expanded="true">
-        <MudNavLink Href="/servicesconfig" Match="NavLinkMatch.Prefix">Tilbyder</MudNavLink>
-        <MudNavLink Href="/subscribers" Match="NavLinkMatch.Prefix">Abonnenter</MudNavLink>
+        <MudNavLink Href="servicesconfig" Match="NavLinkMatch.Prefix">Tilbyder</MudNavLink>
+        <MudNavLink Href="subscribers" Match="NavLinkMatch.Prefix">Abonnenter</MudNavLink>
     </MudNavGroup>
     <MudNavGroup Title="Datasett" Expanded="true">
-        <MudNavLink Href="/dataset" Match="NavLinkMatch.Prefix">Datasett</MudNavLink>
-        <MudNavLink Href="/datasetsubscribers" Match="NavLinkMatch.Prefix">Datasett abonnenter</MudNavLink>
+        <MudNavLink Href="dataset" Match="NavLinkMatch.Prefix">Datasett</MudNavLink>
+        <MudNavLink Href="datasetsubscribers" Match="NavLinkMatch.Prefix">Datasett abonnenter</MudNavLink>
     </MudNavGroup>
-    <MudNavLink Href="/storedchangelogs" Match="NavLinkMatch.Prefix">Endringslogg</MudNavLink>
+    <MudNavLink Href="storedchangelogs" Match="NavLinkMatch.Prefix">Endringslogg</MudNavLink>
     <MudDivider />
-    <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">Om</MudNavLink>
+    <MudNavLink Href="about" Match="NavLinkMatch.Prefix">Om</MudNavLink>
 @*    <MudSpacer />
     <MudStack Justify="Justify.FlexEnd" AlignItems="AlignItems.End" Row="false">
         <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">Om</MudNavLink>

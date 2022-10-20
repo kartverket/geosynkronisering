@@ -7,9 +7,9 @@
 	  <Version>2.1.3</Version>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <Content Remove="wwwroot\favicon.ico" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
     <None Remove="Old_favicon.ico" />
