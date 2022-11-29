@@ -23,6 +23,7 @@ namespace Provider_NetCore
         public static List<ActiveChangelog> _activeChangelogs { get; private set; }
 
         private const string DatasetHeader = "application/vnd.kartverket.ngis.dataset+json";
+        private const string DatasetsHeader = "application/vnd.kartverket.ngis.datasets+json";
         private const string ChangelogHeader = "application/vnd.kartverket.geosynkronisering+zip";
         private const string JsonHeader = "application/json";
         static readonly HttpClient _client = new();
@@ -410,7 +411,7 @@ namespace Provider_NetCore
 
             _currentSubscriber.subscriber = geosyncEntities.ReadAll<NgisSubscriber>("Subscribers").FirstOrDefault(c => c.id == currentSubscriber.id);
 
-            SetClientHeader(DatasetHeader);
+            SetClientHeader(DatasetsHeader);
 
             var datasetsUrl = _currentSubscriber.subscriber.url.TrimEnd('/') + $"/datasets";
 
