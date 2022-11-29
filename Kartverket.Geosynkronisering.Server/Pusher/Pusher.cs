@@ -403,6 +403,23 @@ namespace Provider_NetCore
             };
         }
 
+        internal static List<Dataset> GetDatasetsUrl()
+        {
+            SetClientHeader(DatasetHeader);
+
+            var datasetsUrl = _currentSubscriber.subscriber.url.TrimEnd('/') + $"/datasets";
+
+            var response = Client.GetAsync(datasetsUrl).Result;
+
+            TestForSuccess(response);
+
+            var result = response.Content.ReadAsStringAsync().Result;
+
+            var datasets = JsonSerializer.Deserialize<List<Dataset>>(result);
+
+            return datasets;
+        }
+
         private static string GetDatasetUrl(string postFix = null)
         {
             var url = _currentSubscriber.subscriber.url.TrimEnd('/') + $"/datasets/{_currentSubscriber.subscriberdatasetid}";
