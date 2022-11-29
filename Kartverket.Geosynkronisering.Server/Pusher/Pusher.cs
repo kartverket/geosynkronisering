@@ -403,7 +403,7 @@ namespace Provider_NetCore
             };
         }
 
-        internal static List<Dataset> GetDatasetsUrl()
+        internal static List<Dataset> GetDatasets()
         {
             SetClientHeader(DatasetHeader);
 
