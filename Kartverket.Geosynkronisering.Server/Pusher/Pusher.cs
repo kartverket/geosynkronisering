@@ -406,7 +406,9 @@ namespace Provider_NetCore
 
         public static List<NgisDataset> GetDatasets(Datasets_NgisSubscriber currentSubscriber)
         {
-            _currentSubscriber = geosyncEntities.ReadAll<Datasets_NgisSubscriber>("Datasets_Subscribers").FirstOrDefault(c => c.id == currentSubscriber.id);
+            _currentSubscriber = currentSubscriber;
+
+            _currentSubscriber.subscriber = geosyncEntities.ReadAll<NgisSubscriber>("Subscribers").FirstOrDefault(c => c.id == currentSubscriber.id);
 
             SetClientHeader(DatasetHeader);
 
