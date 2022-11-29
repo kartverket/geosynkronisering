@@ -403,7 +403,7 @@ namespace Provider_NetCore
             };
         }
 
-        internal static List<NgisDataset> GetDatasets()
+        public static List<NgisDataset> GetDatasets()
         {
             SetClientHeader(DatasetHeader);
 
