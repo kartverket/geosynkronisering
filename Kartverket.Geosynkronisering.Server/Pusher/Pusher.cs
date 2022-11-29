@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -403,8 +404,10 @@ namespace Provider_NetCore
             };
         }
 
-        public static List<NgisDataset> GetDatasets()
+        public static List<NgisDataset> GetDatasets(Datasets_NgisSubscriber currentSubscriber)
         {
+            _currentSubscriber = currentSubscriber;
+
             SetClientHeader(DatasetHeader);
 
             var datasetsUrl = _currentSubscriber.subscriber.url.TrimEnd('/') + $"/datasets";
