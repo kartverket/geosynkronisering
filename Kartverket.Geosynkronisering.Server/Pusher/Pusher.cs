@@ -403,7 +403,7 @@ namespace Provider_NetCore
             };
         }
 
-        internal static List<Dataset> GetDatasets()
+        internal static List<NgisDataset> GetDatasets()
         {
             SetClientHeader(DatasetHeader);
 
@@ -415,7 +415,7 @@ namespace Provider_NetCore
 
             var result = response.Content.ReadAsStringAsync().Result;
 
-            var datasets = JsonSerializer.Deserialize<List<Dataset>>(result);
+            var datasets = JsonSerializer.Deserialize<List<NgisDataset>>(result);
 
             return datasets;
         }
