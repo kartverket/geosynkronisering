@@ -38,10 +38,17 @@ var app = builder.Build();
 var config = app.Configuration;    
 //var section = config.GetSection("SerilogCustom");
 var serilogPath = config["SerilogCustom:filepath"];
-if (serilogPath.ToUpper() == "%TEMP%")
+
+// #162 : Web-pusher Logs folder should be below application and not in %TEMP%
+if (false)
 {
-    serilogPath = Path.GetTempPath();
+    if (serilogPath.ToUpper() == "%TEMP%")
+    {
+        serilogPath = Path.GetTempPath();
+    }
 }
+var basePath = AppDomain.CurrentDomain.BaseDirectory;
+serilogPath = basePath + "logs/";
 
 var logFile = Path.Combine(serilogPath, config["SerilogCustom:logfile"]);
 var errorFile = Path.Combine(serilogPath, config["SerilogCustom:errorfile"]);
