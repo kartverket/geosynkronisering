@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Dapper;
 using Dapper.Contrib.Extensions;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace ChangelogManager
 {
@@ -45,7 +47,7 @@ namespace ChangelogManager
         {
             var connectionString = "";
             bool isConfigOK;
-            
+
             try
             {
                 // Supports .net Core appsettings.json
@@ -66,29 +68,38 @@ namespace ChangelogManager
             {
                 throw;
             }
-            
+
 
             // Microsoft.Data.Sqlite just passes the filename directly to the native SQLite engine.
             // It doesn't process the |DataDirectory| replacement string, so fix it
             if (isConfigOK)
             {
-            
-                
-                if (false)
+
+
+                // Test: Will not work for .NET Core if not set in main program with appDomain.CurrentDomain.SetData("DataDirectory")
+                var dataDirectory = AppDomain.CurrentDomain.GetData("DataDirectory") as string;
+
+
+
+                if (dataDirectory != null &&!Directory.Exists(dataDirectory))
                 {
-                    // Test: Will not work for .NET Core if not set in main program with appDomain.CurrentDomain.SetData("DataDirectory")
-                    var dataDirectory = AppDomain.CurrentDomain.GetData("DataDirectory") as string;
+                    // #159: Provider_NotCore fix publisering ved self-extracting for database database 
+                    var strPath = Process.GetCurrentProcess().MainModule.FileName;
+                    var basePath = Path.GetDirectoryName(strPath);
+                    var strSqliteFile = Path.Combine(basePath, "App_Data") + Path.DirectorySeparatorChar;
+                    dataDirectory = strSqliteFile;
                 }
-                
+
+
                 var builder = new SQLiteConnectionStringBuilder(connectionString);
                 builder.DataSource = builder.DataSource
                     .Replace(
                         "|DataDirectory|",
-                        AppDomain.CurrentDomain.GetData("DataDirectory") as string);
+                        dataDirectory);
                 connectionString = builder.ToString();
 
             }
-
+            Log.Debug("GetConnectionStringFromSetting:{0}", connectionString);
             return connectionString;
 
         }
@@ -310,7 +321,7 @@ namespace ChangelogManager
     }
 
 
-  
+
 
     /// <summary>
     /// Subscribers part
@@ -389,9 +400,9 @@ namespace ChangelogManager
 
         private static void InsertSubscriber(Datasets_NgisSubscriber datasetSubscriber)
         {
-         
+
             using (IDbConnection db = new SQLiteConnection(ConnectionString)) db.Insert(datasetSubscriber);
-            
+
             //using (IDbConnection db = new SQLiteConnection(ConnectionString))
             //{
             //    var entities = new geosyncEntities();
@@ -405,7 +416,7 @@ namespace ChangelogManager
             //    //d.subscriber = entities.Subscribers.FirstOrDefault(s => s.id == d.subscriberid);
             //    //d.dataset = entities.Datasets.FirstOrDefault(s => s.DatasetId == d.datasetid);
             //}
-                
+
         }
 
         public static void UpdateSubscriber(Datasets_NgisSubscriber subscriber)

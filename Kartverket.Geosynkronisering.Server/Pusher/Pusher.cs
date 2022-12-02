@@ -409,7 +409,7 @@ namespace Provider_NetCore
         {
             _currentSubscriber = currentSubscriber;
 
-            _currentSubscriber.subscriber = geosyncEntities.ReadAll<NgisSubscriber>("Subscribers").FirstOrDefault(c => c.id == currentSubscriber.id);
+            _currentSubscriber.subscriber = geosyncEntities.ReadAll<NgisSubscriber>("Subscribers").FirstOrDefault(c => c.id == currentSubscriber.subscriberid);
 
             SetClientHeader(DatasetsHeader);
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -17,7 +18,17 @@ namespace ChangelogManager
 
         public static IConfiguration SetupJsonConfig(object bindTo = null)
         {
-            Log.Information("start SetupJsonConfig");
+            try
+            {
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Log.Error(e, "SetupJsonConfig");
+                throw;
+            }
+            //Log.Information("start SetupJsonConfig");
 
             //var testGetCurrentDirectory = System.IO.Directory.GetCurrentDirectory();
             //Log.Information("SetupJsonConfig testGetCurrentDirectory: {0}", testGetCurrentDirectory);
@@ -29,17 +40,17 @@ namespace ChangelogManager
             //var strPath = Assembly.GetEntryAssembly().Location; //AppDomain.CurrentDomain.BaseDirectory;
 
             var basePath = Path.GetDirectoryName(strPath);
-            Log.Information("SetupJsonConfig basePath: {0}", strPath);
+            //Log.Information("SetupJsonConfig basePath: {0}", strPath);
             var strJsonFile = Path.Combine(basePath, "appsettings.json");
-            Log.Information("SetupJsonConfig strJsonFile: {0}", strPath);
+            //Log.Information("SetupJsonConfig strJsonFile: {0}", strPath);
 
             if (!File.Exists(strJsonFile))
             {
                 // When blazor-app is published on IIS, we must use this method to find the correct directory of where the project is stored
                 basePath = AppDomain.CurrentDomain.BaseDirectory;
-                Log.Information("SetupJsonConfig basePath: {0}", basePath);
+                //Log.Information("SetupJsonConfig basePath: {0}", basePath);
                 strJsonFile = Path.Combine(basePath, "appsettings.json");
-                Log.Information("SetupJsonConfig strJsonFile: {0}", strJsonFile);
+                //Log.Information("SetupJsonConfig strJsonFile: {0}", strJsonFile);
 
             }
             var configuration = new ConfigurationBuilder()
@@ -57,7 +68,7 @@ namespace ChangelogManager
             // test
             //var connectionstring = configuration.GetValue<string>("connectionStrings:geosyncEntities");
 
-            Log.Information("SetupJsonConfig End ,configuration != null: {0}", configuration != null);
+            //Log.Information("SetupJsonConfig End ,configuration != null: {0}", configuration != null);
             return configuration;
         }
     }
