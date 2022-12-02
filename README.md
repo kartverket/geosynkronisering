@@ -3,6 +3,7 @@
 -	Provider_NotCore fixed publishing when self-extracting for database #159
 - Web-pusher and Command-based pusher must be able to use the same sqlite database #160
 - Tested on PostGIS in addition to SQL Server #147
+- Web-pusher Logs folder should be below application and not in %TEMP% #162
 
 # Geosynkronisering Provider 2.1.3 Beta.
 -	Fixed problem with push of large datasets (prevent too big headers)
