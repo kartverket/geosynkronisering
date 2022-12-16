@@ -1,12 +1,6 @@
-﻿@page "/about"
+﻿@page "/help"
+
 @using Markdig
-@inject HttpClient Http
-@inject IHttpClientFactory ClientFactory
-
-
-
-<h3>Geosynkronisering Administrator med Push</h3>
-<h3> v @(typeof(About).Assembly.GetName().Version.ToString(3))</h3>
 
 @*Override mudblazor default due to problem with markdown*@
 <style>
@@ -57,33 +51,20 @@
 
 
 </div>
-
-
 @code {
-
     public string? Preview; // => Markdown.ToHtml(Body);
 
     protected override async Task OnInitializedAsync()
     {
         await RenderMarkdown();
     }
-
-    //protected override async Task OnParametersSetAsync()
-    //{
-    //    await RenderMarkdown();
-
-    //}
-
     private async Task RenderMarkdown()
     {
         var rootpath = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot");
-        var filePath = Path.Combine(rootpath, "revisionlog" + Path.DirectorySeparatorChar + "revisionlog" + ".md");
+        var filePath = Path.Combine(rootpath, "help" + Path.DirectorySeparatorChar + "help" + ".md");
         var markdown = await File.ReadAllTextAsync(filePath);
 
-        // Markdig converts to HTML
-        // See: https://jonhilton.net/blazor-markdown-editor/
         Preview = Markdown.ToHtml(markdown);
-
         return;
     }
 

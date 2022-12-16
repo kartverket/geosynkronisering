@@ -30,6 +30,7 @@ builder.Services.AddMudServices();
 //builder.Services.AddScoped<FeedbackController.Progress>();
 builder.Services.AddSingleton<FeedbackController.Progress>();
 
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
@@ -82,10 +83,25 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
+// Lars
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot")),
+    RequestPath = new PathString("/revisionlog")
+});
+
 app.UseRouting();
+
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapDefaultControllerRoute();
+//});
+
+app.MapControllers();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
