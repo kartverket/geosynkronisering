@@ -6,6 +6,14 @@ Inneholder alle merkbare endringer av løsningen
 
 ____________________________________________
 <details>
+  <summary markdown="span">Beta 2.1.5 - desember 2022</summary>
+
+**Nytt**
+-  Dokumentasjon med hjelp
+-  Alle nuget-pakker oppdatert for .NET 6.
+</details>
+
+<details>
   <summary markdown="span">Beta 2.1.4 - desember 2022</summary>
 
 **Nytt**
