@@ -1,3 +1,7 @@
+# Geosynkronisering Provider 2.1.5 Beta.
+-	Documentation WEB Push client and Install #155
+- [Installation](Kartverket.Geosynkronisering.Server/Blazor.Kartverket.Geosynkronisering.Provider/wwwroot/install/installProvider.md)
+
 # Geosynkronisering Provider 2.1.4 Beta.
 -	WEB Push client must be able to Retrieve list of available datasets #154
 -	Provider_NotCore fixed publishing when self-extracting for database #159
