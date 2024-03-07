@@ -1,3 +1,36 @@
+# Geosynkronisering Provider 2.1.5 Beta.
+-	Documentation WEB Push client and Install #153
+- [Installation](Kartverket.Geosynkronisering.Server/Blazor.Kartverket.Geosynkronisering.Provider/wwwroot/install/installProvider.md)
+- [Downloads](https://github.com/kartverket/geosynkronisering/releases)
+
+# Geosynkronisering Provider 2.1.4 Beta.
+-	WEB Push client must be able to Retrieve list of available datasets #154
+-	Provider_NotCore fixed publishing when self-extracting for database #159
+- Web-pusher and Command-based pusher must be able to use the same sqlite database #160
+- Tested on PostGIS in addition to SQL Server #147
+- Web-pusher Logs folder should be below application and not in %TEMP% #162
+
+# Geosynkronisering Provider 2.1.3 Beta.
+-	Fixed problem with push of large datasets (prevent too big headers)
+- Better logging
+- Portion size for creation of initial changelog is now read from database
+
+# Geosynkronisering Provider 2.1 Beta.
+-	The UI-part of the provider has got a new Blazor WEB application supporting Push.
+All the tables for push can be edited in the program in addition to the existing tables.
+-	For logging NLog has been replaced with the more modern Serilog in all projects.
+-	The Push code has been added to a new .NET core project.
+-	The Push-component now raises events that can be handled by both the non UI Provider push program and the new  and the Blazor program.
+
+# Geosynkronisering Provider 2.0 Beta.
+- The non UI-part of the Provider has been rewritten to .NET Standard 2.0 for compatibility with .NET Core, and are now used by the new core Provider  and by the ASP.Net Web Application.
+- In the UI added Timestamp on Changelog.
+For better compatibility with .NET Standard and .NET Core / .NET 5:
+- Changed provider settings database to SQLite from SQL server Compact and replaced Entity Framework with Dapper.
+- Updated and replaced NuGet packages.
+Tools: Visual Studio 2019 .NET Framework 4.7.2 / .NET Standard 2.0 / .NET 5.
+
+
 # Geosynkronisering
 
 [Changelog](./CHANGELOG.md)

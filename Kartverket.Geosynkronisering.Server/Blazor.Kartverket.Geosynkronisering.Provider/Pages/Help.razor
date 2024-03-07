@@ -1,0 +1,71 @@
+﻿@page "/help"
+
+@using Markdig
+
+@*Override mudblazor default due to problem with markdown*@
+<style>
+    ul {
+        margin: 20px;
+        padding: 0;
+        list-style: disc;
+    }
+</style>
+
+
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: unset;
+        padding: 0;
+        border-width: 0;
+        border-style: solid;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+</style>
+
+<style>
+    body {
+        color: var(--mud-palette-text-primary);
+        font-family: var(--mud-typography-default-family);
+        /*font-size: var(--mud-typography-subtitle2-size) !important;*/
+        font-size: unset !important;
+        /* font-size: var(--mud-typography-default-size);*/
+        font-weight: var(--mud-typography-default-weight);
+        line-height: var(--mud-typography-default-lineheight);
+        letter-spacing: var(--mud-typography-default-letterspacing);
+        text-transform: var(--mud-typography-default-text-transform);
+        background-color: var(--mud-palette-background);
+    }
+</style>
+
+
+
+<div style="list-style: disc; margin:30px; list-style-type: disc;">
+
+    @if (Preview != null && Preview.Length > 0)
+    {
+        @((MarkupString)Preview)
+    }
+
+
+</div>
+@code {
+    public string? Preview; // => Markdown.ToHtml(Body);
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RenderMarkdown();
+    }
+    private async Task RenderMarkdown()
+    {
+        var rootpath = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot");
+        var filePath = Path.Combine(rootpath, "help" + Path.DirectorySeparatorChar + "help" + ".md");
+        var markdown = await File.ReadAllTextAsync(filePath);
+
+        Preview = Markdown.ToHtml(markdown);
+        return;
+    }
+
+}
