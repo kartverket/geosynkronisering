@@ -1,0 +1,716 @@
+﻿@using ChangelogManager
+@using Serilog
+@using System.Configuration
+@using System.ComponentModel.Design.Serialization
+@using System.Diagnostics.Eventing.Reader
+@using Blazor.Kartverket.Geosynkronisering.Provider.Components
+@using MudBlazor.Extensions
+@using Provider_NetCore
+@using Pusher
+@inject MudBlazor.ISnackbar SnackBar
+@inject IDialogService DialogService
+@inject FeedbackController.Progress Progress;
+
+@page "/datasetsubscribers"
+@*<h3>DatasetSubscribers</h3>*@
+
+@*@{
+    var canEdit = !_readOnly;
+}*@
+
+@if (_readOnly)
+{
+    <style>
+        .selected {
+            background-color: lightgray !important;
+        }
+
+            .selected > td {
+                color: white !important;
+            }
+
+                .selected > td .mud-input {
+                    color: white !important;
+                }
+    </style>
+}
+
+<MudTable Elevation="25" Items="@_listDatasetsNgisSubscribers" Dense="true" Hover="true" ReadOnly="@_readOnly" CanCancelEdit="true" Filter="new Func<Datasets_NgisSubscriber,bool>(FilterFunc)"
+          @bind-SelectedItem="_selectedSubscriber" SortLabel="Sort By" CommitEditTooltip="Lagre endringer" CancelEditTooltip="Angre endringer"
+          OnCommitEditClick="@(() => SnackBar.Add("Commit Datasets_NgisSubscriber"))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues"
+          RowEditCommit="ItemHasBeenCommitted" IsEditRowSwitchingBlocked="@blockSwitch" @ref="_table" OnPreviewEditClick="PreviewEditClick"
+          RowClassFunc="@SelectedRowClassFunc" T="Datasets_NgisSubscriber" OnRowClick="@((args) => RowClickEvent(args))">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Datasets Subscribers for Push</MudText>
+        <MudSpacer />
+        <MudStack Spacing="3" Row="true">
+            @{
+                var disabled = !_readOnly || _listDatasetsNgisSubscribers.Count == 0 | _selectedSubscriber == null || _selectedSubscriber.id == 0;
+            }
+            <MudCheckBox @bind-Checked="@_readOnly" Label="@(_readOnly ? "lesemodus" : "redigerbar")" Size="Size.Small" Dense="true" />
+            <MudButton Variant="Variant.Filled" Color="Color.Default" StartIcon="@Icons.Material.Filled.CreateNewFolder"
+                       OnClick="@(() => PushDataSet(@_selectedSubscriber))"
+                       Disabled="@disabled" Size="Size.Small">Push datasett til abonnent</MudButton>
+            @if (!_hideMatProgressCircle)
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            }
+        </MudStack>
+
+        <MudSpacer />
+        <MudStack Spacing="3" Row="true">
+            <MudButton Variant="Variant.Filled" Color="Color.Default" StartIcon="@Icons.Material.Filled.Add" OnClick="AddNewRow" Disabled="@_readOnly" Size="Size.Small">Ny rad</MudButton>
+        </MudStack>
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>DatasetId</MudTh>
+        <MudTh>SubscriberId</MudTh>
+        <MudTh>SubscriberDatasetName</MudTh>
+        <MudTh>SubscriberDatasetId</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.id</MudTd>
+        <MudTd DataLabel="DatasetId">
+            <MudTooltip Text=@GetTooltipDatasetName(context.datasetid)>
+                @context.datasetid
+            </MudTooltip>
+        </MudTd>
+        <MudTd DataLabel="SubscriberId">
+            <MudTooltip Text=@GetTooltipSubscriberUrl(context.subscriberid)>
+                @context.subscriberid
+            </MudTooltip>
+        </MudTd>
+        <MudTd DataLabel="SubscriberDatasetName">@FindNgisDataset(context.subscriberid, context.subscriberdatasetid)?.name</MudTd>
+        <MudTd DataLabel="SubscriberDatasetId">@context.subscriberdatasetid</MudTd>
+    </RowTemplate>
+
+    <RowEditingTemplate>
+        <MudTd DataLabel="Id">
+            <MudTextField @bind-Value="@context.id" Required="true" Margin="Margin.Dense" />
+        </MudTd>
+        <MudTd DataLabel="DatasetId">
+            @{
+                var listDatasets = GetDatasets();
+                if (listDatasets.Count > 0)
+                {
+                    <MudSelect @bind-Value="context.datasetid" Margin="@Margin.Dense">
+                        @foreach (var dataset in listDatasets)
+                        {
+                            <MudSelectItem Value="@dataset.DatasetId">@dataset.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+            }
+        </MudTd>
+
+        @*<MudSelect Margin="@Margin.Dense" OnClose="OnsubscriberIdChanged" ValueChanged="(int k) => OnsubscriberIdValueChanged(k)" Value="@context.subscriberid" T="int">*@
+
+        <MudTd DataLabel="SubscriberId">
+            @{
+                var listSubsribers = GetSubscribers();
+                if (listSubsribers.Count > 0)
+                {
+                    <MudSelect @bind-Value="context.subscriberid" Margin="@Margin.Dense" Required="true">
+
+                        @foreach (var subsriber in listSubsribers)
+                        {
+                            <MudSelectItem Value="@subsriber.id">@subsriber.url</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+            }
+            @*<MudTextField @bind-Value="@context.subscriberid" Required="true" RequiredError="subscriberid is required!" Mask="_maskNumberNot0start" @ref="_subscriberidTextField" />*@
+        </MudTd>
+
+        <MudTd DataLabel="SubscriberDatasetName">
+            @*<MudSelect @bind-Value="subsriberId" Margin="@Margin.Dense">*@
+            @{
+                int subsriberId = context.subscriberid;
+                @if (_dictNgisDatasets.Count > 0 && subsriberId > 0)
+                {
+                    var listNgisDataset = _dictNgisDatasets[subsriberId];
+
+                    @if (listNgisDataset.Count > 0)
+                    {
+                        <MudSelect @bind-Value="@context.subscriberdatasetid" Margin="@Margin.Dense" Required="true">
+                            @foreach (var dataset in listNgisDataset)
+                            {
+                                <MudSelectItem T="string" Value="@dataset.id">@dataset.name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                }
+            }
+        </MudTd>
+
+        <MudTd DataLabel="SubscriberDatasetId">
+            <MudTextField @bind-Value="@context.subscriberdatasetid" Required="true" ReadOnly="true" Margin="Margin.Dense" />
+        </MudTd>
+
+        @*        <MudTd DataLabel="SubscriberDatasetId">
+        <MudTextField @bind-Value="@context.subscriberdatasetid" Required="true" />
+        </MudTd>
+        <MudTd DataLabel="SubscriberDatasetName">
+        <MudTextField @bind-Value="@context.subscriberdatasetname" />
+        </MudTd>
+        *@
+        <MudTd DataLabel="">
+            @if (!_newRowAdded)
+            {
+                <MudTooltip Text="Slett rad">
+                    <MudIconButton @onclick="@(() => DeleteRow(@context.id))" Color="Color.Default" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
+                </MudTooltip>
+            }
+        </MudTd>
+    </RowEditingTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+<MudTable Elevation="25" Items="@_listPushLog" Dense="true" @ref="_tablePushlog">
+    <HeaderContent>
+        <MudTh>Push log:</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.ToString()</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@*<MudTable Elevation="25" ServerData="@(new Func<TableState, Task<TableData<string>>>(ServerReload))" Dense="true" @ref="_tablePushlog">
+    <HeaderContent>
+        <MudTh>Push log Server:</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.ToString()</MudTd>
+    </RowTemplate>
+</MudTable>*@
+
+@code {
+    private List<Datasets_NgisSubscriber>? _listDatasetsNgisSubscribers;
+    private Datasets_NgisSubscriber? _datasetSubscriberBeforeEdit;
+    private Datasets_NgisSubscriber? _selectedSubscriber;
+    bool _readOnly = true; //false;
+                           //bool _canEdit = false;
+    bool blockSwitch = true;
+    private string searchString = "";
+    bool _newRowAdded = false;
+    private MudTable<Datasets_NgisSubscriber>? _table;
+    private bool _hideMatProgressCircle = true;
+    private int selectedRowNumber = -1;
+
+    public List<string>? _listPushLog { get; set; }
+    private int _conterPushLog = 0;
+    private MudTable<string>? _tablePushlog;
+
+
+    //private IMask _maskNumberNot0start = new RegexMask(@"^((?!(0))[0-9]*)$"); // RegexMask(@"^((?!(0))\d+$");
+    // private MudTextField<int>? _subscriberidTextField;
+
+    protected override void OnInitialized()
+    {
+        // listen to events from pusher
+        Pusher pusher = new Pusher(Progress);
+
+        // Blazor like this type of event
+        Progress.UpdateLogListSync += Progress_UpdateLogList;
+        _listPushLog = new List<string>();
+        _conterPushLog = 0;
+    }
+
+    public void Dispose()
+    {
+        // dispose of events
+        Progress.UpdateLogListSync -= Progress_UpdateLogList;
+    }
+
+    //protected override async Task OnAfterRenderAsync(bool firstRender)
+    //{
+    //    if (firstRender)
+    //    {
+    //        GetDatasetsSubscribers();
+
+    //        // List of datasets in NGIS OpenAPI
+    //        GetDatasets();
+
+    //        _readOnly = true;
+    //        StateHasChanged();
+    //    }
+    //}
+
+    protected override async Task OnParametersSetAsync()
+    {
+        GetDatasetsSubscribers();
+
+        // List of datasets in NGIS OpenAPI
+        GetDatasetsFromApi();
+
+        _readOnly = true;
+    }
+
+    //protected override async Task OnInitializedAsync()
+    //{
+
+    //}
+
+    #region PushEvents
+
+    /// <summary>
+    /// /// Listen to events from Pusher
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void Progress_UpdateLogList(object? sender, EventArgs e)
+    {
+        var prg = sender as FeedbackController.Progress;
+        var newLogListItem = prg.NewLogListItem;
+        Console.WriteLine("Progress_UpdateLogList:" + newLogListItem);
+
+
+        if (false)
+        {
+            // Test only
+            _listPushLog.Add(newLogListItem);
+            _tablePushlog.ReloadServerData();
+        }
+
+        // Fix immediate redraw of _listPushLog table
+
+        if (true)
+        {
+            _conterPushLog++;
+            AddRowToPushLog(newLogListItem);
+
+        }
+        InvokeAsync(() =>
+        {
+            StateHasChanged();
+        });
+
+    }
+
+    private void AddRowToPushLog(string newLogListItem)
+    {
+        _listPushLog.Add(newLogListItem);
+        Console.WriteLine("AddRowToPushLog:" + newLogListItem);
+    }
+
+    private async Task<TableData<string>> ServerReload(TableState state)
+    {
+        // Test only
+        IEnumerable<string>? data = _listPushLog;
+        await Task.Delay(30);
+        return new TableData<string>() { TotalItems = _listPushLog.Count, Items = _listPushLog };
+    }
+
+    #endregion
+
+    #region DatabaseUI
+
+    /// <summary>
+    /// Get GetDatasetsSubscribers from database
+    /// </summary>
+    private void GetDatasetsSubscribers()
+    {
+        using (geosyncEntities db = new geosyncEntities())
+        {
+            var listSubscribers = db.Datasets_Subscribers;
+            _listDatasetsNgisSubscribers = listSubscribers;
+        }
+    }
+
+
+    // Dictionary of datasets from NGIS OpenAPI
+    private Dictionary<int, List<NgisDataset>> _dictNgisDatasets = new Dictionary<int, List<NgisDataset>>();
+
+    /// <summary>
+    /// Hent alle tilgjengelige datasett for brukere som er registrert
+    /// </summary>
+    private void GetDatasetsFromApi()
+    {
+        //_hideMatProgressCircle = false;
+        //StateHasChanged();
+        // for bruk koble til valgt subsriberid
+        foreach (var ngisDataset in _listDatasetsNgisSubscribers)
+        {
+            var dataset = Pusher.GetDatasets(ngisDataset);
+
+            if (!_dictNgisDatasets.ContainsKey(ngisDataset.subscriberid))
+            {
+                _dictNgisDatasets.Add(ngisDataset.subscriberid, dataset);
+            }
+        }
+        //_hideMatProgressCircle = true;
+        //StateHasChanged();
+    }
+
+    private NgisDataset FindNgisDataset(int subscriberid, String id)
+    {
+        if (subscriberid > 0)
+        {
+            var listNgisDataset = _dictNgisDatasets[subscriberid];
+            var ngisDataset = listNgisDataset?.Find((x => x.id == id));
+            return ngisDataset;
+        }
+        return null;
+    }
+
+    private string SelectedRowClassFunc(Datasets_NgisSubscriber element, int rowNumber)
+    {
+        if (_readOnly)
+        {
+            _table?.SetEditingItem(null); // To fix problems when editing
+        }
+        if (selectedRowNumber == rowNumber)
+        {
+            selectedRowNumber = -1;
+            //clickedEvents.Add("Selected Row: None");
+            return string.Empty;
+        }
+        else if (_table?.SelectedItem != null && _table.SelectedItem.Equals(element))
+        {
+            selectedRowNumber = rowNumber;
+            //clickedEvents.Add($"Selected Row: {rowNumber}");
+            return "selected";
+        }
+        else
+        {
+            return string.Empty;
+        }
+        //StateHasChanged();
+    }
+
+
+    private void RowClickEvent(TableRowClickEventArgs<Datasets_NgisSubscriber> tableRowClickEventArgs)
+    {
+        var row = tableRowClickEventArgs.Item;
+
+        if (row == null)
+        {
+            //_selectedSubscriber = null;
+        }
+        else
+        {
+            //_selectedSubscriber = string.Format("Element Nr. {0} has been selected", row.id);
+        }
+
+        this.StateHasChanged();
+    }
+
+    private List<global::ChangelogManager.Dataset> GetDatasets()
+    {
+        using (geosyncEntities db = new geosyncEntities())
+        {
+            var listDatasets = db.Datasets;
+            return listDatasets;
+        }
+    }
+
+    private List<NgisSubscriber> GetSubscribers()
+    {
+        using (geosyncEntities db = new geosyncEntities())
+        {
+            var listSubscribers = db.Subscribers;
+            return listSubscribers;
+        }
+    }
+
+    private string GetTooltipDatasetName(int datasetId)
+    {
+        using (geosyncEntities db = new geosyncEntities())
+        {
+            var dataset = db.Datasets.FirstOrDefault(s => s.DatasetId == datasetId);
+            if (dataset != null)
+            {
+                return dataset.Name;
+            }
+            return "";
+        }
+    }
+
+    private string GetTooltipSubscriberUrl(int subscriberId)
+    {
+        using (geosyncEntities db = new geosyncEntities())
+        {
+            var subscriber = db.Subscribers.FirstOrDefault(s => s.id == subscriberId);
+            if (subscriber != null)
+            {
+                return subscriber.url;
+            }
+            return "";
+        }
+    }
+
+    private void PreviewEditClick(object element)
+    {
+        if (!_readOnly)
+        {
+            _table.SetEditingItem(element);
+        }
+        else
+        {
+            _table.SetEditingItem(null);
+            //_table.SetSelectedItem(null);
+        }
+
+    }
+
+    /// <summary>
+    /// Delete row and commit to database
+    /// </summary>
+    /// <param name="id"></param>
+    private void DeleteRow(int id)
+    {
+
+        var idx = _listDatasetsNgisSubscribers.FindIndex(x => x.id == id);
+        var subscriber = _listDatasetsNgisSubscribers[idx];
+
+        using (var localDb = new ChangelogManager.DatasetSubscribers())
+        {
+            localDb.DeleteObject(subscriber);
+            //db.SaveChanges();
+        }
+
+        _table.SetEditingItem(null);
+        if (_datasetSubscriberBeforeEdit != null)
+        {
+            _datasetSubscriberBeforeEdit = null;
+        }
+
+        _listDatasetsNgisSubscribers.Clear();
+        GetDatasetsSubscribers();
+
+        Log.Debug($"DeleteRow event: Deleted DatasetsNgisSubscribers {subscriber.subscriberdatasetname}");
+        SnackBar.Add("Deleted DatasetsNgisSubscribers.", Severity.Success);
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Add new row and commit to database
+    /// </summary>
+    /// <returns></returns>
+    private async Task AddNewRow()
+    {
+        var subscriber = new Datasets_NgisSubscriber();
+
+        _listDatasetsNgisSubscribers.Add(subscriber);
+        await Task.Delay(25); // Workaround: https://try.mudblazor.com/snippet/mamFvFuAbvICQrvW & https://github.com/MudBlazor/MudBlazor/issues/3279
+        _table.SetEditingItem(subscriber);
+        _newRowAdded = true;
+    }
+
+    /// <summary>
+    /// Commit changes
+    /// </summary>
+    /// <param name="element"></param>
+    private void ItemHasBeenCommitted(object element)
+    {
+        var subscriber = (Datasets_NgisSubscriber)element;
+
+        // Validate
+        if (subscriber.subscriberid < 1)
+        {
+            DialogService.ShowMessageBox(
+                "Kan ikke lagre",
+                "",
+                yesText: "OK");
+
+            _table.SetEditingItem(element);
+            return;
+        }
+
+
+        var ngisDataset = FindNgisDataset(subscriber.subscriberid, subscriber.subscriberdatasetid);
+        // var ngisDataset = FindNgisDataset(subscriber.subscriberdatasetid);
+        subscriber.subscriberdatasetname = ngisDataset.name;
+
+        ChangelogManager.DatasetSubscribers.SaveSubscriber(subscriber); // Update or Insert
+
+
+
+        var idx = _listDatasetsNgisSubscribers.FindIndex(x => x.id == subscriber.id);
+        _listDatasetsNgisSubscribers[idx] = subscriber;
+        _newRowAdded = false;
+        //_newRowsubscriberId = 0;
+        StateHasChanged();
+
+        Log.Debug($"RowEditCommit event:  Changes to subscriber {((Datasets_NgisSubscriber)element).subscriberdatasetid}");
+    }
+
+    private void BackupItem(object element)
+    {
+
+        //if (_readOnly)
+        //{
+        //    _table.SetEditingItem(null);
+        //    return;
+        //}
+        var subscriber = (Datasets_NgisSubscriber)element;
+        _datasetSubscriberBeforeEdit = new Datasets_NgisSubscriber()
+            {
+                id = subscriber.id,
+                datasetid = subscriber.datasetid,
+                subscriberid = subscriber.subscriberid,
+                subscriberdatasetid = subscriber.subscriberdatasetid,
+                subscriberdatasetname = subscriber.subscriberdatasetname,
+            };
+        Log.Debug($"RowEditPreview event: made a backup of Datasets_NgisSubscriber {subscriber.datasetid}");
+    }
+
+    private void ResetItemToOriginalValues(object? element)
+    {
+        if (_newRowAdded)
+        {
+            _newRowAdded = false;
+            //_newRowsubscriberId = 0;
+            GetDatasetsSubscribers();
+            StateHasChanged();
+            return;
+        }
+
+        if (_datasetSubscriberBeforeEdit == null)
+        {
+            element = null;
+            return;
+        }
+
+        element = _datasetSubscriberBeforeEdit;
+        var idx = _listDatasetsNgisSubscribers.FindIndex(x => x.id == _datasetSubscriberBeforeEdit.id);
+
+        _listDatasetsNgisSubscribers[idx] = _datasetSubscriberBeforeEdit;
+
+        Log.Debug($"RowEditCommit event:  Editing of NgisSubscriber {((Datasets_NgisSubscriber)element).id} cancelled");
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Search in table (not in use)
+    /// </summary>
+    /// <param name="element"></param>
+    /// <returns></returns>
+    private bool FilterFunc(Datasets_NgisSubscriber element)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.id.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.datasetid.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.subscriberdatasetname.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+    #endregion
+
+    #region Push
+    private async Task PushDataSet(Datasets_NgisSubscriber? selectedSubscriber)
+    {
+
+        List<global::ChangelogManager.Dataset> listDatasets = new List<Dataset>();
+        Dataset dataset = selectedSubscriber.dataset;
+        var datasetId = selectedSubscriber.datasetid;
+        using (geosyncEntities db = new geosyncEntities())
+        {
+            dataset = db.Datasets.FirstOrDefault(s => s.DatasetId == datasetId);
+            if (dataset != null)
+            {
+                listDatasets.Add(dataset);
+            }
+        }
+        if (listDatasets.Count == 0)
+        {
+            return;
+        }
+
+        var urlSubscriber = GetTooltipSubscriberUrl(selectedSubscriber.subscriberid);
+        var parameters = new DialogParameters();
+        parameters.Add("ContentText", $"Ønsker du å pushe datasett {dataset.Name} til {urlSubscriber} sitt datasett {selectedSubscriber.subscriberdatasetname}? ");
+        parameters.Add("ButtonText", "Ja");
+        parameters.Add("CancelText", "Nei");
+        parameters.Add("Color", Color.Info);
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var dialog = DialogService.Show<Dialog>("Push datasett", parameters, options);
+        var result = await dialog.Result;
+        if (result.Cancelled)
+        {
+            return;
+        }
+        dialog.Close();
+        _listPushLog.Clear();
+        _conterPushLog = 0;
+        await Task.Delay(25);
+        _hideMatProgressCircle = false;
+        StateHasChanged();
+        SnackBar.Add($"Pusher datasett: {dataset.Name}. Dette kan ta kan ta noe tid", Severity.Info);
+        PushDataSet(listDatasets);
+        _hideMatProgressCircle = true;
+        StateHasChanged();
+    }
+
+    private bool PushDataSet(List<Dataset> listDatasets)
+    {
+        try
+        {
+            Pusher.Synchronize(listDatasets);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("PushDataSet failed " + e);
+            Log.Error(e, "PushDataSet failed");
+            //throw;
+            return false;
+        }
+    }
+    #endregion
+
+
+    //private void OnBlurSubscriberId(FocusEventArgs e)
+    //{
+    //    int i = 0;
+
+    //    if (_selectedSubscriber != null)
+    //    {
+    //    }
+    //    //if (contextSubscriberid == 0 )
+    //    //{
+    //    //    int i = 0;
+    //    //}
+    //    return;
+    //}
+
+    //private int _newRowsubscriberId = 0;
+    //private void OnsubscriberIdChanged()
+    //{
+    //    //Console.WriteLine("OnsubscriberIdChanged:" + _selectedSubscriber?.subscriberid.ToString());
+    //    //throw new NotImplementedException();
+    //    if (newRowAdded)
+    //    {
+    //        //var subscriber = _listDatasetsNgisSubscribers.Last().subscriber;
+    //        //_newRowsubscriberId = subscriber.id;
+    //        //StateHasChanged();
+    //    }
+    //    //if (_selectedSubscriber?.subscriberid > 0)
+    //    //{
+    //    //    StateHasChanged();
+    //    //}
+    //}
+
+    //private void OnsubscriberIdValueChanged(int subsriberId)
+    ////private void OnsubscriberIdValueChanged(NgisSubscriber ngisSubscriber)
+    //{
+    //    //Console.WriteLine("OnsubscriberIdChanged:" + subsriberId.ToString());
+
+    //    if (newRowAdded)
+    //    {
+    //        //var subscriber = _listDatasetsNgisSubscribers.Last().subscriber;
+    //        _newRowsubscriberId = subsriberId;
+    //        //StateHasChanged();
+    //    }
+
+    //    //throw new NotImplementedException();
+    //}
+
+}

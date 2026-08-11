@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ChangelogProviders\SqlServerSpatialChangelog - Copy.cs" />
+    <Compile Remove="Dataset_old.cs" />
+    <Compile Remove="GeosyncModel.Designer.cs" />
+    <Compile Remove="Model1.Context.cs" />
+    <Compile Remove="Model1.cs" />
+    <Compile Remove="WebFeatureServiceReplication.svc.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="GeosyncModel.edmx" />
+    <None Remove="GeosyncModel.edmx.sql" />
+    <None Remove="Model1.Context.tt" />
+    <None Remove="Model1.tt" />
+    <None Remove="WebFeatureServiceReplication.svc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="GeosyncModel.edmx.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
+    <PackageReference Include="DotNetZip" Version="1.16.0" />
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
+    <PackageReference Include="MailKit" Version="3.4.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="7.0.0" />
+    <PackageReference Include="MimeKit" Version="3.4.3" />
+    <PackageReference Include="Npgsql" Version="7.0.1" />
+    <PackageReference Include="Serilog" Version="2.12.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.117" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.117" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.10.0" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.10.0" />
+    <PackageReference Include="System.ServiceModel.Web" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+</Project>

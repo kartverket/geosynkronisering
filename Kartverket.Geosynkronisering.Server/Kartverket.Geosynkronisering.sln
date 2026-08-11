@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C86567FF-0EAF-42A5-9835-6BB831CD2BCD}"
 	ProjectSection(SolutionItems) = preProject
@@ -19,17 +19,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{45D132
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kartverket.Geosynkronisering.Services", "Kartverket.Geosynkronisering\Kartverket.Geosynkronisering.Services.csproj", "{57502AAF-881B-4939-B311-720FC3B447AC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChangelogManager", "ChangelogManager\ChangelogManager.csproj", "{E1A81EF3-7AE0-4295-A875-F95C3C392D38}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Provider_NetCore", "Provider_NetCore\Provider_NetCore.csproj", "{8C9ACE8F-AF25-4D66-A071-D6899267BBC2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor.Kartverket.Geosynkronisering.Provider", "Blazor.Kartverket.Geosynkronisering.Provider\Blazor.Kartverket.Geosynkronisering.Provider.csproj", "{C99F4E23-10B5-40D7-84AB-4547FEA3ACD0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pusher", "Pusher\Pusher.csproj", "{4BEADD65-C0A6-44D1-A1D4-757B6E6009D4}"
+EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 2
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs12
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = Kartverket.Geosynkronisering\\Kartverket.Geosynkronisering.Services.csproj
-		SccProjectTopLevelParentUniqueName1 = Kartverket.Geosynkronisering.sln
-		SccProjectName1 = Kartverket.Geosynkronisering
-		SccLocalPath1 = Kartverket.Geosynkronisering
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -49,12 +47,63 @@ Global
 		{57502AAF-881B-4939-B311-720FC3B447AC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{57502AAF-881B-4939-B311-720FC3B447AC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{57502AAF-881B-4939-B311-720FC3B447AC}.Release|x86.ActiveCfg = Release|Any CPU
+		{E1A81EF3-7AE0-4295-A875-F95C3C392D38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1A81EF3-7AE0-4295-A875-F95C3C392D38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1A81EF3-7AE0-4295-A875-F95C3C392D38}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E1A81EF3-7AE0-4295-A875-F95C3C392D38}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E1A81EF3-7AE0-4295-A875-F95C3C392D38}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E1A81EF3-7AE0-4295-A875-F95C3C392D38}.Debug|x86.Build.0 = Debug|Any CPU
+		{E1A81EF3-7AE0-4295-A875-F95C3C392D38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1A81EF3-7AE0-4295-A875-F95C3C392D38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1A81EF3-7AE0-4295-A875-F95C3C392D38}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E1A81EF3-7AE0-4295-A875-F95C3C392D38}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E1A81EF3-7AE0-4295-A875-F95C3C392D38}.Release|x86.ActiveCfg = Release|Any CPU
+		{E1A81EF3-7AE0-4295-A875-F95C3C392D38}.Release|x86.Build.0 = Release|Any CPU
+		{8C9ACE8F-AF25-4D66-A071-D6899267BBC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C9ACE8F-AF25-4D66-A071-D6899267BBC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C9ACE8F-AF25-4D66-A071-D6899267BBC2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{8C9ACE8F-AF25-4D66-A071-D6899267BBC2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{8C9ACE8F-AF25-4D66-A071-D6899267BBC2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8C9ACE8F-AF25-4D66-A071-D6899267BBC2}.Debug|x86.Build.0 = Debug|Any CPU
+		{8C9ACE8F-AF25-4D66-A071-D6899267BBC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C9ACE8F-AF25-4D66-A071-D6899267BBC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C9ACE8F-AF25-4D66-A071-D6899267BBC2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{8C9ACE8F-AF25-4D66-A071-D6899267BBC2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{8C9ACE8F-AF25-4D66-A071-D6899267BBC2}.Release|x86.ActiveCfg = Release|Any CPU
+		{8C9ACE8F-AF25-4D66-A071-D6899267BBC2}.Release|x86.Build.0 = Release|Any CPU
+		{C99F4E23-10B5-40D7-84AB-4547FEA3ACD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C99F4E23-10B5-40D7-84AB-4547FEA3ACD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C99F4E23-10B5-40D7-84AB-4547FEA3ACD0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C99F4E23-10B5-40D7-84AB-4547FEA3ACD0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C99F4E23-10B5-40D7-84AB-4547FEA3ACD0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C99F4E23-10B5-40D7-84AB-4547FEA3ACD0}.Debug|x86.Build.0 = Debug|Any CPU
+		{C99F4E23-10B5-40D7-84AB-4547FEA3ACD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C99F4E23-10B5-40D7-84AB-4547FEA3ACD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C99F4E23-10B5-40D7-84AB-4547FEA3ACD0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C99F4E23-10B5-40D7-84AB-4547FEA3ACD0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C99F4E23-10B5-40D7-84AB-4547FEA3ACD0}.Release|x86.ActiveCfg = Release|Any CPU
+		{C99F4E23-10B5-40D7-84AB-4547FEA3ACD0}.Release|x86.Build.0 = Release|Any CPU
+		{4BEADD65-C0A6-44D1-A1D4-757B6E6009D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BEADD65-C0A6-44D1-A1D4-757B6E6009D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BEADD65-C0A6-44D1-A1D4-757B6E6009D4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4BEADD65-C0A6-44D1-A1D4-757B6E6009D4}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4BEADD65-C0A6-44D1-A1D4-757B6E6009D4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4BEADD65-C0A6-44D1-A1D4-757B6E6009D4}.Debug|x86.Build.0 = Debug|Any CPU
+		{4BEADD65-C0A6-44D1-A1D4-757B6E6009D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BEADD65-C0A6-44D1-A1D4-757B6E6009D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BEADD65-C0A6-44D1-A1D4-757B6E6009D4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4BEADD65-C0A6-44D1-A1D4-757B6E6009D4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{4BEADD65-C0A6-44D1-A1D4-757B6E6009D4}.Release|x86.ActiveCfg = Release|Any CPU
+		{4BEADD65-C0A6-44D1-A1D4-757B6E6009D4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{57502AAF-881B-4939-B311-720FC3B447AC} = {C86567FF-0EAF-42A5-9835-6BB831CD2BCD}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1A7D5C37-B815-412D-86BF-47F128A83FAB}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Kartverket.Geosynkronisering.vsmdi

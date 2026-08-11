@@ -4,11 +4,14 @@ using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.Xml;
+using ChangelogManager;
 using Kartverket.GeosyncWCF;
 using Kartverket.Geosynkronisering.Database;
 using Kartverket.Geosynkronisering.Properties;
-using NLog;
-using NLog.Fluent;
+//using NLog;
+//using NLog.Fluent;
+using Serilog;
+using Serilog.Events;
 
 namespace Kartverket.Geosynkronisering
 {
@@ -19,15 +22,17 @@ namespace Kartverket.Geosynkronisering
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "WebFeatureServiceReplication" in code, svc and config file together.
     public class WebFeatureServiceReplication : WebFeatureServiceReplicationPort
     {
-        protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private geosyncEntities db;
+        //protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private StoredChangelogsEntities db;
+        //private geosyncEntities db;
 
         public WebFeatureServiceReplication()
         {
-            db = new geosyncEntities();
+            db = new StoredChangelogsEntities();
+            //    db = new geosyncEntities();
         }
 
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
+        //private static readonly Logger logger = LogManager.GetCurrentClassLogger(); // NLog for logging (nuget package)
 
         public REP_CapabilitiesType GetCapabilities(GetCapabilitiesType1 getcapabilities1)
         {
@@ -91,11 +96,14 @@ namespace Kartverket.Geosynkronisering
 
                 string resp;
                 string initType;
+                db = new StoredChangelogsEntities();
                 var datasets = from d in db.Datasets where d.DatasetId == id select d;
                 initType = datasets.First().DatasetProvider;
 
                 //Initiate provider from config/dataset
-                Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
+                Type providerType = Utils.GetProviderType(initType);
+                //Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
+
                 IChangelogProvider changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
                 changelogprovider.Intitalize(id);
                 resp = changelogprovider.GetLastIndex(id);
@@ -214,6 +222,7 @@ namespace Kartverket.Geosynkronisering
         private Dataset GetDataset(string datasetId)
         {
             var id = GetId(datasetId);
+            db = new StoredChangelogsEntities();
             var datasets = from d in db.Datasets where d.DatasetId == id select d;
             var dataset = datasets.First();
             return dataset;
@@ -249,7 +258,7 @@ namespace Kartverket.Geosynkronisering
                 }
                 catch (Exception e)
                 {
-                    logger.Info("SendMail failed, check settings in web.config(appSettings) and in 'Konfigurasjon > EMail' ");
+                    Logger.Info("SendMail failed, check settings in web.config(appSettings) and in 'Konfigurasjon > EMail' ");
                 }
                
 
@@ -325,10 +334,12 @@ namespace Kartverket.Geosynkronisering
             int startindex = -1;
             int count = -1;
             string initType;
+            db = new StoredChangelogsEntities();
             var datasets = from d in db.Datasets where d.DatasetId == id select d;
             initType = datasets.First().DatasetProvider;
             //Initiate provider from config/dataset
-            Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
+            Type providerType = Utils.GetProviderType(initType);
+            //Type providerType = Assembly.GetExecutingAssembly().GetType(initType);
             changelogprovider = Activator.CreateInstance(providerType) as IChangelogProvider;
             changelogprovider.Intitalize(id);
 

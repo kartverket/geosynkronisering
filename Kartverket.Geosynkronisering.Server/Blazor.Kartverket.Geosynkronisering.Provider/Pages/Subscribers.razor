@@ -1,0 +1,203 @@
+﻿@using ChangelogManager
+@using Serilog
+@inject MudBlazor.ISnackbar SnackBar
+
+@page "/subscribers"
+@*<h3>Subscribers</h3>*@
+
+<MudTable Elevation="25" Items="@_listSubscribers" Dense="true" Hover="true" ReadOnly="@_readOnly" CanCancelEdit="true" Filter="new Func<NgisSubscriber,bool>(FilterFunc)"
+          @bind-SelectedItem="_selectedSubscriber" SortLabel="Sort By" CommitEditTooltip="Lagre endringer" CancelEditTooltip="Angre endringer"
+          OnCommitEditClick="@(() => SnackBar.Add("Commit NgisSubscriber"))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues"
+          RowEditCommit="ItemHasBeenCommitted" IsEditRowSwitchingBlocked="@blockSwitch" @ref="_table" OnPreviewEditClick="PreviewEditClick">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Subscribers for Push</MudText>
+        <MudSpacer />
+        <MudStack Spacing="3" Row="true">
+            <MudButton Variant="Variant.Filled" Color="Color.Default" StartIcon="@Icons.Material.Filled.Add" OnClick="AddNewRow">Ny rad</MudButton>
+        </MudStack>
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>Url</MudTh>
+        <MudTh>Username</MudTh>
+        <MudTh>Password</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.id</MudTd>
+        <MudTd DataLabel="Url">@context.url</MudTd>
+        <MudTd DataLabel="Username">@context.username</MudTd>
+        <MudTd DataLabel="Password" Style="-webkit-text-security:square">
+            @context.password
+        </MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="Id">
+            <MudTextField @bind-Value="@context.id" Required="true" />
+        </MudTd>
+        <MudTd DataLabel="Url">
+            <MudTextField @bind-Value="@context.url" Required="true" />
+        </MudTd>
+        <MudTd DataLabel="Username">
+            <MudTextField @bind-Value="@context.username" Required="true" />
+        </MudTd>
+        <MudTd DataLabel="Password">
+            <MudTextField @bind-Value="@context.password" InputType="InputType.Password" Required="true" />
+        </MudTd>
+
+        <MudTd DataLabel="">
+            @if (!newRowAdded)
+            {
+                <MudTooltip Text="Slett rad">
+                    <MudIconButton @onclick="@(() => DeleteRow(@context.id))" Color="Color.Default" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
+                </MudTooltip>
+            }
+        </MudTd>
+    </RowEditingTemplate>
+</MudTable>
+@code {
+    private List<NgisSubscriber> _listSubscribers;
+    private NgisSubscriber _selectedSubscriber;
+    private NgisSubscriber? _subscriberBeforeEdit;
+    bool _readOnly = false;
+    bool blockSwitch = true;
+    private string searchString = "";
+    bool newRowAdded = false;
+
+    private MudTable<ChangelogManager.NgisSubscriber> _table;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            GetSubscribers();
+            StateHasChanged();
+        }
+    }
+
+    private void GetSubscribers()
+    {
+        using (geosyncEntities db = new geosyncEntities())
+        {
+            var listSubscribers = db.Subscribers;
+            _listSubscribers = listSubscribers;
+        }
+
+    }
+
+    private void PreviewEditClick(object element)
+    {
+        _table.SetEditingItem(element);
+    }
+
+    private void DeleteRow(int id)
+    {
+
+        var idx = _listSubscribers.FindIndex(x => x.id == id);
+        var subscriber = _listSubscribers[idx];
+
+        using (var localDb = new ChangelogManager.Subscribers())
+        {
+            localDb.DeleteObject(subscriber);
+            //db.SaveChanges();
+
+        }
+
+        _table.SetEditingItem(null);
+        if (_subscriberBeforeEdit != null)
+        {
+            _subscriberBeforeEdit = null;
+        }
+
+        _listSubscribers.Clear();
+        GetSubscribers();
+
+        Log.Debug($"DeleteRow event: Deleted NgisSubscriber {subscriber.id}");
+        SnackBar.Add("Deleted NgisSubscriber.", Severity.Success);
+        StateHasChanged();
+    }
+
+    private async Task AddNewRow()
+    {
+        var subscriber = new NgisSubscriber();
+
+        _listSubscribers.Add(subscriber);
+        await Task.Delay(25); // Workaround: https://try.mudblazor.com/snippet/mamFvFuAbvICQrvW & https://github.com/MudBlazor/MudBlazor/issues/3279
+        _table.SetEditingItem(subscriber);
+        newRowAdded = true;
+    }
+
+    /// <summary>
+    /// Commit changes
+    /// </summary>
+    /// <param name="element"></param>
+    private void ItemHasBeenCommitted(object element)
+    {
+        var subscriber = (NgisSubscriber)element;
+
+
+        ChangelogManager.Subscribers.SaveSubscriber(subscriber); // Update or Insert
+
+        var idx = _listSubscribers.FindIndex(x => x.id == subscriber.id);
+        _listSubscribers[idx] = subscriber;
+        newRowAdded = false;
+        StateHasChanged();
+
+        Log.Debug($"RowEditCommit event:  Changes to subscriber {((NgisSubscriber)element).id}");
+    }
+
+    private void BackupItem(object element)
+    {
+
+        var subscriber = (NgisSubscriber)element;
+        _subscriberBeforeEdit = new NgisSubscriber()
+            {
+                id = subscriber.id,
+                url = subscriber.url,
+                username = subscriber.username,
+                password = subscriber.password
+            };
+        Log.Debug($"RowEditPreview event: made a backup of NgisSubscriber {subscriber.id}");
+    }
+
+    private void ResetItemToOriginalValues(object? element)
+    {
+        if (newRowAdded)
+        {
+            newRowAdded = false;
+            GetSubscribers();
+            StateHasChanged();
+            return;
+        }
+
+        if (_subscriberBeforeEdit == null)
+        {
+            element = null;
+            return;
+        }
+
+        element = _subscriberBeforeEdit;
+        var idx = _listSubscribers.FindIndex(x => x.id == _subscriberBeforeEdit.id);
+
+        _listSubscribers[idx] = _subscriberBeforeEdit;
+
+        Log.Debug($"RowEditCommit event:  Editing of NgisSubscriber {((NgisSubscriber)element).id} cancelled");
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Search in table
+    /// </summary>
+    /// <param name="element"></param>
+    /// <returns></returns>
+    private bool FilterFunc(NgisSubscriber element)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.id.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.url.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+}

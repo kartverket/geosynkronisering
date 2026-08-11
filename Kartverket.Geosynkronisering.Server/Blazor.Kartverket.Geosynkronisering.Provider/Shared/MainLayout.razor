@@ -1,0 +1,121 @@
+﻿@using MudBlazor.ThemeManager
+@inherits LayoutComponentBase
+
+@*<MudThemeProvider/>*@
+<MudThemeProvider Theme="_currentTheme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<PageTitle>Blazor.Kartverket.Geosynkronisering.Provider</PageTitle>
+
+
+<MudLayout>
+    <MudAppBar Elevation="3">
+        @*        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />*@
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        @*<MudText Typo="Typo.h5" Class="ml-3">Administrator</MudText>*@
+        <MudText Typo="Typo.h5" Class="ml-3">Geosynkronisering Administrator 2.1 Beta</MudText>
+        <MudSpacer />
+        @if (_isLightMode)
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="ToggleTheme" />
+        }
+        else
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Brightness5" Color="Color.Inherit" OnClick="ToggleTheme" />
+        }
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        @*NavMenu*@
+        <NavMenu />
+    </MudDrawer>
+
+@*    <MudMainContent >
+        @Body
+    </MudMainContent>
+*@    
+    <MudMainContent Class="pt-n8 px-4">
+        @Body
+    </MudMainContent>
+    
+
+    @*    <MudMainContent Class="pt-16 px-16">
+    <MudContainer Class="mt-6">
+    @Body
+    </MudContainer>
+    </MudMainContent> *@
+</MudLayout>
+
+
+
+
+@*<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4 auth">
+            <LoginDisplay />
+            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+
+            @if (_isLightMode)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.Brightness4" OnClick="@ToggleTheme" />
+            }
+            else
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.Brightness5" OnClick="@ToggleTheme" />
+            }
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>*@
+
+@code {
+    private bool _isLightMode = true;
+    private MudTheme _currentTheme = new MudTheme();
+    bool _drawerOpen = true;
+
+    private void ToggleTheme()
+    {
+        _isLightMode = !_isLightMode;
+
+        if (!_isLightMode)
+        {
+            _currentTheme = GenerateDarkTheme();
+        }
+        else
+        {
+            _currentTheme = new MudTheme();
+        }
+        //StateHasChanged();
+    }
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private MudTheme GenerateDarkTheme() =>
+        new MudTheme
+            {
+                Palette = new Palette()
+                {
+                    Black = "#27272f",
+                    Background = "#32333d",
+                    BackgroundGrey = "#27272f",
+                    Surface = "#373740",
+                    TextPrimary = "#ffffffb3",
+                    TextSecondary = "rgba(255,255,255, 0.50)",
+                    AppbarBackground = "#27272f",
+                    AppbarText = "#ffffffb3",
+                //dark mode
+                    DrawerBackground = "#27272f",
+                    DrawerText = "#ffffffb3",
+                    DrawerIcon = "#ffffffb3"
+                }
+            };
+}

@@ -1,0 +1,408 @@
+﻿@page "/servicesconfig"
+@using Microsoft.AspNetCore.Components
+@using ChangelogManager
+@using Serilog
+@using System.Data.Entity.Core.Metadata.Edm
+@inject MudBlazor.ISnackbar snackBar
+@*<h3>Services</h3>*@
+
+@*<MudCard Elevation="25">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudPaper Class="border-none">
+                <MudToolBar DisableGutters="true" Dense="true">
+                    <MudText Typo="Typo.h6">Nedlasting</MudText>
+                    <MudSpacer />
+                    <MudStack Spacing="3" Row="true">
+
+                        @if (_readOnlyServerConfig)
+                        {
+                            <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="ToggleEditableServerConfig" StartIcon="@Icons.Material.Filled.Edit">Rediger</MudButton>
+                        }
+                        else
+                        {
+                            <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="ToggleEditableServerConfig" StartIcon="@Icons.Material.Filled.Cancel">Angre</MudButton>
+                        }
+                        <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="SaveServerConfig" StartIcon="@Icons.Material.Filled.Save" Disabled="@_readOnlyServerConfig">Lagre</MudButton>
+                    </MudStack>
+                </MudToolBar>
+            </MudPaper>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudTextField @bind-Value="_serverConfig.FTPUrl" Label="Download URL" Variant="Variant.Text" Margin="Margin.Dense" ReadOnly="@_readOnlyServerConfig"></MudTextField>
+        <br />
+    </MudCardContent>
+</MudCard>
+<br />*@
+
+
+<MudPaper Class="pt-n8 px-4">
+    <MudToolBar DisableGutters="true" Dense="true">
+        <MudText Typo="Typo.h6">Nedlasting</MudText>
+        <MudSpacer />
+        <MudStack Spacing="3" Row="true">
+            @if (_readOnlyServerConfig)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="ToggleEditableServerConfig" StartIcon="@Icons.Material.Filled.Edit">Rediger</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="ToggleEditableServerConfig" StartIcon="@Icons.Material.Filled.Cancel">Angre</MudButton>
+            }
+            <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="SaveServerConfig" StartIcon="@Icons.Material.Filled.Save" Disabled="@_readOnlyServerConfig">Lagre</MudButton>
+        </MudStack>
+    </MudToolBar>
+    <MudDivider DividerType="DividerType.FullWidth" />
+    <MudTextField @bind-Value="_serverConfig.FTPUrl" Label="Download URL" Variant="Variant.Text" Margin="Margin.Dense" ReadOnly="@_readOnlyServerConfig" @ref="_serverConfigUrl"></MudTextField>
+    <br />
+</MudPaper>
+
+
+<MudTable Elevation="25" Items="_listServices" Dense="true" Breakpoint="Breakpoint.Always" RowsPerPage="1" ReadOnly="@_readOnlyService" RowEditCommit="SaveServices" @ref="_tableService">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Service</MudText>
+        <MudSpacer />
+        <MudStack Spacing="3" Row="true">
+            @*            @{
+            var iCon = "Icons.Material.Filled.Edit";
+            }
+            @if (!_readOnlyService)
+            {
+            iCon = "Icons.Material.Filled.Cancel";
+            }*@
+
+            @if (_readOnlyService)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Default" StartIcon="@Icons.Material.Filled.Edit" OnClick="ToggleEditableService">Rediger</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Default" StartIcon="@Icons.Material.Filled.Cancel" OnClick="ToggleEditableService">Angre</MudButton>
+            }
+
+            @*<MudButton Variant="Variant.Filled" Color="Color.Default" StartIcon="@Icons.Material.Filled.Edit" OnClick="ToggleEditableService">Rediger</MudButton>*@
+            @*<MudIconButton Icon="@Icons.Material.Filled.Edit" />*@
+            <MudButton Variant="Variant.Filled" Color="Color.Default" StartIcon="@Icons.Material.Filled.Save" OnClick="SaveServices" Disabled="@_readOnlyService">Lagre</MudButton>
+            @*<MudIconButton Icon="@Icons.Material.Filled.Save" OnClick="SaveServices" />*@
+        </MudStack>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Title</MudTh>
+        <MudTh>Abstract</MudTh>
+        <MudTh>Keywords</MudTh>
+        <MudTh>Fees</MudTh>
+        <MudTh>AccessConstraints</MudTh>
+
+        <MudTh>ProviderName</MudTh>
+        <MudTh>ProviderSite</MudTh>
+        <MudTh>IndividualName</MudTh>
+        <MudTh>Phone</MudTh>
+        <MudTh>Facsimile</MudTh>
+
+        <MudTh>Deliverypoint</MudTh>
+        <MudTh>City</MudTh>
+        <MudTh>PostalCode</MudTh>
+        <MudTh>Country</MudTh>
+        <MudTh>EMail</MudTh>
+
+        <MudTh>OnlineResourcesUrl</MudTh>
+        <MudTh>HoursOfService</MudTh>
+        <MudTh>ContactInstructions</MudTh>
+        <MudTh>Role</MudTh>
+        <MudTh>ServiceURL</MudTh>
+
+        <MudTh>ServiceID</MudTh>
+        <MudTh>Namespace</MudTh>
+        <MudTh>SchemaLocation</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Title">@context.Title</MudTd>
+        <MudTd DataLabel="Abstract">@context.Abstract</MudTd>
+        <MudTd DataLabel="Keywords">@context.Keywords</MudTd>
+        <MudTd DataLabel="Fees">@context.Fees</MudTd>
+        <MudTd DataLabel="AccessConstraints">@context.AccessConstraints</MudTd>
+
+        <MudTd DataLabel="ProviderName">@context.ProviderName</MudTd>
+        <MudTd DataLabel="ProviderSite">@context.ProviderSite</MudTd>
+        <MudTd DataLabel="IndividualName">@context.IndividualName</MudTd>
+        <MudTd DataLabel="Phone">@context.Phone</MudTd>
+        <MudTd DataLabel="Facsimile">@context.Facsimile</MudTd>
+
+        <MudTd DataLabel="Deliverypoint">@context.Deliverypoint</MudTd>
+        <MudTd DataLabel="City">@context.City</MudTd>
+        <MudTd DataLabel="PostalCode">@context.PostalCode</MudTd>
+        <MudTd DataLabel="Country">@context.Country</MudTd>
+        <MudTd DataLabel="EMail">@context.EMail</MudTd>
+
+        <MudTd DataLabel="OnlineResourcesUrl">@context.OnlineResourcesUrl</MudTd>
+        <MudTd DataLabel="HoursOfService">@context.HoursOfService</MudTd>
+        <MudTd DataLabel="ContactInstructions">@context.ContactInstructions</MudTd>
+        <MudTd DataLabel="Role">@context.Role</MudTd>
+        <MudTd DataLabel="ServiceURL">@context.ServiceURL</MudTd>
+
+        <MudTd DataLabel="ServiceID">@context.ServiceID</MudTd>
+        <MudTd DataLabel="Namespace">@context.Namespace</MudTd>
+        <MudTd DataLabel="SchemaLocation">@context.SchemaLocation</MudTd>
+
+        @*        <MudTd DataLabel="">
+        <MudFab @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small" />
+        <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
+        </MudTd>*@
+
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="Title">
+            <MudTextField @bind-Value="@context.Title" Required="false" AutoFocus="true" />
+        </MudTd>
+        <MudTd DataLabel="Abstract">
+            <MudTextField @bind-Value="@context.Abstract" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="Keywords">
+            <MudTextField @bind-Value="@context.Keywords" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="Fees">
+            <MudTextField @bind-Value="@context.Fees" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="AccessConstraints">
+            <MudTextField @bind-Value="@context.AccessConstraints" Required="false" />
+        </MudTd>
+
+        <MudTd DataLabel="ProviderName">
+            <MudTextField @bind-Value="@context.ProviderName" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="ProviderSite">
+            <MudTextField @bind-Value="@context.ProviderSite" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="IndividualName">
+            <MudTextField @bind-Value="@context.IndividualName" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="Phone">
+            <MudTextField @bind-Value="@context.Phone" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="Facsimile">
+            <MudTextField @bind-Value="@context.Facsimile" Required="false" />
+        </MudTd>
+
+        <MudTd DataLabel="Deliverypoint">
+            <MudTextField @bind-Value="@context.Deliverypoint" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="City">
+            <MudTextField @bind-Value="@context.City" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="PostalCode">
+            <MudTextField @bind-Value="@context.PostalCode" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="Country">
+            <MudTextField @bind-Value="@context.Country" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="EMail">
+            <MudTextField @bind-Value="@context.EMail" Required="false" />
+        </MudTd>
+
+        <MudTd DataLabel="OnlineResourcesUrl">
+            <MudTextField @bind-Value="@context.OnlineResourcesUrl" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="HoursOfService">
+            <MudTextField @bind-Value="@context.HoursOfService" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="ContactInstructions">
+            <MudTextField @bind-Value="@context.ContactInstructions" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="Role">
+            <MudTextField @bind-Value="@context.Role" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="ServiceURL">
+            <MudTextField @bind-Value="@context.ServiceURL" Required="false" />
+        </MudTd>
+
+        <MudTd DataLabel="ServiceID">
+            <MudTextField @bind-Value="@context.ServiceID" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="Namespace">
+            <MudTextField @bind-Value="@context.Namespace" Required="false" />
+        </MudTd>
+        <MudTd DataLabel="SchemaLocation">
+            <MudTextField @bind-Value="@context.SchemaLocation" Required="false" />
+        </MudTd>
+    </RowEditingTemplate>
+</MudTable>
+
+
+
+
+@code {
+
+    private List<ServerConfig> _listServerConfigs;
+    private ServerConfig _serverConfig = new ServerConfig();
+    bool _readOnlyServerConfig = true;
+    private MudTextField<string> _serverConfigUrl;
+    //private ElementReference serverConfigUrl;
+
+
+    private ChangelogManager.Service _service = new ChangelogManager.Service();
+    private List<ChangelogManager.Service> _listServices;
+    bool _readOnlyService = true;
+    private MudTable<ChangelogManager.Service> _tableService;
+    //private MudTextField<string> _focusFieldService;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //GetServerConfig();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            GetServerConfig();
+            _serverConfig = _listServerConfigs.FirstOrDefault();
+
+            GetServices();
+            _service = _listServices.FirstOrDefault();
+
+            if (_service == null)
+            {
+                // No data in table
+                _service = new ChangelogManager.Service();
+                _listServices.Add(_service);
+                //StateHasChanged();
+            }
+
+            StateHasChanged();
+        }
+    }
+    #region ServerConfig
+
+    private void GetServerConfig()
+    {
+
+        using (geosyncEntities db = new geosyncEntities())
+        {
+            var listServerConfigs = db.ServerConfigs;
+
+            _listServerConfigs = listServerConfigs;
+
+            if (_listServerConfigs != null && _listServerConfigs.Count > 0)
+            {
+                Log.Information("_listServerConfigs: {0}", _listServerConfigs.Count);
+            }
+            else
+            {
+                Log.Debug("_listServerConfigs: null or count = 0");
+            }
+
+        }
+    }
+
+    private void SaveServerConfig()
+    {
+        if (!_readOnlyServerConfig)
+        {
+            if (_serverConfig.FTPUrl != null)
+            {
+                ServerConfigsEntities.UpdateServerConfig(_serverConfig);
+                snackBar.Add("Nedlasting konfigurasjon lagret.", Severity.Success);
+            }
+            _readOnlyServerConfig = true;
+        }
+
+        GetServerConfig();
+    }
+
+    private async Task ToggleEditableServerConfig()
+    {
+        _readOnlyServerConfig = !_readOnlyServerConfig;
+        if (_readOnlyServerConfig)
+        {
+            // Cancel
+            GetServerConfig();
+            _serverConfig = _listServerConfigs.FirstOrDefault();
+        }
+        else
+        {
+            await _serverConfigUrl.FocusAsync();
+        }
+    }
+    #endregion
+
+    #region Service
+    private void GetServices()
+    {
+        using (geosyncEntities db = new geosyncEntities())
+        {
+            if (_listServices != null)
+            {
+                _listServices.Clear();
+            }
+
+            var listServervices = db.Services;
+
+            _listServices = listServervices;
+
+            if (_listServices != null && _listServices.Count > 0)
+            {
+                Log.Information("_listServices: {0}", _listServices.Count);
+            }
+            else
+            {
+                Log.Debug("_listServices: null or count = 0");
+            }
+        }
+    }
+
+    private async Task ToggleEditableService()
+    {
+        _readOnlyService = !_readOnlyService;
+        if (!_readOnlyService)
+        {
+            //var copyList = _listServices.ToArray().ToList();
+
+            //if (_focusFieldService != null)
+            //{
+            //    await _focusFieldService.FocusAsync();
+            //}
+            _tableService.SetEditingItem(_service);
+        }
+        else
+        {
+            _tableService.SetEditingItem(null);
+            GetServices();
+            _service = _listServices.FirstOrDefault();
+            if (_service == null)
+            {
+                _service = new ChangelogManager.Service();
+                _listServices.Add(_service);
+                StateHasChanged();
+            }
+            // StateHasChanged();
+        }
+    }
+
+    private void SaveServices(object element)
+    {
+        if (!_readOnlyService)
+        {
+            {
+                //_service = (Service)element;
+                ServicesEntities.UpdateServices(_service);
+
+                snackBar.Add("Services konfigurasjon lagret.", Severity.Success);
+            }
+            _readOnlyService = true;
+        }
+
+        GetServices();
+        //StateHasChanged();
+    }
+
+    // NOT IN USE
+    private void BackupItem(object element)
+    {
+        var copyList = _listServices.ToArray().ToList();
+    }
+
+
+    #endregion
+}

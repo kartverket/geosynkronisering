@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="GeosynkroniseringAdmin.aspx.cs" Inherits="Kartverket.Geosynkronisering.GeosynkroniseringAdmin" ValidateRequest="false" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="GeosynkroniseringAdmin.aspx.cs" Inherits="Kartverket.Geosynkronisering.GeosynkroniseringAdmin" ValidateRequest="false" EnableEventValidation="false"  %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -50,7 +50,7 @@
 </head>
 <body>
     <form id="Administrator" runat="server" name="Geosynkronisering">
-        <asp:Panel ID="Panel2" runat="server" CssClass="PanelBlank">
+        <asp:Panel ID="Panel2" runat="server" CssClass="PanelBlank" OnLoad="Panel2_Load">
 
 
             <table style="width: 100%;">
@@ -61,7 +61,8 @@
                     </td>
                     <td width="60%">
                         <asp:Label ID="Label2" runat="server" CssClass="HeaderText"
-                            Text="Geosynkronisering Administrator 1.2.3"></asp:Label>
+                            Text="Geosynkronisering Administrator 2.0 Beta"></asp:Label>
+                            <%--Text="Geosynkronisering Administrator 1.2.3"></asp:Label>--%>
                     </td>
                     <td width="20%">&nbsp;</td>
                     <td width="10%"></td>
@@ -95,8 +96,11 @@
                                                 </div>
                                                 <div style="height: 80%">
                                                     <asp:DetailsView ID="dvServerConfig" runat="server" AutoGenerateRows="False"
-                                                        CssClass="GridView" DataKeyNames="ID" DataSourceID="edsServerConfig"
-                                                        Height="50px" Width="100%" OnItemUpdated="dvServerConfig_ItemUpdated">
+                                                        CssClass="GridView" DataKeyNames="ID"
+                                                        Height="50px" Width="100%"
+                                                                     OnModeChanging="dvServerConfig_Modechanging"
+                                                                     OnItemUpdating="dvServerConfig_Updating"
+                                                                     EnableViewState ="False">
                                                         <EditRowStyle CssClass="GridView" />
                                                         <EmptyDataRowStyle CssClass="GridView" />
                                                         <FieldHeaderStyle CssClass="FieldHeader" />
@@ -115,7 +119,10 @@
                                                 </div>
                                                 <div style="height: 10%">
                                                     <asp:Label ID="Label5" runat="server" CssClass="TableHeaderText" Text="Service:"></asp:Label>
-                                                    <asp:DetailsView ID="dvService" runat="server" AutoGenerateRows="False" CssClass="GridView" DataKeyNames="ServiceID" DataSourceID="edsService" Height="50px" Width="100%">
+                                                    <asp:DetailsView ID="dvService" runat="server" AutoGenerateRows="False" CssClass="GridView" DataKeyNames="ServiceID" Height="50px" Width="100%"
+                                                                     OnModeChanging="dvService_Modechanging"
+                                                                     OnItemUpdating="dvService_Updating"
+                                                                     EnableViewState ="False">
                                                         <EditRowStyle CssClass="GridView" />
                                                         <FieldHeaderStyle CssClass="FieldHeader" />
                                                         <Fields>
@@ -173,20 +180,28 @@
                                                     <asp:TextBox ID="TextBoxLogfile" runat="server" TextMode="MultiLine" ReadOnly="True" Visible="False" Width="90%"></asp:TextBox>
                                                 </div>
                                             </asp:View>
-                                            <asp:View ID="vwDataset" runat="server">
+                                            <asp:View ID="vwDataset" runat="server" OnLoad="vwDataset_Load">>
                                                 <div style="height: 10%">
                                                     <asp:Label ID="Label1" runat="server" Text="Dataset:"
                                                         CssClass="TableHeaderText"></asp:Label>
                                                 </div>
                                                 <div style="height: 50%">
                                                     <asp:DetailsView ID="vDataset" runat="server" AllowPaging="True"
-                                                        CssClass="GridView" DataSourceID="edsDataset" Height="50px" Width="100%"
+                                                        CssClass="GridView" Height="50px" Width="100%"
                                                         AutoGenerateRows="False" DataKeyNames="DatasetId"
-                                                        OnItemCreated="vDataset_ItemCreated" OnPreRender="vDataset_PreRender">
+                                                        OnItemCreated="vDataset_ItemCreated" OnPreRender="vDataset_PreRender" OnItemUpdating="vDataset_ItemUpdating"
+                                                                     AutoGenerateInsertButton="false"
+                                                                     AutoGenerateEditButton="false" 
+                                                                     AutoGenerateDeleteButton="false"
+                                                                     EnableViewState ="False"
+                                                                     OnModeChanging="vDataset_Modechanging" OnItemUpdated="vDataset_ItemUpdated" OnItemCommand="vDataset_ItemCommand"
+                                                                     OnItemDeleting="vDataset_ItemDeleteting" OnItemDeleted="vDataset_ItemDeleteted"
+                                                                     OnItemInserting="vDataset_ItemInserting">
                                                         <EditRowStyle CssClass="GridView" />
                                                         <EmptyDataRowStyle CssClass="GridView" />
                                                         <FieldHeaderStyle CssClass="FieldHeader" />
                                                         <Fields>
+                                                            <asp:BoundField DataField="DatasetId" HeaderText="DatasetId" ReadOnly="True" InsertVisible="True"/>
                                                             <asp:BoundField DataField="Name" HeaderText="Name" SortExpression="Name" />
                                                             <asp:BoundField DataField="SchemaFileUri" HeaderText="SchemaFileUri"
                                                                 SortExpression="SchemaFileUri" />
@@ -214,7 +229,7 @@
                                                             <asp:BoundField DataField="Version" HeaderText="Version" SortExpression="Version" />
                                                             <asp:BoundField DataField="Tolerance" HeaderText="Tolerance" />
                                                             <asp:BoundField DataField="Decimals" HeaderText="Decimals" />
-                                                            <asp:CommandField ButtonType="Image" CancelImageUrl="~/Images/Edit_UndoHS.png" CancelText="Avbryt" DeleteImageUrl="~/Images/delete_12x12.png" DeleteText="Slett" EditImageUrl="~/Images/EditTableHS.png" EditText="Rediger" InsertImageUrl="~/Images/saveHS.png" InsertText="Lagre" NewImageUrl="~/Images/AddTableHS.png" NewText="Ny" SelectText="Velg" ShowDeleteButton="True" ShowEditButton="True" ShowInsertButton="True" UpdateImageUrl="~/Images/saveHS.png" UpdateText="Lagre" />
+                                                            <asp:CommandField ButtonType="Image" CancelImageUrl="~/Images/Edit_UndoHS.png" CancelText="Avbryt" DeleteImageUrl="~/Images/delete_12x12.png" DeleteText="Slett" EditImageUrl="~/Images/EditTableHS.png" EditText="Rediger" InsertImageUrl="~/Images/saveHS.png" InsertText="Lagre" NewImageUrl="~/Images/AddTableHS.png" NewText="Ny" SelectText="Velg" ShowDeleteButton="True" ShowEditButton="True" ShowInsertButton="True" UpdateImageUrl="~/Images/saveHS.png" UpdateText="Lagre"/>
                                                         </Fields>
                                                         <InsertRowStyle CssClass="GridView" />
                                                         <PagerSettings Mode="NextPreviousFirstLast" Position="Bottom" Visible="true" />
@@ -263,8 +278,7 @@
                                                             Text="Endringslogg:"></asp:Label>
                                                     </div>
                                                     <div style="height: 80%">
-                                                        <asp:GridView ID="gwStoredChangeLogs" runat="server" AllowSorting="True"
-                                                            DataSourceID="edsStoredChangeLogs" Width="100%" CssClass="GridView"
+                                                        <asp:GridView ID="gwStoredChangeLogs" runat="server" AllowSorting="True" Width="100%" CssClass="GridView"
                                                             AllowPaging="True" AutoGenerateColumns="False" DataKeyNames="ChangelogId"
                                                             EnableSortingAndPagingCallbacks="True">
                                                             <Columns>
@@ -285,6 +299,8 @@
                                                                     SortExpression="Stored" />
                                                                 <asp:BoundField DataField="ChangelogId" HeaderText="ChangelogId"
                                                                     ReadOnly="True" SortExpression="ChangelogId" />
+                                                                <asp:BoundField DataField="DateCreated" HeaderText="DateCreated"
+                                                                                ReadOnly="True" SortExpression="DateCreated" />
                                                             </Columns>
                                                             <HeaderStyle CssClass="FieldHeader" />
                                                             <PagerSettings Mode="NextPreviousFirstLast" Position="Bottom" Visible="true" />
@@ -328,7 +344,7 @@
                 </tr>
             </table>
         </asp:Panel>
-        <asp:EntityDataSource ID="edsDataset" runat="server"
+  <%--      <asp:EntityDataSource ID="edsDataset" runat="server"
             ConnectionString="name=geosyncEntities" DefaultContainerName="geosyncEntities"
             EnableFlattening="False" EntitySetName="Datasets" EnableDelete="True"
             EnableInsert="True" EnableUpdate="True">
@@ -344,7 +360,7 @@
         <asp:EntityDataSource ID="edsService" runat="server"
             ConnectionString="name=geosyncEntities" DefaultContainerName="geosyncEntities"
             EnableFlattening="False" EnableUpdate="True" EntitySetName="Services">
-        </asp:EntityDataSource>
+        </asp:EntityDataSource>--%>
     </form>
 </body>
 </html>

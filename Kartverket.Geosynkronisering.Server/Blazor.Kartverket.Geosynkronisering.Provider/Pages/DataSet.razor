@@ -1,0 +1,558 @@
+﻿@using ChangelogManager
+@using global::Kartverket.Geosynkronisering
+@using Serilog
+@using Blazor.Kartverket.Geosynkronisering.Provider.Components
+@inject MudBlazor.ISnackbar SnackBar
+@inject IDialogService DialogService
+
+@page "/dataset"
+
+@*<style>
+     .mud-table-dense {
+         padding: 1px 1px 1px 1px !important;
+          padding-inline-start: 1px!important;
+          padding-inline-end: 1px!important;
+         font-size: 0.475rem!important;
+         letter-spacing: 0.001071em!important;
+
+    }
+     .mud-table-cell {
+         display: table-cell;
+         padding: 0px;
+         font-size: 0.675rem;
+         text-align: start;
+         font-weight: 400;
+         line-height: 1.43;
+         border-bottom: 1px solid var(--mud-palette-table-lines);
+         letter-spacing: 0.01071em;
+         vertical-align: inherit;
+         padding-inline-start: 1px!important;
+         padding-inline-end: 1px!important;
+
+
+       }
+     .mud-table-row {
+         padding: 0px!important;
+         padding-inline-start: 1px!important;
+         padding-inline-end: 1px!important;
+
+         }
+     .mud-table-head {
+         padding-inline-start: 1px!important;
+         padding-inline-end: 1px!important;
+
+     }
+</style>*@
+
+@*<h3>Datasett</h3>*@
+
+
+@*Breakpoint="Breakpoint.Always" RowsPerPage="1" for one row per page *@
+<MudTable Elevation="25" Items="@_listDatasets" Dense="true" Hover="true" ReadOnly="@_readOnly" CanCancelEdit="true" Filter="new Func<Dataset, bool>(FilterFunc)"
+          @bind-SelectedItem="_selectedDataset" SortLabel="Sort By" CommitEditTooltip="Lagre endringer" CancelEditTooltip="Angre endringer"
+          OnCommitEditClick="@(() => SnackBar.Add("Commit Edit Handler Invoked"))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues"
+          RowEditCommit="ItemHasBeenCommitted" IsEditRowSwitchingBlocked="@_blockSwitch" @ref="_table" OnPreviewEditClick="PreviewEditClick"
+          Breakpoint="Breakpoint.Always" RowsPerPage="1">
+
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Datasett</MudText>
+        <MudSpacer />
+        <MudStack Spacing="3" Row="true">
+            @{
+                var disabled = !_readOnly || _listDatasets.Count == 0 | _selectedDataset == null || _selectedDataset.DatasetId == 0;
+            }
+            <MudButton Variant="Variant.Filled" Color="Color.Default" StartIcon="@Icons.Material.Filled.CreateNewFolder"
+                       OnClick="@(() => CreateInitialData(@_selectedDataset.DatasetId))"
+                       Disabled="@disabled">Opprett initielle data</MudButton>
+            @if (!_hideMatProgressCircle)
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            }
+
+        </MudStack>
+        <MudSpacer />
+        <MudStack Spacing="3" Row="true">
+            @if (_readOnly)
+            {
+                var disableEdit = _listDatasets.Count == 0 || _selectedDataset == null || _selectedDataset.DatasetId == 0;
+
+                <MudButton Variant="Variant.Filled" Color="Color.Default" StartIcon="@Icons.Material.Filled.Add" OnClick="AddNewRow">Ny rad</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Default" StartIcon="@Icons.Material.Filled.Delete" OnClick="@(() => DeleteRow(@_selectedDataset.DatasetId))" Disabled="@disableEdit">Slett rad</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@(() => ToggleEditable(@_selectedDataset.DatasetId))" StartIcon="@Icons.Material.Filled.Edit" Disabled="@disableEdit">Rediger</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Default" StartIcon="@Icons.Material.Filled.Cancel" OnClick="@(() => ToggleEditable(@_selectedDataset.DatasetId))">Angre</MudButton>
+            }
+            <MudButton Variant="Variant.Filled" Color="Color.Default" StartIcon="@Icons.Material.Filled.Save" OnClick="@(() => ItemHasBeenCommitted(@_selectedDataset.DatasetId))" Disabled="@_readOnly">Lagre</MudButton>
+        </MudStack>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>DatasetId</MudTh>
+        <MudTh>Name</MudTh>
+
+        <MudTh>SchemaFileUri</MudTh>
+        <MudTh>DatasetProvider</MudTh>
+
+        <MudTh>ServerMaxCount</MudTh>
+        <MudTh>DatasetConnection</MudTh>
+        <MudTh>DBSchema</MudTh>
+        <MudTh>TransformationConnection</MudTh>
+        <MudTh>DefaultCrs</MudTh>
+
+        <MudTh>UpperCornerCoords</MudTh>
+        <MudTh>LowerCornerCoords</MudTh>
+
+        <MudTh>TargetNamespace</MudTh>
+        <MudTh>TargetNamespacePrefix</MudTh>
+        <MudTh>Version</MudTh>
+        <MudTh>Decimals</MudTh>
+        <MudTh>Tolerance</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="DatasetId">@context.DatasetId</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+
+        <MudTd DataLabel="SchemaFileUri">@context.SchemaFileUri</MudTd>
+        <MudTd DataLabel="DatasetProvider">@context.DatasetProvider</MudTd>
+
+        <MudTd DataLabel="ServerMaxCount">@context.ServerMaxCount</MudTd>
+        <MudTd DataLabel="DatasetConnection">@context.DatasetConnection</MudTd>
+        <MudTd DataLabel="DBSchema">@context.DBSchema</MudTd>
+        <MudTd DataLabel="TransformationConnection">@context.TransformationConnection</MudTd>
+        <MudTd DataLabel="DefaultCrs">@context.DefaultCrs</MudTd>
+
+        <MudTd DataLabel="UpperCornerCoords">@context.UpperCornerCoords</MudTd>
+        <MudTd DataLabel="LowerCornerCoords">@context.LowerCornerCoords</MudTd>
+
+        <MudTd DataLabel="TargetNamespace">@context.TargetNamespace</MudTd>
+        <MudTd DataLabel="TargetNamespacePrefix">@context.TargetNamespacePrefix</MudTd>
+        <MudTd DataLabel="Version">@context.Version</MudTd>
+        <MudTd DataLabel="Decimals">@context.Decimals</MudTd>
+        <MudTd DataLabel="Tolerance">@context.Tolerance</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="DatasetId">
+            <MudTextField @bind-Value="@context.DatasetId" Required="true" />
+        </MudTd>
+        <MudTd DataLabel="Name">
+            <MudTextField @bind-Value="@context.Name" />
+        </MudTd>
+
+        <MudTd DataLabel="SchemaFileUri">
+            <MudTextField @bind-Value="@context.SchemaFileUri" />
+        </MudTd>
+        <MudTd DataLabel="DatasetProvider">
+            <MudTextField @bind-Value="@context.DatasetProvider" />
+        </MudTd>
+
+        <MudTd DataLabel="ServerMaxCount">
+            <MudTextField @bind-Value="@context.ServerMaxCount" />
+        </MudTd>
+        <MudTd DataLabel="DatasetConnection">
+            <MudTextField @bind-Value="@context.DatasetConnection" />
+        </MudTd>
+        <MudTd DataLabel="DBSchema">
+            <MudTextField @bind-Value="@context.DBSchema" />
+        </MudTd>
+        <MudTd DataLabel="TransformationConnection">
+            <MudTextField @bind-Value="@context.TransformationConnection" />
+        </MudTd>
+        <MudTd DataLabel="DefaultCrs">
+            <MudTextField @bind-Value="@context.DefaultCrs" />
+        </MudTd>
+
+        <MudTd DataLabel="UpperCornerCoords">
+            <MudTextField @bind-Value="@context.UpperCornerCoords" />
+        </MudTd>
+        <MudTd DataLabel="LowerCornerCoords">
+            <MudTextField @bind-Value="@context.LowerCornerCoords" />
+        </MudTd>
+
+        <MudTd DataLabel="TargetNamespace">
+            <MudTextField @bind-Value="@context.TargetNamespace" />
+        </MudTd>
+        <MudTd DataLabel="TargetNamespacePrefix">
+            <MudTextField @bind-Value="@context.TargetNamespacePrefix" />
+        </MudTd>
+        <MudTd DataLabel="Version">
+            <MudTextField @bind-Value="@context.Version" />
+        </MudTd>
+        <MudTd DataLabel="Decimals">
+            <MudTextField @bind-Value="@context.Decimals" />
+        </MudTd>
+        <MudTd DataLabel="Tolerance">
+            <MudTextField @bind-Value="@context.Tolerance" />
+        </MudTd>
+        <MudTd DataLabel="">
+            @if (!_newRowAdded)
+            {
+                @*                <MudTooltip Text="Slett rad">
+            <MudIconButton @onclick="@(() => DeleteRow(@context.DatasetId))" Color="Color.Default" Icon="@Icons.Material.Filled.Delete" Size="Size.Small"/>
+            </MudTooltip>
+            *@
+            }
+        </MudTd>
+    </RowEditingTemplate>
+    <PagerContent>
+        <MudPagination SelectedChanged="PageChanged" Count="@((_table.GetFilteredItemsCount() + _table.RowsPerPage - 1) / _table.RowsPerPage)" Class="pa-4" @ref="@_mudPagination" />
+    </PagerContent>
+</MudTable>
+
+
+
+@code {
+    private List<global::ChangelogManager.Dataset> _listDatasets;
+    private Dataset _dataSet = new Dataset();
+    private Dataset _selectedDataset = null;
+    private Dataset _datasetBeforeEdit;
+    bool _readOnly = true; //false;
+    bool _blockSwitch = true;
+    private string searchString = "";
+    bool _newRowAdded = false;
+
+    //private HashSet<Dataset> selectedItems1 = new HashSet<Dataset>();
+    private MudTable<global::ChangelogManager.Dataset> _table;
+    private MudPagination _mudPagination;
+
+    private bool _hideMatProgressCircle = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            GetDatasets();
+
+            _dataSet = _listDatasets.FirstOrDefault();
+            if (_dataSet == null)
+            {
+                // No data in table
+                _dataSet = new Dataset();
+                _listDatasets.Add(_dataSet);
+            }
+            _table.SetSelectedItem(_dataSet);
+
+            StateHasChanged();
+        }
+    }
+
+    private void GetDatasets()
+    {
+        using (geosyncEntities db = new geosyncEntities())
+        {
+            var ListDatasets = db.Datasets;
+            _listDatasets = ListDatasets;
+        }
+    }
+
+    private void PreviewEditClick(object element)
+    {
+        _table.SetEditingItem(element);
+    }
+
+    /// <summary>
+    /// Delete row from database
+    /// </summary>
+    /// <param name="datasetId"></param>
+    private void DeleteRow(int datasetId)
+    {
+        var idx = _listDatasets.FindIndex(x => x.DatasetId == datasetId);
+        var dataset = _listDatasets[idx];
+
+        using (var localDb = new geosyncEntities())
+        {
+            localDb.DeleteObject(dataset);
+        }
+
+        _table.SetEditingItem(null);
+        _table.SetSelectedItem(null);
+        //_readOnly = true;
+        if (_datasetBeforeEdit != null)
+        {
+            _datasetBeforeEdit = null;
+        }
+
+        _listDatasets.Clear();
+        GetDatasets();
+
+        if (_listDatasets.Count > 0)
+        {
+            if (idx >= (_listDatasets.Count - 1))
+            {
+                _mudPagination.NavigateTo(_listDatasets.Count);
+                if (_selectedDataset == null)
+                {
+                    _table.SetSelectedItem(_listDatasets[idx - 1]);
+                }
+                //_table.NavigateTo(_listDatasets.Count);
+                //PageChanged(_listDatasets.Count);
+            }
+            else
+            {
+                _mudPagination.NavigateTo(idx);
+                if (_selectedDataset == null)
+                {
+                    idx = Math.Max(1, idx - 1);
+                    _table.SetSelectedItem(_listDatasets[idx - 1]);
+                }
+            }
+        }
+
+        Log.Debug($"DeleteRow event: Deleted dataset {dataset.Name}");
+        SnackBar.Add($"Deleted dataset: {dataset.Name}", Severity.Success);
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Insert new row
+    /// </summary>
+    /// <returns></returns>
+    private async Task AddNewRow()
+    {
+        if (_listDatasets.Count == 1 && _listDatasets[0].DatasetId == 0)
+        {
+            // Special case when datasets table is empty but a dummy row has been created
+            _listDatasets.Clear();
+        }
+
+        var dataset = new Dataset();
+
+        _listDatasets.Add(dataset);
+        //PageChanged(_listDatasets.Count);
+        await Task.Delay(25); // Workaround: https://try.mudblazor.com/snippet/mamFvFuAbvICQrvW & https://github.com/MudBlazor/MudBlazor/issues/3279
+                              //_table.SetEditingItem(null);
+                              //_table.SetSelectedItem(dataset);
+        _readOnly = false;
+        _table.SetEditingItem(dataset);
+        _table.SetSelectedItem(dataset);
+        _mudPagination.NavigateTo(_listDatasets.Count);
+        _newRowAdded = true;
+        await Task.Delay(25);
+        //StateHasChanged();
+    }
+
+    /// <summary>
+    /// Commit changes
+    /// </summary>
+    /// <param name="datasetId"></param>
+    /// <returns></returns>
+    private async Task ItemHasBeenCommitted(int datasetId)
+    {
+        var idx = _listDatasets.FindIndex(x => x.DatasetId == datasetId);
+        var dataSet = _listDatasets[idx];
+
+        geosyncEntities.SaveDataset(dataSet); // Update or Insert
+
+        _listDatasets[idx] = dataSet;
+        if (_newRowAdded)
+        {
+            _listDatasets.Clear();
+            GetDatasets();
+
+            _mudPagination.NavigateTo(_listDatasets.Count);
+        }
+        _newRowAdded = false;
+
+        await ToggleEditable(dataSet.DatasetId);
+
+        SnackBar.Add($"Committed changes to dataset: {((Dataset)dataSet).Name}", Severity.Success);
+        Log.Debug($"RowEditCommit event:  Changes to Dataset {((Dataset)dataSet).Name}");
+
+    }
+    /// <summary>
+    /// Commit changes
+    /// </summary>
+    /// <param name="element"></param>
+    private void ItemHasBeenCommitted(object element)
+    {
+        var dataSet = (Dataset)element;
+
+
+        //geosyncEntities.UpdateDataset(dataSet);
+        geosyncEntities.SaveDataset(dataSet); // Update or Insert
+
+        var idx = _listDatasets.FindIndex(x => x.DatasetId == dataSet.DatasetId);
+        _listDatasets[idx] = dataSet;
+        _newRowAdded = false;
+        StateHasChanged();
+
+        Log.Debug($"RowEditCommit event:  Changes to Dataset {((Dataset)element).Name}");
+    }
+    private void BackupItem(object element)
+    {
+        //_datasetBeforeEdit = _listDatasets.ToArray().ToList();
+
+        var dataSet = (Dataset)element;
+        _datasetBeforeEdit = new()
+            {
+                DatasetId = ((Dataset)element).DatasetId,
+                Name = dataSet.Name,
+                SchemaFileUri = dataSet.SchemaFileUri,
+                DatasetProvider = dataSet.DatasetProvider,
+                ServerMaxCount = dataSet.ServerMaxCount,
+                DatasetConnection = dataSet.DatasetConnection,
+                DBSchema = dataSet.DBSchema,
+                TransformationConnection = dataSet.TransformationConnection,
+                DefaultCrs = dataSet.DefaultCrs,
+                UpperCornerCoords = dataSet.UpperCornerCoords,
+                LowerCornerCoords = dataSet.LowerCornerCoords,
+                TargetNamespace = dataSet.TargetNamespace,
+                TargetNamespacePrefix = dataSet.TargetNamespacePrefix,
+                Version = dataSet.Version,
+                Decimals = dataSet.Decimals,
+                Tolerance = dataSet.Tolerance
+            };
+        Log.Debug($"RowEditPreview event: made a backup of Dataset {dataSet.Name}");
+    }
+
+    private void ResetItemToOriginalValues(object element)
+    {
+        if (_newRowAdded)
+        {
+            _newRowAdded = false;
+            GetDatasets();
+            StateHasChanged();
+            return;
+        }
+
+        if (_datasetBeforeEdit == null)
+        {
+            element = null;
+            return;
+        }
+
+        element = _datasetBeforeEdit;
+        //var index = _listDatasets.Where(d => d.DatasetId == _datasetBeforeEdit.DatasetId).Select(d => d.DatasetId);
+        var idx = _listDatasets.FindIndex(x => x.DatasetId == _datasetBeforeEdit.DatasetId);
+
+        _listDatasets[idx] = _datasetBeforeEdit;
+
+        Log.Debug($"RowEditCommit event:  Editing of Dataset {((Dataset)element).Name} cancelled");
+        StateHasChanged();
+    }
+
+
+    /// <summary>
+    /// Search in Dataset table (not in use)
+    /// </summary>
+    /// <param name="element"></param>
+    /// <returns></returns>
+    private bool FilterFunc(Dataset element)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.DatasetId.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private async Task PageChanged(int i)
+    {
+        _table.SetSelectedItem(_listDatasets[i - 1]);
+        _table.NavigateTo(i - 1);
+        await Task.Delay(25);
+    }
+
+
+    /// <summary>
+    /// Toggle edit or not
+    /// </summary>
+    /// <param name="datasetId"></param>
+    /// <returns></returns>
+    private async Task ToggleEditable(int datasetId)
+    {
+        var idx = _listDatasets.FindIndex(x => x.DatasetId == datasetId);
+        var dataset = _listDatasets[idx];
+
+        _readOnly = !_readOnly;
+        if (!_readOnly)
+        {
+            await Task.Delay(25);
+            _table.SetEditingItem(dataset);
+            _table.SetSelectedItem(dataset);
+            await Task.Delay(25);
+            StateHasChanged();
+        }
+        else
+        {
+            _table.SetEditingItem(null);
+            GetDatasets();
+        }
+    }
+
+    /// <summary>
+    /// Create initial data for selected dataset
+    /// </summary>
+    /// <param name="datasetId"></param>
+    /// <returns></returns>
+    private async Task CreateInitialData(int datasetId)
+    {
+        var idx = _listDatasets.FindIndex(x => x.DatasetId == datasetId);
+        var dataset = _listDatasets[idx];
+
+        var parameters = new DialogParameters();
+        parameters.Add("ContentText", $"Ønsker du å lage initielt datasett for {dataset.Name}? ");
+        parameters.Add("ButtonText", "Ja");
+        parameters.Add("CancelText", "Nei");
+        parameters.Add("Color", Color.Info);
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var dialog = DialogService.Show<Dialog>("Initielt datasett", parameters, options);
+        var result = await dialog.Result;
+        if (result.Cancelled)
+        {
+            return;
+        }
+        dialog.Close();
+
+        await Task.Delay(25);
+        _hideMatProgressCircle = false;
+        StateHasChanged();
+        SnackBar.Add($"Lager initielt datasett: {dataset.Name}. Dette kan ta kan ta noe tid", Severity.Info);
+
+        CreateInitialData(dataset);
+
+        _hideMatProgressCircle = true;
+        StateHasChanged();
+    }
+
+    private void CreateInitialData(Dataset dataset)
+    {
+        try
+        {
+            var resp = Utils.GetChangelogProvider(dataset).GenerateInitialChangelog(dataset.DatasetId);
+            var message = $"Created initial dataset for dataset:" + dataset.Name + " with datasetId:" + dataset.DatasetId;
+            Console.WriteLine(message);
+            SnackBar.Add(message, Severity.Success, config =>
+            {
+                config.RequireInteraction = true;
+            });
+        }
+        catch (Exception ex)
+        {
+
+            string innerExMsg = "";
+            Exception innerExp = ex.InnerException;
+            while (innerExp != null)
+            {
+                innerExMsg += string.Format("{0}. \n", innerExp.Message);
+                innerExp = innerExp.InnerException;
+            }
+
+            string errorMsg = string.Format("Klarte ikke å lage initiell endringslogg. {0} \n {1}", ex.Message,
+                innerExMsg);
+
+            SnackBar.Add("ERROR creating initial changelog: " + errorMsg, Severity.Error, config =>
+            {
+                config.RequireInteraction = true;
+            }
+            );
+
+            Console.WriteLine("ERROR creating initial changelog: " + errorMsg);
+            Log.Error(ex, errorMsg);
+        }
+
+
+    }
+}
